@@ -6,10 +6,10 @@ import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
 import {
-  AnnouncementListItemDTO,
+  Announcement,
   AnnouncementInternalAPIService,
   GetAnnouncementsRequestParams,
-  GetAnnouncementsByCriteriaV1RequestParams
+  AnnouncementSearchCriteria
 } from '../../generated'
 import { Action, Column, ConfigurationService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { PortalService } from '../../services/portalService'
@@ -28,9 +28,9 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public changeMode: ChangeMode = 'NEW'
   public actions: Action[] = []
-  public criteria: GetAnnouncementsByCriteriaV1RequestParams = {}
-  public announcement: AnnouncementListItemDTO | undefined
-  public announcements: AnnouncementListItemDTO[] = []
+  public criteria: AnnouncementSearchCriteria = {}
+  public announcement: Announcement | undefined
+  public announcements: Announcement[] = []
   public displayDeleteDialog = false
   public displayDetailDialog = false
   public appsChanged = false
@@ -113,7 +113,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.search({})
+    this.search({ announcementSearchCriteria: {} })
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
     })
@@ -134,19 +134,19 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public onCloseDetail(refresh: boolean): void {
     this.displayDetailDialog = false
-    if (refresh) this.search({}, true)
+    if (refresh) this.search({ announcementSearchCriteria: {} }, true)
   }
 
   public onSearch(): void {
     this.changeMode = 'NEW'
     this.appsChanged = true
-    this.search({}, true)
+    this.search({ announcementSearchCriteria: {} }, true)
   }
 
   public search(criteria: GetAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
     if (!reuseCriteria) {
-      if (criteria.appId === '') criteria.appId = undefined
-      this.criteria = criteria
+      if (criteria.announcementSearchCriteria.appId === '') criteria.announcementSearchCriteria.appId = undefined
+      this.criteria = criteria.announcementSearchCriteria
     }
     this.searching = true
     this.announcementApi
@@ -154,7 +154,7 @@ export class AnnouncementSearchComponent implements OnInit {
       .pipe(finalize(() => (this.searching = false)))
       .subscribe({
         next: (data) => {
-          this.announcements = data
+          this.announcements = data.map((pageResult) => pageResult.stream || []).flat()
           if (this.announcements.length === 0) {
             this.msgService.info({ summaryKey: 'GENERAL.SEARCH.MSG_NO_RESULTS' })
           }
@@ -179,14 +179,14 @@ export class AnnouncementSearchComponent implements OnInit {
     this.announcement = undefined
     this.displayDetailDialog = true
   }
-  public onDetail(ev: MouseEvent, item: AnnouncementListItemDTO, mode: ChangeMode): void {
+  public onDetail(ev: MouseEvent, item: Announcement, mode: ChangeMode): void {
     ev.stopPropagation()
     this.changeMode = mode
     this.appsChanged = false
     this.announcement = item
     this.displayDetailDialog = true
   }
-  public onCopy(ev: MouseEvent, item: AnnouncementListItemDTO) {
+  public onCopy(ev: MouseEvent, item: Announcement) {
     ev.stopPropagation()
     this.changeMode = 'NEW'
     this.appsChanged = false
@@ -194,7 +194,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.announcement.id = undefined
     this.displayDetailDialog = true
   }
-  public onDelete(ev: MouseEvent, item: AnnouncementListItemDTO): void {
+  public onDelete(ev: MouseEvent, item: Announcement): void {
     ev.stopPropagation()
     this.announcement = item
     this.appsChanged = false

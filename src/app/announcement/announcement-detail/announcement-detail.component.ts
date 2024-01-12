@@ -8,8 +8,8 @@ import { SelectItem } from 'primeng/api'
 import { Action, ConfigurationService, PortalMessageService } from '@onecx/portal-integration-angular'
 import { PortalService } from '../../services/portalService'
 import {
-  AnnouncementCreateDTO,
-  AnnouncementDetailItemDTO,
+  CreateAnnouncementRequest,
+  Announcement,
   AnnouncementPriorityType,
   AnnouncementStatus,
   AnnouncementType,
@@ -36,7 +36,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
 export class AnnouncementDetailComponent implements OnInit, OnChanges {
   @Input() public changeMode = 'NEW'
   @Input() public displayDetailDialog = false
-  @Input() public announcement: AnnouncementDetailItemDTO | undefined
+  @Input() public announcement: Announcement | undefined
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
   announcementId: string | undefined
@@ -219,7 +219,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         this.announcementApi
           .updateAnnouncementById({
             id: this.announcementId,
-            announcementDetailItemDTO: this.submitFormGroupValues()
+            updateAnnouncementRequest: this.submitFormGroupValues()
           })
           .subscribe({
             next: () => {
@@ -231,7 +231,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       } else if (this.changeMode === 'NEW') {
         this.announcementApi
           .addAnnouncement({
-            announcementCreateDTO: this.submitFormGroupValues() as AnnouncementCreateDTO
+            createAnnouncementRequest: this.submitFormGroupValues() as CreateAnnouncementRequest
           })
           .subscribe({
             next: () => {
@@ -244,7 +244,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     }
   }
 
-  private submitFormGroupValues(): AnnouncementCreateDTO {
+  private submitFormGroupValues(): CreateAnnouncementRequest {
     if (this.formGroup.controls['assignedTo'].value === 'Workspace') {
       if (this.formGroup.controls['portalId'].value === 'all') {
         this.formGroup.controls['appId'].setValue(null)

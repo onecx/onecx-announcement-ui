@@ -117,17 +117,21 @@ export class AnnouncementCriteriaComponent implements OnInit {
 
   public submitCriteria(): void {
     const criteriaRequest: GetAnnouncementsRequestParams = {
-      title:
-        this.announcementCriteriaGroup.value.title === null ? undefined : this.announcementCriteriaGroup.value.title,
-      appId:
-        this.announcementCriteriaGroup.value.appId === null ? undefined : this.announcementCriteriaGroup.value.appId,
-      priority:
-        this.announcementCriteriaGroup.value.priority === null
-          ? undefined
-          : this.announcementCriteriaGroup.value.priority,
-      status:
-        this.announcementCriteriaGroup.value.status === null ? undefined : this.announcementCriteriaGroup.value.status,
-      type: this.announcementCriteriaGroup.value.type === null ? undefined : this.announcementCriteriaGroup.value.type
+      announcementSearchCriteria: {
+        title:
+          this.announcementCriteriaGroup.value.title === null ? undefined : this.announcementCriteriaGroup.value.title,
+        appId:
+          this.announcementCriteriaGroup.value.appId === null ? undefined : this.announcementCriteriaGroup.value.appId,
+        priority:
+          this.announcementCriteriaGroup.value.priority === null
+            ? undefined
+            : this.announcementCriteriaGroup.value.priority,
+        status:
+          this.announcementCriteriaGroup.value.status === null
+            ? undefined
+            : this.announcementCriteriaGroup.value.status,
+        type: this.announcementCriteriaGroup.value.type === null ? undefined : this.announcementCriteriaGroup.value.type
+      }
     }
     if (this.announcementCriteriaGroup.value.startDateRange) {
       const dates = this.mapDateRangeToDateStrings(this.announcementCriteriaGroup.value.startDateRange)
