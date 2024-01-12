@@ -11,8 +11,7 @@
  */
 
 
-export enum AnnouncementStatus {
-    Active = 'ACTIVE',
-    Inactive = 'INACTIVE'
+export interface AnnouncementApps { 
+    appIds?: Array<string>;
 }
 

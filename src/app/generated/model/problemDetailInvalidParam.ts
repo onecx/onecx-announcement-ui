@@ -11,8 +11,8 @@
  */
 
 
-export enum AnnouncementStatus {
-    Active = 'ACTIVE',
-    Inactive = 'INACTIVE'
+export interface ProblemDetailInvalidParam { 
+    name?: string;
+    message?: string;
 }
 

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "Apache-2.0",
   "config": {
-    "openapiYaml": "src/assets/api/ah-mgmt-api.yaml",
+    "openapiYaml": "src/assets/api/openapi-announcement-bff.yaml",
     "openapiOutput": "src/app/generated"
   },
   "scripts": {

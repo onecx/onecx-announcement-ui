@@ -9,10 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { ProblemDetailInvalidParam } from './problemDetailInvalidParam';
+import { ProblemDetailParam } from './problemDetailParam';
 
 
-export enum AnnouncementStatus {
-    Active = 'ACTIVE',
-    Inactive = 'INACTIVE'
+export interface ProblemDetailResponse { 
+    errorCode?: string;
+    detail?: string;
+    params?: Array<ProblemDetailParam>;
+    invalidParams?: Array<ProblemDetailInvalidParam>;
 }
 

@@ -9,10 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Announcement } from './announcement';
 
 
-export enum AnnouncementStatus {
-    Active = 'ACTIVE',
-    Inactive = 'INACTIVE'
+export interface AnnouncementPageResult { 
+    /**
+     * The total elements in the resource.
+     */
+    totalElements?: number;
+    number?: number;
+    size?: number;
+    totalPages?: number;
+    stream?: Array<Announcement>;
 }
 
