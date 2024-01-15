@@ -371,9 +371,9 @@ export class AnnouncementInternalAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<AnnouncementPageResult>>;
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<AnnouncementPageResult>>>;
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<AnnouncementPageResult>>>;
+    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementPageResult>;
+    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementPageResult>>;
+    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementPageResult>>;
     public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const announcementSearchCriteria = requestParameters.announcementSearchCriteria;
         if (announcementSearchCriteria === null || announcementSearchCriteria === undefined) {
@@ -421,7 +421,7 @@ export class AnnouncementInternalAPIService {
         }
 
         let localVarPath = `/announcements/search`;
-        return this.httpClient.request<Array<AnnouncementPageResult>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<AnnouncementPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: announcementSearchCriteria,

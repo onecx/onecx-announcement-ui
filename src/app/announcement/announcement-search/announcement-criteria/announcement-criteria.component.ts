@@ -125,18 +125,21 @@ export class AnnouncementCriteriaComponent implements OnInit {
         priority:
           this.announcementCriteriaGroup.value.priority === null
             ? undefined
-            : this.announcementCriteriaGroup.value.priority,
+            : this.announcementCriteriaGroup.value.priority?.[0],
         status:
           this.announcementCriteriaGroup.value.status === null
             ? undefined
-            : this.announcementCriteriaGroup.value.status,
-        type: this.announcementCriteriaGroup.value.type === null ? undefined : this.announcementCriteriaGroup.value.type
+            : this.announcementCriteriaGroup.value.status?.[0],
+        type:
+          this.announcementCriteriaGroup.value.type === null
+            ? undefined
+            : this.announcementCriteriaGroup.value.type?.[0]
       }
     }
     if (this.announcementCriteriaGroup.value.startDateRange) {
       const dates = this.mapDateRangeToDateStrings(this.announcementCriteriaGroup.value.startDateRange)
-      criteriaRequest.startDateFrom = dates[0]
-      criteriaRequest.startDateTo = dates[1]
+      criteriaRequest.announcementSearchCriteria.startDateFrom = dates[0]
+      criteriaRequest.announcementSearchCriteria.startDateTo = dates[1]
     }
     this.criteriaEmitter.emit(criteriaRequest)
   }

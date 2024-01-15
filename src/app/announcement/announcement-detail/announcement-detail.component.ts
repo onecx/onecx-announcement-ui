@@ -9,6 +9,7 @@ import { Action, ConfigurationService, PortalMessageService } from '@onecx/porta
 import { PortalService } from '../../services/portalService'
 import {
   CreateAnnouncementRequest,
+  UpdateAnnouncementRequest,
   Announcement,
   AnnouncementPriorityType,
   AnnouncementStatus,
@@ -219,7 +220,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         this.announcementApi
           .updateAnnouncementById({
             id: this.announcementId,
-            updateAnnouncementRequest: this.submitFormGroupValues()
+            updateAnnouncementRequest: this.submitFormGroupValues() as UpdateAnnouncementRequest
           })
           .subscribe({
             next: () => {

@@ -154,7 +154,7 @@ export class AnnouncementSearchComponent implements OnInit {
       .pipe(finalize(() => (this.searching = false)))
       .subscribe({
         next: (data) => {
-          this.announcements = data.map((pageResult) => pageResult.stream || []).flat()
+          this.announcements = data.stream || []
           if (this.announcements.length === 0) {
             this.msgService.info({ summaryKey: 'GENERAL.SEARCH.MSG_NO_RESULTS' })
           }
