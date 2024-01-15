@@ -9,7 +9,7 @@ import { of, throwError } from 'rxjs'
 import { PortalMessageService, ConfigurationService, Column } from '@onecx/portal-integration-angular'
 import { HttpLoaderFactory } from 'src/app/shared/shared.module'
 import { AnnouncementSearchComponent } from './announcement-search.component'
-import { AnnouncementListItemDTO, AnnouncementInternalAPIService } from '../../generated'
+import { Announcement, AnnouncementInternalAPIService } from '../../generated'
 import { PortalService } from '../../services/portalService'
 
 describe('AnnouncementSearchComponent', () => {
@@ -35,7 +35,7 @@ describe('AnnouncementSearchComponent', () => {
   const portalServiceSpy = jasmine.createSpyObj('PortalService', ['getCurrentPortalData'])
   portalServiceSpy.getCurrentPortalData.and.returnValue(of([]))
 
-  const newAnnArr: AnnouncementListItemDTO[] = [
+  const newAnnArr: Announcement[] = [
     {
       id: 'id',
       title: 'new'
@@ -107,10 +107,10 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should correctly assign results if API call returns some data', () => {
-    apiServiceSpy.getAnnouncements.and.returnValue(of([{ id: 'id', title: 'new' }]))
+    apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: [{ id: 'id', title: 'new' }] }))
     component.announcements = []
 
-    component.search({})
+    component.search({ announcementSearchCriteria: {} })
 
     expect(component.announcements[0]).toEqual({ id: 'id', title: 'new' })
   })
@@ -120,7 +120,7 @@ describe('AnnouncementSearchComponent', () => {
     apiServiceSpy.getAnnouncements.and.returnValue(of([]))
     component.announcements = []
 
-    component.search({})
+    component.search({ announcementSearchCriteria: {} })
 
     expect(component.announcements.length).toEqual(0)
     expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'GENERAL.SEARCH.MSG_NO_RESULTS' })
@@ -129,7 +129,7 @@ describe('AnnouncementSearchComponent', () => {
   it('should handle API call error', () => {
     apiServiceSpy.getAnnouncements.and.returnValue(throwError(() => new Error()))
 
-    component.search({})
+    component.search({ announcementSearchCriteria: {} })
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.SEARCH.MSG_SEARCH_FAILED' })
   })
@@ -146,7 +146,7 @@ describe('AnnouncementSearchComponent', () => {
     }
     const reuseCriteria = false
 
-    component.search(newCriteria, reuseCriteria)
+    component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)
 
     expect(component.criteria).toEqual(newCriteria)
   })
