@@ -28,7 +28,7 @@ function initializer(translate: TranslateService): () => Observable<any> {
     BrowserModule,
     KeycloakAuthModule,
     BrowserAnimationsModule,
-    PortalCoreModule.forRoot('announcement-mgmt-ui')
+    PortalCoreModule.forRoot('onecx-announcement-mgmt-ui')
   ],
   providers: [
     DialogService,
