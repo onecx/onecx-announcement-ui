@@ -1,0 +1,17 @@
+apiVersion: v2
+name: onecx-announcement-ui
+version: 0.0.0
+description: OneCX Announcement UI.
+home: https://github.com/onecx/onecx-announcement-ui
+keywords:
+  - announcement
+sources:
+  - https://github.com/onecx/onecx-announcement-ui
+maintainers:
+  - name: OneCX Developer Team
+    email: tkit_dev@1000kit.org
+dependencies:
+  - name: helm-angular-app
+    version: ^0
+    repository: oci://ghcr.io/onecx/charts
+    alias: app

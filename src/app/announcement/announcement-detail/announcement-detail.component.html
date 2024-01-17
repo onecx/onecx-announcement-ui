@@ -1,0 +1,201 @@
+<p-dialog
+  header="{{ (this.changeMode === 'EDIT' ? 'ACTIONS.EDIT.ANNOUNCEMENT' : 'ACTIONS.CREATE.ANNOUNCEMENT') | translate }}"
+  [(visible)]="displayDetailDialog"
+  (onHide)="onDialogHide()"
+  [baseZIndex]="10000"
+  [draggable]="true"
+  [resizable]="true"
+  [closable]="true"
+  [modal]="true"
+  [style]="{ width: '560px' }"
+  [showHeader]="true"
+  [breakpoints]="{
+    '992px': '65vw',
+    '700px': '80vw',
+    '600px': '90vw',
+    '500px': '100vw',
+      }"
+>
+  <form [formGroup]="formGroup" errorTailor>
+    <div class="flex flex-wrap flex-column justify-content-between gap-2">
+      <div class="flex flex-wrap align-items-center justify-content-between mt-3">
+        <div class="w-12">
+          <span class="p-float-label" controlErrorAnchor>
+            <textarea
+              pInputTextarea
+              type="text"
+              class="w-full textarea-sm"
+              id="ah_announcement_detail_title"
+              formControlName="title"
+              rows="1"
+              [autoResize]="true"
+              appendTo="body"
+            ></textarea>
+            <label class="ocx-required-label" for="ah_announcement_detail_title">
+              {{ 'ANNOUNCEMENT.TITLE' | translate }}
+            </label>
+          </span>
+        </div>
+      </div>
+      <div class="w-full mb-2 mt-1 sm:mt-2">
+        <span class="p-float-label mt-2">
+          <textarea
+            pInputTextarea
+            class="w-full textarea-md"
+            id="ah_announcement_detail_content"
+            formControlName="content"
+            rows="3"
+            [autoResize]="true"
+            appendTo="body"
+          ></textarea>
+          <label for="ah_announcement_detail_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
+        </span>
+      </div>
+
+      <div class="grid col-12 row-gap-3 sm:row-gap-1 sm:mt-2">
+        <div class="col-12 sm:col-5 py-0 px-0 sm:pr-3 md:text-right flex sm:justify-content-end">
+          <div>
+            <span class="p-float-label" controlErrorAnchor>
+              <p-calendar
+                id="ah_announcement_detail_startDate"
+                type="text"
+                formControlName="startDate"
+                styleClass="w-14rem"
+                todayButtonStyleClass="calender-today"
+                [showClear]="false"
+                [showTime]="true"
+                [showWeek]="true"
+                [showIcon]="true"
+                [showOnFocus]="false"
+                ariaLabelledBy="date-from-label"
+                appendTo="body"
+              ></p-calendar>
+              <label class="ocx-required-label" for="ah_announcement_detail_startDate">
+                {{ 'ANNOUNCEMENT.START_DATE' | translate }}
+              </label>
+            </span>
+          </div>
+        </div>
+        <div class="col-7 sm:col-5 p-0 sm:pl-3">
+          <span class="p-float-label">
+            <p-calendar
+              id="ah_announcement_detail_endDate"
+              type="text"
+              formControlName="endDate"
+              styleClass="w-14rem"
+              todayButtonStyleClass="calender-today"
+              [showClear]="true"
+              [showTime]="true"
+              [showWeek]="true"
+              [showIcon]="true"
+              [showOnFocus]="false"
+              ariaLabelledBy="date-from-label"
+              appendTo="body"
+            ></p-calendar>
+            <label for="ah_announcement_detail_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+          </span>
+        </div>
+        <div class="col-2 py-0 pl-4">
+          <div class="w-1 flex flex-column row-gap-2 mr-2">
+            <p-inputSwitch
+              id="ah_announcement_detail_status"
+              class="input-switch-xl"
+              formControlName="status"
+              trueValue="ACTIVE"
+              falseValue="INACTIVE"
+            ></p-inputSwitch>
+            <label class="text-xs text-center float-label mr-2" for="ah_announcement_detail_status">
+              {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
+            </label>
+          </div>
+        </div>
+        <label
+          *ngIf="formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange')"
+          class="col-12 py-0 pl-0 sm:pl-3 control-error"
+        >
+          {{ 'ANNOUNCEMENT_DETAIL.INVALID_DATE_RANGE' | translate }}
+        </label>
+      </div>
+
+      <div class="grid col-12 row-gap-2">
+        <div class="col-12 md:col-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
+          <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_appliedFor"
+            >{{ 'ANNOUNCEMENT.ASSIGNED_TO' | translate }}
+          </label>
+          <p-selectButton
+            formControlName="assignedTo"
+            (onChange)="assignedToChange($event)"
+            id="ah_announcement_detail_appliedFor"
+            [options]="assignedToOption"
+          ></p-selectButton>
+        </div>
+        <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
+          <ng-container *ngIf="formGroup.controls['assignedTo'].value === 'Workspace'" controlErrorAnchor>
+            <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_portalId">
+              {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}
+            </label>
+            <p-dropdown
+              class="input-field"
+              styleClass="w-19rem"
+              id="ah_announcement_detail_portalId"
+              [options]="availablePortals"
+              [autoDisplayFirst]="true"
+              [appendTo]="'body'"
+              formControlName="portalId"
+              [filter]="true"
+              filterBy="label"
+            >
+            </p-dropdown>
+          </ng-container>
+          <ng-container *ngIf="formGroup.controls['assignedTo'].value === 'App'" controlErrorAnchor>
+            <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_appId"
+              >{{ 'ANNOUNCEMENT.APPLICATION' | translate }}
+            </label>
+            <input class="w-19rem" id="ah_announcement_detail_appId" pInputText formControlName="appId" />
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="grid col-12 row-gap-2">
+        <div class="col-12 md:col-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
+          <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_priority"
+            >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
+          </label>
+          <p-selectButton
+            id="ah_announcement_detail_priority"
+            formControlName="priority"
+            [options]="(priorityOptions$ | async) ?? []"
+          ></p-selectButton>
+        </div>
+        <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
+          <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_type">
+            {{ 'ANNOUNCEMENT.TYPE' | translate }}
+          </label>
+          <p-selectButton
+            id="ah_announcement_detail_type"
+            formControlName="type"
+            [options]="(typeOptions$ | async) ?? []"
+          ></p-selectButton>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="flex flex-wrap justify-content-end gap-2 mb-1">
+      <p-button
+        id="ah_help_detail_button_close"
+        [label]="'GENERAL.CANCEL' | translate"
+        (onClick)="onDialogHide()"
+        icon="pi pi-times"
+      ></p-button>
+      <p-button
+        id="ah_help_detail_button_save"
+        [label]="'GENERAL.SAVE' | translate"
+        (onClick)="onSave()"
+        icon="pi pi-save"
+        [disabled]="!formGroup.valid"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

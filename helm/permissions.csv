@@ -1,0 +1,5 @@
+PERMISSION NAME;PERMISSION_KEY;onecx-announcement-admin;onecx-announcement-user
+Show search page for Announcement items;ANNOUCEMENT#SEARCH;x;x
+Show details of Announcement item;ANNOUCEMENT#VIEW;x;x
+Edit Announcement item;ANNOUCEMENT#EDIT;x;
+Delete Announcement item;ANNOUCEMENT#DELETE;x;

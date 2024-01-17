@@ -1,0 +1,92 @@
+<ocx-search-criteria
+  [disableAdvancedToggle]="true"
+  [header]="'ANNOUNCEMENT_SEARCH.HEADER' | translate"
+  [subheader]="'ANNOUNCEMENT_SEARCH.SUBHEADER' | translate"
+  (search)="submitCriteria()"
+  [actions]="actions"
+>
+  <div simpleCriteria>
+    <div
+      [formGroup]="announcementCriteriaGroup"
+      class="flex flex-wrap column-gap-3 row-gap-2 sm:row-gap-3 px-0 sm:px-2"
+    >
+      <span class="p-float-label">
+        <p-dropdown
+          id="appId"
+          [options]="availablePortals"
+          [autoDisplayFirst]="true"
+          [appendTo]="'body'"
+          formControlName="appId"
+          [filter]="true"
+          filterBy="label"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.ASSIGNED_TO' | translate"
+        >
+        </p-dropdown>
+        <label for="appId">{{ 'ANNOUNCEMENT.ASSIGNED_TO' | translate }}</label>
+      </span>
+      <span class="p-float-label">
+        <input
+          id="title"
+          pInputText
+          type="text"
+          formControlName="title"
+          class="w-18rem"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
+        />
+        <label for="title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
+      </span>
+      <span class="p-float-label">
+        <p-calendar
+          selectionMode="range"
+          [readonlyInput]="true"
+          inputId="startDateRange"
+          formControlName="startDateRange"
+          appendTo="body"
+          [showButtonBar]="true"
+          [showWeek]="true"
+          [dateFormat]="dateFormatForRange"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.START_DATE_RANGE' | translate"
+        ></p-calendar>
+        <label for="startDateRange">{{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label>
+      </span>
+      <span class="p-float-label">
+        <p-multiSelect
+          [options]="(statusOptions$ | async) ?? []"
+          id="status"
+          formControlName="status"
+          appendTo="body"
+          [filter]="false"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
+        >
+        </p-multiSelect>
+        <label for="status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
+      </span>
+
+      <span class="p-float-label">
+        <p-multiSelect
+          [options]="(type$ | async) ?? []"
+          id="type"
+          formControlName="type"
+          appendTo="body"
+          [filter]="false"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
+        >
+        </p-multiSelect>
+        <label for="type">{{ 'ANNOUNCEMENT.TYPE' | translate }}</label>
+      </span>
+
+      <span class="p-float-label">
+        <p-multiSelect
+          [options]="(priorityType$ | async) ?? []"
+          id="priority"
+          formControlName="priority"
+          appendTo="body"
+          [filter]="false"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
+        >
+        </p-multiSelect>
+        <label for="priority">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
+      </span>
+    </div>
+  </div>
+</ocx-search-criteria>
