@@ -144,6 +144,9 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   public search(criteria: GetAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
+    if (criteria.announcementSearchCriteria.appId === 'all') {
+      criteria.announcementSearchCriteria.appId = undefined
+    }
     if (!reuseCriteria) {
       if (criteria.announcementSearchCriteria.appId === '') criteria.announcementSearchCriteria.appId = undefined
       this.criteria = criteria.announcementSearchCriteria
