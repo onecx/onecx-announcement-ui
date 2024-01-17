@@ -2,7 +2,7 @@ const { ModifyEntryPlugin } = require('@angular-architects/module-federation/src
 const { share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack')
 
 const config = withModuleFederationPlugin({
-  name: 'onecx-announcement-mgmt-ui',
+  name: 'onecx-announcement-ui',
   filename: 'remoteEntry.js',
   exposes: {
     './AnnouncementMgmtModule': 'src/app/announcement-mgmt-remote.module.ts'
