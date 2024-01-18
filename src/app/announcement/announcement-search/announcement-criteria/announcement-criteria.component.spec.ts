@@ -52,13 +52,30 @@ describe('AnnouncementCriteriaComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should handle criteria on submitCriteria', () => {
+  it('should handle criteria on submitCriteria if formGroup values empty', () => {
     const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       appId: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
+      startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
+    })
+    component.announcementCriteriaGroup = newCriteriaGroup
+    spyOn(component.criteriaEmitter, 'emit')
+
+    component.submitCriteria()
+
+    expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+  })
+
+  it('should handle criteria on submitCriteria if formGroup values exist', () => {
+    const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
+      title: new FormControl<string | null>('title'),
+      appId: new FormControl<string | null>('appId'),
+      status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
+      type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
+      priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
       startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
     })
     component.announcementCriteriaGroup = newCriteriaGroup
