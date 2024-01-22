@@ -12,5 +12,5 @@ COPY dist/onecx-announcement-ui/ $DIR_HTML
 ENV BFF_URL http://onecx-announcement-bff:8080/
 ENV APP_BASE_HREF /announcement/
 
-RUN chmod 775 -R $DIR_HTML/assets
+RUN chmod 775 -R "$DIR_HTML"/assets
 USER 1001

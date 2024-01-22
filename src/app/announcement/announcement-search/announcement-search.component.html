@@ -8,6 +8,7 @@
   <ocx-page-content styleClass="px-3">
     <p-table
       #announcementTable
+      id="announcement_search_table"
       [value]="loading ? [] : announcements"
       [columns]="filteredColumns"
       styleClass="p-datatable-striped"
@@ -35,17 +36,22 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="16">{{ 'GENERAL.SEARCH.NO_DATA' | translate }}</td>
+          <td id="announcement_search_table_emptymessage" colspan="16">{{ 'GENERAL.SEARCH.NO_DATA' | translate }}</td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th class="text-center white-space-nowrap" title="{{ 'GENERAL.SEARCH.ACTION' | translate }}">
+          <th
+            id="announcement_search_table_header_actions"
+            class="text-center white-space-nowrap"
+            title="{{ 'GENERAL.SEARCH.ACTION' | translate }}"
+          >
             {{ 'GENERAL.SEARCH.ACTION' | translate }}
           </th>
           <th
             *ngFor="let col of columns"
+            [id]="'announcement_search_table_header_col_' + col.field"
             [class]="col.css"
             [pSortableColumn]="col.field"
             [title]="'ANNOUNCEMENT.TOOLTIPS.' + col.header | translate"

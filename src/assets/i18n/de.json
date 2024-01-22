@@ -47,6 +47,7 @@
     "SAVE": "Speichern",
     "VIEW": "Ansehen",
     "WORKSPACE": "Workspace",
+    "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
     "APP": "App",
     "DETAIL": {
       "CREATION_DATE": "Erstellt am",
@@ -125,9 +126,9 @@
     "SUCCESSFUL_ANNOUNCEMENT_UPDATE": "Neuigkeit wurde erfolgreich aktualisiert",
     "SUCCESSFUL_ANNOUNCEMENT_CREATED": "Neuigkeit wurde erfolgreich erstellt",
     "SUCCESSFUL_ANNOUNCEMENT_DELETE": "Neuigkeit wurde erfolgreich gelöscht",
-    "ANNOUNCEMENT_UPDATE_ERROR": "Fehler, Neuigkeit wurde nicht aktualisiert",
-    "ANNOUNCEMENT_CREATE_ERROR": "Fehler, Neuigkeit wurde nicht erstellt",
-    "ANNOUNCEMENT_DELETE_ERROR": "Fehler, Neuigkeit wurde nicht gelöscht",
+    "ANNOUNCEMENT_UPDATE_ERROR": "Es ist ein Fehleraufgetreten. Die Neuigkeit wurde nicht aktualisiert",
+    "ANNOUNCEMENT_CREATE_ERROR": "Es ist ein Fehleraufgetreten. Die Neuigkeit wurde nicht erstellt",
+    "ANNOUNCEMENT_DELETE_ERROR": "Es ist ein Fehleraufgetreten. Die Neuigkeit wurde nicht gelöscht",
     "ANNOUNCEMENT_DATE_ERROR": "Neuigkeit konnte nicht gespeichert werden",
     "INVALID_DATE_RANGE": "Das Startdatum liegt nach dem Enddatum. Es muss davor liegen."
   },

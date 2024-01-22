@@ -26,6 +26,7 @@ describe('AnnouncementDetailComponent', () => {
     'warning'
   ])
   const configServiceSpy = {
+    lang: 'de',
     getProperty: jasmine.createSpy('getProperty').and.returnValue('123'),
     getPortal: jasmine.createSpy('getPortal').and.returnValue({
       themeId: '1234',
@@ -67,10 +68,6 @@ describe('AnnouncementDetailComponent', () => {
       providers: [
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: ConfigurationService, useValue: configServiceSpy },
-        /* {
-          provide: AnnouncementInternalAPIService,
-          useClass: IAuthMockService
-        }, */
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
         { provide: PortalService, useValue: portalServiceSpy }
@@ -103,8 +100,8 @@ describe('AnnouncementDetailComponent', () => {
   it('should getAllWorkspaces onInit', () => {
     const portals = [
       {
-        portalName: 'AH_MGMT',
-        id: 'help-mgmt'
+        portalName: 'portal',
+        id: 'id'
       }
     ]
     portalServiceSpy.getCurrentPortalData.and.returnValue(of(portals))
@@ -113,19 +110,56 @@ describe('AnnouncementDetailComponent', () => {
     component.ngOnInit()
 
     expect(component.availablePortals).toContain({
-      label: 'AH_MGMT',
-      value: 'help-mgmt'
+      label: 'portal',
+      value: 'id'
     })
   })
 
   it('should log error if getAvailablePortals fails', () => {
     portalServiceSpy.getCurrentPortalData.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
-    const error = new Error()
 
     component.ngOnInit()
 
-    expect(console.error).toHaveBeenCalledWith('Fetching Portals failed', error)
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+    })
+  })
+
+  it('should fill the form with Announcement related to an App', () => {
+    component.changeMode = 'VIEW'
+    component.announcementId = 'id'
+    component.announcement = {
+      id: 'id',
+      appId: 'appId',
+      title: 'title',
+      startDate: '2023-01-02',
+      endDate: '2023-01-03'
+    }
+    const result = (component as any).fillForm()
+
+    expect(component.formGroup.value['appId']).toEqual(component.announcement.appId)
+    expect(component.formGroup.value['portalId']).toBeNull()
+    expect(component.originallyAssignedTo).toEqual('App')
+    expect(result).not.toBeDefined()
+  })
+
+  it('should fill the form with Announcement related to an Workspace', () => {
+    const workspaceId = '9147e1b3-32c2-424c-9f05-6260fb023a71'
+    component.changeMode = 'VIEW'
+    component.announcementId = 'id'
+    component.announcement = {
+      id: 'id',
+      appId: workspaceId,
+      title: 'title',
+      startDate: '2023-01-02',
+      endDate: '2023-01-03'
+    }
+    const result = (component as any).fillForm()
+
+    expect(component.formGroup.value['portalId']).toEqual(workspaceId)
+    expect(component.originallyAssignedTo).toEqual('Workspace')
+    expect(result).not.toBeDefined()
   })
 
   it('should behave correctly onChanges in edit mode', () => {
@@ -308,6 +342,7 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should handle formGroup values in submitFormGroupValues: portalId is "all"', () => {
     component.formGroup = formGroup
+    component.formGroup.patchValue({ assignedTo: 'Workspace' })
     component.formGroup.patchValue({ portalId: 'all' })
 
     const result = (component as any).submitFormGroupValues()
@@ -315,8 +350,9 @@ describe('AnnouncementDetailComponent', () => {
     expect(result.appId).toBeNull()
   })
 
-  xit('should handle formGroup values in submitFormGroupValues: portalId is not "all"', () => {
+  it('should handle formGroup values in submitFormGroupValues: portalId is not "all"', () => {
     component.formGroup = formGroup
+    component.formGroup.patchValue({ assignedTo: 'Workspace' })
     component.formGroup.patchValue({ portalId: 'portal id' })
 
     const result = (component as any).submitFormGroupValues()
@@ -334,6 +370,19 @@ describe('AnnouncementDetailComponent', () => {
       summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_ERROR',
       detailKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_HINT'
     })
+  })
+
+  it('should correct dateRange using validator fn', () => {
+    const dateFormGroup = new FormGroup({
+      startDate: new FormControl('2023-01-01'),
+      endDate: new FormControl('2023-01-02')
+    })
+
+    dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
+    dateFormGroup.updateValueAndValidity()
+
+    expect(dateFormGroup.valid).toBeTrue()
+    expect(dateFormGroup.errors).toBeNull()
   })
 
   it('should catch dateRange error using validator fn', () => {

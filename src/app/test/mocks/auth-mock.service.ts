@@ -7,7 +7,7 @@ export class IAuthMockService implements IAuthService {
     return null
   }
   logout(): void {}
-  hasPermission(permissionKey: string): boolean {
+  hasPermission(_permissionKey: string): boolean {
     return false
   }
   getAuthProviderName(): string {
