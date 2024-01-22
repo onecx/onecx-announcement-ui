@@ -226,17 +226,20 @@ export class AnnouncementSearchComponent implements OnInit {
     })
     this.portalApi.getCurrentPortalData().subscribe({
       next: (portals) => {
-        for (let i = 0; i < portals.length; i++) {
-          this.availablePortals.push({ label: portals[i].portalName, value: portals[i].id })
+        for (var portal of portals) {
+          this.availablePortals.push({ label: portal.portalName, value: portal.id })
         }
       },
-      error: (err) => console.error('Fetching Portals failed', err)
+      error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
     })
   }
 
   // is app in list of available portals?
-  public isPortal(appId?: string) {
-    return appId && this.availablePortals.find(({ value }) => value === appId)?.label ? true : false
+  public isPortal(appId?: string): boolean {
+    if (appId && this.availablePortals.find(({ value }) => value === appId)) {
+      return true
+    }
+    return false
   }
 
   // if not in list of available portals then get the suitable translation key

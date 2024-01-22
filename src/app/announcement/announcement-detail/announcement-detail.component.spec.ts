@@ -103,8 +103,8 @@ describe('AnnouncementDetailComponent', () => {
   it('should getAllWorkspaces onInit', () => {
     const portals = [
       {
-        portalName: 'AH_MGMT',
-        id: 'help-mgmt'
+        portalName: 'portal',
+        id: 'id'
       }
     ]
     portalServiceSpy.getCurrentPortalData.and.returnValue(of(portals))
@@ -113,19 +113,20 @@ describe('AnnouncementDetailComponent', () => {
     component.ngOnInit()
 
     expect(component.availablePortals).toContain({
-      label: 'AH_MGMT',
-      value: 'help-mgmt'
+      label: 'portal',
+      value: 'id'
     })
   })
 
   it('should log error if getAvailablePortals fails', () => {
     portalServiceSpy.getCurrentPortalData.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
-    const error = new Error()
 
     component.ngOnInit()
 
-    expect(console.error).toHaveBeenCalledWith('Fetching Portals failed', error)
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+    })
   })
 
   it('should behave correctly onChanges in edit mode', () => {

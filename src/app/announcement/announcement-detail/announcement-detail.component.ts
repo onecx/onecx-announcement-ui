@@ -24,7 +24,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
     if (startDate && endDate) {
       const start = new Date(startDate)
       const end = new Date(endDate)
-      return !(start < end) ? { invalidDateRange: true } : null
+      return start >= end ? { invalidDateRange: true } : null
     } else return null
   }
 }
@@ -56,7 +56,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   public priorityOptions$: Observable<SelectItem[]> = of([])
   originallyAssignedTo = 'Workspace'
 
-  console = console
   constructor(
     private portalApi: PortalService,
     private announcementApi: AnnouncementInternalAPIService,
@@ -151,13 +150,11 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         this.announcement.appId
       )
     ) {
-      console.log('APP ID', this.announcement?.appId)
       this.formGroup.controls['portalId'].setValue(
         this.announcement?.appId === undefined ? null : this.announcement?.appId
       )
       this.originallyAssignedTo = 'Workspace'
     } else {
-      console.log('APP ID 2', this.announcement?.appId)
       this.originallyAssignedTo = 'App'
     }
     this.formGroup.controls['assignedTo'].setValue(this.originallyAssignedTo)
@@ -185,26 +182,13 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     })
     this.portalApi.getCurrentPortalData().subscribe({
       next: (portals) => {
-        for (let i = 0; i < portals.length; i++) {
-          this.availablePortals.push({ label: portals[i].portalName, value: portals[i].id })
+        for (var portal of portals) {
+          this.availablePortals.push({ label: portal.portalName, value: portal.id })
         }
       },
-      error: (err) => console.error('Fetching Portals failed', err)
+      error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
     })
   }
-
-  /* public getPortalName(appId?: string): string | undefined {
-    // if no appId, then announcement is assigned to every workspace
-    if (!appId || appId === 'all') {
-      return this.translate.instant('ANNOUNCEMENT.EVERY_WORKSPACE')
-    }
-    // if appId matches in the list, then we return the workspace name
-    else if (this.availablePortals.find(({ value }) => value === appId)?.label) {
-      return this.availablePortals.find(({ value }) => value === appId)?.label
-    }
-    // if no portalId matches anything in the list, then we return:
-    return this.translate.instant('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
-  } */
 
   /**
    * SAVING => create or update
@@ -245,7 +229,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     }
   }
 
-  private submitFormGroupValues(): CreateAnnouncementRequest {
+  private submitFormGroupValues(): any {
     if (this.formGroup.controls['assignedTo'].value === 'Workspace') {
       if (this.formGroup.controls['portalId'].value === 'all') {
         this.formGroup.controls['appId'].setValue(null)

@@ -47,6 +47,7 @@
     "SAVE": "Save",
     "VIEW": "View",
     "WORKSPACE": "Workspace",
+    "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
     "APP": "App",
     "DETAIL": {
       "CREATION_DATE": "Created on",
