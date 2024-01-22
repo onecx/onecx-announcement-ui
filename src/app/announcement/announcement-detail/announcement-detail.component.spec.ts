@@ -309,6 +309,7 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should handle formGroup values in submitFormGroupValues: portalId is "all"', () => {
     component.formGroup = formGroup
+    component.formGroup.patchValue({ assignedTo: 'Workspace' })
     component.formGroup.patchValue({ portalId: 'all' })
 
     const result = (component as any).submitFormGroupValues()
@@ -316,8 +317,9 @@ describe('AnnouncementDetailComponent', () => {
     expect(result.appId).toBeNull()
   })
 
-  xit('should handle formGroup values in submitFormGroupValues: portalId is not "all"', () => {
+  it('should handle formGroup values in submitFormGroupValues: portalId is not "all"', () => {
     component.formGroup = formGroup
+    component.formGroup.patchValue({ assignedTo: 'Workspace' })
     component.formGroup.patchValue({ portalId: 'portal id' })
 
     const result = (component as any).submitFormGroupValues()

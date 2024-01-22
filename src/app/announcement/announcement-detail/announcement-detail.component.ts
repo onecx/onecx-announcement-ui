@@ -182,7 +182,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     })
     this.portalApi.getCurrentPortalData().subscribe({
       next: (portals) => {
-        for (var portal of portals) {
+        for (let portal of portals) {
           this.availablePortals.push({ label: portal.portalName, value: portal.id })
         }
       },

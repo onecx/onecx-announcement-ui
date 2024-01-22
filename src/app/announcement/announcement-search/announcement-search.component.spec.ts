@@ -41,6 +41,22 @@ describe('AnnouncementSearchComponent', () => {
       title: 'new'
     }
   ]
+  const resultAllAnnouncements: Announcement[] = [
+    {
+      id: 'id1',
+      title: 'ann1',
+      appId: 'app1'
+    },
+    {
+      id: 'id2',
+      title: 'ann2',
+      appId: 'app2'
+    },
+    {
+      id: 'id3',
+      title: 'announcement without appId'
+    }
+  ]
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -91,11 +107,7 @@ describe('AnnouncementSearchComponent', () => {
         header: 'TITLE',
         active: false
       },
-      {
-        field: 'appId',
-        header: 'ASSIGNED_TO',
-        active: true
-      }
+      { field: 'appId', header: 'ASSIGNED_TO', active: true }
     ]
     spyOn(component, 'search')
 
@@ -115,6 +127,34 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.announcements[0]).toEqual({ id: 'id', title: 'new' })
   })
 
+  it('should search appId', () => {
+    apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
+    component.announcements = []
+    component.criteria = {
+      appId: 'app1'
+    }
+    const reuseCriteria = false
+    const resultApp1Announcements = { id: 'id1', title: 'ann1', appId: 'app1' }
+
+    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+    expect(component.announcements[0]).toEqual(resultApp1Announcements)
+  })
+
+  it('should search all', () => {
+    apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
+    component.criteria = {
+      appId: 'all'
+    }
+    const resultCriteria = {
+      appId: undefined
+    }
+    const reuseCriteria = false
+
+    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+    expect(component.criteria).toEqual(resultCriteria)
+    expect(component.announcements).toEqual(resultAllAnnouncements)
+  })
+
   it('should handle empty announcements on search', () => {
     msgServiceSpy.info.calls.reset()
     apiServiceSpy.getAnnouncements.and.returnValue(of([]))
@@ -127,6 +167,7 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should handle API call error', () => {
+    msgServiceSpy.error.calls.reset()
     apiServiceSpy.getAnnouncements.and.returnValue(throwError(() => new Error()))
 
     component.search({ announcementSearchCriteria: {} })
@@ -347,14 +388,24 @@ describe('AnnouncementSearchComponent', () => {
   it('should getAppName', () => {
     const portals = [
       {
-        label: 'AH_MGMT',
-        value: 'help-mgmt'
+        label: 'Portal',
+        value: 'portal'
       }
     ]
     component.availablePortals = portals
+    const result = component.getAppName('portal')
+    expect(result).toEqual('Portal')
+  })
 
-    const result = component.getAppName('help-mgmt')
-
-    expect(result).toEqual('AH_MGMT')
+  it('should isPortal', () => {
+    const portals = [
+      {
+        label: 'Portal',
+        value: 'portal'
+      }
+    ]
+    component.availablePortals = portals
+    const result = component.isPortal('anything-else')
+    expect(result).toEqual(false)
   })
 })
