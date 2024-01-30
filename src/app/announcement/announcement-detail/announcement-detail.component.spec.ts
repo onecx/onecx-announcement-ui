@@ -9,10 +9,10 @@ import { FormControl, FormGroup } from '@angular/forms'
 
 import { PortalMessageService, ConfigurationService } from '@onecx/portal-integration-angular'
 import { HttpLoaderFactory } from 'src/app/shared/shared.module'
-import { AnnouncementInternalAPIService } from '../../generated'
+import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { PortalService } from 'src/app/shared/services/portalService'
 import { AnnouncementDetailComponent } from './announcement-detail.component'
 import { dateRangeValidator } from './announcement-detail.component'
-import { PortalService } from '../../services/portalService'
 
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent

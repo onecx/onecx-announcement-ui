@@ -7,8 +7,8 @@ import { FormControl, FormGroup } from '@angular/forms'
 
 import { ConfigurationService } from '@onecx/portal-integration-angular'
 import { HttpLoaderFactory } from 'src/app/shared/shared.module'
+import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
-import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from '../../../generated'
 
 describe('AnnouncementCriteriaComponent', () => {
   let component: AnnouncementCriteriaComponent

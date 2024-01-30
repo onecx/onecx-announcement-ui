@@ -8,9 +8,9 @@ import { of, throwError } from 'rxjs'
 
 import { PortalMessageService, ConfigurationService, Column } from '@onecx/portal-integration-angular'
 import { HttpLoaderFactory } from 'src/app/shared/shared.module'
+import { PortalService } from 'src/app/shared/services/portalService'
+import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
-import { Announcement, AnnouncementInternalAPIService } from '../../generated'
-import { PortalService } from '../../services/portalService'
 
 describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
