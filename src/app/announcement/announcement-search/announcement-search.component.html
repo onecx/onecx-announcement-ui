@@ -1,9 +1,9 @@
 <ocx-portal-page permission="ANNOUNCEMENT#SEARCH" helpArticleId="PAGE_ANNOUNCEMENT_SEARCH">
-  <am-announcement-criteria
+  <app-announcement-criteria
     [actions]="actions"
     [availablePortals]="availablePortals"
     (criteriaEmitter)="search($event)"
-  ></am-announcement-criteria>
+  ></app-announcement-criteria>
 
   <ocx-page-content styleClass="px-3">
     <p-table
@@ -177,9 +177,9 @@
   </ng-template>
 </p-dialog>
 
-<am-announcement-detail
+<app-announcement-detail
   [displayDetailDialog]="displayDetailDialog"
   (hideDialogAndChanged)="onCloseDetail($event)"
   [announcement]="announcement"
   [changeMode]="changeMode"
-></am-announcement-detail>
+></app-announcement-detail>

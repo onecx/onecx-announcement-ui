@@ -5,21 +5,21 @@ import { finalize } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
+import { Action, Column, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import {
   Announcement,
   AnnouncementInternalAPIService,
   GetAnnouncementsRequestParams,
   AnnouncementSearchCriteria
-} from '../../generated'
-import { Action, Column, ConfigurationService, PortalMessageService } from '@onecx/portal-integration-angular'
-import { PortalService } from '../../services/portalService'
-import { limitText } from '../../shared/utils'
+} from 'src/app/shared/generated'
+import { PortalService } from 'src/app/shared/services/portalService'
+import { limitText } from 'src/app/shared/utils'
 
 type ExtendedColumn = Column & { isDate?: boolean; isDropdown?: true; css?: string; limit?: boolean }
 type ChangeMode = 'VIEW' | 'NEW' | 'EDIT'
 
 @Component({
-  selector: 'am-announcement-search',
+  selector: 'app-announcement-search',
   templateUrl: './announcement-search.component.html',
   styleUrls: ['./announcement-search.component.scss']
 })
@@ -101,15 +101,15 @@ export class AnnouncementSearchComponent implements OnInit {
   ]
 
   constructor(
+    private user: UserService,
     private router: Router,
     private route: ActivatedRoute,
     private portalApi: PortalService,
     private announcementApi: AnnouncementInternalAPIService,
-    private config: ConfigurationService,
     private msgService: PortalMessageService,
     private translate: TranslateService
   ) {
-    this.dateFormat = this.config.lang === 'de' ? 'dd.MM.yyyy HH:mm' : 'short'
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'medium'
   }
 
   ngOnInit(): void {

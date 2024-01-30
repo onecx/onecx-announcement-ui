@@ -5,8 +5,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { finalize, Observable, map, of } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
-import { Action, ConfigurationService, PortalMessageService } from '@onecx/portal-integration-angular'
-import { PortalService } from '../../services/portalService'
+import { Action, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { PortalService } from 'src/app/shared/services/portalService'
 import {
   CreateAnnouncementRequest,
   UpdateAnnouncementRequest,
@@ -15,7 +15,7 @@ import {
   AnnouncementStatus,
   AnnouncementType,
   AnnouncementInternalAPIService
-} from '../../generated'
+} from 'src/app/shared/generated'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -30,7 +30,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
 }
 
 @Component({
-  selector: 'am-announcement-detail',
+  selector: 'app-announcement-detail',
   templateUrl: './announcement-detail.component.html',
   styleUrls: ['./announcement-detail.component.scss']
 })
@@ -57,16 +57,16 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   originallyAssignedTo = 'Workspace'
 
   constructor(
+    private user: UserService,
     private portalApi: PortalService,
     private announcementApi: AnnouncementInternalAPIService,
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    public config: ConfigurationService,
     private translate: TranslateService,
     private msgService: PortalMessageService
   ) {
-    this.dateFormat = this.config.lang === 'de' ? 'dd.MM.yyyy HH:mm' : 'short'
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'medium'
     this.prepareDropDownOptions()
     this.formGroup = fb.nonNullable.group({
       id: new FormControl(null),

@@ -9,7 +9,7 @@
     "dist/**",
     "helm/**",
     "node_modules/**",
-    "src/app/generated/**",
+    "src/app/shared/generated/**",
     "src/app/api/*",
     "src/app/model/*",
     "src/**/*.ico",
@@ -39,7 +39,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "am",
+            "prefix": "app",
             "style": "camelCase"
           }
         ],
@@ -47,7 +47,7 @@
           "warn",
           {
             "type": "element",
-            "prefix": "am",
+            "prefix": "app",
             "style": "kebab-case"
           }
         ],
