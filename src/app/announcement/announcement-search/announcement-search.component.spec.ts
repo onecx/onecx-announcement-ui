@@ -6,8 +6,13 @@ import { ActivatedRoute } from '@angular/router'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 
-import { PortalMessageService, ConfigurationService, Column } from '@onecx/portal-integration-angular'
-import { HttpLoaderFactory } from 'src/app/shared/shared.module'
+import {
+  AppStateService,
+  createTranslateLoader,
+  ConfigurationService,
+  Column,
+  PortalMessageService
+} from '@onecx/portal-integration-angular'
 import { PortalService } from 'src/app/shared/services/portalService'
 import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
@@ -35,27 +40,11 @@ describe('AnnouncementSearchComponent', () => {
   const portalServiceSpy = jasmine.createSpyObj('PortalService', ['getCurrentPortalData'])
   portalServiceSpy.getCurrentPortalData.and.returnValue(of([]))
 
-  const newAnnArr: Announcement[] = [
-    {
-      id: 'id',
-      title: 'new'
-    }
-  ]
+  const newAnnArr: Announcement[] = [{ id: 'id', title: 'new' }]
   const resultAllAnnouncements: Announcement[] = [
-    {
-      id: 'id1',
-      title: 'ann1',
-      appId: 'app1'
-    },
-    {
-      id: 'id2',
-      title: 'ann2',
-      appId: 'app2'
-    },
-    {
-      id: 'id3',
-      title: 'announcement without appId'
-    }
+    { id: 'id1', title: 'ann1', appId: 'app1' },
+    { id: 'id2', title: 'ann2', appId: 'app2' },
+    { id: 'id3', title: 'announcement without appId' }
   ]
 
   beforeEach(waitForAsync(() => {
@@ -64,10 +53,11 @@ describe('AnnouncementSearchComponent', () => {
       imports: [
         HttpClientTestingModule,
         TranslateModule.forRoot({
+          isolate: true,
           loader: {
             provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
+            useFactory: createTranslateLoader,
+            deps: [HttpClient, AppStateService]
           }
         })
       ],
@@ -102,11 +92,7 @@ describe('AnnouncementSearchComponent', () => {
   it('should call search OnInit and populate filteredColumns/actions correctly', () => {
     translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
     component.columns = [
-      {
-        field: 'title',
-        header: 'TITLE',
-        active: false
-      },
+      { field: 'title', header: 'TITLE', active: false },
       { field: 'appId', header: 'ASSIGNED_TO', active: true }
     ]
     spyOn(component, 'search')
@@ -130,9 +116,7 @@ describe('AnnouncementSearchComponent', () => {
   it('should search appId', () => {
     apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
     component.announcements = []
-    component.criteria = {
-      appId: 'app1'
-    }
+    component.criteria = { appId: 'app1' }
     const reuseCriteria = false
     const resultApp1Announcements = { id: 'id1', title: 'ann1', appId: 'app1' }
 
@@ -142,9 +126,7 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should search all', () => {
     apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
-    component.criteria = {
-      appId: 'all'
-    }
+    component.criteria = { appId: 'all' }
     const resultCriteria = {
       appId: undefined
     }
@@ -177,14 +159,8 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should use new criteria if reuseCriteria is false', () => {
     apiServiceSpy.getAnnouncements.and.returnValue(of([]))
-    component.criteria = {
-      appId: 'appId',
-      title: 'title'
-    }
-    const newCriteria = {
-      appId: '',
-      title: 'new title'
-    }
+    component.criteria = { appId: 'appId', title: 'title' }
+    const newCriteria = { appId: '', title: 'new title' }
     const reuseCriteria = false
 
     component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)

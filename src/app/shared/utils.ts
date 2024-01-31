@@ -9,14 +9,6 @@ export function limitText(text: string, limit: number): string {
   }
 }
 
-export function setFetchUrls(apiPrefix: string, url: string): string {
-  if (url && !url.match(/^(http|https)/g)) {
-    return apiPrefix + url
-  } else {
-    return url
-  }
-}
-
 export function copyToClipboard(text?: string): void {
   if (text) navigator.clipboard.writeText(text)
 }

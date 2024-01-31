@@ -5,8 +5,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { FormControl, FormGroup } from '@angular/forms'
 
-import { ConfigurationService } from '@onecx/portal-integration-angular'
-import { HttpLoaderFactory } from 'src/app/shared/shared.module'
+import { AppStateService, ConfigurationService, createTranslateLoader } from '@onecx/portal-integration-angular'
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
 
@@ -32,8 +31,8 @@ describe('AnnouncementCriteriaComponent', () => {
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
+            useFactory: createTranslateLoader,
+            deps: [HttpClient, AppStateService]
           }
         })
       ],
