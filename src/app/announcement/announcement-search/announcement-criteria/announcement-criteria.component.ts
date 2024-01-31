@@ -4,13 +4,13 @@ import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { Observable, map, of } from 'rxjs'
 
-import { Action, ConfigurationService } from '@onecx/portal-integration-angular'
+import { Action, UserService } from '@onecx/portal-integration-angular'
 import {
   AnnouncementPriorityType,
   AnnouncementStatus,
   AnnouncementType,
   GetAnnouncementsRequestParams
-} from '../../../generated'
+} from 'src/app/shared/generated'
 
 export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
@@ -22,7 +22,7 @@ export interface AnnouncementCriteriaForm {
 }
 
 @Component({
-  selector: 'am-announcement-criteria',
+  selector: 'app-announcement-criteria',
   templateUrl: './announcement-criteria.component.html',
   styleUrls: ['./announcement-criteria.component.scss']
 })
@@ -39,8 +39,8 @@ export class AnnouncementCriteriaComponent implements OnInit {
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityType$: Observable<SelectItem[]> = of([])
 
-  constructor(public config: ConfigurationService, public translate: TranslateService) {
-    this.dateFormatForRange = this.config.lang === 'de' ? 'dd.mm.yy' : 'm/d/yy'
+  constructor(private user: UserService, public translate: TranslateService) {
+    this.dateFormatForRange = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'm/d/yy'
   }
 
   ngOnInit(): void {

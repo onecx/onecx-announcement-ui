@@ -1,9 +1,9 @@
 import { Component } from '@angular/core'
 
 @Component({
-  selector: 'am-root',
+  selector: 'app-root',
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  title = 'announcement-mgmt'
+  title = 'onecx-announcement-ui'
 }

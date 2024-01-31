@@ -1,22 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { ColorSketchModule } from 'ngx-color/sketch'
 import { ErrorTailorModule } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
+import { CalendarModule } from 'primeng/calendar'
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
-import { ConfirmationService, MessageService } from 'primeng/api'
+import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DialogService } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
-import { CalendarModule } from 'primeng/calendar'
-import { StyleClassModule } from 'primeng/styleclass'
 import { KeyFilterModule } from 'primeng/keyfilter'
 import { ListboxModule } from 'primeng/listbox'
 import { MultiSelectModule } from 'primeng/multiselect'
@@ -25,33 +24,18 @@ import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
 
 import {
-  MfeInfo,
-  MFE_INFO,
+  AppStateService,
+  ConfigurationService,
   PortalDialogService,
-  PortalMessageService,
-  TranslateCombinedLoader
+  PortalApiConfiguration
 } from '@onecx/portal-integration-angular'
 
-import { environment } from '../../environments/environment'
-import { BASE_PATH } from '../generated/variables'
-import { CanActivateGuard } from './can-active-guard.service'
+import { Configuration } from 'src/app/shared/generated'
+import { environment } from 'src/environments/environment'
 import { LabelResolver } from './label.resolver'
 
-export const basePathProvider = (mfeInfo: MfeInfo) => {
-  /* console.log(
-    'Base path provider: ' + (mfeInfo ? mfeInfo.remoteBaseUrl + '' + environment.apiPrefix : '' + environment.apiPrefix)
-  ) */
-  return (mfeInfo ? mfeInfo.remoteBaseUrl : '') + environment.apiPrefix
-}
-
-export function HttpLoaderFactory(http: HttpClient, mfeInfo: MfeInfo) {
-  // console.log(`Configuring translation loader ${mfeInfo?.remoteBaseUrl}`)
-  // if running standalone then load the app assets directly from remote base URL
-  const appAssetPrefix = mfeInfo?.remoteBaseUrl ? mfeInfo.remoteBaseUrl : './'
-  return new TranslateCombinedLoader(
-    new TranslateHttpLoader(http, appAssetPrefix + 'assets/i18n/', '.json'),
-    new TranslateHttpLoader(http, appAssetPrefix + 'onecx-portal-lib/assets/i18n/', '.json')
-  )
+export function apiConfigProvider(configService: ConfigurationService, appStateService: AppStateService) {
+  return new PortalApiConfiguration(Configuration, environment.apiPrefix, configService, appStateService)
 }
 
 @NgModule({
@@ -59,7 +43,9 @@ export function HttpLoaderFactory(http: HttpClient, mfeInfo: MfeInfo) {
   imports: [
     AutoCompleteModule,
     CalendarModule,
+    ColorSketchModule,
     CommonModule,
+    ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
@@ -72,10 +58,9 @@ export function HttpLoaderFactory(http: HttpClient, mfeInfo: MfeInfo) {
     MultiSelectModule,
     ReactiveFormsModule,
     SelectButtonModule,
-    StyleClassModule,
     TableModule,
     ToastModule,
-    TranslateModule.forChild({ isolate: true }),
+    TranslateModule,
     ErrorTailorModule.forRoot({
       controlErrorsOn: { async: true, blur: true, change: true },
       errors: {
@@ -103,6 +88,7 @@ export function HttpLoaderFactory(http: HttpClient, mfeInfo: MfeInfo) {
     AutoCompleteModule,
     CalendarModule,
     CommonModule,
+    ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
@@ -116,20 +102,16 @@ export function HttpLoaderFactory(http: HttpClient, mfeInfo: MfeInfo) {
     MultiSelectModule,
     ReactiveFormsModule,
     SelectButtonModule,
-    StyleClassModule,
     TableModule,
     ToastModule,
     TranslateModule
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [
-    CanActivateGuard,
     ConfirmationService,
     LabelResolver,
-    HttpClient,
-    { provide: MessageService, useExisting: PortalMessageService },
     { provide: DialogService, useClass: PortalDialogService },
-    { provide: BASE_PATH, useFactory: basePathProvider, deps: [MFE_INFO] }
+    { provide: Configuration, useFactory: apiConfigProvider, deps: [ConfigurationService, AppStateService] }
   ],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
 })

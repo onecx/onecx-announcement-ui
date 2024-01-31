@@ -3,7 +3,6 @@ import { SelectItem } from 'primeng/api'
 
 import {
   limitText,
-  setFetchUrls,
   copyToClipboard,
   forceFormValidation,
   dropDownSortItemsByLabel,
@@ -30,20 +29,6 @@ describe('util functions', () => {
       const result = limitText(str, 5)
 
       expect(result).toEqual('')
-    })
-  })
-
-  describe('setFetchUrls', () => {
-    it('should prepend apiPrefix to a relative URL', () => {
-      const result = setFetchUrls('ahm-api', '/am')
-
-      expect(result).toEqual('ahm-api/am')
-    })
-
-    it('should return the original URL if it is absolute', () => {
-      const result = setFetchUrls('ahm-api', 'http://am')
-
-      expect(result).toEqual('http://am')
     })
   })
 

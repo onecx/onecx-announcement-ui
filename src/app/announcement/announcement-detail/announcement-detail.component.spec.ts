@@ -7,12 +7,16 @@ import { ActivatedRoute } from '@angular/router'
 import { of, throwError } from 'rxjs'
 import { FormControl, FormGroup } from '@angular/forms'
 
-import { PortalMessageService, ConfigurationService } from '@onecx/portal-integration-angular'
-import { HttpLoaderFactory } from 'src/app/shared/shared.module'
-import { AnnouncementInternalAPIService } from '../../generated'
+import {
+  AppStateService,
+  createTranslateLoader,
+  ConfigurationService,
+  PortalMessageService
+} from '@onecx/portal-integration-angular'
+import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { PortalService } from 'src/app/shared/services/portalService'
 import { AnnouncementDetailComponent } from './announcement-detail.component'
 import { dateRangeValidator } from './announcement-detail.component'
-import { PortalService } from '../../services/portalService'
 
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
@@ -59,8 +63,8 @@ describe('AnnouncementDetailComponent', () => {
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
-            useFactory: HttpLoaderFactory,
-            deps: [HttpClient]
+            useFactory: createTranslateLoader,
+            deps: [HttpClient, AppStateService]
           }
         })
       ],
@@ -98,21 +102,13 @@ describe('AnnouncementDetailComponent', () => {
   })
 
   it('should getAllWorkspaces onInit', () => {
-    const portals = [
-      {
-        portalName: 'portal',
-        id: 'id'
-      }
-    ]
+    const portals = [{ portalName: 'portal', id: 'id' }]
     portalServiceSpy.getCurrentPortalData.and.returnValue(of(portals))
     component.availablePortals = []
 
     component.ngOnInit()
 
-    expect(component.availablePortals).toContain({
-      label: 'portal',
-      value: 'id'
-    })
+    expect(component.availablePortals).toContain({ label: 'portal', value: 'id' })
   })
 
   it('should log error if getAvailablePortals fails', () => {
@@ -165,9 +161,7 @@ describe('AnnouncementDetailComponent', () => {
   it('should behave correctly onChanges in edit mode', () => {
     component.changeMode = 'EDIT'
     const testId = 'test id'
-    component.announcement = {
-      id: testId
-    }
+    component.announcement = { id: testId }
 
     component.ngOnChanges()
 
@@ -178,9 +172,7 @@ describe('AnnouncementDetailComponent', () => {
   it('should behave correctly onChanges in new mode', () => {
     component.changeMode = 'NEW'
     const testId = 'test id'
-    component.announcement = {
-      id: testId
-    }
+    component.announcement = { id: testId }
 
     component.ngOnChanges()
 
@@ -199,12 +191,8 @@ describe('AnnouncementDetailComponent', () => {
   it('should update data if getAnnouncementById call succeeds', () => {
     apiServiceSpy.getAnnouncementById.and.returnValue(of({ id: 'new id' }))
     component.changeMode = 'EDIT'
-    component.announcement = {
-      id: 'test id'
-    }
-    const newAnnouncement = {
-      id: 'new id'
-    }
+    component.announcement = { id: 'test id' }
+    const newAnnouncement = { id: 'new id' }
 
     component.ngOnChanges()
 
@@ -214,9 +202,7 @@ describe('AnnouncementDetailComponent', () => {
   it('should display error if getAnnouncementById call fails', () => {
     apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => new Error()))
     component.changeMode = 'EDIT'
-    component.announcement = {
-      id: 'test id'
-    }
+    component.announcement = { id: 'test id' }
 
     component.ngOnChanges()
 
@@ -227,10 +213,7 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should set originallyAssignedTo to "App" if announcement has certain appId', () => {
     component.changeMode = 'NEW'
-    component.announcement = {
-      id: 'test id',
-      appId: 'non-uuid-app-id'
-    }
+    component.announcement = { id: 'test id', appId: 'non-uuid-app-id' }
 
     component.ngOnChanges()
 
@@ -239,13 +222,8 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should restore the original value in assignedToChange if no change and value is "App"', () => {
     component.formGroup = formGroup
-    component.announcement = {
-      id: 'test id',
-      appId: 'app id'
-    }
-    const event = {
-      value: 'App'
-    }
+    component.announcement = { id: 'test id', appId: 'app id' }
+    const event = { value: 'App' }
     component.originallyAssignedTo = 'App'
 
     component.assignedToChange(event)
@@ -255,13 +233,8 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should restore the original value in assignedToChange if no change and value is "Workspace"', () => {
     component.formGroup = formGroup
-    component.announcement = {
-      id: 'test id',
-      appId: 'app id'
-    }
-    const event = {
-      value: 'Workspace'
-    }
+    component.announcement = { id: 'test id', appId: 'app id' }
+    const event = { value: 'Workspace' }
     component.originallyAssignedTo = 'Workspace'
 
     component.assignedToChange(event)
@@ -271,13 +244,8 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should clear the appId value in assignedToChange if change is made', () => {
     component.formGroup = formGroup
-    component.announcement = {
-      id: 'test id',
-      appId: 'app id'
-    }
-    const event = {
-      value: 'Workspace'
-    }
+    component.announcement = { id: 'test id', appId: 'app id' }
+    const event = { value: 'Workspace' }
     component.originallyAssignedTo = 'other'
 
     component.assignedToChange(event)
