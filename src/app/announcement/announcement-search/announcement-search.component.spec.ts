@@ -11,11 +11,13 @@ import {
   createTranslateLoader,
   ConfigurationService,
   Column,
-  PortalMessageService
+  PortalMessageService,
+  UserService
 } from '@onecx/portal-integration-angular'
 import { PortalService } from 'src/app/shared/services/portalService'
 import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
+import { SelectItem } from 'primeng/api'
 
 describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
@@ -47,6 +49,12 @@ describe('AnnouncementSearchComponent', () => {
     { id: 'id3', title: 'announcement without appId' }
   ]
 
+  const mockUserService = {
+    lang$: {
+      getValue: jasmine.createSpy('getValue')
+    }
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementSearchComponent],
@@ -67,7 +75,8 @@ describe('AnnouncementSearchComponent', () => {
         { provide: ConfigurationService, useValue: configServiceSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
-        { provide: PortalService, useValue: portalServiceSpy }
+        { provide: PortalService, useValue: portalServiceSpy },
+        { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents()
     msgServiceSpy.success.calls.reset()
@@ -77,6 +86,7 @@ describe('AnnouncementSearchComponent', () => {
     apiServiceSpy.deleteAnnouncementById.calls.reset()
     translateServiceSpy.get.calls.reset()
     portalServiceSpy.getCurrentPortalData.calls.reset()
+    mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
   beforeEach(() => {
@@ -373,6 +383,13 @@ describe('AnnouncementSearchComponent', () => {
     expect(result).toEqual('Portal')
   })
 
+  it("should receive '' from getAppName if no portal with given name could be found", () => {
+    const portals: SelectItem<any>[] = []
+    component.availablePortals = portals
+    const result = component.getAppName('portal')
+    expect(result).toEqual('')
+  })
+
   it('should isPortal', () => {
     const portals = [
       {
@@ -383,5 +400,17 @@ describe('AnnouncementSearchComponent', () => {
     component.availablePortals = portals
     const result = component.isPortal('anything-else')
     expect(result).toEqual(false)
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
+    mockUserService.lang$.getValue.and.returnValue('en')
+    fixture = TestBed.createComponent(AnnouncementSearchComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.dateFormat).toEqual('medium')
   })
 })

@@ -5,7 +5,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { FormControl, FormGroup } from '@angular/forms'
 
-import { AppStateService, ConfigurationService, createTranslateLoader } from '@onecx/portal-integration-angular'
+import {
+  AppStateService,
+  ConfigurationService,
+  UserService,
+  createTranslateLoader
+} from '@onecx/portal-integration-angular'
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
 
@@ -23,6 +28,12 @@ describe('AnnouncementCriteriaComponent', () => {
     })
   }
 
+  const mockUserService = {
+    lang$: {
+      getValue: jasmine.createSpy('getValue')
+    }
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementCriteriaComponent],
@@ -37,7 +48,10 @@ describe('AnnouncementCriteriaComponent', () => {
         })
       ],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [{ provide: ConfigurationService, useValue: configServiceSpy }]
+      providers: [
+        { provide: ConfigurationService, useValue: configServiceSpy },
+        { provide: UserService, useValue: mockUserService }
+      ]
     }).compileComponents()
   }))
 
@@ -45,6 +59,7 @@ describe('AnnouncementCriteriaComponent', () => {
     fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
+    mockUserService.lang$.getValue.and.returnValue('de')
   })
 
   it('should create', () => {
@@ -100,5 +115,17 @@ describe('AnnouncementCriteriaComponent', () => {
     component.submitCriteria()
 
     expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
+    expect(component.dateFormatForRange).toEqual('dd.mm.yy')
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
+    mockUserService.lang$.getValue.and.returnValue('en')
+    fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.dateFormatForRange).toEqual('m/d/yy')
   })
 })
