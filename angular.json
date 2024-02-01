@@ -113,7 +113,7 @@
               "**/*.module.ts",
               "src/app/test/**",
               "src/app/environments/**",
-              "src/app/generated/**"
+              "src/app/shared/generated/**"
             ]
           }
         },
