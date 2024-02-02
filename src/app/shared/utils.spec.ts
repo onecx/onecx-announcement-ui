@@ -71,6 +71,17 @@ describe('util functions', () => {
 
       expect(sortedItems[0].label).toEqual('label1')
     })
+    it("should treat falsy values for SelectItem.label as ''", () => {
+      const items: SelectItem[] = [
+        { label: undefined, value: 1 },
+        { label: undefined, value: 2 },
+        { label: 'label1', value: 2 }
+      ]
+
+      const sortedItems = items.sort(dropDownSortItemsByLabel)
+
+      expect(sortedItems[0].label).toEqual(undefined)
+    })
   })
 
   describe('dropDownGetLabelByValue', () => {

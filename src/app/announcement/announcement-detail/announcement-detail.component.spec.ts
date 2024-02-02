@@ -11,7 +11,8 @@ import {
   AppStateService,
   createTranslateLoader,
   ConfigurationService,
-  PortalMessageService
+  PortalMessageService,
+  UserService
 } from '@onecx/portal-integration-angular'
 import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { PortalService } from 'src/app/shared/services/portalService'
@@ -55,6 +56,12 @@ describe('AnnouncementDetailComponent', () => {
     appId: new FormControl('AH_MGMT')
   })
 
+  const mockUserService = {
+    lang$: {
+      getValue: jasmine.createSpy('getValue')
+    }
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementDetailComponent],
@@ -74,7 +81,8 @@ describe('AnnouncementDetailComponent', () => {
         { provide: ConfigurationService, useValue: configServiceSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
-        { provide: PortalService, useValue: portalServiceSpy }
+        { provide: PortalService, useValue: portalServiceSpy },
+        { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents()
     msgServiceSpy.success.calls.reset()
@@ -85,6 +93,7 @@ describe('AnnouncementDetailComponent', () => {
     apiServiceSpy.addAnnouncement.calls.reset()
     apiServiceSpy.updateAnnouncementById.calls.reset()
     portalServiceSpy.getCurrentPortalData.calls.reset()
+    mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
   beforeEach(() => {
@@ -383,5 +392,17 @@ describe('AnnouncementDetailComponent', () => {
 
     expect(component.displayDetailDialog).toBeFalse()
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
+  })
+
+  it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
+    mockUserService.lang$.getValue.and.returnValue('en')
+    fixture = TestBed.createComponent(AnnouncementDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.dateFormat).toEqual('medium')
   })
 })
