@@ -19,7 +19,12 @@ import { KeycloakAuthModule } from '@onecx/keycloak-auth'
 import { AppComponent } from './app.component'
 import { environment } from 'src/environments/environment'
 
-const routes: Routes = [{ path: '', pathMatch: 'full' }]
+const routes: Routes = [
+  {
+    path: '',
+    loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
+  }
+]
 @NgModule({
   bootstrap: [AppComponent],
   declarations: [AppComponent],
