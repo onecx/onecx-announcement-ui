@@ -4,9 +4,31 @@ app:
     repository: 'onecx/onecx-announcement-ui'
   routing:
     enabled: true
+    path: /mfe/announcement/
+  
   operator:
-    apm:
-      enabled: false
+    # Microfrontend
+    microfrontend:
+      enabled: true
+      spec:
+        exposedModule: "./AnnouncementMgmtModule"
+        description: "OneCX Announcement Mgmt"
+        note: "OneCX Announcement Mgmt module auto import via MF operator"
+    # Permission
+    permission:
+      enabled: true
+      spec:
+        permissions:
+          ANNOUCEMENT:
+            CREATE: Create announcement
+            EDIT: Edit announcement
+            DELETE: Delete announcement
+            SAVE: Update and save announcement
+            IMPORT: Import announcement
+            EXPORT: Export announcement
+            VIEW: View mode for announcement
+            SEARCH: Search announcement
+    # Keycloak
     keycloak:
       enabled: true
       client: |-
@@ -32,4 +54,5 @@ app:
          ]
 
 # PIPE Config
+
 
