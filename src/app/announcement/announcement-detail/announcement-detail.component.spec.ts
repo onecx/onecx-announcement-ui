@@ -17,7 +17,7 @@ import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementDetailComponent } from './announcement-detail.component'
 import { dateRangeValidator } from './announcement-detail.component'
 
-fdescribe('AnnouncementDetailComponent', () => {
+describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
   let fixture: ComponentFixture<AnnouncementDetailComponent>
   let mockActivatedRoute: ActivatedRoute
@@ -30,16 +30,15 @@ fdescribe('AnnouncementDetailComponent', () => {
   ])
   const apiServiceSpy = {
     getAnnouncementById: jasmine.createSpy('getAnnouncementById').and.returnValue(of({})),
-    addAnnouncement: jasmine.createSpy('addAnnouncement').and.returnValue(of({})),
+    createAnnouncement: jasmine.createSpy('createAnnouncement').and.returnValue(of({})),
     updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({})),
     getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
   }
   const formGroup = new FormGroup({
     id: new FormControl('id'),
     title: new FormControl('title'),
-    assignedTo: new FormControl('Workspace'),
     workspaceName: new FormControl('workspace name'),
-    appId: new FormControl('AH_MGMT')
+    appId: new FormControl('app id')
   })
   const mockUserService = {
     lang$: {
@@ -73,7 +72,7 @@ fdescribe('AnnouncementDetailComponent', () => {
     msgServiceSpy.info.calls.reset()
     msgServiceSpy.warning.calls.reset()
     apiServiceSpy.getAnnouncementById.calls.reset()
-    apiServiceSpy.addAnnouncement.calls.reset()
+    apiServiceSpy.createAnnouncement.calls.reset()
     apiServiceSpy.updateAnnouncementById.calls.reset()
     apiServiceSpy.getAllWorkspaceNames.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
@@ -114,36 +113,22 @@ fdescribe('AnnouncementDetailComponent', () => {
     })
   })
 
-  fit('should fill the form with Announcement related to an App', () => {
-    component.changeMode = 'VIEW'
-    component.announcementId = 'id'
-    component.announcement = {
-      id: 'id',
-      appId: 'appId',
-      title: 'title',
-      startDate: '2023-01-02',
-      endDate: '2023-01-03'
-    }
-    const result = (component as any).fillForm()
-
-    expect(component.formGroup.value['appId']).toEqual(component.announcement.appId)
-    expect(component.formGroup.value['workspaceName']).toBeNull()
-    expect(result).not.toBeDefined()
-  })
-
-  fit('should fill the form with Announcement related to an Workspace', () => {
+  it('should fill the form with Announcement', () => {
     const workspaceName = 'w1'
+    const appId = 'app1'
     component.changeMode = 'VIEW'
     component.announcementId = 'id'
     component.announcement = {
       id: 'id',
-      workspaceName: workspaceName,
       title: 'title',
+      appId: appId,
+      workspaceName: workspaceName,
       startDate: '2023-01-02',
       endDate: '2023-01-03'
     }
     const result = (component as any).fillForm()
 
+    expect(component.formGroup.value['appId']).toEqual(appId)
     expect(component.formGroup.value['workspaceName']).toEqual(workspaceName)
     expect(result).not.toBeDefined()
   })
@@ -202,7 +187,7 @@ fdescribe('AnnouncementDetailComponent', () => {
   })
 
   it('should create an announcement onSave in new mode', () => {
-    apiServiceSpy.addAnnouncement.and.returnValue(of({}))
+    apiServiceSpy.createAnnouncement.and.returnValue(of({}))
     component.changeMode = 'NEW'
     spyOn(component.hideDialogAndChanged, 'emit')
     component.formGroup = formGroup
@@ -216,7 +201,7 @@ fdescribe('AnnouncementDetailComponent', () => {
   })
 
   it('should handle api call error in new mode', () => {
-    apiServiceSpy.addAnnouncement.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => new Error()))
     component.changeMode = 'NEW'
     component.formGroup = formGroup
 
@@ -258,22 +243,20 @@ fdescribe('AnnouncementDetailComponent', () => {
 
   it('should handle formGroup values in submitFormGroupValues: workspaceName is "all"', () => {
     component.formGroup = formGroup
-    component.formGroup.patchValue({ assignedTo: 'Workspace' })
     component.formGroup.patchValue({ workspaceName: 'all' })
 
     const result = (component as any).submitFormGroupValues()
 
-    expect(result.appId).toBeNull()
+    expect(result.workspaceName).toBeNull()
   })
 
   it('should handle formGroup values in submitFormGroupValues: workspaceName is not "all"', () => {
     component.formGroup = formGroup
-    component.formGroup.patchValue({ assignedTo: 'Workspace' })
     component.formGroup.patchValue({ workspaceName: 'workspace name' })
 
     const result = (component as any).submitFormGroupValues()
 
-    expect(result.appId).toEqual('workspace name')
+    expect(result.workspaceName).toEqual('workspace name')
   })
 
   it('should display warning onSave if dateRange invalid', () => {

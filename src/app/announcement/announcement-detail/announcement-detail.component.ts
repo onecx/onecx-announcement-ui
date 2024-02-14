@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
 import { FormBuilder, FormControl, FormGroup, Validators, ValidationErrors, ValidatorFn } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { finalize, Observable, map, of } from 'rxjs'
@@ -27,7 +26,6 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
     } else return null
   }
 }
-export type AssignedToType = 'Workspace' | 'App'
 
 @Component({
   selector: 'app-announcement-detail',
@@ -50,8 +48,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   // form
   formGroup: FormGroup
   autoResize!: boolean
-  assignedTo: AssignedToType = 'Workspace'
-  assignedToOption: SelectItem[] = []
   public typeOptions$: Observable<SelectItem[]> = of([])
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityOptions$: Observable<SelectItem[]> = of([])
@@ -60,8 +56,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     private user: UserService,
     private announcementApi: AnnouncementInternalAPIService,
     private fb: FormBuilder,
-    private router: Router,
-    private route: ActivatedRoute,
     private translate: TranslateService,
     private msgService: PortalMessageService
   ) {
@@ -102,8 +96,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         this.fillForm() // on COPY
       } else {
         this.formGroup.reset()
-        this.assignedTo = 'Workspace'
-        //this.formGroup.controls['assignedTo'].setValue('Workspace')
         this.formGroup.controls['type'].setValue(AnnouncementType.Info)
         this.formGroup.controls['priority'].setValue(AnnouncementPriorityType.Normal)
         this.formGroup.controls['status'].setValue(AnnouncementStatus.Inactive)
@@ -142,14 +134,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       startDate: this.announcement?.startDate ? new Date(this.announcement.startDate) : null,
       endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
     })
-    if (this.announcement?.workspaceName) this.assignedTo = 'Workspace'
-    else if (this.announcement?.appId) this.assignedTo = 'App'
-    console.log('fillForm() ' + this.assignedTo)
-  }
-
-  public assignedToChange(event: any): void {
-    console.log('assignedToChange ' + this.assignedTo, event)
-    if (event?.value) this.assignedTo = event.value
   }
 
   private getWorkspaces(dropdownDefault: string): void {
@@ -261,9 +245,5 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
           ]
         })
       )
-    this.assignedToOption = [
-      { label: 'Workspace', value: 'Workspace' },
-      { label: 'App', value: 'App' }
-    ]
   }
 }
