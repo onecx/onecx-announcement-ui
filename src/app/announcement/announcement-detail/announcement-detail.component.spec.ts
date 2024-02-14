@@ -312,6 +312,9 @@ describe('AnnouncementDetailComponent', () => {
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
   })
 
+  /**
+   * Language tests
+   */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
   })

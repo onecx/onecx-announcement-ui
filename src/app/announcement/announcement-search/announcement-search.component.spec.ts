@@ -14,7 +14,6 @@ import {
 } from '@onecx/portal-integration-angular'
 import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
-//import { SelectItem } from 'primeng/api'
 
 describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
