@@ -49,7 +49,7 @@ describe('AnnouncementCriteriaComponent', () => {
   })
 
   it('should handle criteria on submitCriteria if formGroup values empty', () => {
-    const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
+    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
@@ -57,7 +57,7 @@ describe('AnnouncementCriteriaComponent', () => {
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
       startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
     })
-    component.announcementCriteriaGroup = newCriteriaGroup
+    component.announcementCriteria = newCriteria
     spyOn(component.criteriaEmitter, 'emit')
 
     component.submitCriteria()
@@ -66,7 +66,7 @@ describe('AnnouncementCriteriaComponent', () => {
   })
 
   it('should handle criteria on submitCriteria if formGroup values exist', () => {
-    const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
+    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>('title'),
       workspaceName: new FormControl<string | null>('workspaceName'),
       status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
@@ -74,7 +74,7 @@ describe('AnnouncementCriteriaComponent', () => {
       priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
       startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
     })
-    component.announcementCriteriaGroup = newCriteriaGroup
+    component.announcementCriteria = newCriteria
     spyOn(component.criteriaEmitter, 'emit')
 
     component.submitCriteria()
@@ -83,7 +83,7 @@ describe('AnnouncementCriteriaComponent', () => {
   })
 
   it('should handle criteria on submitCriteria with empty dateTo or equal dateFrom, dateTo', () => {
-    const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
+    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
@@ -91,7 +91,7 @@ describe('AnnouncementCriteriaComponent', () => {
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
       startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02')])
     })
-    component.announcementCriteriaGroup = newCriteriaGroup
+    component.announcementCriteria = newCriteria
     spyOn(component.criteriaEmitter, 'emit')
 
     component.submitCriteria()
@@ -99,6 +99,32 @@ describe('AnnouncementCriteriaComponent', () => {
     expect(component.criteriaEmitter.emit).toHaveBeenCalled()
   })
 
+  it('should reset search criteria', () => {
+    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
+      title: new FormControl<string | null>('title'),
+      workspaceName: new FormControl<string | null>('workspaceName'),
+      status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
+      type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
+      priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
+      startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02')])
+    })
+    component.announcementCriteria = newCriteria
+    spyOn(component.criteriaEmitter, 'emit')
+
+    component.submitCriteria()
+
+    expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+
+    spyOn(component.resetSearchEmitter, 'emit')
+
+    component.resetCriteria()
+
+    expect(component.resetSearchEmitter.emit).toHaveBeenCalled()
+  })
+
+  /**
+   * Language tests
+   */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
     expect(component.dateFormatForRange).toEqual('dd.mm.yy')
   })

@@ -138,6 +138,11 @@ export class AnnouncementSearchComponent implements OnInit {
     this.search({ announcementSearchCriteria: {} }, true)
   }
 
+  public reset(): void {
+    this.criteria = {}
+    this.announcements = []
+  }
+
   public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
     if (criteria.announcementSearchCriteria.workspaceName === 'all') {
       criteria.announcementSearchCriteria.workspaceName = undefined
@@ -155,10 +160,10 @@ export class AnnouncementSearchComponent implements OnInit {
         next: (data) => {
           this.announcements = data.stream || []
           if (this.announcements.length === 0) {
-            this.msgService.info({ summaryKey: 'GENERAL.SEARCH.MSG_NO_RESULTS' })
+            this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.SEARCH.MSG_SEARCH_FAILED' })
+        error: () => this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
       })
   }
 
@@ -207,9 +212,9 @@ export class AnnouncementSearchComponent implements OnInit {
           this.announcements = this.announcements.filter((a) => a.id !== this.announcement?.id)
           this.announcement = undefined
           this.appsChanged = true
-          this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ANNOUNCEMENT_OK' })
+          this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
         },
-        error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ANNOUNCEMENT_NOK' })
+        error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
       })
     }
   }

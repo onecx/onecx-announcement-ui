@@ -138,7 +138,7 @@
           *ngIf="formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange')"
           class="col-12 py-0 pl-0 sm:pl-3 control-error"
         >
-          {{ 'ANNOUNCEMENT_DETAIL.INVALID_DATE_RANGE' | translate }}
+          {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
         </label>
       </div>
 
@@ -172,14 +172,16 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        id="help_detail_button_close"
+        id="announcement_detail_button_cancel"
         [label]="'GENERAL.CANCEL' | translate"
+        [title]="'GENERAL.TOOLTIPS.CANCEL' | translate"
         (onClick)="onDialogHide()"
         icon="pi pi-times"
       ></p-button>
       <p-button
-        id="help_detail_button_save"
+        id="announcement_detail_button_save"
         [label]="'GENERAL.SAVE' | translate"
+        [title]="'GENERAL.TOOLTIPS.SAVE' | translate"
         (onClick)="onSave()"
         icon="pi pi-save"
         [disabled]="!formGroup.valid"

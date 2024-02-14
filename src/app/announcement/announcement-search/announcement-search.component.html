@@ -3,6 +3,7 @@
     [actions]="actions"
     [workspaces]="workspaces"
     (criteriaEmitter)="search($event)"
+    (resetSearchEmitter)="reset()"
   ></app-announcement-criteria>
 
   <ocx-page-content styleClass="px-3">
@@ -36,18 +37,14 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td id="announcement_search_table_emptymessage" colspan="16">{{ 'GENERAL.SEARCH.NO_DATA' | translate }}</td>
+          <td id="announcement_search_table_emptymessage" colspan="16">{{ 'ACTIONS.SEARCH.NO_DATA' | translate }}</td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th
-            id="announcement_search_table_header_actions"
-            class="text-center white-space-nowrap"
-            title="{{ 'GENERAL.SEARCH.ACTION' | translate }}"
-          >
-            {{ 'GENERAL.SEARCH.ACTION' | translate }}
+          <th id="announcement_search_table_header_actions" class="text-center white-space-nowrap">
+            {{ 'ACTIONS.SEARCH.ACTIONS' | translate }}
           </th>
           <th
             *ngFor="let col of columns"

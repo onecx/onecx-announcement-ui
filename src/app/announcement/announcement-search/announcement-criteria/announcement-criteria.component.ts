@@ -15,7 +15,6 @@ import {
 export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
   workspaceName: FormControl<string | null>
-  //appId: FormControl<string | null>
   status: FormControl<AnnouncementStatus[] | null>
   type: FormControl<AnnouncementType[] | null>
   priority: FormControl<AnnouncementPriorityType[] | null>
@@ -31,9 +30,10 @@ export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []
   @Input() public workspaces: SelectItem[] = []
   @Output() public criteriaEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
+  @Output() public resetSearchEmitter = new EventEmitter<boolean>()
 
   public displayCreateDialog = false
-  public announcementCriteriaGroup!: FormGroup<AnnouncementCriteriaForm>
+  public announcementCriteria!: FormGroup<AnnouncementCriteriaForm>
   public dateFormatForRange: string
   public filteredTitles: any[] = []
   public type$: Observable<SelectItem[]> = of([])
@@ -45,10 +45,9 @@ export class AnnouncementCriteriaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.announcementCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
+    this.announcementCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
-      //appId: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
@@ -120,34 +119,29 @@ export class AnnouncementCriteriaComponent implements OnInit {
   public submitCriteria(): void {
     const criteriaRequest: SearchAnnouncementsRequestParams = {
       announcementSearchCriteria: {
-        title:
-          this.announcementCriteriaGroup.value.title === null ? undefined : this.announcementCriteriaGroup.value.title,
-        //appId:
-        //  this.announcementCriteriaGroup.value.appId === null ? undefined : this.announcementCriteriaGroup.value.appId,
+        title: this.announcementCriteria.value.title === null ? undefined : this.announcementCriteria.value.title,
         workspaceName:
-          this.announcementCriteriaGroup.value.workspaceName === null
+          this.announcementCriteria.value.workspaceName === null
             ? undefined
-            : this.announcementCriteriaGroup.value.workspaceName,
+            : this.announcementCriteria.value.workspaceName,
         priority:
-          this.announcementCriteriaGroup.value.priority === null
-            ? undefined
-            : this.announcementCriteriaGroup.value.priority?.[0],
+          this.announcementCriteria.value.priority === null ? undefined : this.announcementCriteria.value.priority?.[0],
         status:
-          this.announcementCriteriaGroup.value.status === null
-            ? undefined
-            : this.announcementCriteriaGroup.value.status?.[0],
-        type:
-          this.announcementCriteriaGroup.value.type === null
-            ? undefined
-            : this.announcementCriteriaGroup.value.type?.[0]
+          this.announcementCriteria.value.status === null ? undefined : this.announcementCriteria.value.status?.[0],
+        type: this.announcementCriteria.value.type === null ? undefined : this.announcementCriteria.value.type?.[0]
       }
     }
-    if (this.announcementCriteriaGroup.value.startDateRange) {
-      const dates = this.mapDateRangeToDateStrings(this.announcementCriteriaGroup.value.startDateRange)
+    if (this.announcementCriteria.value.startDateRange) {
+      const dates = this.mapDateRangeToDateStrings(this.announcementCriteria.value.startDateRange)
       criteriaRequest.announcementSearchCriteria.startDateFrom = dates[0]
       criteriaRequest.announcementSearchCriteria.startDateTo = dates[1]
     }
     this.criteriaEmitter.emit(criteriaRequest)
+  }
+
+  public resetCriteria(): void {
+    this.announcementCriteria.reset()
+    this.resetSearchEmitter.emit(true)
   }
 
   private mapDateRangeToDateStrings(dateRange: Date[]) {

@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { ActivatedRoute } from '@angular/router'
 import { of, throwError } from 'rxjs'
 import { FormControl, FormGroup } from '@angular/forms'
 
@@ -20,7 +19,6 @@ import { dateRangeValidator } from './announcement-detail.component'
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
   let fixture: ComponentFixture<AnnouncementDetailComponent>
-  let mockActivatedRoute: ActivatedRoute
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
@@ -61,7 +59,6 @@ describe('AnnouncementDetailComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService }
@@ -182,7 +179,7 @@ describe('AnnouncementDetailComponent', () => {
     component.ngOnChanges()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'SEARCH.MSG_SEARCH_FAILED'
+      summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED'
     })
   })
 
@@ -195,7 +192,7 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.SUCCESSFUL_ANNOUNCEMENT_CREATED'
+      summaryKey: 'ACTIONS.CREATE.MESSAGE.OK'
     })
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
   })
@@ -209,7 +206,7 @@ describe('AnnouncementDetailComponent', () => {
 
     expect(component.formGroup.valid).toBeTrue()
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_CREATE_ERROR'
+      summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK'
     })
   })
 
@@ -223,7 +220,7 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.SUCCESSFUL_ANNOUNCEMENT_UPDATE'
+      summaryKey: 'ACTIONS.EDIT.MESSAGE.OK'
     })
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
   })
@@ -237,7 +234,7 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_UPDATE_ERROR'
+      summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK'
     })
   })
 
@@ -266,8 +263,7 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.warning).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_ERROR',
-      detailKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_HINT'
+      summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE'
     })
   })
 

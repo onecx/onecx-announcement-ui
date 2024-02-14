@@ -4,16 +4,16 @@
       width: 100%;
     }
   }
-}
-:host ::ng-deep .p-multiselect {
-  min-width: 15rem;
-  width: 18rem;
-}
-:host ::ng-deep .p-calendar {
-  min-width: 15rem;
-  width: 18rem;
-}
-:host ::ng-deep .p-dropdown {
-  min-width: 15rem;
-  width: 18rem;
+  .p-multiselect {
+    min-width: 15rem;
+    width: 18rem;
+  }
+  .p-calendar {
+    min-width: 15rem;
+    width: 18rem;
+  }
+  .p-dropdown {
+    min-width: 15rem;
+    width: 18rem;
+  }
 }

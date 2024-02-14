@@ -110,10 +110,10 @@ describe('AnnouncementSearchComponent', () => {
     component.announcements = []
     component.criteria = { workspaceName: 'w1' }
     const reuseCriteria = false
-    const resultw1Announcements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
+    const resultAnnouncements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
 
     component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
-    expect(component.announcements[0]).toEqual(resultw1Announcements)
+    expect(component.announcements[0]).toEqual(resultAnnouncements)
   })
 
   it('should search all', () => {
@@ -137,7 +137,22 @@ describe('AnnouncementSearchComponent', () => {
     component.search({ announcementSearchCriteria: {} })
 
     expect(component.announcements.length).toEqual(0)
-    expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'GENERAL.SEARCH.MSG_NO_RESULTS' })
+    expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
+  })
+
+  it('should reset search criteria', () => {
+    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
+    component.announcements = []
+    component.criteria = { workspaceName: 'w1' }
+    const reuseCriteria = false
+    const resultAnnouncements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
+
+    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+    expect(component.announcements[0]).toEqual(resultAnnouncements)
+
+    component.reset()
+    expect(component.criteria).toEqual({})
+    expect(component.announcements).toEqual([])
   })
 
   it('should handle API call error', () => {
@@ -146,7 +161,7 @@ describe('AnnouncementSearchComponent', () => {
 
     component.search({ announcementSearchCriteria: {} })
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.SEARCH.MSG_SEARCH_FAILED' })
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
   })
 
   it('should use new criteria if reuseCriteria is false', () => {
@@ -228,7 +243,7 @@ describe('AnnouncementSearchComponent', () => {
     component.onDeleteConfirmation()
 
     // expect(component.announcements.length).toBe(0)
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ANNOUNCEMENT_OK' })
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
   })
 
   it('should display error on delete announcement failure', () => {
@@ -240,7 +255,7 @@ describe('AnnouncementSearchComponent', () => {
 
     component.onDeleteConfirmation()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ANNOUNCEMENT_NOK' })
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
   })
 
   it('should set correct values onCloseDetail', () => {
@@ -342,6 +357,9 @@ describe('AnnouncementSearchComponent', () => {
     expect(result).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
   })
 
+  /**
+   * Language tests
+   */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
   })

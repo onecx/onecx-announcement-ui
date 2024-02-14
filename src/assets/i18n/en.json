@@ -17,8 +17,8 @@
       "ANNOUNCEMENT.TOOLTIP": "Create a new Announcement",
       "MESSAGE": {
         "ANNOUNCEMENT_ALREADY_EXIST": "An Announcement with that title already exists",
-        "ANNOUNCEMENT.CREATE_OK": "The Announcement was created successfully",
-        "ANNOUNCEMENT.CREATE_NOK": "An error has occurred. The Announcement was not created."
+        "OK": "The Announcement was created successfully",
+        "NOK": "An error has occurred. The Announcement was not created."
       }
     },
     "DELETE": {
@@ -28,17 +28,28 @@
       "MESSAGE_TEXT": "Do you want to delete \"{{ITEM}}\"?",
       "MESSAGE_INFO": "This action cannot be undone!",
       "MESSAGE": {
-        "ANNOUNCEMENT_OK": "The announcement was deleted successfully",
-        "ANNOUNCEMENT_NOK": "An error has occurred. The announcement was not deleted."
+        "OK": "The announcement was deleted successfully",
+        "NOK": "An error has occurred. The announcement was not deleted."
       }
     },
     "EDIT": {
       "ANNOUNCEMENT": "Edit Announcement",
       "ANNOUNCEMENT.TOOLTIP": "Edit the Announcement properties",
       "MESSAGE": {
-        "ANNOUNCEMENT_OK": "The announcement was saved successfully",
-        "ANNOUNCEMENT_NOK": "An error has occurred. The announcement was not saved."
+        "OK": "The announcement was saved successfully",
+        "NOK": "An error has occurred. The announcement was not saved."
       }
+    },
+    "SEARCH": {
+      "ACTIONS": "Actions",
+      "LABEL": "Search",
+      "LABEL.TOOLTIP": "Start Searching",
+      "RESET": "Reset",
+      "RESET_TOOLTIP": "Clear given criteria",
+      "NO_DATA": "No data",
+      "NO_RESULTS": "Search returned no results",
+      "SEARCH_FAILED": "Search failed",
+      "NOT_FOUND": "No data found"
     }
   },
   "GENERAL": {
@@ -46,31 +57,7 @@
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "VIEW": "View",
-    "WORKSPACE": "Workspace",
     "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
-    "APP": "App",
-    "DETAIL": {
-      "CREATION_DATE": "Created on",
-      "CREATION_USER": "Created by",
-      "MODIFICATION_DATE": "Changed on",
-      "MODIFICATION_USER": "Changed by",
-      "TOOLTIPS": {
-        "CREATION_DATE": "Timestamp of the creation",
-        "CREATION_USER": "Name of the user of the creation",
-        "MODIFICATION_DATE": "Timestamp of the last change",
-        "MODIFICATION_USER": "Name of the user of the last change"
-      }
-    },
-    "SEARCH": {
-      "ACTION": "Action",
-      "SEARCH": "Search",
-      "SEARCH.TOOLTIP": "Start Searching",
-      "RESET": "Reset",
-      "RESET_TOOLTIP": "Clear given criteria",
-      "NO_DATA": "No data",
-      "MSG_NO_RESULTS": "Search returned no results",
-      "MSG_SEARCH_FAILED": "Search failed"
-    },
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",
@@ -87,14 +74,16 @@
     "RELOAD": "Reload",
     "SWITCH_TO_EDIT_MODE": "Edit"
   },
+  "DIALOG": {
+    "SEARCH.HEADER": "Announcement Management",
+    "SEARCH.SUBHEADER": "Searching and managing of Announcements",
+    "DETAIL.SUBHEADER": "Announcement Details"
+  },
   "ANNOUNCEMENT": {
     "ID": "Id",
     "APPLICATION": "Application",
     "WORKSPACE": "Workspace",
     "TITLE": "Title",
-    "ASSIGNED_TO": "Applied for",
-    "ASSIGNED_TO_WORKSPACE": "For Workspace",
-    "ASSIGNED_TO_APP": "For APP",
     "TYPE": "Type",
     "STATUS": "Status",
     "PRIORITY": "Priority",
@@ -109,9 +98,6 @@
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",
       "WORKSPACE": "Workspace for which the announcement should be applied..",
-      "ASSIGNED_TO": "Workspace or App for which the announcement should be applied. For all Workspaces it says 'Every Workspace'.",
-      "ASSIGNED_TO_WORKSPACE": "Workspace for which the announcement should be applied..",
-      "ASSIGNED_TO_APP": "App for which the announcement should be applied",
       "TYPE": "Type of the Announcement",
       "STATUS": "Status of the Announcement",
       "PRIORITY": "Priority of the Announcement",
@@ -121,27 +107,6 @@
       "END_DATE_RANGE": "Date range of the end date",
       "CONTENT": "The text of the displayed announcement"
     }
-  },
-  "ANNOUNCEMENT_SEARCH": {
-    "HEADER": "Announcement Management",
-    "SUBHEADER": "Searching and managing of Announcements"
-  },
-  "ANNOUNCEMENT_DETAIL": {
-    "SUBHEADER": "Announcement Details",
-    "SUCCESSFUL_ANNOUNCEMENT_UPDATE": "Announcement was successfully updated",
-    "SUCCESSFUL_ANNOUNCEMENT_CREATED": "Announcement was successfully created",
-    "SUCCESSFUL_ANNOUNCEMENT_DELETE": "Announcement was successfully deleted",
-    "ANNOUNCEMENT_UPDATE_ERROR": "Error, Announcement was not updated",
-    "ANNOUNCEMENT_CREATE_ERROR": "Error, Announcement was not created",
-    "ANNOUNCEMENT_DELETE_ERROR": "Error, Announcement was not deleted",
-    "ANNOUNCEMENT_DATE_ERROR": "Announcement could not be created",
-    "INVALID_DATE_RANGE": "The start date is after the end date. It must be before that."
-  },
-  "ANNOUNCEMENT_CREATION": {
-    "CREATION_SUCCESS": "The Announcement was sucessfully created.",
-    "CREATION_FAILED": "Error, the Announcement could not be created.",
-    "INVALID": "Announcement form is invalid",
-    "CREATE_ANNOUNCEMENT": "Create Announcement"
   },
   "ENUMS": {
     "ANNOUNCEMENT_TYPE": {
@@ -165,6 +130,7 @@
     },
     "ERRORS": {
       "INTERNAL_ERROR": "Internal error",
+      "INVALID_DATE_RANGE": "The start date is after the end date. It must be before that.",
       "EMPTY_REQUIRED_FIELD": "This field is required.",
       "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
       "MINIMUM_LENGTH": "At least {{chars}} characters are required.",

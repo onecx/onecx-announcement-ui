@@ -123,7 +123,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
             this.announcement = item
             this.fillForm()
           },
-          error: () => this.msgService.error({ summaryKey: 'SEARCH.MSG_SEARCH_FAILED' })
+          error: () => this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
         })
     }
   }
@@ -157,8 +157,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   public onSave(): void {
     if (this.formGroup.errors?.['dateRange']) {
       this.msgService.warning({
-        summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_ERROR',
-        detailKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_HINT'
+        summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE'
       })
     } else if (this.formGroup.valid) {
       if (this.changeMode === 'EDIT' && this.announcementId) {
@@ -169,10 +168,10 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
           })
           .subscribe({
             next: () => {
-              this.msgService.success({ summaryKey: 'ANNOUNCEMENT_DETAIL.SUCCESSFUL_ANNOUNCEMENT_UPDATE' })
+              this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
               this.hideDialogAndChanged.emit(true)
             },
-            error: () => this.msgService.error({ summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_UPDATE_ERROR' })
+            error: () => this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
           })
       } else if (this.changeMode === 'NEW') {
         this.announcementApi
@@ -181,10 +180,10 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
           })
           .subscribe({
             next: () => {
-              this.msgService.success({ summaryKey: 'ANNOUNCEMENT_DETAIL.SUCCESSFUL_ANNOUNCEMENT_CREATED' })
+              this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
               this.hideDialogAndChanged.emit(true)
             },
-            error: () => this.msgService.error({ summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_CREATE_ERROR' })
+            error: () => this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
           })
       }
     }
@@ -193,8 +192,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   private submitFormGroupValues(): any {
     if (this.formGroup.controls['workspaceName'].value === 'all') {
       this.formGroup.controls['workspaceName'].setValue(null)
-      //} else {
-      //  this.formGroup.controls['appId'].setValue(this.formGroup.controls['portalId'].value)
     }
     return this.formGroup.value
   }
