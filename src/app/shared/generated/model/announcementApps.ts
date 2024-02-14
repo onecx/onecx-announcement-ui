@@ -13,5 +13,6 @@
 
 export interface AnnouncementApps { 
     appIds?: Array<string>;
+    workspaceNames?: Array<string>;
 }
 

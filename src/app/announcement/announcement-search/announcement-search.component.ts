@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { finalize } from 'rxjs'
 import { Table } from 'primeng/table'
@@ -9,10 +8,9 @@ import { Action, Column, PortalMessageService, UserService } from '@onecx/portal
 import {
   Announcement,
   AnnouncementInternalAPIService,
-  GetAnnouncementsRequestParams,
+  SearchAnnouncementsRequestParams,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
-import { PortalService } from 'src/app/shared/services/portalService'
 import { limitText } from 'src/app/shared/utils'
 
 type ExtendedColumn = Column & { isDate?: boolean; isDropdown?: true; css?: string; limit?: boolean }
@@ -37,7 +35,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public searching = false
   public loading = false
   public dateFormat: string
-  public availablePortals: SelectItem[] = []
+  public workspaces: SelectItem[] = []
   public nonExistingPortalIds = ['all', 'ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND']
   public filteredColumns: Column[] = []
 
@@ -52,8 +50,8 @@ export class AnnouncementSearchComponent implements OnInit {
       limit: true
     },
     {
-      field: 'appId',
-      header: 'ASSIGNED_TO',
+      field: 'workspaceName',
+      header: 'WORKSPACE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden xl:table-cell'
@@ -102,9 +100,6 @@ export class AnnouncementSearchComponent implements OnInit {
 
   constructor(
     private user: UserService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private portalApi: PortalService,
     private announcementApi: AnnouncementInternalAPIService,
     private msgService: PortalMessageService,
     private translate: TranslateService
@@ -128,7 +123,7 @@ export class AnnouncementSearchComponent implements OnInit {
           show: 'always',
           permission: 'ANNOUNCEMENT#EDIT'
         })
-        this.getAvailabePortals(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+        this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
       })
   }
 
@@ -143,17 +138,18 @@ export class AnnouncementSearchComponent implements OnInit {
     this.search({ announcementSearchCriteria: {} }, true)
   }
 
-  public search(criteria: GetAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
-    if (criteria.announcementSearchCriteria.appId === 'all') {
-      criteria.announcementSearchCriteria.appId = undefined
+  public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
+    if (criteria.announcementSearchCriteria.workspaceName === 'all') {
+      criteria.announcementSearchCriteria.workspaceName = undefined
     }
     if (!reuseCriteria) {
-      if (criteria.announcementSearchCriteria.appId === '') criteria.announcementSearchCriteria.appId = undefined
+      if (criteria.announcementSearchCriteria.workspaceName === '')
+        criteria.announcementSearchCriteria.workspaceName = undefined
       this.criteria = criteria.announcementSearchCriteria
     }
     this.searching = true
     this.announcementApi
-      .getAnnouncements(criteria)
+      .searchAnnouncements(criteria)
       .pipe(finalize(() => (this.searching = false)))
       .subscribe({
         next: (data) => {
@@ -218,43 +214,34 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  // get available portals
-  private getAvailabePortals(dropdownDefault?: string) {
-    this.availablePortals.push({
+  private getWorkspaces(dropdownDefault?: string) {
+    this.workspaces.push({
       label: dropdownDefault,
       value: 'all'
     })
-    this.portalApi.getCurrentPortalData().subscribe({
-      next: (portals) => {
-        for (let portal of portals) {
-          this.availablePortals.push({ label: portal.portalName, value: portal.id })
+    this.announcementApi.getAllWorkspaceNames().subscribe({
+      next: (workspaces) => {
+        for (let workspace of workspaces) {
+          this.workspaces.push({ label: workspace, value: workspace })
         }
       },
       error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
     })
   }
 
-  // is app in list of available portals?
-  public isPortal(appId?: string): boolean {
-    if (appId && this.availablePortals.find(({ value }) => value === appId)) {
+  // in list of workspaces?
+  public isWorkspace(workspaceName?: string): boolean {
+    if (workspaceName && this.workspaces.find(({ value }) => value === workspaceName)) {
       return true
     }
     return false
   }
 
-  // if not in list of available portals then get the suitable translation key
-  public getAppIdTranslationKey(appId?: string): string {
-    if (!appId || appId === 'all') {
-      return 'ANNOUNCEMENT.EVERY_WORKSPACE'
-    }
-    // if appId has UUID structure, but is not in the available-portals List
-    else if (/^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi.test(appId)) {
+  // if not in list of workspaces then get the suitable translation key
+  public getTranslationKeyForNonExistingWorkspaces(workspaceName?: string): string {
+    if (workspaceName && workspaceName?.length > 0) {
       return 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
     }
-    return ''
-  }
-
-  public getAppName(appId?: string): string {
-    return this.availablePortals.find(({ value }) => value === appId)?.label || ''
+    return 'ANNOUNCEMENT.EVERY_WORKSPACE'
   }
 }

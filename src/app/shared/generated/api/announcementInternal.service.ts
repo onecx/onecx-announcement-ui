@@ -38,7 +38,7 @@ import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables'
 import { Configuration }                                     from '../configuration';
 
 
-export interface AddAnnouncementRequestParams {
+export interface CreateAnnouncementRequestParams {
     createAnnouncementRequest: CreateAnnouncementRequest;
 }
 
@@ -50,13 +50,13 @@ export interface GetAnnouncementByIdRequestParams {
     id: string;
 }
 
-export interface GetAnnouncementsRequestParams {
+export interface SearchAnnouncementsRequestParams {
     announcementSearchCriteria: AnnouncementSearchCriteria;
 }
 
 export interface UpdateAnnouncementByIdRequestParams {
     id: string;
-    updateAnnouncementRequest?: UpdateAnnouncementRequest;
+    updateAnnouncementRequest: UpdateAnnouncementRequest;
 }
 
 
@@ -125,18 +125,18 @@ export class AnnouncementInternalAPIService {
     }
 
     /**
-     * Add announcement
+     * Create announcement
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public addAnnouncement(requestParameters: AddAnnouncementRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Announcement>;
-    public addAnnouncement(requestParameters: AddAnnouncementRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Announcement>>;
-    public addAnnouncement(requestParameters: AddAnnouncementRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Announcement>>;
-    public addAnnouncement(requestParameters: AddAnnouncementRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public createAnnouncement(requestParameters: CreateAnnouncementRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Announcement>;
+    public createAnnouncement(requestParameters: CreateAnnouncementRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Announcement>>;
+    public createAnnouncement(requestParameters: CreateAnnouncementRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Announcement>>;
+    public createAnnouncement(requestParameters: CreateAnnouncementRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const createAnnouncementRequest = requestParameters.createAnnouncementRequest;
         if (createAnnouncementRequest === null || createAnnouncementRequest === undefined) {
-            throw new Error('Required parameter createAnnouncementRequest was null or undefined when calling addAnnouncement.');
+            throw new Error('Required parameter createAnnouncementRequest was null or undefined when calling createAnnouncement.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -199,10 +199,10 @@ export class AnnouncementInternalAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any>;
-    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<any>>;
-    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<any>>;
-    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any>;
+    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpResponse<any>>;
+    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<HttpEvent<any>>;
+    public deleteAnnouncementById(requestParameters: DeleteAnnouncementByIdRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined, context?: HttpContext}): Observable<any> {
         const id = requestParameters.id;
         if (id === null || id === undefined) {
             throw new Error('Required parameter id was null or undefined when calling deleteAnnouncementById.');
@@ -214,7 +214,6 @@ export class AnnouncementInternalAPIService {
         if (localVarHttpHeaderAcceptSelected === undefined) {
             // to determine the Accept header
             const httpHeaderAccepts: string[] = [
-                'application/json'
             ];
             localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         }
@@ -307,6 +306,60 @@ export class AnnouncementInternalAPIService {
     }
 
     /**
+     * retrieve list of all existing workspace names
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getAllWorkspaceNames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<string>>;
+    public getAllWorkspaceNames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<string>>>;
+    public getAllWorkspaceNames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<string>>>;
+    public getAllWorkspaceNames(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/announcements/workspaces`;
+        return this.httpClient.request<Array<string>>('get', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Retrieve announcement by id
      * @param requestParameters
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -371,13 +424,13 @@ export class AnnouncementInternalAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementPageResult>;
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementPageResult>>;
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementPageResult>>;
-    public getAnnouncements(requestParameters: GetAnnouncementsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public searchAnnouncements(requestParameters: SearchAnnouncementsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementPageResult>;
+    public searchAnnouncements(requestParameters: SearchAnnouncementsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementPageResult>>;
+    public searchAnnouncements(requestParameters: SearchAnnouncementsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementPageResult>>;
+    public searchAnnouncements(requestParameters: SearchAnnouncementsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const announcementSearchCriteria = requestParameters.announcementSearchCriteria;
         if (announcementSearchCriteria === null || announcementSearchCriteria === undefined) {
-            throw new Error('Required parameter announcementSearchCriteria was null or undefined when calling getAnnouncements.');
+            throw new Error('Required parameter announcementSearchCriteria was null or undefined when calling searchAnnouncements.');
         }
 
         let localVarHeaders = this.defaultHeaders;
@@ -449,6 +502,9 @@ export class AnnouncementInternalAPIService {
             throw new Error('Required parameter id was null or undefined when calling updateAnnouncementById.');
         }
         const updateAnnouncementRequest = requestParameters.updateAnnouncementRequest;
+        if (updateAnnouncementRequest === null || updateAnnouncementRequest === undefined) {
+            throw new Error('Required parameter updateAnnouncementRequest was null or undefined when calling updateAnnouncementById.');
+        }
 
         let localVarHeaders = this.defaultHeaders;
 

@@ -15,7 +15,7 @@ import { AnnouncementType } from './announcementType';
 
 
 export interface Announcement { 
-    version?: number;
+    modificationCount?: number;
     creationDate?: string;
     creationUser?: string;
     modificationDate?: string;
@@ -29,6 +29,7 @@ export interface Announcement {
     startDate?: string;
     endDate?: string;
     appId?: string;
+    workspaceName?: string;
 }
 
 

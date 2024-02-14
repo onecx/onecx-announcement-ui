@@ -12,34 +12,36 @@
     >
       <span class="p-float-label">
         <p-dropdown
-          id="appId"
-          [options]="availablePortals"
+          id="announcement_search_criteria_workspace_name"
+          [options]="workspaces"
           [autoDisplayFirst]="true"
           [appendTo]="'body'"
-          formControlName="appId"
+          formControlName="workspaceName"
           [filter]="true"
           filterBy="label"
-          [title]="'ANNOUNCEMENT.TOOLTIPS.ASSIGNED_TO' | translate"
+          [title]="'ANNOUNCEMENT.TOOLTIPS.ASSIGNED_TO_WORKSPACE' | translate"
         >
         </p-dropdown>
-        <label for="appId">{{ 'ANNOUNCEMENT.ASSIGNED_TO' | translate }}</label>
+        <label for="announcement_search_criteria_workspace_name">
+          {{ 'ANNOUNCEMENT.ASSIGNED_TO_WORKSPACE' | translate }}</label
+        >
       </span>
       <span class="p-float-label">
         <input
-          id="title"
+          id="announcement_search_criteria_title"
           pInputText
           type="text"
           formControlName="title"
           class="w-18rem"
           [title]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
         />
-        <label for="title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
+        <label for="announcement_search_criteria_title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
       </span>
       <span class="p-float-label">
         <p-calendar
+          inputId="announcement_search_criteria_startDateRange"
           selectionMode="range"
           [readonlyInput]="true"
-          inputId="startDateRange"
           formControlName="startDateRange"
           appendTo="body"
           [showButtonBar]="true"
@@ -47,25 +49,27 @@
           [dateFormat]="dateFormatForRange"
           [title]="'ANNOUNCEMENT.TOOLTIPS.START_DATE_RANGE' | translate"
         ></p-calendar>
-        <label for="startDateRange">{{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label>
+        <label for="announcement_search_criteria_startDateRange">
+          {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label
+        >
       </span>
       <span class="p-float-label">
         <p-multiSelect
+          id="announcement_search_criteria_status"
           [options]="(statusOptions$ | async) ?? []"
-          id="status"
           formControlName="status"
           appendTo="body"
           [filter]="false"
           [title]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
         >
         </p-multiSelect>
-        <label for="status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
+        <label for="announcement_search_criteria_status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
       </span>
 
       <span class="p-float-label">
         <p-multiSelect
+          id="announcement_search_criteria_type"
           [options]="(type$ | async) ?? []"
-          id="type"
           formControlName="type"
           appendTo="body"
           [filter]="false"
@@ -77,15 +81,15 @@
 
       <span class="p-float-label">
         <p-multiSelect
+          id="announcement_search_criteria_priority"
           [options]="(priorityType$ | async) ?? []"
-          id="priority"
           formControlName="priority"
           appendTo="body"
           [filter]="false"
           [title]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
         >
         </p-multiSelect>
-        <label for="priority">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
+        <label for="announcement_search_criteria_priority">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
       </span>
     </div>
   </div>

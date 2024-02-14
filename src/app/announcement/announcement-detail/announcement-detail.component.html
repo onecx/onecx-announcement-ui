@@ -7,7 +7,7 @@
   [resizable]="true"
   [closable]="true"
   [modal]="true"
-  [style]="{ width: '560px' }"
+  [style]="{ width: '600px' }"
   [showHeader]="true"
   [breakpoints]="{
     '992px': '65vw',
@@ -23,16 +23,16 @@
           <span class="p-float-label" controlErrorAnchor>
             <textarea
               pInputTextarea
+              id="announcement_detail_form_title"
               type="text"
               style="min-height: 2.5rem"
               class="w-full textarea-sm"
-              id="ah_announcement_detail_title"
               formControlName="title"
               rows="1"
               [autoResize]="true"
               appendTo="body"
             ></textarea>
-            <label class="ocx-required-label" for="ah_announcement_detail_title">
+            <label class="ocx-required-label" for="announcement_detail_form_title">
               {{ 'ANNOUNCEMENT.TITLE' | translate }}
             </label>
           </span>
@@ -42,14 +42,14 @@
         <span class="p-float-label mt-2">
           <textarea
             pInputTextarea
+            id="announcement_detail_form_content"
             class="w-full textarea-md"
-            id="ah_announcement_detail_content"
             formControlName="content"
             rows="3"
             [autoResize]="true"
             appendTo="body"
           ></textarea>
-          <label for="ah_announcement_detail_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
+          <label for="announcement_detail_form_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
         </span>
       </div>
 
@@ -58,7 +58,7 @@
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
-                id="ah_announcement_detail_startDate"
+                id="announcement_detail_form_startDate"
                 type="text"
                 formControlName="startDate"
                 styleClass="w-14rem"
@@ -71,7 +71,7 @@
                 ariaLabelledBy="date-from-label"
                 appendTo="body"
               ></p-calendar>
-              <label class="ocx-required-label" for="ah_announcement_detail_startDate">
+              <label class="ocx-required-label" for="announcement_detail_form_startDate">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
               </label>
             </span>
@@ -80,7 +80,7 @@
         <div class="col-7 sm:col-5 p-0 sm:pl-3">
           <span class="p-float-label">
             <p-calendar
-              id="ah_announcement_detail_endDate"
+              id="announcement_detail_form_endDate"
               type="text"
               formControlName="endDate"
               styleClass="w-14rem"
@@ -93,19 +93,19 @@
               ariaLabelledBy="date-from-label"
               appendTo="body"
             ></p-calendar>
-            <label for="ah_announcement_detail_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+            <label for="announcement_detail_form_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
           </span>
         </div>
         <div class="col-2 py-0 pl-4">
           <div class="w-1 flex flex-column row-gap-2 mr-2">
             <p-inputSwitch
-              id="ah_announcement_detail_status"
+              id="announcement_detail_form_status"
               class="input-switch-xl"
               formControlName="status"
               trueValue="ACTIVE"
               falseValue="INACTIVE"
             ></p-inputSwitch>
-            <label class="text-xs text-center float-label mr-2" for="ah_announcement_detail_status">
+            <label class="text-xs text-center float-label mr-2" for="announcement_detail_form_status">
               {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
             </label>
           </div>
@@ -120,60 +120,60 @@
 
       <div class="grid col-12 row-gap-2">
         <div class="col-12 md:col-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
-          <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_appliedFor"
+          <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_appliedFor"
             >{{ 'ANNOUNCEMENT.ASSIGNED_TO' | translate }}
           </label>
           <p-selectButton
             formControlName="assignedTo"
             (onChange)="assignedToChange($event)"
-            id="ah_announcement_detail_appliedFor"
+            id="announcement_detail_form_appliedFor"
             [options]="assignedToOption"
           ></p-selectButton>
         </div>
         <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
-          <ng-container *ngIf="formGroup.controls['assignedTo'].value === 'Workspace'" controlErrorAnchor>
-            <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_portalId">
+          <ng-container *ngIf="assignedTo === 'Workspace'" controlErrorAnchor>
+            <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_form_workspaceName">
               {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}
             </label>
             <p-dropdown
+              id="announcement_detail_form_workspaceName"
               class="input-field"
               styleClass="w-19rem"
-              id="ah_announcement_detail_portalId"
-              [options]="availablePortals"
+              [options]="workspaces"
               [autoDisplayFirst]="true"
               [appendTo]="'body'"
-              formControlName="portalId"
+              formControlName="workspaceName"
               [filter]="true"
               filterBy="label"
             >
             </p-dropdown>
           </ng-container>
-          <ng-container *ngIf="formGroup.controls['assignedTo'].value === 'App'" controlErrorAnchor>
-            <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_appId"
+          <ng-container *ngIf="assignedTo === 'App'" controlErrorAnchor>
+            <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_appId"
               >{{ 'ANNOUNCEMENT.APPLICATION' | translate }}
             </label>
-            <input class="w-19rem" id="ah_announcement_detail_appId" pInputText formControlName="appId" />
+            <input class="w-19rem" id="announcement_detail_form_appId" pInputText formControlName="appId" />
           </ng-container>
         </div>
       </div>
 
       <div class="grid col-12 row-gap-2">
         <div class="col-12 md:col-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
-          <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_priority"
+          <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_priority"
             >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
           </label>
           <p-selectButton
-            id="ah_announcement_detail_priority"
+            id="announcement_detail_form_priority"
             formControlName="priority"
             [options]="(priorityOptions$ | async) ?? []"
           ></p-selectButton>
         </div>
         <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
-          <label class="float-label mb-1 text-sm font-medium" for="ah_announcement_detail_type">
+          <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_type">
             {{ 'ANNOUNCEMENT.TYPE' | translate }}
           </label>
           <p-selectButton
-            id="ah_announcement_detail_type"
+            id="announcement_detail_form_type"
             formControlName="type"
             [options]="(typeOptions$ | async) ?? []"
           ></p-selectButton>
@@ -185,13 +185,13 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        id="ah_help_detail_button_close"
+        id="help_detail_button_close"
         [label]="'GENERAL.CANCEL' | translate"
         (onClick)="onDialogHide()"
         icon="pi pi-times"
       ></p-button>
       <p-button
-        id="ah_help_detail_button_save"
+        id="help_detail_button_save"
         [label]="'GENERAL.SAVE' | translate"
         (onClick)="onSave()"
         icon="pi pi-save"

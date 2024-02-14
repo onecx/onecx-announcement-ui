@@ -2,31 +2,16 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { FormControl, FormGroup } from '@angular/forms'
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 
-import {
-  AppStateService,
-  ConfigurationService,
-  UserService,
-  createTranslateLoader
-} from '@onecx/portal-integration-angular'
+import { AppStateService, UserService, createTranslateLoader } from '@onecx/portal-integration-angular'
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
 
 describe('AnnouncementCriteriaComponent', () => {
   let component: AnnouncementCriteriaComponent
   let fixture: ComponentFixture<AnnouncementCriteriaComponent>
-
-  const configServiceSpy = {
-    getProperty: jasmine.createSpy('getProperty').and.returnValue('123'),
-    getPortal: jasmine.createSpy('getPortal').and.returnValue({
-      themeId: '1234',
-      portalName: 'test',
-      baseUrl: '/',
-      microfrontendRegistrations: []
-    })
-  }
 
   const mockUserService = {
     lang$: {
@@ -48,10 +33,7 @@ describe('AnnouncementCriteriaComponent', () => {
         })
       ],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [
-        { provide: ConfigurationService, useValue: configServiceSpy },
-        { provide: UserService, useValue: mockUserService }
-      ]
+      providers: [{ provide: UserService, useValue: mockUserService }]
     }).compileComponents()
   }))
 
@@ -69,7 +51,7 @@ describe('AnnouncementCriteriaComponent', () => {
   it('should handle criteria on submitCriteria if formGroup values empty', () => {
     const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
-      appId: new FormControl<string | null>(null),
+      workspaceName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
@@ -86,7 +68,7 @@ describe('AnnouncementCriteriaComponent', () => {
   it('should handle criteria on submitCriteria if formGroup values exist', () => {
     const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>('title'),
-      appId: new FormControl<string | null>('appId'),
+      workspaceName: new FormControl<string | null>('workspaceName'),
       status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
       type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
       priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
@@ -103,7 +85,7 @@ describe('AnnouncementCriteriaComponent', () => {
   it('should handle criteria on submitCriteria with empty dateTo or equal dateFrom, dateTo', () => {
     const newCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
-      appId: new FormControl<string | null>(null),
+      workspaceName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),

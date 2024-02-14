@@ -6,7 +6,6 @@ import { finalize, Observable, map, of } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
 import { Action, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
-import { PortalService } from 'src/app/shared/services/portalService'
 import {
   CreateAnnouncementRequest,
   UpdateAnnouncementRequest,
@@ -28,6 +27,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
     } else return null
   }
 }
+export type AssignedToType = 'Workspace' | 'App'
 
 @Component({
   selector: 'app-announcement-detail',
@@ -42,7 +42,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
 
   announcementId: string | undefined
   announcementDeleteVisible = false
-  availablePortals: SelectItem[] = []
+  workspaces: SelectItem[] = []
   actions: Action[] = []
   public dateFormat: string
   isLoading = false
@@ -50,15 +50,14 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   // form
   formGroup: FormGroup
   autoResize!: boolean
+  assignedTo: AssignedToType = 'Workspace'
   assignedToOption: SelectItem[] = []
   public typeOptions$: Observable<SelectItem[]> = of([])
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityOptions$: Observable<SelectItem[]> = of([])
-  originallyAssignedTo = 'Workspace'
 
   constructor(
     private user: UserService,
-    private portalApi: PortalService,
     private announcementApi: AnnouncementInternalAPIService,
     private fb: FormBuilder,
     private router: Router,
@@ -70,17 +69,16 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     this.prepareDropDownOptions()
     this.formGroup = fb.nonNullable.group({
       id: new FormControl(null),
+      modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),
+      content: new FormControl(null),
       appId: new FormControl(null),
-      portalId: new FormControl(null),
+      workspaceName: new FormControl(null),
       type: new FormControl(null),
       priority: new FormControl(null),
       status: new FormControl(null),
-      startDate: new FormControl(null),
-      endDate: new FormControl(null),
-      content: new FormControl(null),
-      // helper
-      assignedTo: new FormControl(null)
+      startDate: new FormControl(null, [Validators.required]),
+      endDate: new FormControl(null)
     })
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
     this.autoResize = true
@@ -88,7 +86,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
-      this.getAllWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+      this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
     })
   }
 
@@ -104,7 +102,8 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         this.fillForm() // on COPY
       } else {
         this.formGroup.reset()
-        this.formGroup.controls['assignedTo'].setValue('Workspace')
+        this.assignedTo = 'Workspace'
+        //this.formGroup.controls['assignedTo'].setValue('Workspace')
         this.formGroup.controls['type'].setValue(AnnouncementType.Info)
         this.formGroup.controls['priority'].setValue(AnnouncementPriorityType.Normal)
         this.formGroup.controls['status'].setValue(AnnouncementStatus.Inactive)
@@ -143,47 +142,25 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       startDate: this.announcement?.startDate ? new Date(this.announcement.startDate) : null,
       endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
     })
-    //if appId is null, or "" or has the structure of a uuid, then we assume, that it is assigned to a workspace.
-    if (
-      !this.announcement?.appId ||
-      /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/gi.test(
-        this.announcement.appId
-      )
-    ) {
-      this.formGroup.controls['portalId'].setValue(
-        this.announcement?.appId === undefined ? null : this.announcement?.appId
-      )
-      this.originallyAssignedTo = 'Workspace'
-    } else {
-      this.originallyAssignedTo = 'App'
-    }
-    this.formGroup.controls['assignedTo'].setValue(this.originallyAssignedTo)
+    if (this.announcement?.workspaceName) this.assignedTo = 'Workspace'
+    else if (this.announcement?.appId) this.assignedTo = 'App'
+    console.log('fillForm() ' + this.assignedTo)
   }
 
   public assignedToChange(event: any): void {
-    //if we 'return' to the originally assigned type, then we restore the original value
-    if (event.value === this.originallyAssignedTo) {
-      if (event.value === 'App') {
-        this.formGroup.controls['appId'].setValue(this.announcement?.appId)
-      } else if (event.value === 'Workspace') {
-        this.formGroup.controls['portalId'].setValue(this.announcement?.appId)
-      }
-    }
-    //if we switch the assigned-to-type, then we clear the value.
-    else {
-      this.formGroup.controls['appId'].setValue(null)
-    }
+    console.log('assignedToChange ' + this.assignedTo, event)
+    if (event?.value) this.assignedTo = event.value
   }
 
-  private getAllWorkspaces(dropdownDefault: string): void {
-    this.availablePortals.push({
+  private getWorkspaces(dropdownDefault: string): void {
+    this.workspaces.push({
       label: dropdownDefault,
       value: null
     })
-    this.portalApi.getCurrentPortalData().subscribe({
-      next: (portals) => {
-        for (let portal of portals) {
-          this.availablePortals.push({ label: portal.portalName, value: portal.id })
+    this.announcementApi.getAllWorkspaceNames().subscribe({
+      next: (workspaces) => {
+        for (let workspace of workspaces) {
+          this.workspaces.push({ label: workspace, value: workspace })
         }
       },
       error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
@@ -215,7 +192,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
           })
       } else if (this.changeMode === 'NEW') {
         this.announcementApi
-          .addAnnouncement({
+          .createAnnouncement({
             createAnnouncementRequest: this.submitFormGroupValues() as CreateAnnouncementRequest
           })
           .subscribe({
@@ -230,12 +207,10 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   }
 
   private submitFormGroupValues(): any {
-    if (this.formGroup.controls['assignedTo'].value === 'Workspace') {
-      if (this.formGroup.controls['portalId'].value === 'all') {
-        this.formGroup.controls['appId'].setValue(null)
-      } else {
-        this.formGroup.controls['appId'].setValue(this.formGroup.controls['portalId'].value)
-      }
+    if (this.formGroup.controls['workspaceName'].value === 'all') {
+      this.formGroup.controls['workspaceName'].setValue(null)
+      //} else {
+      //  this.formGroup.controls['appId'].setValue(this.formGroup.controls['portalId'].value)
     }
     return this.formGroup.value
   }

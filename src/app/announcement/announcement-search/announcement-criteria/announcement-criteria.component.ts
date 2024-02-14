@@ -9,12 +9,13 @@ import {
   AnnouncementPriorityType,
   AnnouncementStatus,
   AnnouncementType,
-  GetAnnouncementsRequestParams
+  SearchAnnouncementsRequestParams
 } from 'src/app/shared/generated'
 
 export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
-  appId: FormControl<string | null>
+  workspaceName: FormControl<string | null>
+  //appId: FormControl<string | null>
   status: FormControl<AnnouncementStatus[] | null>
   type: FormControl<AnnouncementType[] | null>
   priority: FormControl<AnnouncementPriorityType[] | null>
@@ -28,8 +29,8 @@ export interface AnnouncementCriteriaForm {
 })
 export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []
-  @Input() public availablePortals: SelectItem[] = []
-  @Output() public criteriaEmitter = new EventEmitter<GetAnnouncementsRequestParams>()
+  @Input() public workspaces: SelectItem[] = []
+  @Output() public criteriaEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
 
   public displayCreateDialog = false
   public announcementCriteriaGroup!: FormGroup<AnnouncementCriteriaForm>
@@ -46,7 +47,8 @@ export class AnnouncementCriteriaComponent implements OnInit {
   ngOnInit(): void {
     this.announcementCriteriaGroup = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
-      appId: new FormControl<string | null>(null),
+      workspaceName: new FormControl<string | null>(null),
+      //appId: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
@@ -116,12 +118,16 @@ export class AnnouncementCriteriaComponent implements OnInit {
   }
 
   public submitCriteria(): void {
-    const criteriaRequest: GetAnnouncementsRequestParams = {
+    const criteriaRequest: SearchAnnouncementsRequestParams = {
       announcementSearchCriteria: {
         title:
           this.announcementCriteriaGroup.value.title === null ? undefined : this.announcementCriteriaGroup.value.title,
-        appId:
-          this.announcementCriteriaGroup.value.appId === null ? undefined : this.announcementCriteriaGroup.value.appId,
+        //appId:
+        //  this.announcementCriteriaGroup.value.appId === null ? undefined : this.announcementCriteriaGroup.value.appId,
+        workspaceName:
+          this.announcementCriteriaGroup.value.workspaceName === null
+            ? undefined
+            : this.announcementCriteriaGroup.value.workspaceName,
         priority:
           this.announcementCriteriaGroup.value.priority === null
             ? undefined

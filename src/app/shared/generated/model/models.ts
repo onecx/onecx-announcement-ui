@@ -9,5 +9,4 @@ export * from './createAnnouncementRequest';
 export * from './problemDetailInvalidParam';
 export * from './problemDetailParam';
 export * from './problemDetailResponse';
-export * from './searchAnnouncementRequest';
 export * from './updateAnnouncementRequest';
