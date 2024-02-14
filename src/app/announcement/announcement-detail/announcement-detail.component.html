@@ -97,27 +97,29 @@
             </span>
           </div>
         </div>
-        <div class="col-7 sm:col-5 p-0 sm:pl-3">
-          <span class="p-float-label" controlErrorAnchor>
-            <p-calendar
-              id="announcement_detail_form_endDate"
-              type="text"
-              formControlName="endDate"
-              styleClass="w-14rem"
-              todayButtonStyleClass="calender-today"
-              [showClear]="true"
-              [showTime]="true"
-              [showWeek]="true"
-              [showIcon]="true"
-              [showOnFocus]="false"
-              ariaLabelledBy="date-from-label"
-              appendTo="body"
-              [title]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
-            ></p-calendar>
-            <label for="announcement_detail_form_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
-          </span>
+        <div class="col-12 sm:col-5 p-0 sm:pl-3">
+          <div>
+            <span class="p-float-label" controlErrorAnchor>
+              <p-calendar
+                id="announcement_detail_form_endDate"
+                type="text"
+                formControlName="endDate"
+                styleClass="w-14rem"
+                todayButtonStyleClass="calender-today"
+                [showClear]="true"
+                [showTime]="true"
+                [showWeek]="true"
+                [showIcon]="true"
+                [showOnFocus]="false"
+                ariaLabelledBy="date-from-label"
+                appendTo="body"
+                [title]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
+              ></p-calendar>
+              <label for="announcement_detail_form_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+            </span>
+          </div>
         </div>
-        <div class="col-2 py-0 pl-4">
+        <div class="col-6 sm:col-2 py-0 sm:pl-4">
           <div class="w-1 flex flex-column row-gap-2 mr-2">
             <p-inputSwitch
               id="announcement_detail_form_status"

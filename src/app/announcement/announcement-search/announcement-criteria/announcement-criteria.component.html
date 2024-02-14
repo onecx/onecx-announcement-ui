@@ -1,71 +1,10 @@
 <ocx-search-criteria
-  [advancedSearchActive]="false"
-  [disableAdvancedToggle]="false"
   [header]="'DIALOG.SEARCH.HEADER' | translate"
   [subheader]="'DIALOG.SEARCH.SUBHEADER' | translate"
   (search)="submitCriteria()"
-  (reset)="resetCriteria()"
   [actions]="actions"
 >
   <div simpleCriteria>
-    <div [formGroup]="announcementCriteria" class="flex flex-wrap column-gap-3 row-gap-2 sm:row-gap-3 px-0 sm:px-2">
-      <span class="p-float-label">
-        <p-dropdown
-          id="announcement_search_criteria_workspace_name"
-          [options]="workspaces"
-          [autoDisplayFirst]="true"
-          [appendTo]="'body'"
-          formControlName="workspaceName"
-          [filter]="true"
-          filterBy="label"
-          [title]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
-        >
-        </p-dropdown>
-        <label for="announcement_search_criteria_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
-      </span>
-      <span class="p-float-label">
-        <input
-          id="announcement_search_criteria_title"
-          pInputText
-          type="text"
-          formControlName="title"
-          class="w-18rem"
-          [title]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
-        />
-        <label for="announcement_search_criteria_title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
-      </span>
-      <span class="p-float-label">
-        <p-calendar
-          inputId="announcement_search_criteria_start_date_range"
-          selectionMode="range"
-          [readonlyInput]="true"
-          formControlName="startDateRange"
-          appendTo="body"
-          [showButtonBar]="true"
-          [showWeek]="true"
-          [dateFormat]="dateFormatForRange"
-          [title]="'ANNOUNCEMENT.TOOLTIPS.START_DATE_RANGE' | translate"
-        ></p-calendar>
-        <label for="announcement_search_criteria_start_date_range">
-          {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label
-        >
-      </span>
-      <span class="p-float-label">
-        <p-multiSelect
-          id="announcement_search_criteria_status"
-          [options]="(statusOptions$ | async) ?? []"
-          formControlName="status"
-          appendTo="body"
-          [filter]="false"
-          [title]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
-        >
-        </p-multiSelect>
-        <label for="announcement_search_criteria_status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
-      </span>
-    </div>
-  </div>
-
-  <div advancedCriteria>
     <div [formGroup]="announcementCriteria" class="flex flex-wrap column-gap-3 row-gap-2 sm:row-gap-3 px-0 sm:px-2">
       <span class="p-float-label">
         <p-dropdown
