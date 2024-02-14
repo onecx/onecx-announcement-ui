@@ -3,26 +3,22 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { ActivatedRoute } from '@angular/router'
 import { of, throwError } from 'rxjs'
 import { FormControl, FormGroup } from '@angular/forms'
 
 import {
   AppStateService,
   createTranslateLoader,
-  ConfigurationService,
   PortalMessageService,
   UserService
 } from '@onecx/portal-integration-angular'
 import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
-import { PortalService } from 'src/app/shared/services/portalService'
 import { AnnouncementDetailComponent } from './announcement-detail.component'
 import { dateRangeValidator } from './announcement-detail.component'
 
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
   let fixture: ComponentFixture<AnnouncementDetailComponent>
-  let mockActivatedRoute: ActivatedRoute
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
@@ -30,32 +26,18 @@ describe('AnnouncementDetailComponent', () => {
     'info',
     'warning'
   ])
-  const configServiceSpy = {
-    lang: 'de',
-    getProperty: jasmine.createSpy('getProperty').and.returnValue('123'),
-    getPortal: jasmine.createSpy('getPortal').and.returnValue({
-      themeId: '1234',
-      portalName: 'test',
-      baseUrl: '/',
-      microfrontendRegistrations: []
-    })
-  }
   const apiServiceSpy = {
     getAnnouncementById: jasmine.createSpy('getAnnouncementById').and.returnValue(of({})),
-    addAnnouncement: jasmine.createSpy('addAnnouncement').and.returnValue(of({})),
-    updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({}))
+    createAnnouncement: jasmine.createSpy('createAnnouncement').and.returnValue(of({})),
+    updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({})),
+    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
   }
-  const portalServiceSpy = jasmine.createSpyObj('PortalService', ['getCurrentPortalData'])
-  portalServiceSpy.getCurrentPortalData.and.returnValue(of([]))
-
   const formGroup = new FormGroup({
     id: new FormControl('id'),
     title: new FormControl('title'),
-    assignedTo: new FormControl('Workspace'),
-    portalId: new FormControl('portal id'),
-    appId: new FormControl('AH_MGMT')
+    workspaceName: new FormControl('workspace name'),
+    appId: new FormControl('app id')
   })
-
   const mockUserService = {
     lang$: {
       getValue: jasmine.createSpy('getValue')
@@ -77,11 +59,8 @@ describe('AnnouncementDetailComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: ConfigurationService, useValue: configServiceSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
-        { provide: PortalService, useValue: portalServiceSpy },
         { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents()
@@ -90,9 +69,9 @@ describe('AnnouncementDetailComponent', () => {
     msgServiceSpy.info.calls.reset()
     msgServiceSpy.warning.calls.reset()
     apiServiceSpy.getAnnouncementById.calls.reset()
-    apiServiceSpy.addAnnouncement.calls.reset()
+    apiServiceSpy.createAnnouncement.calls.reset()
     apiServiceSpy.updateAnnouncementById.calls.reset()
-    portalServiceSpy.getCurrentPortalData.calls.reset()
+    apiServiceSpy.getAllWorkspaceNames.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
@@ -110,18 +89,18 @@ describe('AnnouncementDetailComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should getAllWorkspaces onInit', () => {
-    const portals = [{ portalName: 'portal', id: 'id' }]
-    portalServiceSpy.getCurrentPortalData.and.returnValue(of(portals))
-    component.availablePortals = []
+  it('should getWorkspaces onInit', () => {
+    const workspaces = ['w1']
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
+    component.workspaces = []
 
     component.ngOnInit()
 
-    expect(component.availablePortals).toContain({ label: 'portal', value: 'id' })
+    expect(component.workspaces).toContain({ label: 'w1', value: 'w1' })
   })
 
-  it('should log error if getAvailablePortals fails', () => {
-    portalServiceSpy.getCurrentPortalData.and.returnValue(throwError(() => new Error()))
+  it('should log error if getWorkspaces fails', () => {
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
 
     component.ngOnInit()
@@ -131,39 +110,23 @@ describe('AnnouncementDetailComponent', () => {
     })
   })
 
-  it('should fill the form with Announcement related to an App', () => {
+  it('should fill the form with Announcement', () => {
+    const workspaceName = 'w1'
+    const appId = 'app1'
     component.changeMode = 'VIEW'
     component.announcementId = 'id'
     component.announcement = {
       id: 'id',
-      appId: 'appId',
       title: 'title',
+      appId: appId,
+      workspaceName: workspaceName,
       startDate: '2023-01-02',
       endDate: '2023-01-03'
     }
     const result = (component as any).fillForm()
 
-    expect(component.formGroup.value['appId']).toEqual(component.announcement.appId)
-    expect(component.formGroup.value['portalId']).toBeNull()
-    expect(component.originallyAssignedTo).toEqual('App')
-    expect(result).not.toBeDefined()
-  })
-
-  it('should fill the form with Announcement related to an Workspace', () => {
-    const workspaceId = '9147e1b3-32c2-424c-9f05-6260fb023a71'
-    component.changeMode = 'VIEW'
-    component.announcementId = 'id'
-    component.announcement = {
-      id: 'id',
-      appId: workspaceId,
-      title: 'title',
-      startDate: '2023-01-02',
-      endDate: '2023-01-03'
-    }
-    const result = (component as any).fillForm()
-
-    expect(component.formGroup.value['portalId']).toEqual(workspaceId)
-    expect(component.originallyAssignedTo).toEqual('Workspace')
+    expect(component.formGroup.value['appId']).toEqual(appId)
+    expect(component.formGroup.value['workspaceName']).toEqual(workspaceName)
     expect(result).not.toBeDefined()
   })
 
@@ -216,54 +179,12 @@ describe('AnnouncementDetailComponent', () => {
     component.ngOnChanges()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'SEARCH.MSG_SEARCH_FAILED'
+      summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED'
     })
   })
 
-  it('should set originallyAssignedTo to "App" if announcement has certain appId', () => {
-    component.changeMode = 'NEW'
-    component.announcement = { id: 'test id', appId: 'non-uuid-app-id' }
-
-    component.ngOnChanges()
-
-    expect(component.originallyAssignedTo).toEqual('App')
-  })
-
-  it('should restore the original value in assignedToChange if no change and value is "App"', () => {
-    component.formGroup = formGroup
-    component.announcement = { id: 'test id', appId: 'app id' }
-    const event = { value: 'App' }
-    component.originallyAssignedTo = 'App'
-
-    component.assignedToChange(event)
-
-    expect(component.formGroup.value['appId']).toEqual(component.announcement.appId)
-  })
-
-  it('should restore the original value in assignedToChange if no change and value is "Workspace"', () => {
-    component.formGroup = formGroup
-    component.announcement = { id: 'test id', appId: 'app id' }
-    const event = { value: 'Workspace' }
-    component.originallyAssignedTo = 'Workspace'
-
-    component.assignedToChange(event)
-
-    expect(component.formGroup.value['portalId']).toEqual(component.announcement.appId)
-  })
-
-  it('should clear the appId value in assignedToChange if change is made', () => {
-    component.formGroup = formGroup
-    component.announcement = { id: 'test id', appId: 'app id' }
-    const event = { value: 'Workspace' }
-    component.originallyAssignedTo = 'other'
-
-    component.assignedToChange(event)
-
-    expect(component.formGroup.value['appId']).toBeNull()
-  })
-
   it('should create an announcement onSave in new mode', () => {
-    apiServiceSpy.addAnnouncement.and.returnValue(of({}))
+    apiServiceSpy.createAnnouncement.and.returnValue(of({}))
     component.changeMode = 'NEW'
     spyOn(component.hideDialogAndChanged, 'emit')
     component.formGroup = formGroup
@@ -271,13 +192,13 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.SUCCESSFUL_ANNOUNCEMENT_CREATED'
+      summaryKey: 'ACTIONS.CREATE.MESSAGE.OK'
     })
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
   })
 
   it('should handle api call error in new mode', () => {
-    apiServiceSpy.addAnnouncement.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => new Error()))
     component.changeMode = 'NEW'
     component.formGroup = formGroup
 
@@ -285,7 +206,7 @@ describe('AnnouncementDetailComponent', () => {
 
     expect(component.formGroup.valid).toBeTrue()
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_CREATE_ERROR'
+      summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK'
     })
   })
 
@@ -299,7 +220,7 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.success).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.SUCCESSFUL_ANNOUNCEMENT_UPDATE'
+      summaryKey: 'ACTIONS.EDIT.MESSAGE.OK'
     })
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
   })
@@ -313,28 +234,26 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_UPDATE_ERROR'
+      summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK'
     })
   })
 
-  it('should handle formGroup values in submitFormGroupValues: portalId is "all"', () => {
+  it('should handle formGroup values in submitFormValues: workspaceName is "all"', () => {
     component.formGroup = formGroup
-    component.formGroup.patchValue({ assignedTo: 'Workspace' })
-    component.formGroup.patchValue({ portalId: 'all' })
+    component.formGroup.patchValue({ workspaceName: 'all' })
 
-    const result = (component as any).submitFormGroupValues()
+    const result = (component as any).submitFormValues()
 
-    expect(result.appId).toBeNull()
+    expect(result.workspaceName).toBeUndefined()
   })
 
-  it('should handle formGroup values in submitFormGroupValues: portalId is not "all"', () => {
+  it('should handle formGroup values in submitFormValues: workspaceName is not "all"', () => {
     component.formGroup = formGroup
-    component.formGroup.patchValue({ assignedTo: 'Workspace' })
-    component.formGroup.patchValue({ portalId: 'portal id' })
+    component.formGroup.patchValue({ workspaceName: 'workspace name' })
 
-    const result = (component as any).submitFormGroupValues()
+    const result = (component as any).submitFormValues()
 
-    expect(result.appId).toEqual('portal id')
+    expect(result.workspaceName).toEqual('workspace name')
   })
 
   it('should display warning onSave if dateRange invalid', () => {
@@ -344,8 +263,7 @@ describe('AnnouncementDetailComponent', () => {
     component.onSave()
 
     expect(msgServiceSpy.warning).toHaveBeenCalledWith({
-      summaryKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_ERROR',
-      detailKey: 'ANNOUNCEMENT_DETAIL.ANNOUNCEMENT_DATE_HINT'
+      summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE'
     })
   })
 
@@ -394,6 +312,9 @@ describe('AnnouncementDetailComponent', () => {
     expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
   })
 
+  /**
+   * Language tests
+   */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
   })

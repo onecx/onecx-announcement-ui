@@ -20,7 +20,6 @@ model/models.ts
 model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
-model/searchAnnouncementRequest.ts
 model/updateAnnouncementRequest.ts
 param.ts
 variables.ts

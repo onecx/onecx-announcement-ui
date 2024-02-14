@@ -15,14 +15,16 @@ import { AnnouncementType } from './announcementType';
 
 
 export interface UpdateAnnouncementRequest { 
-    title?: string;
+    modificationCount: number;
+    title: string;
     content?: string;
     type?: AnnouncementType;
     priority?: AnnouncementPriorityType;
     status?: AnnouncementStatus;
-    startDate?: string;
+    startDate: string;
     endDate?: string;
     appId?: string;
+    workspaceName?: string;
 }
 
 

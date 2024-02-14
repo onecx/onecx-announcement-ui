@@ -2,53 +2,37 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { ActivatedRoute } from '@angular/router'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 
 import {
   AppStateService,
   createTranslateLoader,
-  ConfigurationService,
   Column,
   PortalMessageService,
   UserService
 } from '@onecx/portal-integration-angular'
-import { PortalService } from 'src/app/shared/services/portalService'
 import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
-import { SelectItem } from 'primeng/api'
 
 describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
   let fixture: ComponentFixture<AnnouncementSearchComponent>
-  let mockActivatedRoute: ActivatedRoute
 
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
-  const configServiceSpy = {
-    getProperty: jasmine.createSpy('getProperty').and.returnValue('123'),
-    getPortal: jasmine.createSpy('getPortal').and.returnValue({
-      themeId: '1234',
-      portalName: 'test',
-      baseUrl: '/',
-      microfrontendRegistrations: []
-    })
-  }
   const apiServiceSpy = {
-    getAnnouncements: jasmine.createSpy('getAnnouncements').and.returnValue(of({})),
-    deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({}))
+    searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
+    deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
+    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
-  const portalServiceSpy = jasmine.createSpyObj('PortalService', ['getCurrentPortalData'])
-  portalServiceSpy.getCurrentPortalData.and.returnValue(of([]))
 
   const newAnnArr: Announcement[] = [{ id: 'id', title: 'new' }]
   const resultAllAnnouncements: Announcement[] = [
-    { id: 'id1', title: 'ann1', appId: 'app1' },
-    { id: 'id2', title: 'ann2', appId: 'app2' },
-    { id: 'id3', title: 'announcement without appId' }
+    { id: 'id1', title: 'ann1', workspaceName: 'w1' },
+    { id: 'id2', title: 'ann2', workspaceName: 'w2' },
+    { id: 'id3', title: 'announcement without workspace' }
   ]
-
   const mockUserService = {
     lang$: {
       getValue: jasmine.createSpy('getValue')
@@ -71,21 +55,18 @@ describe('AnnouncementSearchComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: ConfigurationService, useValue: configServiceSpy },
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
-        { provide: PortalService, useValue: portalServiceSpy },
         { provide: UserService, useValue: mockUserService }
       ]
     }).compileComponents()
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     msgServiceSpy.info.calls.reset()
-    apiServiceSpy.getAnnouncements.calls.reset()
+    apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
+    apiServiceSpy.getAllWorkspaceNames.calls.reset()
     translateServiceSpy.get.calls.reset()
-    portalServiceSpy.getCurrentPortalData.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
@@ -103,19 +84,19 @@ describe('AnnouncementSearchComponent', () => {
     translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
     component.columns = [
       { field: 'title', header: 'TITLE', active: false },
-      { field: 'appId', header: 'ASSIGNED_TO', active: true }
+      { field: 'workspaceName', header: 'WORKSPACE', active: true }
     ]
     spyOn(component, 'search')
 
     component.ngOnInit()
 
     expect(component.search).toHaveBeenCalled()
-    expect(component.filteredColumns[0].field).toEqual('appId')
+    expect(component.filteredColumns[0].field).toEqual('workspaceName')
     expect(component.actions[0].label).toEqual('ACTIONS.CREATE.LABEL')
   })
 
   it('should correctly assign results if API call returns some data', () => {
-    apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: [{ id: 'id', title: 'new' }] }))
+    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [{ id: 'id', title: 'new' }] }))
     component.announcements = []
 
     component.search({ announcementSearchCriteria: {} })
@@ -123,22 +104,22 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.announcements[0]).toEqual({ id: 'id', title: 'new' })
   })
 
-  it('should search appId', () => {
-    apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
+  it('should search workspace', () => {
+    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
     component.announcements = []
-    component.criteria = { appId: 'app1' }
+    component.criteria = { workspaceName: 'w1' }
     const reuseCriteria = false
-    const resultApp1Announcements = { id: 'id1', title: 'ann1', appId: 'app1' }
+    const resultAnnouncements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
 
     component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
-    expect(component.announcements[0]).toEqual(resultApp1Announcements)
+    expect(component.announcements[0]).toEqual(resultAnnouncements)
   })
 
   it('should search all', () => {
-    apiServiceSpy.getAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
-    component.criteria = { appId: 'all' }
+    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
+    component.criteria = { workspaceName: 'all' }
     const resultCriteria = {
-      appId: undefined
+      workspaceName: undefined
     }
     const reuseCriteria = false
 
@@ -149,28 +130,43 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should handle empty announcements on search', () => {
     msgServiceSpy.info.calls.reset()
-    apiServiceSpy.getAnnouncements.and.returnValue(of([]))
+    apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
     component.announcements = []
 
     component.search({ announcementSearchCriteria: {} })
 
     expect(component.announcements.length).toEqual(0)
-    expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'GENERAL.SEARCH.MSG_NO_RESULTS' })
+    expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
+  })
+
+  it('should reset search criteria', () => {
+    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
+    component.announcements = []
+    component.criteria = { workspaceName: 'w1' }
+    const reuseCriteria = false
+    const resultAnnouncements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
+
+    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+    expect(component.announcements[0]).toEqual(resultAnnouncements)
+
+    component.reset()
+    expect(component.criteria).toEqual({})
+    expect(component.announcements).toEqual([])
   })
 
   it('should handle API call error', () => {
     msgServiceSpy.error.calls.reset()
-    apiServiceSpy.getAnnouncements.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => new Error()))
 
     component.search({ announcementSearchCriteria: {} })
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'GENERAL.SEARCH.MSG_SEARCH_FAILED' })
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
   })
 
   it('should use new criteria if reuseCriteria is false', () => {
-    apiServiceSpy.getAnnouncements.and.returnValue(of([]))
-    component.criteria = { appId: 'appId', title: 'title' }
-    const newCriteria = { appId: '', title: 'new title' }
+    apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
+    component.criteria = { workspaceName: 'workspaceName', title: 'title' }
+    const newCriteria = { workspaceName: '', title: 'new title' }
     const reuseCriteria = false
 
     component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)
@@ -246,7 +242,7 @@ describe('AnnouncementSearchComponent', () => {
     component.onDeleteConfirmation()
 
     // expect(component.announcements.length).toBe(0)
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ANNOUNCEMENT_OK' })
+    expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
   })
 
   it('should display error on delete announcement failure', () => {
@@ -258,7 +254,7 @@ describe('AnnouncementSearchComponent', () => {
 
     component.onDeleteConfirmation()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.ANNOUNCEMENT_NOK' })
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
   })
 
   it('should set correct values onCloseDetail', () => {
@@ -273,18 +269,18 @@ describe('AnnouncementSearchComponent', () => {
   it('should update filteredColumns onColumnsChange', () => {
     const columns: Column[] = [
       {
-        field: 'appId',
-        header: 'APPLICATION_ID'
+        field: 'workspaceName',
+        header: 'WORKSPACE'
       },
       {
         field: 'context',
         header: 'CONTEXT'
       }
     ]
-    const expectedColumn = { field: 'appId', header: 'APPLICATION_ID' }
+    const expectedColumn = { field: 'workspaceName', header: 'WORKSPACE' }
     component.columns = columns
 
-    component.onColumnsChange(['appId'])
+    component.onColumnsChange(['workspaceName'])
 
     expect(component.filteredColumns).not.toContain(columns[1])
     expect(component.filteredColumns).toEqual([jasmine.objectContaining(expectedColumn)])
@@ -309,26 +305,18 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.onCreate).toHaveBeenCalled()
   })
 
-  it('should getAvailablePortals', () => {
-    const portals = [
-      {
-        portalName: 'Portal',
-        id: 'portal'
-      }
-    ]
-    portalServiceSpy.getCurrentPortalData.and.returnValue(of(portals))
-    component.availablePortals = []
+  it('should getWorkspaces', () => {
+    const workspaces = ['w1']
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
+    component.workspaces = []
 
     component.ngOnInit()
 
-    expect(component.availablePortals).toContain({
-      label: 'Portal',
-      value: 'portal'
-    })
+    expect(component.workspaces).toContain({ label: 'w1', value: 'w1' })
   })
 
-  it('should log error if getAvailablePortals fails', () => {
-    portalServiceSpy.getCurrentPortalData.and.returnValue(throwError(() => new Error()))
+  it('should log error if getWorkspaces fails', () => {
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
 
     component.ngOnInit()
@@ -338,70 +326,39 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  it('should verify portal', () => {
-    const portals = [
-      {
-        label: 'Portal',
-        value: 'portal'
-      }
-    ]
-    component.availablePortals = portals
+  it('should verify workspace', () => {
+    const workspaces = [{ label: 'w1', value: 'w1' }]
+    component.workspaces = workspaces
 
-    const result = component.isPortal('portal')
+    const result = component.isWorkspace('w1')
 
     expect(result).toEqual(true)
   })
 
-  it('should getAppIdTranslationKey: return Every workspace', () => {
-    const result = component.getAppIdTranslationKey('all')
+  it('should verify unknown workspace', () => {
+    const workspaces = [{ label: 'w1', value: 'w1' }]
+    component.workspaces = workspaces
+
+    const result = component.isWorkspace('w2')
+
+    expect(result).toEqual(false)
+  })
+
+  it('should getTranslationKeyForNonExistingWorkspaces: return Every workspace', () => {
+    const result = component.getTranslationKeyForNonExistingWorkspaces(undefined)
 
     expect(result).toEqual('ANNOUNCEMENT.EVERY_WORKSPACE')
   })
 
-  it('should getAppIdTranslationKey: return Not found', () => {
-    const uuid = '123e4567-e89b-12d3-a456-426614174000'
-    const result = component.getAppIdTranslationKey(uuid)
+  it('should getTranslationKeyForNonExistingWorkspaces: return unknown workspace', () => {
+    const result = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
 
     expect(result).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
   })
 
-  it('should getAppIdTranslationKey: return empty string', () => {
-    const result = component.getAppIdTranslationKey('anything')
-
-    expect(result).toEqual('')
-  })
-
-  it('should getAppName', () => {
-    const portals = [
-      {
-        label: 'Portal',
-        value: 'portal'
-      }
-    ]
-    component.availablePortals = portals
-    const result = component.getAppName('portal')
-    expect(result).toEqual('Portal')
-  })
-
-  it("should receive '' from getAppName if no portal with given name could be found", () => {
-    const portals: SelectItem<any>[] = []
-    component.availablePortals = portals
-    const result = component.getAppName('portal')
-    expect(result).toEqual('')
-  })
-
-  it('should isPortal', () => {
-    const portals = [
-      {
-        label: 'Portal',
-        value: 'portal'
-      }
-    ]
-    component.availablePortals = portals
-    const result = component.isPortal('anything-else')
-    expect(result).toEqual(false)
-  })
-
+  /**
+   * Language tests
+   */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
   })

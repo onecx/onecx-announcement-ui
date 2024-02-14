@@ -10,10 +10,14 @@ tags:
 paths:
   /announcements/search:
     post:
+      x-onecx:
+        permissions:
+          announcements:
+            - read
       tags:
         - AnnouncementInternal
       summary: Find announcements by criteria
-      operationId: getAnnouncements
+      operationId: searchAnnouncements
       requestBody:
         required: true
         content:
@@ -35,10 +39,14 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /announcements:
     post:
+      x-onecx:
+        permissions:
+          announcements:
+            - write
       tags:
         - AnnouncementInternal
-      summary: Add announcement
-      operationId: addAnnouncement
+      summary: Create announcement
+      operationId: createAnnouncement
       requestBody:
         required: true
         content:
@@ -66,6 +74,10 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /announcements/appIds:
     get:
+      x-onecx:
+        permissions:
+          announcements:
+            - read
       tags:
         - AnnouncementInternal
       summary: Get all application IDs to which announcements are assigned
@@ -79,6 +91,10 @@ paths:
                 $ref: '#/components/schemas/AnnouncementApps'
   /announcements/{id}:
     get:
+      x-onecx:
+        permissions:
+          announcements:
+            - read
       tags:
         - AnnouncementInternal
       summary: Retrieve announcement by id
@@ -97,6 +113,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Announcement'
     delete:
+      x-onecx:
+        permissions:
+          announcements:
+            - delete
       tags:
         - AnnouncementInternal
       summary: Delete announcement
@@ -110,13 +130,11 @@ paths:
       responses:
         '204':
           description: No content
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
     put:
+      x-onecx:
+        permissions:
+          announcements:
+            - write
       tags:
         - AnnouncementInternal
       summary: Patch/update announcement
@@ -128,6 +146,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -145,6 +164,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/workspaces:
+    get:
+      x-onecx:
+        permissions:
+          announcements:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: retrieve list of all existing workspace names
+      operationId: getAllWorkspaceNames
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
 components:
   schemas:
     AnnouncementApps:
@@ -154,8 +192,15 @@ components:
           type: array
           items:
             type: string
+        workspaceNames:
+          type: array
+          items:
+            type: string
     CreateAnnouncementRequest:
       type: object
+      required:
+        - title
+        - startDate
       properties:
         title:
           type: string
@@ -173,23 +218,11 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         appId:
           type: string
-    SearchAnnouncementRequest:
+        workspaceName:
+          type: string
+    AnnouncementSearchCriteria:
       type: object
       properties:
-        creationDateFrom:
-          $ref: '#/components/schemas/OffsetDateTime'
-        creationDateTo:
-          $ref: '#/components/schemas/OffsetDateTime'
-        creationUser:
-          type: string
-        modificationDateFrom:
-          $ref: '#/components/schemas/OffsetDateTime'
-        modificationDateTo:
-          $ref: '#/components/schemas/OffsetDateTime'
-        modificationUser:
-          type: string
-        id:
-          type: string
         title:
           type: string
         content:
@@ -210,6 +243,8 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         appId:
           type: string
+        workspaceName:
+          type: string
         pageNumber:
           format: int32
           description: The number of page.
@@ -222,7 +257,14 @@ components:
           type: integer
     UpdateAnnouncementRequest:
       type: object
+      required:
+        - title
+        - startDate
+        - modificationCount
       properties:
+        modificationCount:
+          format: int32
+          type: integer
         title:
           type: string
         content:
@@ -239,10 +281,12 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         appId:
           type: string
+        workspaceName:
+          type: string
     Announcement:
       type: object
       properties:
-        version:
+        modificationCount:
           format: int32
           type: integer
         creationDate:
@@ -270,6 +314,8 @@ components:
         endDate:
           $ref: '#/components/schemas/OffsetDateTime'
         appId:
+          type: string
+        workspaceName:
           type: string
     AnnouncementPageResult:
       type: object
@@ -341,36 +387,3 @@ components:
           type: string
         message:
           type: string
-    AnnouncementSearchCriteria:
-      type: object
-      properties:
-        title:
-          type: string
-        content:
-          type: string
-        type:
-          $ref: '#/components/schemas/AnnouncementType'
-        priority:
-          $ref: '#/components/schemas/AnnouncementPriorityType'
-        status:
-          $ref: '#/components/schemas/AnnouncementStatus'
-        startDateFrom:
-          $ref: '#/components/schemas/OffsetDateTime'
-        startDateTo:
-          $ref: '#/components/schemas/OffsetDateTime'
-        endDateFrom:
-          $ref: '#/components/schemas/OffsetDateTime'
-        endDateTo:
-          $ref: '#/components/schemas/OffsetDateTime'
-        appId:
-          type: string
-        pageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        pageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          type: integer
