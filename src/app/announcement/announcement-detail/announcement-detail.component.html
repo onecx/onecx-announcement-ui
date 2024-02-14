@@ -98,7 +98,7 @@
           </div>
         </div>
         <div class="col-7 sm:col-5 p-0 sm:pl-3">
-          <span class="p-float-label">
+          <span class="p-float-label" controlErrorAnchor>
             <p-calendar
               id="announcement_detail_form_endDate"
               type="text"
@@ -133,8 +133,11 @@
           </div>
         </div>
         <label
-          *ngIf="formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange')"
-          class="col-12 py-0 pl-0 sm:pl-3 control-error"
+          *ngIf="
+            formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange') ||
+            formGroup.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
+          "
+          class="col-12 py-0 ml-1 sm:pl-3 control-error"
         >
           {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
         </label>

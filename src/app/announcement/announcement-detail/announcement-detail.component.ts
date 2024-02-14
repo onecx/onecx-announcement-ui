@@ -75,6 +75,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       endDate: new FormControl(null)
     })
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
+    this.formGroup.controls['endDate'].addValidators([dateRangeValidator(this.formGroup)])
     this.autoResize = true
   }
 
