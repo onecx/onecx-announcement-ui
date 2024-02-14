@@ -56,21 +56,19 @@
       </div>
 
       <div class="w-full mb-2 mt-1 sm:mt-2">
-        <span class="p-float-label" controlErrorAnchor>
+        <span class="p-float-label">
           <p-dropdown
-            id="announcement_detail_form_workspaceName"
+            id="announcement_detail_form_workspace_name"
             class="input-field"
             styleClass="w-full"
             [options]="workspaces"
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
             formControlName="workspaceName"
-            [filter]="true"
-            filterBy="label"
             [title]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
           >
           </p-dropdown>
-          <label for="announcement_detail_form_form_workspaceName"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
+          <label for="announcement_detail_form_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
         </span>
       </div>
 

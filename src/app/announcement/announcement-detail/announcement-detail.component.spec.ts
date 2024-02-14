@@ -238,20 +238,20 @@ describe('AnnouncementDetailComponent', () => {
     })
   })
 
-  it('should handle formGroup values in submitFormGroupValues: workspaceName is "all"', () => {
+  it('should handle formGroup values in submitFormValues: workspaceName is "all"', () => {
     component.formGroup = formGroup
     component.formGroup.patchValue({ workspaceName: 'all' })
 
-    const result = (component as any).submitFormGroupValues()
+    const result = (component as any).submitFormValues()
 
-    expect(result.workspaceName).toBeNull()
+    expect(result.workspaceName).toBeUndefined()
   })
 
-  it('should handle formGroup values in submitFormGroupValues: workspaceName is not "all"', () => {
+  it('should handle formGroup values in submitFormValues: workspaceName is not "all"', () => {
     component.formGroup = formGroup
     component.formGroup.patchValue({ workspaceName: 'workspace name' })
 
-    const result = (component as any).submitFormGroupValues()
+    const result = (component as any).submitFormValues()
 
     expect(result.workspaceName).toEqual('workspace name')
   })

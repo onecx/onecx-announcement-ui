@@ -134,12 +134,13 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       startDate: this.announcement?.startDate ? new Date(this.announcement.startDate) : null,
       endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
     })
+    if (!this.announcement?.workspaceName) this.formGroup.controls['workspaceName'].setValue('all')
   }
 
   private getWorkspaces(dropdownDefault: string): void {
     this.workspaces.push({
       label: dropdownDefault,
-      value: null
+      value: 'all'
     })
     this.announcementApi.getAllWorkspaceNames().subscribe({
       next: (workspaces) => {
@@ -164,7 +165,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         this.announcementApi
           .updateAnnouncementById({
             id: this.announcementId,
-            updateAnnouncementRequest: this.submitFormGroupValues() as UpdateAnnouncementRequest
+            updateAnnouncementRequest: this.submitFormValues() as UpdateAnnouncementRequest
           })
           .subscribe({
             next: () => {
@@ -176,7 +177,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       } else if (this.changeMode === 'NEW') {
         this.announcementApi
           .createAnnouncement({
-            createAnnouncementRequest: this.submitFormGroupValues() as CreateAnnouncementRequest
+            createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest
           })
           .subscribe({
             next: () => {
@@ -189,11 +190,12 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     }
   }
 
-  private submitFormGroupValues(): any {
-    if (this.formGroup.controls['workspaceName'].value === 'all') {
-      this.formGroup.controls['workspaceName'].setValue(null)
+  private submitFormValues(): any {
+    const announcement: Announcement = { ...this.formGroup.value }
+    if (announcement.workspaceName === 'all') {
+      announcement.workspaceName = undefined
     }
-    return this.formGroup.value
+    return announcement
   }
 
   /****************************************************************************
