@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { finalize } from 'rxjs'
+import { Observable, finalize, map } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
@@ -13,7 +13,13 @@ import {
 } from 'src/app/shared/generated'
 import { limitText } from 'src/app/shared/utils'
 
-type ExtendedColumn = Column & { isDate?: boolean; isDropdown?: true; css?: string; limit?: boolean }
+type ExtendedColumn = Column & {
+  hasFilter?: boolean
+  isDate?: boolean
+  isDropdown?: true
+  css?: string
+  limit?: boolean
+}
 type ChangeMode = 'VIEW' | 'NEW' | 'EDIT'
 
 @Component({
@@ -26,6 +32,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public changeMode: ChangeMode = 'NEW'
   public actions: Action[] = []
+  public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
   public announcement: Announcement | undefined
   public announcements: Announcement[] = []
@@ -86,6 +93,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden sm:table-cell',
+      hasFilter: true,
       isDate: true
     },
     {
@@ -94,6 +102,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden sm:table-cell',
+      hasFilter: true,
       isDate: true
     }
   ]
@@ -104,27 +113,39 @@ export class AnnouncementSearchComponent implements OnInit {
     private msgService: PortalMessageService,
     private translate: TranslateService
   ) {
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'medium'
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
   }
 
   ngOnInit(): void {
+    this.prepareDialogTranslations()
+    this.prepareActionButtons()
     this.search({ announcementSearchCriteria: {} })
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
     })
-    this.translate
-      .get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP', 'ANNOUNCEMENT.EVERY_WORKSPACE'])
-      .subscribe((data) => {
-        this.actions.push({
-          label: data['ACTIONS.CREATE.LABEL'],
-          title: data['ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP'],
-          actionCallback: () => this.onCreate(),
-          icon: 'pi pi-plus',
-          show: 'always',
-          permission: 'ANNOUNCEMENT#EDIT'
-        })
-        this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+  }
+
+  private prepareDialogTranslations(): void {
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+      this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+    })
+  }
+
+  private prepareActionButtons(): void {
+    this.actions$ = this.translate.get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP']).pipe(
+      map((data) => {
+        return [
+          {
+            label: data['ACTIONS.CREATE.LABEL'],
+            title: data['ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP'],
+            actionCallback: () => this.onCreate(),
+            icon: 'pi pi-plus',
+            show: 'always',
+            permission: 'ANNOUNCEMENT#EDIT'
+          }
+        ]
       })
+    )
   }
 
   public onCloseDetail(refresh: boolean): void {

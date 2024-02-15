@@ -81,7 +81,6 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should call search OnInit and populate filteredColumns/actions correctly', () => {
-    translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
     component.columns = [
       { field: 'title', header: 'TITLE', active: false },
       { field: 'workspaceName', header: 'WORKSPACE', active: true }
@@ -92,7 +91,6 @@ describe('AnnouncementSearchComponent', () => {
 
     expect(component.search).toHaveBeenCalled()
     expect(component.filteredColumns[0].field).toEqual('workspaceName')
-    expect(component.actions[0].label).toEqual('ACTIONS.CREATE.LABEL')
   })
 
   it('should correctly assign results if API call returns some data', () => {
@@ -299,8 +297,9 @@ describe('AnnouncementSearchComponent', () => {
     spyOn(component, 'onCreate')
 
     component.ngOnInit()
-    const action = component.actions[0]
-    action.actionCallback()
+    component.actions$?.subscribe((action) => {
+      action[0].actionCallback()
+    })
 
     expect(component.onCreate).toHaveBeenCalled()
   })
@@ -360,7 +359,7 @@ describe('AnnouncementSearchComponent', () => {
    * Language tests
    */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
-    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
 
   it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
@@ -368,6 +367,6 @@ describe('AnnouncementSearchComponent', () => {
     fixture = TestBed.createComponent(AnnouncementSearchComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    expect(component.dateFormat).toEqual('medium')
+    expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
   })
 })

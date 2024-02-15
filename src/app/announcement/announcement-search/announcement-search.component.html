@@ -1,6 +1,6 @@
 <ocx-portal-page permission="ANNOUNCEMENT#SEARCH" helpArticleId="PAGE_ANNOUNCEMENT_SEARCH">
   <app-announcement-criteria
-    [actions]="actions"
+    [actions]="(actions$ | async) ?? []"
     [workspaces]="workspaces"
     (criteriaEmitter)="search($event)"
     (resetSearchEmitter)="reset()"
@@ -14,6 +14,7 @@
       [columns]="filteredColumns"
       styleClass="p-datatable-striped"
       dataKey="id"
+      [globalFilterFields]="['title', 'workspaceName']"
       [reorderableColumns]="false"
       [paginator]="true"
       [alwaysShowPaginator]="true"
@@ -27,8 +28,10 @@
           [enableFiltering]="true"
           [enableSorting]="false"
           [columnDefinitions]="columns"
+          [columnTemplates]="[]"
           (columnsChange)="onColumnsChange($event)"
           (filterChange)="onFilterChange($event)"
+          [filterColumns]="['ANNOUNCEMENT.TITLE' | translate, 'ANNOUNCEMENT.WORKSPACE' | translate]"
         ></ocx-data-view-controls>
       </ng-template>
       <ng-template pTemplate="paginatorleft" let-state>
@@ -55,7 +58,7 @@
           >
             {{ col.translationPrefix + '.' + col.header | translate }}
             <p-sortIcon [field]="col.field"></p-sortIcon>
-            <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter>
+            <p-columnFilter *ngIf="col.hasFilter" type="text" [field]="col.field" display="menu"></p-columnFilter>
           </th>
         </tr>
       </ng-template>

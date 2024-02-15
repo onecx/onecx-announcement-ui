@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { SelectItem } from 'primeng/api'
 
 import { AppStateService, UserService, createTranslateLoader } from '@onecx/portal-integration-angular'
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
@@ -120,6 +121,26 @@ describe('AnnouncementCriteriaComponent', () => {
     component.resetCriteria()
 
     expect(component.resetSearchEmitter.emit).toHaveBeenCalled()
+  })
+
+  it('should load dropdown lists with translations', () => {
+    let data2: SelectItem[] = []
+    component.type$?.subscribe((data) => {
+      data2 = data
+    })
+    expect(data2.length).toBeGreaterThanOrEqual(3)
+
+    data2 = []
+    component.priorityType$?.subscribe((data) => {
+      data2 = data
+    })
+    expect(data2.length).toBeGreaterThanOrEqual(3)
+
+    data2 = []
+    component.statusOptions$?.subscribe((data) => {
+      data2 = data
+    })
+    expect(data2.length).toBeGreaterThanOrEqual(2)
   })
 
   /**

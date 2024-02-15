@@ -42,9 +42,10 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   announcementDeleteVisible = false
   workspaces: SelectItem[] = []
   actions: Action[] = []
+  public today = new Date()
   public dateFormat: string
-  isLoading = false
-  displayDateRangeError = false
+  public isLoading = false
+  public displayDateRangeError = false
   // form
   formGroup: FormGroup
   autoResize!: boolean
@@ -59,7 +60,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private msgService: PortalMessageService
   ) {
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'medium'
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
     this.prepareDropDownOptions()
     this.formGroup = fb.nonNullable.group({
       id: new FormControl(null),
