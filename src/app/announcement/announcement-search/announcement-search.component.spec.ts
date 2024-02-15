@@ -23,11 +23,12 @@ describe('AnnouncementSearchComponent', () => {
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
     deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
+    getAllAppsWithAnnouncements: jasmine.createSpy('getAllAppsWithAnnouncements').and.returnValue(of({})),
     getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
-  const newAnnArr: Announcement[] = [{ id: 'id', title: 'new' }]
+  const newAnnArray: Announcement[] = [{ id: 'id', title: 'new' }]
   const resultAllAnnouncements: Announcement[] = [
     { id: 'id1', title: 'ann1', workspaceName: 'w1' },
     { id: 'id2', title: 'ann2', workspaceName: 'w2' },
@@ -65,7 +66,7 @@ describe('AnnouncementSearchComponent', () => {
     msgServiceSpy.info.calls.reset()
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
-    apiServiceSpy.getAllWorkspaceNames.calls.reset()
+    apiServiceSpy.getAllAppsWithAnnouncements.calls.reset()
     translateServiceSpy.get.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
@@ -81,7 +82,6 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should call search OnInit and populate filteredColumns/actions correctly', () => {
-    translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
     component.columns = [
       { field: 'title', header: 'TITLE', active: false },
       { field: 'workspaceName', header: 'WORKSPACE', active: true }
@@ -92,7 +92,6 @@ describe('AnnouncementSearchComponent', () => {
 
     expect(component.search).toHaveBeenCalled()
     expect(component.filteredColumns[0].field).toEqual('workspaceName')
-    expect(component.actions[0].label).toEqual('ACTIONS.CREATE.LABEL')
   })
 
   it('should correctly assign results if API call returns some data', () => {
@@ -198,12 +197,12 @@ describe('AnnouncementSearchComponent', () => {
     spyOn(ev, 'stopPropagation')
     const mode = 'EDIT'
 
-    component.onDetail(ev, newAnnArr[0], mode)
+    component.onDetail(ev, newAnnArray[0], mode)
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual(mode)
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArr[0])
+    expect(component.announcement).toBe(newAnnArray[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
@@ -211,12 +210,12 @@ describe('AnnouncementSearchComponent', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
 
-    component.onCopy(ev, newAnnArr[0])
+    component.onCopy(ev, newAnnArray[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual('NEW')
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArr[0])
+    expect(component.announcement).toBe(newAnnArray[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
@@ -224,25 +223,31 @@ describe('AnnouncementSearchComponent', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
 
-    component.onDelete(ev, newAnnArr[0])
+    component.onDelete(ev, newAnnArray[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArr[0])
+    expect(component.announcement).toBe(newAnnArray[0])
     expect(component.displayDeleteDialog).toBeTrue()
   })
 
-  it('should delete announcement item', () => {
+  it('should delete announcement item with/without workspace', () => {
+    const ev: MouseEvent = new MouseEvent('type')
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
-    component.announcement = {
-      id: 'definedHere'
-    }
-    component.announcements = newAnnArr
-
+    component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
+    component.announcements = [
+      { id: 'a1', title: 'a1' },
+      { id: 'a2', title: 'a2', workspaceName: 'workspace' }
+    ]
+    component.onDelete(ev, component.announcements[0])
     component.onDeleteConfirmation()
 
-    // expect(component.announcements.length).toBe(0)
+    expect(component.announcements.length).toBe(1)
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
+
+    component.onDelete(ev, component.announcements[0])
+    component.onDeleteConfirmation()
+    expect(component.announcements.length).toBe(0)
   })
 
   it('should display error on delete announcement failure', () => {
@@ -250,7 +255,7 @@ describe('AnnouncementSearchComponent', () => {
     component.announcement = {
       id: 'definedHere'
     }
-    component.announcements = newAnnArr
+    component.announcements = newAnnArray
 
     component.onDeleteConfirmation()
 
@@ -299,23 +304,48 @@ describe('AnnouncementSearchComponent', () => {
     spyOn(component, 'onCreate')
 
     component.ngOnInit()
-    const action = component.actions[0]
-    action.actionCallback()
+    component.actions$?.subscribe((action) => {
+      action[0].actionCallback()
+    })
 
     expect(component.onCreate).toHaveBeenCalled()
   })
 
-  it('should getWorkspaces', () => {
-    const workspaces = ['w1']
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
-    component.workspaces = []
+  /**
+   * test workspaces: used and all
+   */
+  it('should get workspaces used by announcements (getUsedWorkspaces)', () => {
+    const apps = { appIds: [], workspaceNames: ['w1'] }
+    apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(of(apps))
+    component.usedWorkspaces = []
 
     component.ngOnInit()
 
-    expect(component.workspaces).toContain({ label: 'w1', value: 'w1' })
+    expect(component.usedWorkspaces).toContain({ label: 'w1', value: 'w1' })
   })
 
-  it('should log error if getWorkspaces fails', () => {
+  it('should log error if getUsedWorkspaces fails', () => {
+    apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(throwError(() => new Error()))
+    spyOn(console, 'error')
+
+    component.ngOnInit()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+    })
+  })
+
+  it('should get all existing workspaces (getAllWorkspaceNames)', () => {
+    const workspaceNames = ['w1', 'w2']
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaceNames))
+    component.allWorkspaces = []
+
+    component.ngOnInit()
+
+    expect(component.allWorkspaces).toContain(workspaceNames[0])
+  })
+
+  it('should log error if getAllWorkspaceNames fails', () => {
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
 
@@ -327,17 +357,17 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should verify workspace', () => {
-    const workspaces = [{ label: 'w1', value: 'w1' }]
-    component.workspaces = workspaces
+    const workspaces = ['w1']
+    component.allWorkspaces = workspaces
 
-    const result = component.isWorkspace('w1')
+    const result = component.isWorkspace(workspaces[0])
 
     expect(result).toEqual(true)
   })
 
   it('should verify unknown workspace', () => {
-    const workspaces = [{ label: 'w1', value: 'w1' }]
-    component.workspaces = workspaces
+    const workspaces = ['w1']
+    component.allWorkspaces = workspaces
 
     const result = component.isWorkspace('w2')
 
@@ -360,7 +390,7 @@ describe('AnnouncementSearchComponent', () => {
    * Language tests
    */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
-    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
 
   it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
@@ -368,6 +398,6 @@ describe('AnnouncementSearchComponent', () => {
     fixture = TestBed.createComponent(AnnouncementSearchComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    expect(component.dateFormat).toEqual('medium')
+    expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
   })
 })

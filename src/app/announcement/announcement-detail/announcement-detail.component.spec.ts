@@ -316,7 +316,7 @@ describe('AnnouncementDetailComponent', () => {
    * Language tests
    */
   it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
-    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm:ss')
+    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
 
   it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
@@ -324,6 +324,6 @@ describe('AnnouncementDetailComponent', () => {
     fixture = TestBed.createComponent(AnnouncementDetailComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    expect(component.dateFormat).toEqual('medium')
+    expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
   })
 })

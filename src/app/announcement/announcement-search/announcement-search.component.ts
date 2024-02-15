@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { finalize } from 'rxjs'
+import { Observable, finalize, map } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
@@ -13,7 +13,13 @@ import {
 } from 'src/app/shared/generated'
 import { limitText } from 'src/app/shared/utils'
 
-type ExtendedColumn = Column & { isDate?: boolean; isDropdown?: true; css?: string; limit?: boolean }
+type ExtendedColumn = Column & {
+  hasFilter?: boolean
+  isDate?: boolean
+  isDropdown?: true
+  css?: string
+  limit?: boolean
+}
 type ChangeMode = 'VIEW' | 'NEW' | 'EDIT'
 
 @Component({
@@ -25,7 +31,7 @@ export class AnnouncementSearchComponent implements OnInit {
   @ViewChild('announcementTable', { static: false }) announcementTable: Table | undefined
 
   public changeMode: ChangeMode = 'NEW'
-  public actions: Action[] = []
+  public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
   public announcement: Announcement | undefined
   public announcements: Announcement[] = []
@@ -35,7 +41,8 @@ export class AnnouncementSearchComponent implements OnInit {
   public searching = false
   public loading = false
   public dateFormat: string
-  public workspaces: SelectItem[] = []
+  public usedWorkspaces: SelectItem[] = []
+  public allWorkspaces: string[] = []
   public nonExistingPortalIds = ['all', 'ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND']
   public filteredColumns: Column[] = []
 
@@ -86,6 +93,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden sm:table-cell',
+      hasFilter: true,
       isDate: true
     },
     {
@@ -94,6 +102,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden sm:table-cell',
+      hasFilter: true,
       isDate: true
     }
   ]
@@ -104,32 +113,42 @@ export class AnnouncementSearchComponent implements OnInit {
     private msgService: PortalMessageService,
     private translate: TranslateService
   ) {
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'medium'
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
   }
 
   ngOnInit(): void {
+    this.getUsedWorkspaces()
+    this.getAllWorkspaces()
+    this.prepareActionButtons()
     this.search({ announcementSearchCriteria: {} })
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
     })
-    this.translate
-      .get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP', 'ANNOUNCEMENT.EVERY_WORKSPACE'])
-      .subscribe((data) => {
-        this.actions.push({
-          label: data['ACTIONS.CREATE.LABEL'],
-          title: data['ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP'],
-          actionCallback: () => this.onCreate(),
-          icon: 'pi pi-plus',
-          show: 'always',
-          permission: 'ANNOUNCEMENT#EDIT'
-        })
-        this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+  }
+
+  private prepareActionButtons(): void {
+    this.actions$ = this.translate.get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP']).pipe(
+      map((data) => {
+        return [
+          {
+            label: data['ACTIONS.CREATE.LABEL'],
+            title: data['ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP'],
+            actionCallback: () => this.onCreate(),
+            icon: 'pi pi-plus',
+            show: 'always',
+            permission: 'ANNOUNCEMENT#EDIT'
+          }
+        ]
       })
+    )
   }
 
   public onCloseDetail(refresh: boolean): void {
     this.displayDetailDialog = false
-    if (refresh) this.search({ announcementSearchCriteria: {} }, true)
+    if (refresh) {
+      this.search({ announcementSearchCriteria: {} }, true)
+      this.getUsedWorkspaces()
+    }
   }
 
   public onSearch(): void {
@@ -206,6 +225,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
   public onDeleteConfirmation(): void {
     if (this.announcement?.id) {
+      const workspaceUsed = this.announcement?.workspaceName !== undefined
       this.announcementApi.deleteAnnouncementById({ id: this.announcement?.id }).subscribe({
         next: () => {
           this.displayDeleteDialog = false
@@ -213,36 +233,58 @@ export class AnnouncementSearchComponent implements OnInit {
           this.announcement = undefined
           this.appsChanged = true
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
+          if (workspaceUsed) this.getUsedWorkspaces()
         },
         error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
       })
     }
   }
 
-  private getWorkspaces(dropdownDefault?: string) {
-    this.workspaces.push({
-      label: dropdownDefault,
-      value: 'all'
-    })
-    this.announcementApi.getAllWorkspaceNames().subscribe({
-      next: (workspaces) => {
-        for (let workspace of workspaces) {
-          this.workspaces.push({ label: workspace, value: workspace })
-        }
-      },
-      error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+  // used in search criteria
+  private getUsedWorkspaces(): void {
+    this.usedWorkspaces = []
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+      this.usedWorkspaces.push({
+        label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
+        value: 'all'
+      })
+      this.announcementApi.getAllAppsWithAnnouncements().subscribe({
+        next: (apps) => {
+          if (apps?.workspaceNames)
+            for (let workspace of apps.workspaceNames) {
+              this.usedWorkspaces.push({ label: workspace, value: workspace })
+            }
+        },
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+      })
     })
   }
 
-  // in list of workspaces?
+  // used in search results
+  private getAllWorkspaces() {
+    this.allWorkspaces = []
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+      this.allWorkspaces.push(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+      this.announcementApi.getAllWorkspaceNames().subscribe({
+        next: (workspaces) => {
+          for (let workspace of workspaces) {
+            this.allWorkspaces.push(workspace)
+          }
+        },
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+      })
+    })
+  }
+
+  // workspace in list of all workspaces?
   public isWorkspace(workspaceName?: string): boolean {
-    if (workspaceName && this.workspaces.find(({ value }) => value === workspaceName)) {
+    if (workspaceName && this.allWorkspaces.includes(workspaceName)) {
       return true
     }
     return false
   }
 
-  // if not in list of workspaces then get the suitable translation key
+  // if not in list of all workspaces then get the suitable translation key
   public getTranslationKeyForNonExistingWorkspaces(workspaceName?: string): string {
     if (workspaceName && workspaceName?.length > 0) {
       return 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
