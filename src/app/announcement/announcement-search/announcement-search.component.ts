@@ -240,16 +240,17 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  private getWorkspaces(dropdownDefault?: string) {
+  public getWorkspaces(dropdownDefault?: string) {
     this.workspaces.push({
       label: dropdownDefault,
       value: 'all'
     })
-    this.announcementApi.getAllWorkspaceNames().subscribe({
-      next: (workspaces) => {
-        for (let workspace of workspaces) {
-          this.workspaces.push({ label: workspace, value: workspace })
-        }
+    this.announcementApi.getAllAppsWithAnnouncements().subscribe({
+      next: (apps) => {
+        if (apps?.workspaceNames)
+          for (let workspace of apps?.workspaceNames) {
+            this.workspaces.push({ label: workspace, value: workspace })
+          }
       },
       error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
     })

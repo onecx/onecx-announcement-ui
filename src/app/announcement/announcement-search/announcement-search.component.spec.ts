@@ -23,7 +23,7 @@ describe('AnnouncementSearchComponent', () => {
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
     deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
-    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
+    getAllAppsWithAnnouncements: jasmine.createSpy('getAllAppsWithAnnouncements').and.returnValue(of([]))
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
@@ -65,7 +65,7 @@ describe('AnnouncementSearchComponent', () => {
     msgServiceSpy.info.calls.reset()
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
-    apiServiceSpy.getAllWorkspaceNames.calls.reset()
+    apiServiceSpy.getAllAppsWithAnnouncements.calls.reset()
     translateServiceSpy.get.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
@@ -304,9 +304,9 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.onCreate).toHaveBeenCalled()
   })
 
-  it('should getWorkspaces', () => {
-    const workspaces = ['w1']
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
+  it('should get workspaces used by announcements ', () => {
+    const apps = { appIds: [], workspaceNames: ['w1'] }
+    apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(of(apps))
     component.workspaces = []
 
     component.ngOnInit()
@@ -315,7 +315,7 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should log error if getWorkspaces fails', () => {
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
 
     component.ngOnInit()
