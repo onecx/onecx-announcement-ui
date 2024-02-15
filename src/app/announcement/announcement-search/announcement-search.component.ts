@@ -42,7 +42,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public loading = false
   public dateFormat: string
   public usedWorkspaces: SelectItem[] = []
-  public allWorkspaces: String[] = []
+  public allWorkspaces: string[] = []
   public nonExistingPortalIds = ['all', 'ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND']
   public filteredColumns: Column[] = []
 
@@ -251,7 +251,7 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.getAllAppsWithAnnouncements().subscribe({
         next: (apps) => {
           if (apps?.workspaceNames)
-            for (let workspace of apps?.workspaceNames) {
+            for (let workspace of apps.workspaceNames) {
               this.usedWorkspaces.push({ label: workspace, value: workspace })
             }
         },
