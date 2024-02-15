@@ -278,7 +278,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // workspace in list of all workspaces?
   public isWorkspace(workspaceName?: string): boolean {
-    if (workspaceName && this.allWorkspaces.includes(workspaceName ?? '')) {
+    if (workspaceName && this.allWorkspaces.includes(workspaceName)) {
       return true
     }
     return false
