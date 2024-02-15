@@ -23,11 +23,12 @@ describe('AnnouncementSearchComponent', () => {
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
     deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
-    getAllAppsWithAnnouncements: jasmine.createSpy('getAllAppsWithAnnouncements').and.returnValue(of([]))
+    getAllAppsWithAnnouncements: jasmine.createSpy('getAllAppsWithAnnouncements').and.returnValue(of({})),
+    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
-  const newAnnArr: Announcement[] = [{ id: 'id', title: 'new' }]
+  const newAnnArray: Announcement[] = [{ id: 'id', title: 'new' }]
   const resultAllAnnouncements: Announcement[] = [
     { id: 'id1', title: 'ann1', workspaceName: 'w1' },
     { id: 'id2', title: 'ann2', workspaceName: 'w2' },
@@ -196,12 +197,12 @@ describe('AnnouncementSearchComponent', () => {
     spyOn(ev, 'stopPropagation')
     const mode = 'EDIT'
 
-    component.onDetail(ev, newAnnArr[0], mode)
+    component.onDetail(ev, newAnnArray[0], mode)
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual(mode)
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArr[0])
+    expect(component.announcement).toBe(newAnnArray[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
@@ -209,12 +210,12 @@ describe('AnnouncementSearchComponent', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
 
-    component.onCopy(ev, newAnnArr[0])
+    component.onCopy(ev, newAnnArray[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual('NEW')
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArr[0])
+    expect(component.announcement).toBe(newAnnArray[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
@@ -222,25 +223,31 @@ describe('AnnouncementSearchComponent', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
 
-    component.onDelete(ev, newAnnArr[0])
+    component.onDelete(ev, newAnnArray[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArr[0])
+    expect(component.announcement).toBe(newAnnArray[0])
     expect(component.displayDeleteDialog).toBeTrue()
   })
 
-  it('should delete announcement item', () => {
+  it('should delete announcement item with/without workspace', () => {
+    const ev: MouseEvent = new MouseEvent('type')
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
-    component.announcement = {
-      id: 'definedHere'
-    }
-    component.announcements = newAnnArr
-
+    component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
+    component.announcements = [
+      { id: 'a1', title: 'a1' },
+      { id: 'a2', title: 'a2', workspaceName: 'workspace' }
+    ]
+    component.onDelete(ev, component.announcements[0])
     component.onDeleteConfirmation()
 
-    // expect(component.announcements.length).toBe(0)
+    expect(component.announcements.length).toBe(1)
     expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
+
+    component.onDelete(ev, component.announcements[0])
+    component.onDeleteConfirmation()
+    expect(component.announcements.length).toBe(0)
   })
 
   it('should display error on delete announcement failure', () => {
@@ -248,7 +255,7 @@ describe('AnnouncementSearchComponent', () => {
     component.announcement = {
       id: 'definedHere'
     }
-    component.announcements = newAnnArr
+    component.announcements = newAnnArray
 
     component.onDeleteConfirmation()
 
@@ -304,6 +311,9 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.onCreate).toHaveBeenCalled()
   })
 
+  /**
+   * test workspaces: used and all
+   */
   it('should get workspaces used by announcements (getUsedWorkspaces)', () => {
     const apps = { appIds: [], workspaceNames: ['w1'] }
     apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(of(apps))
@@ -325,6 +335,27 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
+  it('should get all existing workspaces (getAllWorkspaceNames)', () => {
+    const workspaceNames = ['w1', 'w2']
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaceNames))
+    component.allWorkspaces = []
+
+    component.ngOnInit()
+
+    expect(component.allWorkspaces).toContain(workspaceNames[0])
+  })
+
+  it('should log error if getAllWorkspaceNames fails', () => {
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
+    spyOn(console, 'error')
+
+    component.ngOnInit()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+    })
+  })
+
   it('should verify workspace', () => {
     const workspaces = ['w1']
     component.allWorkspaces = workspaces
@@ -335,7 +366,7 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should verify unknown workspace', () => {
-    const workspaces = ['w1', 'w2']
+    const workspaces = ['w1']
     component.allWorkspaces = workspaces
 
     const result = component.isWorkspace('w2')

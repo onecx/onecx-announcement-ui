@@ -118,6 +118,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUsedWorkspaces()
+    this.getAllWorkspaces()
     this.prepareActionButtons()
     this.search({ announcementSearchCriteria: {} })
     this.filteredColumns = this.columns.filter((a) => {
@@ -241,6 +242,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // used in search criteria
   private getUsedWorkspaces(): void {
+    this.usedWorkspaces = []
     this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
       this.usedWorkspaces.push({
         label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
@@ -259,22 +261,23 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // used in search results
-  public getAllWorkspaces(dropdownDefault?: string) {
+  private getAllWorkspaces() {
     this.allWorkspaces = []
-    this.announcementApi.getAllWorkspaceNames().subscribe({
-      next: (workspaces) => {
-        for (let workspace of workspaces) {
-          this.allWorkspaces.push(workspace)
-        }
-      },
-      error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+      this.allWorkspaces.push(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+      this.announcementApi.getAllWorkspaceNames().subscribe({
+        next: (workspaces) => {
+          for (let workspace of workspaces) {
+            this.allWorkspaces.push(workspace)
+          }
+        },
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+      })
     })
   }
 
   // workspace in list of all workspaces?
   public isWorkspace(workspaceName?: string): boolean {
-    console.log('this.allWorkspaces', this.allWorkspaces)
-    console.log('include ' + workspaceName + '  ' + this.allWorkspaces.includes(workspaceName ?? ''))
     if (workspaceName && this.allWorkspaces.includes(workspaceName ?? '')) {
       return true
     }
