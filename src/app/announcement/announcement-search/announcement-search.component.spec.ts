@@ -304,7 +304,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.onCreate).toHaveBeenCalled()
   })
 
-  it('should get workspaces used by announcements ', () => {
+  it('should get workspaces used by announcements (getUsedWorkspaces)', () => {
     const apps = { appIds: [], workspaceNames: ['w1'] }
     apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(of(apps))
     component.workspaces = []
@@ -314,7 +314,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.workspaces).toContain({ label: 'w1', value: 'w1' })
   })
 
-  it('should log error if getWorkspaces fails', () => {
+  it('should log error if getUsedWorkspaces fails', () => {
     apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(throwError(() => new Error()))
     spyOn(console, 'error')
 
