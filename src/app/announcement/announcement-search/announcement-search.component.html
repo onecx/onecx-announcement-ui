@@ -1,7 +1,7 @@
 <ocx-portal-page permission="ANNOUNCEMENT#SEARCH" helpArticleId="PAGE_ANNOUNCEMENT_SEARCH">
   <app-announcement-criteria
     [actions]="(actions$ | async) ?? []"
-    [workspaces]="workspaces"
+    [workspaces]="usedWorkspaces"
     (criteriaEmitter)="search($event)"
     (resetSearchEmitter)="reset()"
   ></app-announcement-criteria>

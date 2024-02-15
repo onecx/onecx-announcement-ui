@@ -307,11 +307,11 @@ describe('AnnouncementSearchComponent', () => {
   it('should get workspaces used by announcements (getUsedWorkspaces)', () => {
     const apps = { appIds: [], workspaceNames: ['w1'] }
     apiServiceSpy.getAllAppsWithAnnouncements.and.returnValue(of(apps))
-    component.workspaces = []
+    component.usedWorkspaces = []
 
     component.ngOnInit()
 
-    expect(component.workspaces).toContain({ label: 'w1', value: 'w1' })
+    expect(component.usedWorkspaces).toContain({ label: 'w1', value: 'w1' })
   })
 
   it('should log error if getUsedWorkspaces fails', () => {
@@ -326,17 +326,17 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should verify workspace', () => {
-    const workspaces = [{ label: 'w1', value: 'w1' }]
-    component.workspaces = workspaces
+    const workspaces = ['w1']
+    component.allWorkspaces = workspaces
 
-    const result = component.isWorkspace('w1')
+    const result = component.isWorkspace(workspaces[0])
 
     expect(result).toEqual(true)
   })
 
   it('should verify unknown workspace', () => {
-    const workspaces = [{ label: 'w1', value: 'w1' }]
-    component.workspaces = workspaces
+    const workspaces = ['w1', 'w2']
+    component.allWorkspaces = workspaces
 
     const result = component.isWorkspace('w2')
 
