@@ -27,14 +27,6 @@ module.exports = function (config) {
     jasmineHtmlReporter: {
       suppressAll: true // removes the duplicated traces
     },
-    sonarqubeReporter: {
-      basePath: 'src/app', // test files folder
-      filePattern: '**/*.spec.ts', // test files glob pattern
-      encoding: 'utf-8', // test files encoding
-      outputFolder: 'sonar', // report destination
-      legacyMode: false, // report for Sonarqube < 6.2 (disabled)
-      reportName: 'sonarqube_report.xml'
-    },
     sonarQubeUnitReporter: {
       sonarQubeVersion: 'LATEST',
       outputFile: 'reports/sonarqube_report.xml',
