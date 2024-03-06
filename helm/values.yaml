@@ -13,7 +13,7 @@ app:
       spec:
         exposedModule: "./OneCXAnnouncementModule"
         description: "OneCX Announcement UI"
-        note: "OneCX Announcement UI module auto import via MF operator"
+        note: "OneCX Announcement UI auto import via MF operator"
     # Permission
     permission:
       enabled: true
@@ -21,38 +21,19 @@ app:
         permissions:
           ANNOUCEMENT:
             CREATE: Create announcement
-            EDIT: Edit announcement
             DELETE: Delete announcement
+            EDIT: Edit announcement
             SAVE: Update and save announcement
-            IMPORT: Import announcement
-            EXPORT: Export announcement
-            VIEW: View mode for announcement
             SEARCH: Search announcement
+            VIEW: View mode for announcement
+            EXPORT: Export announcement
+            IMPORT: Import announcement
     # Keycloak
     keycloak:
-      enabled: true
-      client: |-
-        {
-          "clientId": "onecx-announcement-ui",
-          "enabled": true,
-          "description": "Keycloak client for onecx-announcement-ui",
-          "redirectUris": ["*"],
-          "webOrigins": ["*"],
-          "publicClient": true,
-          "protocol": "openid-connect"
-        }
-      roles: |-
-        [
-           {
-             "name": "onecx-announcement-admin",
-             "description": "OneCX Announcement admin"
-           },
-           {
-             "name": "onecx-announcement-user",
-             "description": "OneCX Announcement user"
-           }
-         ]
-
+      client:
+        enabled: true
+        spec:
+          kcConfig:
+            clientId: "onecx-announcement-ui"
+            
 # PIPE Config
-
-
