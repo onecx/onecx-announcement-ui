@@ -31,6 +31,8 @@ connect.lock
 reports
 typings
 *.log
+.git
+.gitignore
 
 # e2e
 /e2e/*.js
@@ -43,6 +45,7 @@ Thumbs.db
 # Rest
 /helm
 Dockerfile
+.dockerignore
 .github
 .husky
 README.md
