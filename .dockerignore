@@ -39,3 +39,13 @@ typings
 # System Files
 .DS_Store
 Thumbs.db
+
+# Rest
+/helm
+Dockerfile
+.github
+.husky
+README.md
+.prettierignore
+.prettierrc.json
+CHANGELOG.md
