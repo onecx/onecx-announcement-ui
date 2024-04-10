@@ -13,7 +13,7 @@
         pInputText
         type="text"
         formControlName="title"
-        class="w-18rem"
+        class="w-12rem sm:w-18rem"
         [title]="'ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate"
       />
       <label for="announcement_search_criteria_title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
@@ -42,8 +42,6 @@
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
         formControlName="workspaceName"
-        [filter]="true"
-        filterBy="label"
         [title]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
       >
       </p-dropdown>
