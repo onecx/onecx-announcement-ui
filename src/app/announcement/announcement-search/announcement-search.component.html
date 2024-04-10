@@ -34,9 +34,9 @@
           [filterColumns]="['ANNOUNCEMENT.TITLE' | translate, 'ANNOUNCEMENT.WORKSPACE' | translate]"
         ></ocx-data-view-controls>
       </ng-template>
-      <ng-template pTemplate="paginatorleft" let-state>
+      <!--ng-template pTemplate="paginatorleft" let-state>
         <ocx-paging-info [resultsCount]="announcements ? announcements.length : -1" [state]="state"></ocx-paging-info>
-      </ng-template>
+      </ng-template-->
 
       <ng-template pTemplate="emptymessage">
         <tr>

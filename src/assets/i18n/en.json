@@ -97,7 +97,7 @@
     "WORKSPACE_NOT_FOUND": "-- not found --",
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",
-      "TITLE.CRITERIA": "Title of the Announcement, Wildcards supported: *, ?",
+      "TITLE.CRITERIA": "Title of the Announcement, Wildcard supported: *",
       "WORKSPACE": "Workspace for which the announcement should be applied..",
       "TYPE": "Type of the Announcement",
       "STATUS": "Status of the Announcement",
