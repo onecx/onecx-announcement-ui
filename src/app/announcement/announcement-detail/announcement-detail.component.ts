@@ -66,7 +66,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       id: new FormControl(null),
       modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),
-      content: new FormControl(null),
+      content: new FormControl(null, [Validators.maxLength(255)]),
       appId: new FormControl(null),
       workspaceName: new FormControl(null),
       type: new FormControl(null),
