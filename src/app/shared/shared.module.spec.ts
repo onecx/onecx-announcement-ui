@@ -18,7 +18,6 @@ describe('SharedModule', () => {
     httpClient = TestBed.inject(HttpClient)
   })
 
-  // TODO: correct this and do the right thing
   it('should return the correct basePath with mfeInfo', () => {
     const mfeInfo: MfeInfo = {
       mountPath: '',
@@ -31,19 +30,4 @@ describe('SharedModule', () => {
     const result = mfeInfo.remoteBaseUrl + '' + environment.apiPrefix
     expect(result).toEqual('http://localhost:4200/bff')
   })
-
-  /*
-  it('should return a translate loader', () => {
-    const mfeInfo: MfeInfo = {
-      mountPath: '',
-      remoteBaseUrl: 'http://localhost:4200/',
-      baseHref: '',
-      shellName: ''
-    }
-
-    const result = HttpLoaderFactory(httpClient, mfeInfo)
-
-    expect(result).toBeInstanceOf(TranslateCombinedLoader)
-  })
-  */
 })
