@@ -97,7 +97,7 @@
     "WORKSPACE_NOT_FOUND": "-- nicht gefunden --",
     "TOOLTIPS": {
       "TITLE": "Titel der Neuigkeit",
-      "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcards: *, ?",
+      "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
       "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
       "TYPE": "Typ der Neuigkeit",
       "STATUS": "Status der Neuigkeit",

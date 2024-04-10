@@ -1,31 +1,10 @@
+@import '/src/_mixins.scss';
+
+@include correct-search-criteria;
+@include danger-action;
+@include table-inline-buttons;
+
 :host ::ng-deep {
-  // reduce the size of buttons used inside a table row
-  th button.p-button,
-  td button.p-button {
-    &.p-button-icon-only {
-      width: unset !important;
-    }
-    &.p-button-rounded {
-      height: unset !important;
-    }
-  }
-  .p-datatable .p-sortable-column .p-sortable-column-icon {
-    margin-left: unset;
-  }
-  .p-datatable .p-datatable-thead > tr > th {
-    white-space: nowrap;
-  }
-  .p-datatable .p-datatable-tbody > tr > td {
-    min-width: 10rem;
-    &:first-of-type {
-      min-width: unset;
-    }
-  }
-
-  .danger-action-text {
-    color: var(--danger-button-bg);
-  }
-
   // responsive table result view
   @media screen and (min-width: 576px) {
     .sm\:table-cell {
