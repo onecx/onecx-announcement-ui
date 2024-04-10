@@ -24,7 +24,9 @@ describe('SharedModule', () => {
       mountPath: '',
       remoteBaseUrl: 'http://localhost:4200/',
       baseHref: '',
-      shellName: ''
+      shellName: '',
+      productName: '',
+      appId: ''
     }
     const result = mfeInfo.remoteBaseUrl + '' + environment.apiPrefix
     expect(result).toEqual('http://localhost:4200/bff')
