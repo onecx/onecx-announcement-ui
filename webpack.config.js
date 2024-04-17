@@ -5,7 +5,8 @@ const config = withModuleFederationPlugin({
   name: 'onecx-announcement-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXAnnouncementModule': 'src/app/onecx-announcement-remote.module.ts'
+    './OneCXAnnouncementModule': 'src/app/onecx-announcement-remote.module.ts',
+    './OneCXAnnouncementBannerComponent': 'src/app/remotes/announcement-banner/announcement-banner.component.ts'
   },
   shared: share({
     '@angular/core': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
