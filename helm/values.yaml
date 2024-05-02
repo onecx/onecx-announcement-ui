@@ -10,10 +10,12 @@ app:
     # Microfrontend
     microfrontend:
       enabled: true
-      spec:
-        exposedModule: "./OneCXAnnouncementModule"
-        description: "OneCX Announcement UI"
-        note: "OneCX Announcement UI auto import via MF operator"
+      specs:
+        main:
+          exposedModule: "./OneCXAnnouncementModule"
+          description: "OneCX Announcement UI"
+          note: "OneCX Announcement UI auto import via MF operator"
+          type: MODULE
     # Permission
     permission:
       enabled: true
