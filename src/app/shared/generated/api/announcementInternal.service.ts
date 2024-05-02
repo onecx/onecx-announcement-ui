@@ -19,6 +19,10 @@ import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 // @ts-ignore
+import { ActiveAnnouncementsPageResult } from '../model/activeAnnouncementsPageResult';
+// @ts-ignore
+import { ActiveAnnouncementsSearchCriteria } from '../model/activeAnnouncementsSearchCriteria';
+// @ts-ignore
 import { Announcement } from '../model/announcement';
 // @ts-ignore
 import { AnnouncementApps } from '../model/announcementApps';
@@ -48,6 +52,10 @@ export interface DeleteAnnouncementByIdRequestParams {
 
 export interface GetAnnouncementByIdRequestParams {
     id: string;
+}
+
+export interface SearchActiveAnnouncementsRequestParams {
+    activeAnnouncementsSearchCriteria: ActiveAnnouncementsSearchCriteria;
 }
 
 export interface SearchAnnouncementsRequestParams {
@@ -409,6 +417,75 @@ export class AnnouncementInternalAPIService {
         return this.httpClient.request<Announcement>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Find active announcements by criteria
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public searchActiveAnnouncements(requestParameters: SearchActiveAnnouncementsRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ActiveAnnouncementsPageResult>;
+    public searchActiveAnnouncements(requestParameters: SearchActiveAnnouncementsRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ActiveAnnouncementsPageResult>>;
+    public searchActiveAnnouncements(requestParameters: SearchActiveAnnouncementsRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ActiveAnnouncementsPageResult>>;
+    public searchActiveAnnouncements(requestParameters: SearchActiveAnnouncementsRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const activeAnnouncementsSearchCriteria = requestParameters.activeAnnouncementsSearchCriteria;
+        if (activeAnnouncementsSearchCriteria === null || activeAnnouncementsSearchCriteria === undefined) {
+            throw new Error('Required parameter activeAnnouncementsSearchCriteria was null or undefined when calling searchActiveAnnouncements.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/announcements/active/search`;
+        return this.httpClient.request<ActiveAnnouncementsPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: activeAnnouncementsSearchCriteria,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,
