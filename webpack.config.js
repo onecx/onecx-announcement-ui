@@ -31,7 +31,7 @@ const config = withModuleFederationPlugin({
       requiredVersion: 'auto',
       includeSecondaries: true
     },
-    rxjs: { singleton: true, strictVersion: true, requiredVersion: 'auto', includeSecondaries: true },
+    rxjs: { requiredVersion: 'auto', includeSecondaries: true },
     '@angular/router': { singleton: true, strictVersion: true, requiredVersion: 'auto', includeSecondaries: true },
     '@ngx-translate/core': { singleton: true, strictVersion: false, requiredVersion: '^14.0.0' },
     '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },

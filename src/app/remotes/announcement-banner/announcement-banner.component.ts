@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Component, Inject, OnInit } from '@angular/core'
+import { Component, Inject } from '@angular/core'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import {
@@ -38,7 +38,7 @@ import { environment } from 'src/environments/environment'
   ],
   templateUrl: './announcement-banner.component.html'
 })
-export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, OnInit {
+export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
   private ignoredAnnouncementsKey = 'onecx_messages_ignored_ids'
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<Announcement[]>([])
@@ -109,15 +109,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, OnI
     } catch (error) {
       console.error('Failed to hide the announcement:', error)
     }
-  }
-
-  ngOnInit() {
-    this.ocxInitRemoteComponent({
-      appId: 'announcement',
-      baseUrl: 'http://localhost:4200',
-      permissions: [],
-      productName: 'announcement'
-    })
   }
 
   getPriorityClasses(announcement: Announcement, bgOnly: boolean = false) {

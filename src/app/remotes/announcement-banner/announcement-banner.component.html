@@ -4,6 +4,7 @@
     [numVisible]="1"
     [numScroll]="1"
     *ngIf="announcements && announcements.length > 0"
+    [showIndicators]="false"
   >
     <ng-template let-announcement pTemplate="item">
       <div class="flex h-full w-full align-items-center py-4">
