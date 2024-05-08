@@ -9,17 +9,15 @@ const config = withModuleFederationPlugin({
     './OneCXAnnouncementBannerComponent': 'src/app/remotes/announcement-banner/announcement-banner.component.ts'
   },
   shared: share({
-    '@angular/core': { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    '@angular/core': { singleton: true, requiredVersion: 'auto' },
     '@angular/forms': {
       singleton: true,
-      strictVersion: true,
       requiredVersion: 'auto',
       includeSecondaries: true,
       eager: false
     },
     '@angular/common': {
       singleton: true,
-      strictVersion: true,
       requiredVersion: 'auto',
       includeSecondaries: {
         skip: ['@angular/common/http/testing']
@@ -27,17 +25,16 @@ const config = withModuleFederationPlugin({
     },
     '@angular/common/http': {
       singleton: true,
-      strictVersion: true,
       requiredVersion: 'auto',
       includeSecondaries: true
     },
+    '@angular/router': { singleton: true, requiredVersion: 'auto', includeSecondaries: true },
     rxjs: { requiredVersion: 'auto', includeSecondaries: true },
-    '@angular/router': { singleton: true, strictVersion: true, requiredVersion: 'auto', includeSecondaries: true },
-    '@ngx-translate/core': { singleton: true, strictVersion: false, requiredVersion: '^14.0.0' },
-    '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
-    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true },
+    '@ngx-translate/core': { singleton: true, requiredVersion: 'auto' },
     '@onecx/accelerator': { requiredVersion: 'auto', includeSecondaries: true },
-    '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true }
+    '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true }
   }),
   sharedMappings: ['@onecx/portal-integration-angular']
 })
