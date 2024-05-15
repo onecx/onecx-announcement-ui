@@ -1,0 +1,472 @@
+openapi: '3.0.3'
+info:
+  title: onecx-announcement-bff
+  version: '1.0'
+servers:
+  - url: https://onecx-announcement-bff:8080
+tags:
+  - name: AnnouncementInternal
+    description: Execute Announcement CRUD operations
+paths:
+  /announcements/search:
+    post:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Find announcements by criteria
+      operationId: searchAnnouncements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementSearchCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementPageResult'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/active/search:
+    post:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Find active announcements by criteria
+      operationId: searchActiveAnnouncements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActiveAnnouncementsSearchCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveAnnouncementsPageResult'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements:
+    post:
+      x-onecx:
+        permissions:
+          announcement:
+            - write
+      tags:
+        - AnnouncementInternal
+      summary: Create announcement
+      operationId: createAnnouncement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAnnouncementRequest'
+      responses:
+        '201':
+          description: OK
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: url
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/appIds:
+    get:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Get all application IDs to which announcements are assigned
+      operationId: getAllAppsWithAnnouncements
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnouncementApps'
+  /announcements/{id}:
+    get:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Retrieve announcement by id
+      operationId: getAnnouncementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+    delete:
+      x-onecx:
+        permissions:
+          announcement:
+            - delete
+      tags:
+        - AnnouncementInternal
+      summary: Delete announcement
+      operationId: deleteAnnouncementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+    put:
+      x-onecx:
+        permissions:
+          announcement:
+            - write
+      tags:
+        - AnnouncementInternal
+      summary: Patch/update announcement
+      operationId: updateAnnouncementById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAnnouncementRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Announcement'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/workspaces:
+    get:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: retrieve list of all existing workspace names
+      operationId: getAllWorkspaceNames
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+components:
+  schemas:
+    AnnouncementApps:
+      type: object
+      properties:
+        appIds:
+          type: array
+          items:
+            type: string
+        workspaceNames:
+          type: array
+          items:
+            type: string
+    CreateAnnouncementRequest:
+      type: object
+      required:
+        - title
+        - startDate
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/AnnouncementType'
+        priority:
+          $ref: '#/components/schemas/AnnouncementPriorityType'
+        status:
+          $ref: '#/components/schemas/AnnouncementStatus'
+        startDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        appId:
+          type: string
+        workspaceName:
+          type: string
+    AnnouncementSearchCriteria:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/AnnouncementType'
+        priority:
+          $ref: '#/components/schemas/AnnouncementPriorityType'
+        status:
+          $ref: '#/components/schemas/AnnouncementStatus'
+        startDateFrom:
+          $ref: '#/components/schemas/OffsetDateTime'
+        startDateTo:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDateFrom:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDateTo:
+          $ref: '#/components/schemas/OffsetDateTime'
+        appId:
+          type: string
+        workspaceName:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    UpdateAnnouncementRequest:
+      type: object
+      required:
+        - title
+        - startDate
+        - modificationCount
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/AnnouncementType'
+        priority:
+          $ref: '#/components/schemas/AnnouncementPriorityType'
+        status:
+          $ref: '#/components/schemas/AnnouncementStatus'
+        startDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        appId:
+          type: string
+        workspaceName:
+          type: string
+    Announcement:
+      type: object
+      properties:
+        modificationCount:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/AnnouncementType'
+        priority:
+          $ref: '#/components/schemas/AnnouncementPriorityType'
+        status:
+          $ref: '#/components/schemas/AnnouncementStatus'
+        startDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        endDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        appId:
+          type: string
+        workspaceName:
+          type: string
+    AnnouncementPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Announcement'
+    ActiveAnnouncementsSearchCriteria:
+      type: object
+      required:
+        - currentDate
+      properties:
+        currentDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        workspaceName:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    ActiveAnnouncementsPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementAbstract'
+    AnnouncementAbstract:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/AnnouncementType'
+        priority:
+          $ref: '#/components/schemas/AnnouncementPriorityType'
+        workspaceName:
+          type: string
+    AnnouncementPriorityType:
+      enum:
+        - IMPORTANT
+        - NORMAL
+        - LOW
+      type: string
+    AnnouncementStatus:
+      enum:
+        - ACTIVE
+        - INACTIVE
+      type: string
+    AnnouncementType:
+      enum:
+        - EVENT
+        - INFO
+        - SYSTEM_MAINTENANCE
+      type: string
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
