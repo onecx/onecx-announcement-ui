@@ -2,7 +2,7 @@ import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { Component, Inject } from '@angular/core'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
@@ -39,7 +39,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-banner.component.html'
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
-  private ignoredAnnouncementsKey = 'onecx_messages_ignored_ids'
+  private ignoredAnnouncementsKey = 'onecx_announcement_ignored_ids'
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<Announcement[]>([])
   announcements$: Observable<Announcement[]> = this.announcementsSubject.asObservable()
@@ -49,7 +49,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
     private translateService: TranslateService,
     private appConfigService: AppConfigService,
     private apiV1: AnnouncementInternalAPIService,
-    private configService: ConfigurationService,
     private appStateService: AppStateService,
     private userService: UserService
   ) {
@@ -77,15 +76,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
         )
       )
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
-  }
-
-  private getIgnoredAnnouncementsIds(): string[] {
-    try {
-      const ignored = localStorage.getItem('onecx_messages_ignored_ids')
-      return ignored ? JSON.parse(ignored) : []
-    } catch {
-      return []
-    }
   }
 
   ocxInitRemoteComponent(config: RemoteComponentConfig): void {
@@ -119,6 +109,15 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
         return bgOnly ? 'bg-orange-800' : 'bg-orange-200 text-orange-800'
       default:
         return bgOnly ? 'bg-green-800' : 'bg-green-200 text-green-800'
+    }
+  }
+
+  private getIgnoredAnnouncementsIds(): string[] {
+    try {
+      const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)
+      return ignored ? JSON.parse(ignored) : []
+    } catch {
+      return []
     }
   }
 }
