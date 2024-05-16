@@ -12,7 +12,7 @@ paths:
     post:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - read
       tags:
         - AnnouncementInternal
@@ -37,11 +37,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/active/search:
+    post:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Find active announcements by criteria
+      operationId: searchActiveAnnouncements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActiveAnnouncementsSearchCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveAnnouncementsPageResult'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /announcements:
     post:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - write
       tags:
         - AnnouncementInternal
@@ -76,7 +105,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - read
       tags:
         - AnnouncementInternal
@@ -93,7 +122,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - read
       tags:
         - AnnouncementInternal
@@ -115,7 +144,7 @@ paths:
     delete:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - delete
       tags:
         - AnnouncementInternal
@@ -133,7 +162,7 @@ paths:
     put:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - write
       tags:
         - AnnouncementInternal
@@ -168,7 +197,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          announcements:
+          announcement:
             - read
       tags:
         - AnnouncementInternal
@@ -337,6 +366,60 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Announcement'
+    ActiveAnnouncementsSearchCriteria:
+      type: object
+      required:
+        - currentDate
+      properties:
+        currentDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        workspaceName:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    ActiveAnnouncementsPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementAbstract'
+    AnnouncementAbstract:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        type:
+          $ref: '#/components/schemas/AnnouncementType'
+        priority:
+          $ref: '#/components/schemas/AnnouncementPriorityType'
+        workspaceName:
+          type: string
     AnnouncementPriorityType:
       enum:
         - IMPORTANT

@@ -8,7 +8,10 @@ configuration.ts
 encoder.ts
 git_push.sh
 index.ts
+model/activeAnnouncementsPageResult.ts
+model/activeAnnouncementsSearchCriteria.ts
 model/announcement.ts
+model/announcementAbstract.ts
 model/announcementApps.ts
 model/announcementPageResult.ts
 model/announcementPriorityType.ts

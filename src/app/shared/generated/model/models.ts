@@ -1,4 +1,7 @@
+export * from './activeAnnouncementsPageResult';
+export * from './activeAnnouncementsSearchCriteria';
 export * from './announcement';
+export * from './announcementAbstract';
 export * from './announcementApps';
 export * from './announcementPageResult';
 export * from './announcementPriorityType';
