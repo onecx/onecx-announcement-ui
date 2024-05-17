@@ -6,7 +6,7 @@
     *ngIf="announcements && announcements.length > 0"
     [showIndicators]="false"
     class="relative"
-    style="z-index: 990"
+    [style.zIndex]="990"
   >
     <ng-template let-announcement pTemplate="item">
       <div class="flex h-full w-full align-items-center py-4">
