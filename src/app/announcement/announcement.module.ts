@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
 
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
-import { InitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
 import { SharedModule } from '../shared/shared.module'
 
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
@@ -24,8 +24,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     PortalCoreModule.forMicroFrontend(),
-    // [RouterModule.forChild(addInitializeModuleGuard(routes))],
-    RouterModule.forChild(routes),
+    [RouterModule.forChild(addInitializeModuleGuard(routes))],
     SharedModule
   ],
   providers: [InitializeModuleGuard],
