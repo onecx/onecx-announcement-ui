@@ -6,7 +6,10 @@ const config = withModuleFederationPlugin({
   filename: 'remoteEntry.js',
   exposes: {
     './OneCXAnnouncementModule': 'src/app/onecx-announcement-remote.module.ts',
-    './OneCXAnnouncementBannerComponent': 'src/app/remotes/announcement-banner/announcement-banner.component.ts'
+    './OneCXAnnouncementBannerComponent': 'src/app/remotes/announcement-banner/announcement-banner.component.ts',
+    './OneCXAnnouncementWebcomponentModule': 'src/bootstrap.ts',
+    './OneCXAnnouncementWebcomponentBannerComponent':
+      'src/app/remotes/announcement-banner/announcement-banner.component.bootstrap.ts'
   },
   shared: share({
     '@angular/core': { singleton: true, requiredVersion: 'auto' },
@@ -46,5 +49,17 @@ const plugins = config.plugins.filter((plugin) => !(plugin instanceof ModifyEntr
 
 module.exports = {
   ...config,
-  plugins
+  plugins,
+  output: {
+    uniqueName: 'onecx-announcement-ui',
+    publicPath: 'auto'
+  },
+  experiments: {
+    ...config.experiments,
+    topLevelAwait: true
+  },
+  optimization: {
+    runtimeChunk: false,
+    splitChunks: false
+  }
 }
