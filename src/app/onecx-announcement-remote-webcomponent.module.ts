@@ -5,6 +5,7 @@ import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ng
 import { createCustomElement } from '@angular/elements'
 
 import {
+  addInitializeModuleGuard,
   AppStateService,
   ConfigurationService,
   createTranslateLoader,
@@ -15,6 +16,8 @@ import { AppEntrypointComponent } from './app-entrypoint.component'
 import { BrowserModule } from '@angular/platform-browser'
 import { firstValueFrom, map } from 'rxjs'
 import { match } from './router.utils'
+import { SharedModule } from './shared/shared.module'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 function initializeRouter(router: Router, appStateService: AppStateService) {
   return () =>
@@ -45,8 +48,9 @@ const routes: Routes = [
   imports: [
     BrowserModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    SharedModule,
     PortalCoreModule.forMicroFrontend(),
-    // RouterModule.forChild(addInitializeModuleGuard(routes)),
     TranslateModule.forRoot({
       isolate: true,
       loader: {
@@ -66,7 +70,7 @@ const routes: Routes = [
       multi: true,
       deps: [Router, AppStateService]
     },
-    provideRouter(routes)
+    provideRouter(addInitializeModuleGuard(routes))
   ],
   schemas: []
 })
