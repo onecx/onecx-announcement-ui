@@ -11,12 +11,23 @@ import { TagModule } from 'primeng/tag'
 import { BASE_URL /* , RemoteComponentConfig */ } from '@onecx/angular-remote-components'
 import { AppConfigService, AppStateService } from '@onecx/portal-integration-angular'
 import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
-import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { Announcement, AnnouncementInternalAPIService, AnnouncementPriorityType } from 'src/app/shared/generated'
 
 class MockAppStateService {
   currentPortal$ = of({
     workspaceName: 'wsName'
   })
+}
+
+const importantAnnouncement: Announcement = {
+  id: 'importantAnncmtId',
+  priority: AnnouncementPriorityType.Important
+}
+const normalAnnouncement: Announcement = {
+  priority: AnnouncementPriorityType.Normal
+}
+const lowPrioAnnouncement: Announcement = {
+  priority: AnnouncementPriorityType.Low
 }
 
 describe('AnnouncementBannerComponent', () => {
@@ -71,5 +82,43 @@ describe('AnnouncementBannerComponent', () => {
     component = fixture.componentInstance
     fixture.detectChanges()
     expect(component).toBeTruthy()
+  })
+
+  it('should load announcements', () => {
+    apiServiceSpy.searchActiveAnnouncements.and.returnValue(of({}))
+    fixture = TestBed.createComponent(OneCXAnnouncementBannerComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component).toBeTruthy()
+  })
+
+  // describe('hide', () => {
+  //   component.hide('importantAnncmtId')
+  // })
+
+  describe('getPriorityClasses', () => {
+    it('should set priority class color for important anncmt', () => {
+      const resultBgOnly = component.getPriorityClasses(importantAnnouncement, true)
+      expect(resultBgOnly).toBe('bg-red-800')
+
+      const resultNotBgOnly = component.getPriorityClasses(importantAnnouncement, false)
+      expect(resultNotBgOnly).toBe('bg-red-200 text-red-800')
+    })
+
+    it('should set priority class color for normal anncmt', () => {
+      const resultBgOnly = component.getPriorityClasses(normalAnnouncement, true)
+      expect(resultBgOnly).toBe('bg-orange-800')
+
+      const resultNotBgOnly = component.getPriorityClasses(normalAnnouncement, false)
+      expect(resultNotBgOnly).toBe('bg-orange-200 text-orange-800')
+    })
+
+    it('should set priority class color for low prio anncmt', () => {
+      const resultBgOnly = component.getPriorityClasses(lowPrioAnnouncement, true)
+      expect(resultBgOnly).toBe('bg-green-800')
+
+      const resultNotBgOnly = component.getPriorityClasses(lowPrioAnnouncement)
+      expect(resultNotBgOnly).toBe('bg-green-200 text-green-800')
+    })
   })
 })
