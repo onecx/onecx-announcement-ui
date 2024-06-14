@@ -60,7 +60,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
           this.apiV1
             .searchActiveAnnouncements({
               activeAnnouncementsSearchCriteria: {
-                workspaceName: currentWorkspace.portalName,
+                workspaceName: currentWorkspace.workspaceName,
                 currentDate: this.currentDate
               }
             })
