@@ -1,6 +1,6 @@
 import { HttpClient, HttpClientModule } from '@angular/common/http'
-import { DoBootstrap, Injector, NgModule } from '@angular/core'
-import { RouterModule, Routes } from '@angular/router'
+import { APP_INITIALIZER, DoBootstrap, Injector, NgModule } from '@angular/core'
+import { Router, RouterModule, Routes } from '@angular/router'
 import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { createCustomElement } from '@angular/elements'
 
@@ -14,41 +14,43 @@ import { AppEntrypointComponent } from './app-entrypoint.component'
 import { BrowserModule } from '@angular/platform-browser'
 import { SharedModule } from './shared/shared.module'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { EmptyComponent } from './announcement/empty/empty.component'
+import { match } from './router.utils'
+import { firstValueFrom, map } from 'rxjs'
 
-// function initializeRouter(router: Router, appStateService: AppStateService) {
-//   return () =>
-//     firstValueFrom(
-//       appStateService.currentMfe$.asObservable().pipe(
-//         map((mfeInfo) => {
-//           const routes = router.config
-//           routes.forEach((route) => {
-//             route.data = {
-//               ...route.data,
-//               mfeInfo: mfeInfo
-//             }
-//           })
-//           router.resetConfig(routes)
-//         })
-//       )
-//     )
-// }
-
-const routes: Routes = [
-  {
-    path: 'admin/announcement',
-    // path: '',
-    loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
-  },
-  { path: '**', component: EmptyComponent }
-]
+function initializeRouter(router: Router, appStateService: AppStateService) {
+  return () =>
+    firstValueFrom(
+      appStateService.currentMfe$.asObservable().pipe(
+        map((mfeInfo) => {
+          const routes = router.config
+          routes.forEach((route) => {
+            route.data = {
+              ...route.data,
+              mfeInfo: mfeInfo
+            }
+          })
+          router.resetConfig(routes)
+        })
+      )
+    )
+}
 
 // const routes: Routes = [
 //   {
-//     matcher: match(''),
+//     path: 'admin/announcement',
+//     // path: '',
 //     loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
-//   }
+//   },
+//   { path: '**', component: EmptyComponent }
 // ]
+
+const routes: Routes = [
+  {
+    matcher: match(''),
+    loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
+  }
+]
+
 @NgModule({
   declarations: [AppEntrypointComponent],
   imports: [
@@ -71,13 +73,12 @@ const routes: Routes = [
   exports: [],
   providers: [
     // ConfigurationService,
-    // {
-    //   provide: APP_INITIALIZER,
-    //   useFactory: initializeRouter,
-    //   multi: true,
-    //   deps: [Router, AppStateService]
-    // },
-    // provideRouter(addInitializeModuleGuard(routes))
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeRouter,
+      multi: true,
+      deps: [Router, AppStateService]
+    }
   ],
   schemas: []
 })
