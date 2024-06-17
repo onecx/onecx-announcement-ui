@@ -16,6 +16,7 @@ import { SharedModule } from './shared/shared.module'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { match } from './router.utils'
 import { firstValueFrom, map } from 'rxjs'
+import { EmptyComponent } from './announcement/empty/empty.component'
 
 function initializeRouter(router: Router, appStateService: AppStateService) {
   return () =>
@@ -35,20 +36,12 @@ function initializeRouter(router: Router, appStateService: AppStateService) {
     )
 }
 
-// const routes: Routes = [
-//   {
-//     path: 'admin/announcement',
-//     // path: '',
-//     loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
-//   },
-//   { path: '**', component: EmptyComponent }
-// ]
-
 const routes: Routes = [
   {
     matcher: match(''),
     loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
-  }
+  },
+  { path: '**', component: EmptyComponent }
 ]
 
 @NgModule({
