@@ -6,6 +6,7 @@ import { createCustomElement } from '@angular/elements'
 
 import {
   AppStateService,
+  ConfigurationService,
   createTranslateLoader,
   PortalCoreModule,
   PortalMissingTranslationHandler
@@ -16,7 +17,7 @@ import { SharedModule } from './shared/shared.module'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { match } from './router.utils'
 import { firstValueFrom, map } from 'rxjs'
-import { EmptyComponent } from './announcement/empty/empty.component'
+import { addInitializeModuleGuard } from '@onecx/angular-integration-interface'
 
 function initializeRouter(router: Router, appStateService: AppStateService) {
   return () =>
@@ -40,8 +41,7 @@ const routes: Routes = [
   {
     matcher: match(''),
     loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
-  },
-  { path: '**', component: EmptyComponent }
+  }
 ]
 
 @NgModule({
@@ -51,7 +51,7 @@ const routes: Routes = [
     HttpClientModule,
     BrowserAnimationsModule,
     SharedModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(addInitializeModuleGuard(routes)),
     PortalCoreModule.forMicroFrontend(),
     TranslateModule.forRoot({
       isolate: true,
@@ -65,7 +65,7 @@ const routes: Routes = [
   ],
   exports: [],
   providers: [
-    // ConfigurationService,
+    ConfigurationService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeRouter,
