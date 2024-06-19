@@ -18,6 +18,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { match } from './router.utils'
 import { firstValueFrom, map } from 'rxjs'
 import { addInitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { AngularAuthModule } from '@onecx/angular-auth'
 
 function initializeRouter(router: Router, appStateService: AppStateService) {
   return () =>
@@ -61,7 +62,8 @@ const routes: Routes = [
         deps: [HttpClient, AppStateService]
       },
       missingTranslationHandler: { provide: MissingTranslationHandler, useClass: PortalMissingTranslationHandler }
-    })
+    }),
+    AngularAuthModule
   ],
   exports: [],
   providers: [
