@@ -6,9 +6,8 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
-// import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed'
 
-import { BASE_URL /* , RemoteComponentConfig */ } from '@onecx/angular-remote-components'
+import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { AppConfigService, AppStateService } from '@onecx/portal-integration-angular'
 import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
 import { Announcement, AnnouncementInternalAPIService, AnnouncementPriorityType } from 'src/app/shared/generated'
@@ -36,7 +35,9 @@ describe('AnnouncementBannerComponent', () => {
   let mockAppStateService: MockAppStateService
 
   const apiServiceSpy = {
-    searchActiveAnnouncements: jasmine.createSpy('searchActiveAnnouncements').and.returnValue(of({}))
+    searchActiveAnnouncements: jasmine
+      .createSpy('searchActiveAnnouncements')
+      .and.returnValue(of({ stream: [{ id: 'id' }] }))
   }
 
   let baseUrlSubject: ReplaySubject<any>
@@ -92,9 +93,48 @@ describe('AnnouncementBannerComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  // describe('hide', () => {
-  //   component.hide('importantAnncmtId')
-  // })
+  it('should init remote component', (done: DoneFn) => {
+    fixture = TestBed.createComponent(OneCXAnnouncementBannerComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+
+    component.ocxInitRemoteComponent({
+      baseUrl: 'base_url'
+    } as RemoteComponentConfig)
+
+    baseUrlSubject.asObservable().subscribe((item) => {
+      expect(item).toEqual('base_url')
+      done()
+    })
+  })
+
+  describe('hide', () => {
+    it('should hide the announcement', () => {
+      const mockAnnouncementsSubject = {
+        value: [{ id: 'announcement1' }, { id: 'announcement2' }],
+        next: jasmine.createSpy('next')
+      }
+      component['announcementsSubject'] = mockAnnouncementsSubject as any
+      spyOn(localStorage, 'setItem').and.callFake(() => {})
+      spyOn(component as any, 'getIgnoredAnnouncementsIds').and.returnValue([])
+
+      const id = 'announcement1'
+      component.hide(id)
+
+      expect(localStorage.setItem).toHaveBeenCalledWith(component['ignoredAnnouncementsKey'], JSON.stringify([id]))
+      expect(mockAnnouncementsSubject.next).toHaveBeenCalledWith([{ id: 'announcement2' }])
+    })
+
+    it('should log an error if an exception is thrown in the try block', () => {
+      const error = new Error('test error')
+      spyOn(localStorage, 'setItem').and.throwError(error.message)
+      spyOn(console, 'error')
+
+      component.hide('some id')
+
+      expect(console.error).toHaveBeenCalledWith('Failed to hide the announcement:', error)
+    })
+  })
 
   describe('getPriorityClasses', () => {
     it('should set priority class color for important anncmt', () => {
@@ -119,6 +159,26 @@ describe('AnnouncementBannerComponent', () => {
 
       const resultNotBgOnly = component.getPriorityClasses(lowPrioAnnouncement)
       expect(resultNotBgOnly).toBe('bg-green-200 text-green-800')
+    })
+  })
+
+  describe('getIgnoredAnnouncementIds', () => {
+    it('should return ignored anncmt id', () => {
+      const ignoredIds = ['id1', 'id2', 'id3']
+      spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(ignoredIds))
+
+      const result = component['getIgnoredAnnouncementsIds']()
+
+      expect(result).toEqual(ignoredIds)
+    })
+
+    it('should return an empty array on error', () => {
+      const error = new Error('test error')
+      spyOn(localStorage, 'getItem').and.throwError(error.message)
+
+      const result = component['getIgnoredAnnouncementsIds']()
+
+      expect(result).toEqual([])
     })
   })
 })
