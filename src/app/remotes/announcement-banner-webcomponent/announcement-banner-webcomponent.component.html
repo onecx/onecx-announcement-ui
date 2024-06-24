@@ -1,0 +1,47 @@
+<ng-container *ngIf="announcements$ | async as announcements">
+  <p-carousel
+    [value]="announcements"
+    [numVisible]="1"
+    [numScroll]="1"
+    *ngIf="announcements && announcements.length > 0"
+    [showIndicators]="false"
+    class="relative"
+    [style.zIndex]="990"
+  >
+    <ng-template let-announcement pTemplate="item">
+      <div class="flex h-full w-full align-items-center py-4">
+        <div
+          class="p-2 border-round flex flex-row align-items-center w-full"
+          [ngClass]="getPriorityClasses(announcement)"
+        >
+          <div class="w-full flex justify-content-between align-items-center">
+            <div class="flex gap-2 align-items-center">
+              <i class="pi pi-info-circle text-xl px-4"></i>
+              <div class="flex flex-column gap-1">
+                <div>
+                  <p class="font-bold m-0">{{ announcement.title }}</p>
+                  <p class="m-0">{{ announcement.content }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-row gap-1 align-items-center">
+              <div class="flex flex-row gap-2">
+                <p-tag
+                  [value]="announcement.workspaceName ?? 'Global'"
+                  [styleClass]="getPriorityClasses(announcement, true)"
+                  [rounded]="true"
+                ></p-tag>
+              </div>
+              <button
+                class="p-button-rounded p-button-text text-orange-800"
+                pButton
+                (click)="hide(announcement.id!)"
+                icon="pi pi-times"
+              ></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-carousel>
+</ng-container>

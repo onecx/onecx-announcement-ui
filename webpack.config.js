@@ -9,7 +9,7 @@ const config = withModuleFederationPlugin({
     './OneCXAnnouncementBannerComponent': 'src/app/remotes/announcement-banner/announcement-banner.component.ts',
     './OneCXAnnouncementWebcomponentModule': 'src/bootstrap.ts',
     './OneCXAnnouncementWebcomponentBannerComponent':
-      'src/app/remotes/announcement-banner/announcement-banner.component.bootstrap.ts'
+      'src/app/remotes/announcement-banner-webcomponent/announcement-banner-webcomponent.component.bootstrap.ts'
   },
   shared: share({
     '@angular/core': { requiredVersion: 'auto', includeSecondaries: true },
