@@ -2,7 +2,7 @@ import { createCustomElement } from '@angular/elements'
 import { createApplication } from '@angular/platform-browser'
 import { NgZone, PlatformRef, VERSION, Version, getPlatform, importProvidersFrom } from '@angular/core'
 import {} from '@angular-architects/module-federation-tools'
-import { OneCXAnnouncementWebcomponentBannerComponent } from './announcement-banner-webcomponent.component'
+import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { AngularAuthModule } from '@onecx/angular-auth'
 ;(async () => {
@@ -29,7 +29,7 @@ import { AngularAuthModule } from '@onecx/angular-auth'
   const version = VERSION
   platform && platformCache.set(version, platform)
 
-  const myStandaloneComponentAsWebComponent = createCustomElement(OneCXAnnouncementWebcomponentBannerComponent, {
+  const myStandaloneComponentAsWebComponent = createCustomElement(OneCXAnnouncementBannerComponent, {
     injector: app.injector
   })
 

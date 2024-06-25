@@ -58,6 +58,7 @@
     "@onecx/portal-integration-angular": "^4.32.1",
     "@onecx/portal-layout-styles": "^4.32.1",
     "@onecx/angular-remote-components": "^4.32.1",
+    "@onecx/angular-webcomponents": "^4.32.1",
     "@onecx/angular-auth": "^4.32.1",
     "file-saver": "^2.0.5",
     "i18n-iso-countries": "^7.6.0",
