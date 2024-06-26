@@ -8,9 +8,9 @@ import {
   BASE_URL,
   RemoteComponentConfig,
   ocxRemoteComponent,
-  provideTranslateServiceForRoot
+  provideTranslateServiceForRoot,
+  ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
-import { ocxRemoteWebcomponent } from '@onecx/angular-webcomponents'
 import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
