@@ -13,14 +13,14 @@ import {
   PortalMissingTranslationHandler
 } from '@onecx/portal-integration-angular'
 import { addInitializeModuleGuard } from '@onecx/angular-integration-interface'
-import { initializeRouter, match } from '@onecx/angular-webcomponents'
+import { initializeRouter, startsWith } from '@onecx/angular-webcomponents'
 import { AngularAuthModule } from '@onecx/angular-auth'
 import { AppEntrypointComponent } from './app-entrypoint.component'
 import { SharedModule } from './shared/shared.module'
 
 const routes: Routes = [
   {
-    matcher: match(''),
+    matcher: startsWith(''),
     loadChildren: () => import('./announcement/announcement.module').then((m) => m.AnnouncementModule)
   }
 ]
