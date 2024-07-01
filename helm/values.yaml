@@ -16,10 +16,16 @@ app:
           description: "OneCX Announcement UI"
           note: "OneCX Announcement UI auto import via MF operator"
           type: MODULE
+          technology: WEBCOMPONENTMODULE
+          remoteName: onecx-announcement
+          tagName: ocx-announcement-component
         announcement-banner:
           exposedModule: "./OneCXAnnouncementBannerComponent"
           description: "Announcement banner component"
           type: COMPONENT
+          technology: WEBCOMPONENTMODULE
+          remoteName: onecx-announcement
+          tagName: ocx-announcement-banner-component
     # Permission
     permission:
       enabled: true

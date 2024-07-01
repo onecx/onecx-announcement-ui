@@ -4,9 +4,8 @@ import { FormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
 
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
-import { addInitializeModuleGuard, InitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
 import { SharedModule } from '../shared/shared.module'
-
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
 import { AnnouncementCriteriaComponent } from './announcement-search/announcement-criteria/announcement-criteria.component'
 import { AnnouncementDetailComponent } from './announcement-detail/announcement-detail.component'
