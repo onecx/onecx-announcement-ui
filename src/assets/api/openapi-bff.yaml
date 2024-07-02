@@ -283,6 +283,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     UpdateAnnouncementRequest:
       type: object
@@ -384,6 +385,7 @@ components:
           format: int32
           description: The size of page
           default: 100
+          maximum: 1000
           type: integer
     ActiveAnnouncementsPageResult:
       type: object
