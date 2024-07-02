@@ -35,11 +35,8 @@ app:
             CREATE: Create announcement
             DELETE: Delete announcement
             EDIT: Edit announcement
-            SAVE: Update and save announcement
             SEARCH: Search announcement
             VIEW: View mode for announcement
-            EXPORT: Export announcement
-            IMPORT: Import announcement
     # Keycloak
     keycloak:
       client:
