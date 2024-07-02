@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Component, Inject } from '@angular/core'
+import { Component, Inject, Input } from '@angular/core'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -8,12 +8,13 @@ import {
   BASE_URL,
   RemoteComponentConfig,
   ocxRemoteComponent,
-  provideTranslateServiceForRoot
+  provideTranslateServiceForRoot,
+  ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
 import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
-import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { Announcement, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { environment } from 'src/environments/environment'
@@ -38,7 +39,7 @@ import { environment } from 'src/environments/environment'
   ],
   templateUrl: './announcement-banner.component.html'
 })
-export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
+export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   private ignoredAnnouncementsKey = 'onecx_announcement_ignored_ids'
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<Announcement[]>([])
@@ -47,17 +48,16 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
     private translateService: TranslateService,
-    private appConfigService: AppConfigService,
     private apiV1: AnnouncementInternalAPIService,
     private appStateService: AppStateService,
-    private userService: UserService
+    private userService: UserService,
+    private appConfigService: AppConfigService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
-
-    this.appStateService.currentPortal$
+    combineLatest([this.baseUrl.asObservable(), this.appStateService.currentPortal$.asObservable()])
       .pipe(
-        mergeMap((currentWorkspace) =>
-          this.apiV1
+        mergeMap(([_, currentWorkspace]) => {
+          return this.apiV1
             .searchActiveAnnouncements({
               activeAnnouncementsSearchCriteria: {
                 workspaceName: currentWorkspace.workspaceName,
@@ -73,17 +73,21 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent {
                 return of([])
               })
             )
-        )
+        })
       )
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 
+  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
+    this.ocxInitRemoteComponent(config)
+  }
+
   ocxInitRemoteComponent(config: RemoteComponentConfig): void {
-    this.baseUrl.next(config.baseUrl)
-    this.appConfigService.init(config['baseUrl'])
     this.apiV1.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
+    this.baseUrl.next(config.baseUrl)
+    this.appConfigService.init(config['baseUrl'])
   }
 
   hide(id: string): void {
