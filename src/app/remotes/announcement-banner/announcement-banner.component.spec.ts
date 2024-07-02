@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { ReplaySubject, of } from 'rxjs'
+import { BehaviorSubject, ReplaySubject, of } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -13,9 +13,8 @@ import { OneCXAnnouncementBannerComponent } from './announcement-banner.componen
 import { Announcement, AnnouncementInternalAPIService, AnnouncementPriorityType } from 'src/app/shared/generated'
 
 class MockAppStateService {
-  currentPortal$ = of({
-    workspaceName: 'wsName'
-  })
+  private currentPortalSubject = new BehaviorSubject<{ workspaceName: string }>({ workspaceName: 'wsName' })
+  currentPortal$ = this.currentPortalSubject.asObservable()
 }
 
 const importantAnnouncement: Announcement = {
@@ -53,6 +52,7 @@ describe('AnnouncementBannerComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
+        { provide: AppStateService, useValue: mockAppStateService },
         provideHttpClient(),
         provideHttpClientTesting(),
         {
