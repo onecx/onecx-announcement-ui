@@ -31,7 +31,7 @@ app:
       enabled: true
       spec:
         permissions:
-          ANNOUCEMENT:
+          ANNOUNCEMENT:
             CREATE: Create announcement
             DELETE: Delete announcement
             EDIT: Edit announcement
