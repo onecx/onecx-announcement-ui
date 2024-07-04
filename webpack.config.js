@@ -30,9 +30,20 @@ const config = withModuleFederationPlugin({
       requiredVersion: 'auto',
       includeSecondaries: true
     },
-    rxjs: { requiredVersion: 'auto', includeSecondaries: true }
+    rxjs: { requiredVersion: 'auto', includeSecondaries: true },
+    '@ngx-translate/core': { singleton: true, requiredVersion: 'auto' },
+    '@onecx/accelerator': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-accelerator': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-integration-interface': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/keycloak-auth': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/portal-integration-angular': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/portal-layout-styles': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-remote-components': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-webcomponents': { requiredVersion: 'auto', includeSecondaries: true },
+    '@onecx/angular-auth': { requiredVersion: 'auto', includeSecondaries: true }
   }),
-  sharedMappings: []
+  sharedMappings: ['@onecx/portal-integration-angular']
 })
 config.devServer = {
   allowedHosts: 'all'
