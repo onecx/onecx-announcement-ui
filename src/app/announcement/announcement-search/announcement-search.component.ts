@@ -195,7 +195,6 @@ export class AnnouncementSearchComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.announcements = data.stream || []
-          console.log('ANN', this.announcements)
           if (this.announcements.length === 0) {
             this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
           }
@@ -321,7 +320,6 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.getAllProductsWithAnnouncements().subscribe({
         next: (data) => {
           if (data?.productNames) {
-            console.log('PRODUCTS', data)
             for (let product of data.productNames) {
               this.usedProducts.push({ label: product, value: product })
             }
