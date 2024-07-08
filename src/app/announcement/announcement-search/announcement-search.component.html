@@ -2,6 +2,7 @@
   <app-announcement-criteria
     [actions]="(actions$ | async) ?? []"
     [workspaces]="usedWorkspaces"
+    [products]="usedProducts"
     (criteriaEmitter)="search($event)"
     (resetSearchEmitter)="reset()"
   ></app-announcement-criteria>

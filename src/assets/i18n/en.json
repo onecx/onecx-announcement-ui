@@ -94,6 +94,7 @@
     "CONTENT": "Content",
     "DATE_RANGES_ERROR": "Invalid date ranges: The end date range should be after/equal the start date range.",
     "EVERY_WORKSPACE": "All Workspaces",
+    "EVERY_PRODUCT": "All Applications",
     "WORKSPACE_NOT_FOUND": "-- not found --",
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",

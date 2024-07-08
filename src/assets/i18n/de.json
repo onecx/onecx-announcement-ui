@@ -94,6 +94,7 @@
     "CONTENT": "Text",
     "DATE_RANGES_ERROR": "Falsche Datumsbereiche: Der Bereich des Enddatums sollte nach/gleich dem Bereich des Startdatums liegen.",
     "EVERY_WORKSPACE": "Alle Workspaces",
+    "EVERY_PRODUCT": "Alle Applikationen",
     "WORKSPACE_NOT_FOUND": "-- nicht gefunden --",
     "TOOLTIPS": {
       "TITLE": "Titel der Neuigkeit",

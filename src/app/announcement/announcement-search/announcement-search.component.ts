@@ -43,6 +43,8 @@ export class AnnouncementSearchComponent implements OnInit {
   public dateFormat: string
   public usedWorkspaces: SelectItem[] = []
   public allWorkspaces: string[] = []
+  public usedProducts: SelectItem[] = []
+  public allProducts: string[] = []
   public nonExistingPortalIds = ['all', 'ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND']
   public filteredColumns: Column[] = []
 
@@ -62,6 +64,13 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden xl:table-cell'
+    },
+    {
+      field: 'productDisplayName',
+      header: 'APPLICATION',
+      active: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      css: 'hidden sm:table-cell'
     },
     {
       field: 'type',
@@ -119,6 +128,8 @@ export class AnnouncementSearchComponent implements OnInit {
   ngOnInit(): void {
     this.getUsedWorkspaces()
     this.getAllWorkspaces()
+    this.getUsedProducts()
+    this.getAllProducts()
     this.prepareActionButtons()
     this.search({ announcementSearchCriteria: {} })
     this.filteredColumns = this.columns.filter((a) => {
@@ -143,11 +154,12 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  public onCloseDetail(refresh: boolean): void {
+  public onCloseDetail(refresh: any): void {
     this.displayDetailDialog = false
     if (refresh) {
       this.search({ announcementSearchCriteria: {} }, true)
       this.getUsedWorkspaces()
+      this.getUsedProducts()
     }
   }
 
@@ -248,10 +260,10 @@ export class AnnouncementSearchComponent implements OnInit {
         label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
         value: 'all'
       })
-      this.announcementApi.getAllAppsWithAnnouncements().subscribe({
-        next: (apps) => {
-          if (apps?.workspaceNames)
-            for (let workspace of apps.workspaceNames) {
+      this.announcementApi.getAllProductsWithAnnouncements().subscribe({
+        next: (data) => {
+          if (data.workspaceNames)
+            for (let workspace of data.workspaceNames) {
               this.usedWorkspaces.push({ label: workspace, value: workspace })
             }
         },
@@ -290,5 +302,43 @@ export class AnnouncementSearchComponent implements OnInit {
       return 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
     }
     return 'ANNOUNCEMENT.EVERY_WORKSPACE'
+  }
+
+  // used in search criteria
+  private getUsedProducts(): void {
+    this.usedProducts = []
+    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
+      this.usedProducts.push({
+        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
+        value: 'all'
+      })
+      this.announcementApi.getAllProductsWithAnnouncements().subscribe({
+        next: (data) => {
+          if (data?.productNames)
+            for (let product of data.productNames) {
+              this.usedProducts.push({ label: product, value: product })
+            }
+        },
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND' })
+      })
+    })
+  }
+
+  // used in search results
+  private getAllProducts() {
+    this.allProducts = []
+    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
+      this.allProducts.push(data['ANNOUNCEMENT.EVERY_PRODUCT'])
+      this.announcementApi.searchProductsByCriteria({}).subscribe({
+        next: (data) => {
+          if (data.stream) {
+            for (let product of data.stream) {
+              this.allProducts.push(product.name)
+            }
+          }
+        },
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND' })
+      })
+    })
   }
 }
