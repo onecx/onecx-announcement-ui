@@ -319,7 +319,7 @@ export class AnnouncementSearchComponent implements OnInit {
               this.usedProducts.push({ label: product, value: product })
             }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND' })
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
       })
     })
   }
@@ -329,7 +329,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.allProducts = []
     this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.allProducts.push(data['ANNOUNCEMENT.EVERY_PRODUCT'])
-      this.announcementApi.searchProductsByCriteria({}).subscribe({
+      this.announcementApi.searchProductsByCriteria({ productsSearchCriteria: {} }).subscribe({
         next: (data) => {
           if (data.stream) {
             for (let product of data.stream) {
@@ -337,7 +337,7 @@ export class AnnouncementSearchComponent implements OnInit {
             }
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND' })
+        error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
       })
     })
   }

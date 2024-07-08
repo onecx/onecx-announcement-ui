@@ -127,10 +127,10 @@ export class AnnouncementCriteriaComponent implements OnInit {
           this.announcementCriteria.value.workspaceName === null
             ? undefined
             : this.announcementCriteria.value.workspaceName,
-        // productName:
-        //   this.announcementCriteria.value.productName === null
-        //     ? undefined
-        //     : this.announcementCriteria.value.productName,
+        productName:
+          this.announcementCriteria.value.productName === null
+            ? undefined
+            : this.announcementCriteria.value.productName,
         priority:
           this.announcementCriteria.value.priority === null ? undefined : this.announcementCriteria.value.priority?.[0],
         status:

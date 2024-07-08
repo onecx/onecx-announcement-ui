@@ -72,6 +72,23 @@
         </span>
       </div>
 
+      <div class="w-full">
+        <span class="p-float-label">
+          <p-dropdown
+            id="announcement_detail_form_application_name"
+            class="input-field"
+            styleClass="w-full"
+            [options]="products"
+            [autoDisplayFirst]="true"
+            [appendTo]="'body'"
+            formControlName="productName"
+            [title]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
+          >
+          </p-dropdown>
+          <label for="announcement_detail_form_application_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }} </label>
+        </span>
+      </div>
+
       <div class="grid grid-nogutter col-12 row-gap-3 sm:row-gap-1 pb-0">
         <div class="col-12 sm:col-5 py-0 px-0 sm:pr-3 md:text-right flex sm:justify-content-end">
           <div>

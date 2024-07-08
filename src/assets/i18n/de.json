@@ -58,6 +58,7 @@
     "SAVE": "Speichern",
     "VIEW": "Ansehen",
     "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
+    "APPLICATIONS.NOT_FOUND": "Applikationen konnten nicht geladen werden",
     "TOOLTIPS": {
       "CLOSE": "Dialog verlassen",
       "CANCEL": "Die Aktion abbrechen",
@@ -100,6 +101,7 @@
       "TITLE": "Titel der Neuigkeit",
       "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
       "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
+      "PRODUCT": "Applikation, bei der die Neuigkeit angezeigt werden soll",
       "TYPE": "Typ der Neuigkeit",
       "STATUS": "Status der Neuigkeit",
       "PRIORITY": "Priorität der Neuigkeit",
