@@ -66,7 +66,7 @@ export class AnnouncementSearchComponent implements OnInit {
       css: 'text-center hidden xl:table-cell'
     },
     {
-      field: 'productDisplayName',
+      field: 'productName',
       header: 'APPLICATION',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
@@ -178,9 +178,14 @@ export class AnnouncementSearchComponent implements OnInit {
     if (criteria.announcementSearchCriteria.workspaceName === 'all') {
       criteria.announcementSearchCriteria.workspaceName = undefined
     }
+    if (criteria.announcementSearchCriteria.productName === 'all') {
+      criteria.announcementSearchCriteria.productName = undefined
+    }
     if (!reuseCriteria) {
       if (criteria.announcementSearchCriteria.workspaceName === '')
         criteria.announcementSearchCriteria.workspaceName = undefined
+      if (criteria.announcementSearchCriteria.productName === '')
+        criteria.announcementSearchCriteria.productName = undefined
       this.criteria = criteria.announcementSearchCriteria
     }
     this.searching = true
@@ -190,6 +195,7 @@ export class AnnouncementSearchComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.announcements = data.stream || []
+          console.log('ANN', this.announcements)
           if (this.announcements.length === 0) {
             this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
           }
@@ -314,10 +320,12 @@ export class AnnouncementSearchComponent implements OnInit {
       })
       this.announcementApi.getAllProductsWithAnnouncements().subscribe({
         next: (data) => {
-          if (data?.productNames)
+          if (data?.productNames) {
+            console.log('PRODUCTS', data)
             for (let product of data.productNames) {
               this.usedProducts.push({ label: product, value: product })
             }
+          }
         },
         error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
       })
