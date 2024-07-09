@@ -30,13 +30,14 @@ describe('AnnouncementDetailComponent', () => {
     getAnnouncementById: jasmine.createSpy('getAnnouncementById').and.returnValue(of({})),
     createAnnouncement: jasmine.createSpy('createAnnouncement').and.returnValue(of({})),
     updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({})),
-    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([]))
+    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([])),
+    searchProductsByCriteria: jasmine.createSpy('searchProductsByCriteria').and.returnValue(of([]))
   }
   const formGroup = new FormGroup({
     id: new FormControl('id'),
     title: new FormControl('title'),
     workspaceName: new FormControl('workspace name'),
-    appId: new FormControl('app id')
+    productName: new FormControl('prod name')
   })
   const mockUserService = {
     lang$: {
@@ -72,6 +73,7 @@ describe('AnnouncementDetailComponent', () => {
     apiServiceSpy.createAnnouncement.calls.reset()
     apiServiceSpy.updateAnnouncementById.calls.reset()
     apiServiceSpy.getAllWorkspaceNames.calls.reset()
+    apiServiceSpy.searchProductsByCriteria.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
@@ -112,20 +114,20 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should fill the form with Announcement', () => {
     const workspaceName = 'w1'
-    const appId = 'app1'
+    const productName = 'app1'
     component.changeMode = 'VIEW'
     component.announcementId = 'id'
     component.announcement = {
       id: 'id',
       title: 'title',
-      appId: appId,
+      productName: productName,
       workspaceName: workspaceName,
       startDate: '2023-01-02',
       endDate: '2023-01-03'
     }
     const result = (component as any).fillForm()
 
-    expect(component.formGroup.value['appId']).toEqual(appId)
+    expect(component.formGroup.value['productName']).toEqual(productName)
     expect(component.formGroup.value['workspaceName']).toEqual(workspaceName)
     expect(result).not.toBeDefined()
   })

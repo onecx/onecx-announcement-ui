@@ -53,6 +53,7 @@ describe('AnnouncementCriteriaComponent', () => {
     const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
+      productName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
@@ -70,6 +71,7 @@ describe('AnnouncementCriteriaComponent', () => {
     const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>('title'),
       workspaceName: new FormControl<string | null>('workspaceName'),
+      productName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
       type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
       priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
@@ -87,6 +89,7 @@ describe('AnnouncementCriteriaComponent', () => {
     const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
+      productName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
@@ -104,6 +107,7 @@ describe('AnnouncementCriteriaComponent', () => {
     const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>('title'),
       workspaceName: new FormControl<string | null>('workspaceName'),
+      productName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
       type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
       priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
