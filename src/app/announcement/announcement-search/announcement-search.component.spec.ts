@@ -118,9 +118,10 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should search all', () => {
     apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
-    component.criteria = { workspaceName: 'all' }
+    component.criteria = { workspaceName: 'all', productName: 'all' }
     const resultCriteria = {
-      workspaceName: undefined
+      workspaceName: undefined,
+      productName: undefined
     }
     const reuseCriteria = false
 
@@ -167,7 +168,7 @@ describe('AnnouncementSearchComponent', () => {
   it('should use new criteria if reuseCriteria is false', () => {
     apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
     component.criteria = { workspaceName: 'workspaceName', title: 'title' }
-    const newCriteria = { workspaceName: '', title: 'new title' }
+    const newCriteria = { workspaceName: '', productName: '', title: 'new title' }
     const reuseCriteria = false
 
     component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)
@@ -386,6 +387,51 @@ describe('AnnouncementSearchComponent', () => {
     const result = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
 
     expect(result).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
+  })
+
+  /**
+   * test products: used and all
+   */
+  it('should get products used by announcements (getUsedProducts)', () => {
+    const apps = { appIds: [], productNames: ['prod1'] }
+    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(of(apps))
+    component.usedProducts = []
+
+    component.ngOnInit()
+
+    expect(component.usedProducts).toContain({ label: 'prod1', value: 'prod1' })
+  })
+
+  it('should log error if getUsedProducts fails', () => {
+    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => new Error()))
+    spyOn(console, 'error')
+
+    component.ngOnInit()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+    })
+  })
+
+  it('should get all existing products (searchProductsByCriteria)', () => {
+    const productNames = { stream: [{ name: 'prod1' }, { name: 'prod2' }] }
+    apiServiceSpy.searchProductsByCriteria.and.returnValue(of(productNames))
+    component.allProducts = []
+
+    component.ngOnInit()
+
+    expect(component.allProducts).toContain(productNames.stream[0].name)
+  })
+
+  it('should log error if searchProductsByCriteria fails', () => {
+    apiServiceSpy.searchProductsByCriteria.and.returnValue(throwError(() => new Error()))
+    spyOn(console, 'error')
+
+    component.ngOnInit()
+
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+    })
   })
 
   /**
