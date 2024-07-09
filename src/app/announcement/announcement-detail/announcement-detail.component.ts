@@ -14,6 +14,7 @@ import {
   AnnouncementType,
   AnnouncementInternalAPIService
 } from 'src/app/shared/generated'
+import { dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -167,6 +168,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
         if (data.stream) {
           for (let product of data.stream) {
             this.products.push({ label: product.displayName, value: product.displayName })
+            this.products.sort(dropDownSortItemsByLabel)
           }
         }
       },

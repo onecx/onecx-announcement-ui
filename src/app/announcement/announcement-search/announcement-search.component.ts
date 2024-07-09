@@ -163,11 +163,11 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  public onSearch(): void {
-    this.changeMode = 'NEW'
-    this.appsChanged = true
-    this.search({ announcementSearchCriteria: {} }, true)
-  }
+  // public onSearch(): void {
+  //   this.changeMode = 'NEW'
+  //   this.appsChanged = true
+  //   this.search({ announcementSearchCriteria: {} }, true)
+  // }
 
   public reset(): void {
     this.criteria = {}
