@@ -11,7 +11,12 @@ import {
   provideTranslateServiceForRoot,
   ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
-import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
+import {
+  AppConfigService,
+  REMOTE_COMPONENT_ID,
+  UserService,
+  createRemoteComponentTranslateLoader
+} from '@onecx/portal-integration-angular'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
@@ -28,12 +33,16 @@ import { environment } from 'src/environments/environment'
       provide: BASE_URL,
       useValue: new ReplaySubject<string>(1)
     },
+    {
+      provide: REMOTE_COMPONENT_ID,
+      useValue: 'ocx-announcement-banner-component'
+    },
     provideTranslateServiceForRoot({
       isolate: true,
       loader: {
         provide: TranslateLoader,
         useFactory: createRemoteComponentTranslateLoader,
-        deps: [HttpClient, BASE_URL]
+        deps: [HttpClient, BASE_URL, REMOTE_COMPONENT_ID]
       }
     })
   ],
