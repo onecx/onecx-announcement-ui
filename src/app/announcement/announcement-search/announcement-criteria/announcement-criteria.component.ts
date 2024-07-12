@@ -15,6 +15,7 @@ import {
 export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
   workspaceName: FormControl<string | null>
+  productName: FormControl<string | null>
   status: FormControl<AnnouncementStatus[] | null>
   type: FormControl<AnnouncementType[] | null>
   priority: FormControl<AnnouncementPriorityType[] | null>
@@ -29,6 +30,7 @@ export interface AnnouncementCriteriaForm {
 export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []
   @Input() public workspaces: SelectItem[] = []
+  @Input() public products: SelectItem[] = []
   @Output() public criteriaEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
   @Output() public resetSearchEmitter = new EventEmitter<boolean>()
 
@@ -48,6 +50,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
     this.announcementCriteria = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
+      productName: new FormControl<string | null>(null),
       status: new FormControl<AnnouncementStatus[] | null>(null),
       type: new FormControl<AnnouncementType[] | null>(null),
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
@@ -124,6 +127,10 @@ export class AnnouncementCriteriaComponent implements OnInit {
           this.announcementCriteria.value.workspaceName === null
             ? undefined
             : this.announcementCriteria.value.workspaceName,
+        productName:
+          this.announcementCriteria.value.productName === null
+            ? undefined
+            : this.announcementCriteria.value.productName,
         priority:
           this.announcementCriteria.value.priority === null ? undefined : this.announcementCriteria.value.priority?.[0],
         status:

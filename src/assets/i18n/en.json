@@ -58,6 +58,7 @@
     "SAVE": "Save",
     "VIEW": "View",
     "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
+    "APPLICATIONS.NOT_FOUND": "Products could not be loaded",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",
@@ -94,11 +95,13 @@
     "CONTENT": "Content",
     "DATE_RANGES_ERROR": "Invalid date ranges: The end date range should be after/equal the start date range.",
     "EVERY_WORKSPACE": "All Workspaces",
+    "EVERY_PRODUCT": "All Applications",
     "WORKSPACE_NOT_FOUND": "-- not found --",
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",
       "TITLE.CRITERIA": "Title of the Announcement, Wildcard supported: *",
-      "WORKSPACE": "Workspace for which the announcement should be applied..",
+      "WORKSPACE": "Workspace for which the announcement should be applied.",
+      "APPLICATION": "Application for which the announcement should be applied.",
       "TYPE": "Type of the Announcement",
       "STATUS": "Status of the Announcement",
       "PRIORITY": "Priority of the Announcement",

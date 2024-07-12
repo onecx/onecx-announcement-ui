@@ -14,6 +14,7 @@ import {
   AnnouncementType,
   AnnouncementInternalAPIService
 } from 'src/app/shared/generated'
+import { dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -41,6 +42,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   announcementId: string | undefined
   announcementDeleteVisible = false
   workspaces: SelectItem[] = []
+  products: SelectItem[] = []
   actions: Action[] = []
   public today = new Date()
   public dateFormat: string
@@ -69,6 +71,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       content: new FormControl(null, [Validators.maxLength(255)]),
       appId: new FormControl(null),
       workspaceName: new FormControl(null),
+      productName: new FormControl(null),
       type: new FormControl(null),
       priority: new FormControl(null),
       status: new FormControl(null),
@@ -81,8 +84,9 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+      this.getProducts(data['ANNOUNCEMENT.EVERY_PRODUCT'])
     })
   }
 
@@ -154,6 +158,24 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     })
   }
 
+  private getProducts(dropdownDefault: string): void {
+    this.products.push({
+      label: dropdownDefault,
+      value: 'all'
+    })
+    this.announcementApi.searchProductsByCriteria({ productsSearchCriteria: {} }).subscribe({
+      next: (data) => {
+        if (data.stream) {
+          for (let product of data.stream) {
+            this.products.push({ label: product.displayName, value: product.displayName })
+            this.products.sort(dropDownSortItemsByLabel)
+          }
+        }
+      },
+      error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
+    })
+  }
+
   /**
    * SAVING => create or update
    */
@@ -196,6 +218,9 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     const announcement: Announcement = { ...this.formGroup.value }
     if (announcement.workspaceName === 'all') {
       announcement.workspaceName = undefined
+    }
+    if (announcement.productName === 'all') {
+      announcement.productName = undefined
     }
     return announcement
   }

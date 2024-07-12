@@ -25,15 +25,19 @@ import { ActiveAnnouncementsSearchCriteria } from '../model/activeAnnouncementsS
 // @ts-ignore
 import { Announcement } from '../model/announcement';
 // @ts-ignore
-import { AnnouncementApps } from '../model/announcementApps';
-// @ts-ignore
 import { AnnouncementPageResult } from '../model/announcementPageResult';
+// @ts-ignore
+import { AnnouncementProducts } from '../model/announcementProducts';
 // @ts-ignore
 import { AnnouncementSearchCriteria } from '../model/announcementSearchCriteria';
 // @ts-ignore
 import { CreateAnnouncementRequest } from '../model/createAnnouncementRequest';
 // @ts-ignore
 import { ProblemDetailResponse } from '../model/problemDetailResponse';
+// @ts-ignore
+import { ProductsPageResult } from '../model/productsPageResult';
+// @ts-ignore
+import { ProductsSearchCriteria } from '../model/productsSearchCriteria';
 // @ts-ignore
 import { UpdateAnnouncementRequest } from '../model/updateAnnouncementRequest';
 
@@ -60,6 +64,10 @@ export interface SearchActiveAnnouncementsRequestParams {
 
 export interface SearchAnnouncementsRequestParams {
     announcementSearchCriteria: AnnouncementSearchCriteria;
+}
+
+export interface SearchProductsByCriteriaRequestParams {
+    productsSearchCriteria?: ProductsSearchCriteria;
 }
 
 export interface UpdateAnnouncementByIdRequestParams {
@@ -260,14 +268,14 @@ export class AnnouncementInternalAPIService {
     }
 
     /**
-     * Get all application IDs to which announcements are assigned
+     * Get all product names to which announcements are assigned
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllAppsWithAnnouncements(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementApps>;
-    public getAllAppsWithAnnouncements(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementApps>>;
-    public getAllAppsWithAnnouncements(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementApps>>;
-    public getAllAppsWithAnnouncements(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+    public getAllProductsWithAnnouncements(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementProducts>;
+    public getAllProductsWithAnnouncements(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementProducts>>;
+    public getAllProductsWithAnnouncements(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementProducts>>;
+    public getAllProductsWithAnnouncements(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
 
@@ -300,8 +308,8 @@ export class AnnouncementInternalAPIService {
             }
         }
 
-        let localVarPath = `/announcements/appIds`;
-        return this.httpClient.request<AnnouncementApps>('get', `${this.configuration.basePath}${localVarPath}`,
+        let localVarPath = `/announcements/products`;
+        return this.httpClient.request<AnnouncementProducts>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,
@@ -555,6 +563,72 @@ export class AnnouncementInternalAPIService {
             {
                 context: localVarHttpContext,
                 body: announcementSearchCriteria,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Get all available products
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public searchProductsByCriteria(requestParameters: SearchProductsByCriteriaRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<ProductsPageResult>;
+    public searchProductsByCriteria(requestParameters: SearchProductsByCriteriaRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<ProductsPageResult>>;
+    public searchProductsByCriteria(requestParameters: SearchProductsByCriteriaRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<ProductsPageResult>>;
+    public searchProductsByCriteria(requestParameters: SearchProductsByCriteriaRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const productsSearchCriteria = requestParameters.productsSearchCriteria;
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/announcements/products/available`;
+        return this.httpClient.request<ProductsPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: productsSearchCriteria,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

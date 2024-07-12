@@ -12,9 +12,9 @@ model/activeAnnouncementsPageResult.ts
 model/activeAnnouncementsSearchCriteria.ts
 model/announcement.ts
 model/announcementAbstract.ts
-model/announcementApps.ts
 model/announcementPageResult.ts
 model/announcementPriorityType.ts
+model/announcementProducts.ts
 model/announcementSearchCriteria.ts
 model/announcementStatus.ts
 model/announcementType.ts
@@ -23,6 +23,9 @@ model/models.ts
 model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
+model/product.ts
+model/productsPageResult.ts
+model/productsSearchCriteria.ts
 model/updateAnnouncementRequest.ts
 param.ts
 variables.ts

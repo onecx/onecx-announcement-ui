@@ -24,7 +24,7 @@ export interface AnnouncementSearchCriteria {
     startDateTo?: string;
     endDateFrom?: string;
     endDateTo?: string;
-    appId?: string;
+    productName?: string;
     workspaceName?: string;
     /**
      * The number of page.

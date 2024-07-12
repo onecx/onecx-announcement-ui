@@ -101,7 +101,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /announcements/appIds:
+  /announcements/products:
     get:
       x-onecx:
         permissions:
@@ -109,15 +109,15 @@ paths:
             - read
       tags:
         - AnnouncementInternal
-      summary: Get all application IDs to which announcements are assigned
-      operationId: getAllAppsWithAnnouncements
+      summary: Get all product names to which announcements are assigned
+      operationId: getAllProductsWithAnnouncements
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AnnouncementApps'
+                $ref: '#/components/schemas/AnnouncementProducts'
   /announcements/{id}:
     get:
       x-onecx:
@@ -212,12 +212,84 @@ paths:
                 type: array
                 items:
                   type: string
+  /announcements/products/available:
+    post:
+      x-onecx:
+        permissions:
+          product:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Get all available products
+      operationId: searchProductsByCriteria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductsSearchCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsPageResult'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
-    AnnouncementApps:
+    ProductsPageResult:
       type: object
       properties:
-        appIds:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+    ProductsSearchCriteria:
+      type: object
+      properties:
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          maximum: 1000
+          type: integer
+    Product:
+      type: object
+      required:
+        - name
+        - displayName
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+    AnnouncementProducts:
+      type: object
+      properties:
+        productNames:
           type: array
           items:
             type: string
@@ -245,7 +317,7 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         endDate:
           $ref: '#/components/schemas/OffsetDateTime'
-        appId:
+        productName:
           type: string
         workspaceName:
           type: string
@@ -270,7 +342,7 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         endDateTo:
           $ref: '#/components/schemas/OffsetDateTime'
-        appId:
+        productName:
           type: string
         workspaceName:
           type: string
@@ -309,7 +381,7 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         endDate:
           $ref: '#/components/schemas/OffsetDateTime'
-        appId:
+        productName:
           type: string
         workspaceName:
           type: string
@@ -343,7 +415,7 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         endDate:
           $ref: '#/components/schemas/OffsetDateTime'
-        appId:
+        productName:
           type: string
         workspaceName:
           type: string

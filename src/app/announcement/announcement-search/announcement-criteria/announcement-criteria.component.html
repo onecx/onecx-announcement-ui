@@ -48,6 +48,18 @@
       <label for="announcement_search_criteria_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
     </span>
     <span class="p-float-label">
+      <p-dropdown
+        id="announcement_search_criteria_product_name"
+        [options]="products"
+        [autoDisplayFirst]="true"
+        [appendTo]="'body'"
+        formControlName="productName"
+        [title]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
+      >
+      </p-dropdown>
+      <label for="announcement_search_criteria_product_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }}</label>
+    </span>
+    <span class="p-float-label">
       <p-multiSelect
         id="announcement_search_criteria_status"
         [options]="(statusOptions$ | async) ?? []"

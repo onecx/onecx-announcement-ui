@@ -2,6 +2,7 @@
   <app-announcement-criteria
     [actions]="(actions$ | async) ?? []"
     [workspaces]="usedWorkspaces"
+    [products]="usedProducts"
     (criteriaEmitter)="search($event)"
     (resetSearchEmitter)="reset()"
   ></app-announcement-criteria>
@@ -123,6 +124,9 @@
               <ng-container *ngIf="col.field !== 'workspaceName'">{{ rowData[col.field] }}</ng-container>
               <ng-container *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName)">
                 {{ rowData[col.field] }}</ng-container
+              >
+              <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
+                {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}</ng-container
               >
               <ng-container *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName)">
                 {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}</ng-container

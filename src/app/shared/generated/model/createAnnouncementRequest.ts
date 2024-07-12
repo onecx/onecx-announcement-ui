@@ -22,7 +22,7 @@ export interface CreateAnnouncementRequest {
     status?: AnnouncementStatus;
     startDate: string;
     endDate?: string;
-    appId?: string;
+    productName?: string;
     workspaceName?: string;
 }
 

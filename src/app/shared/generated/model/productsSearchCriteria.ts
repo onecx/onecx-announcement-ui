@@ -11,8 +11,14 @@
  */
 
 
-export interface AnnouncementApps { 
-    appIds?: Array<string>;
-    workspaceNames?: Array<string>;
+export interface ProductsSearchCriteria { 
+    /**
+     * The number of page.
+     */
+    pageNumber?: number;
+    /**
+     * The size of page
+     */
+    pageSize?: number;
 }
 
