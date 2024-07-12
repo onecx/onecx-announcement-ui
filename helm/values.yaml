@@ -37,12 +37,5 @@ app:
             EDIT: Edit announcement
             SEARCH: Search announcement
             VIEW: View mode for announcement
-    # Keycloak
-    keycloak:
-      client:
-        enabled: true
-        spec:
-          kcConfig:
-            clientId: "onecx-announcement-ui"
             
 # PIPE Config
