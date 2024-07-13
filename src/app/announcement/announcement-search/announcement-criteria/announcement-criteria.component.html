@@ -59,7 +59,7 @@
       </p-dropdown>
       <label for="announcement_search_criteria_product_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }}</label>
     </span>
-    <span class="p-float-label">
+    <span *ocxAdvanced class="p-float-label">
       <p-multiSelect
         id="announcement_search_criteria_status"
         [options]="(statusOptions$ | async) ?? []"
