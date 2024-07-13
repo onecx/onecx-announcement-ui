@@ -36,7 +36,7 @@ app:
             DELETE: Delete announcement
             EDIT: Edit announcement
             SEARCH: Search announcement
-            VIEW: View mode for announcement
+            VIEW: View announcement
     # Keycloak
     keycloak:
       client:
