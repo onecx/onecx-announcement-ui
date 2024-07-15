@@ -197,7 +197,7 @@ paths:
     get:
       x-onecx:
         permissions:
-          announcement:
+          workspace:
             - read
       tags:
         - AnnouncementInternal
@@ -211,7 +211,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/WorkspaceAbstract'
   /announcements/products/available:
     post:
       x-onecx:
@@ -511,6 +511,13 @@ components:
         - INFO
         - SYSTEM_MAINTENANCE
       type: string
+    WorkspaceAbstract:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
     OffsetDateTime:
       format: date-time
       type: string

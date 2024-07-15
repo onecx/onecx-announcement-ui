@@ -151,7 +151,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     this.announcementApi.getAllWorkspaceNames().subscribe({
       next: (workspaces) => {
         for (let workspace of workspaces) {
-          this.workspaces.push({ label: workspace, value: workspace })
+          this.workspaces.push({ label: workspace.displayName, value: workspace.displayName })
         }
       },
       error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })

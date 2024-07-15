@@ -16,3 +16,4 @@ export * from './product';
 export * from './productsPageResult';
 export * from './productsSearchCriteria';
 export * from './updateAnnouncementRequest';
+export * from './workspaceAbstract';

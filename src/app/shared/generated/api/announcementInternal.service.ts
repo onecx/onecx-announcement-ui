@@ -40,6 +40,8 @@ import { ProductsPageResult } from '../model/productsPageResult';
 import { ProductsSearchCriteria } from '../model/productsSearchCriteria';
 // @ts-ignore
 import { UpdateAnnouncementRequest } from '../model/updateAnnouncementRequest';
+// @ts-ignore
+import { WorkspaceAbstract } from '../model/workspaceAbstract';
 
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -326,9 +328,9 @@ export class AnnouncementInternalAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public getAllWorkspaceNames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<string>>;
-    public getAllWorkspaceNames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<string>>>;
-    public getAllWorkspaceNames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<string>>>;
+    public getAllWorkspaceNames(observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<WorkspaceAbstract>>;
+    public getAllWorkspaceNames(observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<WorkspaceAbstract>>>;
+    public getAllWorkspaceNames(observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<WorkspaceAbstract>>>;
     public getAllWorkspaceNames(observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
 
         let localVarHeaders = this.defaultHeaders;
@@ -363,7 +365,7 @@ export class AnnouncementInternalAPIService {
         }
 
         let localVarPath = `/announcements/workspaces`;
-        return this.httpClient.request<Array<string>>('get', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<Array<WorkspaceAbstract>>('get', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 responseType: <any>responseType_,

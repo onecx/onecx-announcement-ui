@@ -285,7 +285,7 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.getAllWorkspaceNames().subscribe({
         next: (workspaces) => {
           for (let workspace of workspaces) {
-            this.allWorkspaces.push(workspace)
+            if (workspace.displayName) this.allWorkspaces.push(workspace.displayName)
           }
         },
         error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
