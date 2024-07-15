@@ -45,7 +45,8 @@ export class AnnouncementSearchComponent implements OnInit {
   public allWorkspaces: string[] = []
   public usedProducts: SelectItem[] = []
   public allProducts: string[] = []
-  public nonExistingPortalIds = ['all', 'ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND']
+  public nonExistingWorkspaceIds = ['all', 'All Workspaces', 'Alle Workspaces']
+  public nonExistingApplicationIds = ['all', 'All Applications', 'Alle Applikationen']
   public filteredColumns: Column[] = []
 
   public limitText = limitText
@@ -267,7 +268,9 @@ export class AnnouncementSearchComponent implements OnInit {
         next: (data) => {
           if (data.workspaceNames)
             for (let workspace of data.workspaceNames) {
-              this.usedWorkspaces.push({ label: workspace, value: workspace })
+              if (!this.nonExistingWorkspaceIds.includes(workspace)) {
+                this.usedWorkspaces.push({ label: workspace, value: workspace })
+              }
             }
         },
         error: (err) =>
@@ -327,7 +330,9 @@ export class AnnouncementSearchComponent implements OnInit {
         next: (data) => {
           if (data?.productNames) {
             for (let product of data.productNames) {
-              this.usedProducts.push({ label: product, value: product })
+              if (!this.nonExistingApplicationIds.includes(product)) {
+                this.usedProducts.push({ label: product, value: product })
+              }
             }
           }
         },
@@ -349,7 +354,7 @@ export class AnnouncementSearchComponent implements OnInit {
         next: (data) => {
           if (data.stream) {
             for (let product of data.stream) {
-              this.allProducts.push(product.name)
+              this.allProducts.push(product.displayName)
             }
           }
         },
