@@ -176,16 +176,6 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.criteria).toEqual(newCriteria)
   })
 
-  // it('should set correct values onSearch', () => {
-  //   spyOn(component, 'search')
-
-  //   component.onSearch()
-
-  //   expect(component.changeMode).toEqual('NEW')
-  //   expect(component.appsChanged).toBeTrue()
-  //   expect(component.search).toHaveBeenCalled()
-  // })
-
   it('should set correct values onCreate', () => {
     component.onCreate()
 
@@ -339,13 +329,13 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should get all existing workspaces (getAllWorkspaceNames)', () => {
-    const workspaceNames = ['w1', 'w2']
+    const workspaceNames = [{ displayName: 'w1' }, { displayName: 'w2' }]
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaceNames))
     component.allWorkspaces = []
 
     component.ngOnInit()
 
-    expect(component.allWorkspaces).toContain(workspaceNames[0])
+    expect(component.allWorkspaces).toContain(workspaceNames[0].displayName)
   })
 
   it('should log error if getAllWorkspaceNames fails', () => {

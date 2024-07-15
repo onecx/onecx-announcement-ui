@@ -92,7 +92,7 @@ describe('AnnouncementDetailComponent', () => {
   })
 
   it('should getWorkspaces onInit', () => {
-    const workspaces = ['w1']
+    const workspaces = [{ displayName: 'w1' }]
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
     component.workspaces = []
 
