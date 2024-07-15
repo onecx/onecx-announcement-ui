@@ -163,12 +163,6 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  // public onSearch(): void {
-  //   this.changeMode = 'NEW'
-  //   this.appsChanged = true
-  //   this.search({ announcementSearchCriteria: {} }, true)
-  // }
-
   public reset(): void {
     this.criteria = {}
     this.announcements = []
@@ -199,7 +193,11 @@ export class AnnouncementSearchComponent implements OnInit {
             this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+          })
       })
   }
 
@@ -272,7 +270,11 @@ export class AnnouncementSearchComponent implements OnInit {
               this.usedWorkspaces.push({ label: workspace, value: workspace })
             }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+          })
       })
     })
   }
@@ -288,7 +290,11 @@ export class AnnouncementSearchComponent implements OnInit {
             if (workspace.displayName) this.allWorkspaces.push(workspace.displayName)
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+          })
       })
     })
   }
@@ -325,7 +331,11 @@ export class AnnouncementSearchComponent implements OnInit {
             }
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
+          })
       })
     })
   }
@@ -343,7 +353,11 @@ export class AnnouncementSearchComponent implements OnInit {
             }
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
+          })
       })
     })
   }
