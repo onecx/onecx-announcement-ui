@@ -58,7 +58,7 @@
     "SAVE": "Save",
     "VIEW": "View",
     "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
-    "APPLICATIONS.NOT_FOUND": "Products could not be loaded",
+    "PRODUCTS.NOT_FOUND": "Applications could not be loaded",
     "TOOLTIPS": {
       "CLOSE": "Leave dialog",
       "CANCEL": "Cancel action",

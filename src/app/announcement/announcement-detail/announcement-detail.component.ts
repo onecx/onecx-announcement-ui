@@ -44,7 +44,6 @@ export class AnnouncementDetailComponent implements OnChanges {
   announcementDeleteVisible = false
   workspaces: SelectItem[] = []
   products: SelectItem[] = []
-  // actions: Action[] = []
   public today = new Date()
   public dateFormat: string
   public isLoading = false
@@ -82,13 +81,6 @@ export class AnnouncementDetailComponent implements OnChanges {
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
     this.formGroup.controls['endDate'].addValidators([dateRangeValidator(this.formGroup)])
     this.autoResize = true
-    // this.workspaces.push({
-    //   label: dropdownDefault,
-    //   value: 'all'
-    // })
-    for (let workspace of this.allWorkspaces) {
-      this.workspaces.push({ label: workspace, value: workspace })
-    }
   }
 
   ngOnChanges() {

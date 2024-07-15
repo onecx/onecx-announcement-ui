@@ -338,7 +338,7 @@ export class AnnouncementSearchComponent implements OnInit {
         },
         error: (err) =>
           this.msgService.error({
-            summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND',
+            summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
             detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
           })
       })
@@ -360,7 +360,7 @@ export class AnnouncementSearchComponent implements OnInit {
         },
         error: (err) =>
           this.msgService.error({
-            summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND',
+            summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
             detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
           })
       })

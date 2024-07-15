@@ -158,11 +158,15 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should handle API call error', () => {
     msgServiceSpy.error.calls.reset()
-    apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => new Error()))
+    const err = { status: '400' }
+    apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => err))
 
     component.search({ announcementSearchCriteria: {} })
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+    })
   })
 
   it('should use new criteria if reuseCriteria is false', () => {
@@ -252,7 +256,9 @@ describe('AnnouncementSearchComponent', () => {
 
     component.onDeleteConfirmation()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
+    expect(msgServiceSpy.error).toHaveBeenCalledWith({
+      summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK'
+    })
   })
 
   it('should set correct values onCloseDetail', () => {
@@ -318,13 +324,15 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should log error if getUsedWorkspaces fails', () => {
-    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => new Error()))
+    const err = { status: '400' }
+    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
     })
   })
 
@@ -339,13 +347,15 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should log error if getAllWorkspaceNames fails', () => {
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
+    const err = { status: '400' }
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
     })
   })
 
@@ -393,34 +403,38 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should log error if getUsedProducts fails', () => {
-    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => new Error()))
+    const err = { status: '400' }
+    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+      summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
     })
   })
 
   it('should get all existing products (searchProductsByCriteria)', () => {
-    const productNames = { stream: [{ name: 'prod1' }, { name: 'prod2' }] }
+    const productNames = { stream: [{ displayName: 'prod1' }, { displayName: 'prod2' }] }
     apiServiceSpy.searchProductsByCriteria.and.returnValue(of(productNames))
     component.allProducts = []
 
     component.ngOnInit()
 
-    expect(component.allProducts).toContain(productNames.stream[0].name)
+    expect(component.allProducts).toContain(productNames.stream[0].displayName)
   })
 
   it('should log error if searchProductsByCriteria fails', () => {
-    apiServiceSpy.searchProductsByCriteria.and.returnValue(throwError(() => new Error()))
+    const err = { status: '400' }
+    apiServiceSpy.searchProductsByCriteria.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
+      summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
     })
   })
 
