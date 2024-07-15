@@ -127,9 +127,8 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getUsedWorkspaces()
+    this.getUsedWorkspacesAndProducts()
     this.getAllWorkspaces()
-    this.getUsedProducts()
     this.getAllProducts()
     this.prepareActionButtons()
     this.search({ announcementSearchCriteria: {} })
@@ -159,8 +158,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDetailDialog = false
     if (refresh) {
       this.search({ announcementSearchCriteria: {} }, true)
-      this.getUsedWorkspaces()
-      this.getUsedProducts()
+      this.getUsedWorkspacesAndProducts()
     }
   }
 
@@ -249,7 +247,7 @@ export class AnnouncementSearchComponent implements OnInit {
           this.announcement = undefined
           this.appsChanged = true
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-          if (workspaceUsed) this.getUsedWorkspaces()
+          if (workspaceUsed) this.getUsedWorkspacesAndProducts()
         },
         error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
       })
@@ -257,11 +255,15 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // used in search criteria
-  private getUsedWorkspaces(): void {
+  private getUsedWorkspacesAndProducts(): void {
     this.usedWorkspaces = []
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.usedWorkspaces.push({
         label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
+        value: 'all'
+      })
+      this.usedProducts.push({
+        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
         value: 'all'
       })
       this.announcementApi.getAllProductsWithAnnouncements().subscribe({
@@ -272,6 +274,13 @@ export class AnnouncementSearchComponent implements OnInit {
                 this.usedWorkspaces.push({ label: workspace, value: workspace })
               }
             }
+          if (data.productNames) {
+            for (let product of data.productNames) {
+              if (!this.nonExistingApplicationIds.includes(product)) {
+                this.usedProducts.push({ label: product, value: product })
+              }
+            }
+          }
         },
         error: (err) =>
           this.msgService.error({
@@ -319,31 +328,31 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // used in search criteria
-  private getUsedProducts(): void {
-    this.usedProducts = []
-    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      this.usedProducts.push({
-        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
-        value: 'all'
-      })
-      this.announcementApi.getAllProductsWithAnnouncements().subscribe({
-        next: (data) => {
-          if (data?.productNames) {
-            for (let product of data.productNames) {
-              if (!this.nonExistingApplicationIds.includes(product)) {
-                this.usedProducts.push({ label: product, value: product })
-              }
-            }
-          }
-        },
-        error: (err) =>
-          this.msgService.error({
-            summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
-            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
-          })
-      })
-    })
-  }
+  // private getUsedProducts(): void {
+  //   this.usedProducts = []
+  //   this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
+  //     this.usedProducts.push({
+  //       label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
+  //       value: 'all'
+  //     })
+  //     this.announcementApi.getAllProductsWithAnnouncements().subscribe({
+  //       next: (data) => {
+  //         if (data?.productNames) {
+  //           for (let product of data.productNames) {
+  //             if (!this.nonExistingApplicationIds.includes(product)) {
+  //               this.usedProducts.push({ label: product, value: product })
+  //             }
+  //           }
+  //         }
+  //       },
+  //       error: (err) =>
+  //         this.msgService.error({
+  //           summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
+  //           detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
+  //         })
+  //     })
+  //   })
+  // }
 
   // used in search results
   private getAllProducts() {
