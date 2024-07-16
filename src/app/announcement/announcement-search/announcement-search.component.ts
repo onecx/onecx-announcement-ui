@@ -11,7 +11,7 @@ import {
   SearchAnnouncementsRequestParams,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
-import { limitText } from 'src/app/shared/utils'
+import { limitText, sortByLocale } from 'src/app/shared/utils'
 
 type ExtendedColumn = Column & {
   hasFilter?: boolean
@@ -300,6 +300,7 @@ export class AnnouncementSearchComponent implements OnInit {
         next: (workspaces) => {
           for (let workspace of workspaces) {
             if (workspace.displayName) this.allWorkspaces.push(workspace.displayName)
+            this.allWorkspaces.sort(sortByLocale)
           }
         },
         error: (err) =>
@@ -338,6 +339,7 @@ export class AnnouncementSearchComponent implements OnInit {
             for (let product of data.stream) {
               this.allProducts.push(product.displayName)
             }
+            this.allProducts.sort(sortByLocale)
           }
         },
         error: (err) =>

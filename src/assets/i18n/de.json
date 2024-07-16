@@ -102,7 +102,7 @@
       "TITLE": "Titel der Neuigkeit",
       "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
       "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
-      "PRODUCT": "Applikation, bei der die Neuigkeit angezeigt werden soll",
+      "APPLICATION": "Applikation, bei der die Neuigkeit angezeigt werden soll",
       "TYPE": "Typ der Neuigkeit",
       "STATUS": "Status der Neuigkeit",
       "PRIORITY": "Priorität der Neuigkeit",
