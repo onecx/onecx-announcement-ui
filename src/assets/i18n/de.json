@@ -57,6 +57,7 @@
     "CANCEL": "Abbrechen",
     "SAVE": "Speichern",
     "VIEW": "Ansehen",
+    "ASSIGNMENTS.NOT_FOUND": "Workspaces und Applikationen mit zugewiesenen Neuigkeiten konnten nicht geladen werden",
     "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
     "APPLICATIONS.NOT_FOUND": "Applikationen konnten nicht geladen werden",
     "TOOLTIPS": {

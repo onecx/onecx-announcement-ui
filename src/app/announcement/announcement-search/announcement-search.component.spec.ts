@@ -23,9 +23,9 @@ describe('AnnouncementSearchComponent', () => {
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
     deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
-    getAllProductsWithAnnouncements: jasmine.createSpy('getAllProductsWithAnnouncements').and.returnValue(of({})),
+    getAllAnnouncementAssignments: jasmine.createSpy('getAllAnnouncementAssignments').and.returnValue(of({})),
     getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([])),
-    searchProductsByCriteria: jasmine.createSpy('searchProductsByCriteria').and.returnValue(of([]))
+    getAllProductNames: jasmine.createSpy('getAllProductNames').and.returnValue(of([]))
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
@@ -67,8 +67,8 @@ describe('AnnouncementSearchComponent', () => {
     msgServiceSpy.info.calls.reset()
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
-    apiServiceSpy.getAllProductsWithAnnouncements.calls.reset()
-    apiServiceSpy.searchProductsByCriteria.calls.reset()
+    apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
+    apiServiceSpy.getAllProductNames.calls.reset()
     translateServiceSpy.get.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
@@ -315,7 +315,7 @@ describe('AnnouncementSearchComponent', () => {
    */
   it('should get workspaces used by announcements (getUsedWorkspaces)', () => {
     const apps = { appIds: [], workspaceNames: ['w1'] }
-    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(of(apps))
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(apps))
     component.usedWorkspaces = []
 
     component.ngOnInit()
@@ -325,14 +325,14 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should log error if getUsedWorkspaces fails', () => {
     const err = { status: '400' }
-    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => err))
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+      summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
     })
   })
 
@@ -394,7 +394,7 @@ describe('AnnouncementSearchComponent', () => {
    */
   it('should get products used by announcements (getUsedProducts)', () => {
     const apps = { appIds: [], productNames: ['prod1'] }
-    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(of(apps))
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(apps))
     component.usedProducts = []
 
     component.ngOnInit()
@@ -404,20 +404,20 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should log error if getUsedProducts fails', () => {
     const err = { status: '400' }
-    apiServiceSpy.getAllProductsWithAnnouncements.and.returnValue(throwError(() => err))
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()
 
     expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
+      summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
+      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
     })
   })
 
-  it('should get all existing products (searchProductsByCriteria)', () => {
+  it('should get all existing products (getAllProductNames)', () => {
     const productNames = { stream: [{ displayName: 'prod1' }, { displayName: 'prod2' }] }
-    apiServiceSpy.searchProductsByCriteria.and.returnValue(of(productNames))
+    apiServiceSpy.getAllProductNames.and.returnValue(of(productNames))
     component.allProducts = []
 
     component.ngOnInit()
@@ -425,9 +425,9 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.allProducts).toContain(productNames.stream[0].displayName)
   })
 
-  it('should log error if searchProductsByCriteria fails', () => {
+  it('should log error if getAllProductNames fails', () => {
     const err = { status: '400' }
-    apiServiceSpy.searchProductsByCriteria.and.returnValue(throwError(() => err))
+    apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component.ngOnInit()

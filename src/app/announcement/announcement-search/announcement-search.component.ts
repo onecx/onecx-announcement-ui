@@ -284,8 +284,8 @@ export class AnnouncementSearchComponent implements OnInit {
         },
         error: (err) =>
           this.msgService.error({
-            summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
-            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+            summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
           })
       })
     })
