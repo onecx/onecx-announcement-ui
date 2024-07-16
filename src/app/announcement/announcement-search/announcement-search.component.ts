@@ -266,7 +266,7 @@ export class AnnouncementSearchComponent implements OnInit {
         label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
         value: 'all'
       })
-      this.announcementApi.getAllProductsWithAnnouncements().subscribe({
+      this.announcementApi.getAllAnnouncementAssignments().subscribe({
         next: (data) => {
           if (data.workspaceNames)
             for (let workspace of data.workspaceNames) {
@@ -327,39 +327,12 @@ export class AnnouncementSearchComponent implements OnInit {
     return 'ANNOUNCEMENT.EVERY_WORKSPACE'
   }
 
-  // used in search criteria
-  // private getUsedProducts(): void {
-  //   this.usedProducts = []
-  //   this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-  //     this.usedProducts.push({
-  //       label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
-  //       value: 'all'
-  //     })
-  //     this.announcementApi.getAllProductsWithAnnouncements().subscribe({
-  //       next: (data) => {
-  //         if (data?.productNames) {
-  //           for (let product of data.productNames) {
-  //             if (!this.nonExistingApplicationIds.includes(product)) {
-  //               this.usedProducts.push({ label: product, value: product })
-  //             }
-  //           }
-  //         }
-  //       },
-  //       error: (err) =>
-  //         this.msgService.error({
-  //           summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
-  //           detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
-  //         })
-  //     })
-  //   })
-  // }
-
   // used in search results
   private getAllProducts() {
     this.allProducts = []
     this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.allProducts.push(data['ANNOUNCEMENT.EVERY_PRODUCT'])
-      this.announcementApi.searchProductsByCriteria({ productsSearchCriteria: {} }).subscribe({
+      this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).subscribe({
         next: (data) => {
           if (data.stream) {
             for (let product of data.stream) {
