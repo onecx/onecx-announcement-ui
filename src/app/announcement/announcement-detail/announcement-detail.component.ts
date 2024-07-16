@@ -134,6 +134,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
     })
     if (!this.announcement?.workspaceName) this.formGroup.controls['workspaceName'].setValue('all')
+    if (!this.announcement?.productName) this.formGroup.controls['productName'].setValue('all')
   }
 
   /**
@@ -176,10 +177,10 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   private submitFormValues(): any {
     const announcement: Announcement = { ...this.formGroup.value }
-    if (announcement.workspaceName === 'all') {
+    if (announcement.workspaceName === 'All Workspaces' || announcement.workspaceName === 'Alle Workspaces') {
       announcement.workspaceName = undefined
     }
-    if (announcement.productName === 'all') {
+    if (announcement.productName === 'All Applications' || announcement.productName === 'Alle Applikationen') {
       announcement.productName = undefined
     }
     return announcement

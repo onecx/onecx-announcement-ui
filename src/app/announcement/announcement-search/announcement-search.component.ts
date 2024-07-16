@@ -45,8 +45,6 @@ export class AnnouncementSearchComponent implements OnInit {
   public allWorkspaces: string[] = []
   public usedProducts: SelectItem[] = []
   public allProducts: string[] = []
-  public nonExistingWorkspaceIds = ['all', 'All Workspaces', 'Alle Workspaces']
-  public nonExistingApplicationIds = ['all', 'All Applications', 'Alle Applikationen']
   public filteredColumns: Column[] = []
 
   public limitText = limitText
@@ -257,6 +255,7 @@ export class AnnouncementSearchComponent implements OnInit {
   // used in search criteria
   private getUsedWorkspacesAndProducts(): void {
     this.usedWorkspaces = []
+    this.usedProducts = []
     this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.usedWorkspaces.push({
         label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
@@ -270,15 +269,11 @@ export class AnnouncementSearchComponent implements OnInit {
         next: (data) => {
           if (data.workspaceNames)
             for (let workspace of data.workspaceNames) {
-              if (!this.nonExistingWorkspaceIds.includes(workspace)) {
-                this.usedWorkspaces.push({ label: workspace, value: workspace })
-              }
+              this.usedWorkspaces.push({ label: workspace, value: workspace })
             }
           if (data.productNames) {
             for (let product of data.productNames) {
-              if (!this.nonExistingApplicationIds.includes(product)) {
-                this.usedProducts.push({ label: product, value: product })
-              }
+              this.usedProducts.push({ label: product, value: product })
             }
           }
         },
