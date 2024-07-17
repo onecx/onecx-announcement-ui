@@ -12,9 +12,9 @@ model/activeAnnouncementsPageResult.ts
 model/activeAnnouncementsSearchCriteria.ts
 model/announcement.ts
 model/announcementAbstract.ts
+model/announcementAssignments.ts
 model/announcementPageResult.ts
 model/announcementPriorityType.ts
-model/announcementProducts.ts
 model/announcementSearchCriteria.ts
 model/announcementStatus.ts
 model/announcementType.ts
@@ -27,5 +27,6 @@ model/product.ts
 model/productsPageResult.ts
 model/productsSearchCriteria.ts
 model/updateAnnouncementRequest.ts
+model/workspaceAbstract.ts
 param.ts
 variables.ts

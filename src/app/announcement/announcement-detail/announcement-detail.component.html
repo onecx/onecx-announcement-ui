@@ -31,7 +31,8 @@
               rows="1"
               [autoResize]="true"
               appendTo="body"
-              [title]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
+              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
+              tooltipPosition="top"
             ></textarea>
             <label class="ocx-required-label" for="announcement_detail_form_title">
               {{ 'ANNOUNCEMENT.TITLE' | translate }}
@@ -49,7 +50,8 @@
             rows="3"
             [autoResize]="true"
             appendTo="body"
-            [title]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
+            tooltipPosition="top"
           ></textarea>
           <label for="announcement_detail_form_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
         </span>
@@ -61,11 +63,12 @@
             id="announcement_detail_form_workspace_name"
             class="input-field"
             styleClass="w-full"
-            [options]="workspaces"
+            [options]="allWorkspaces"
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
             formControlName="workspaceName"
-            [title]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
+            tooltipPosition="top"
           >
           </p-dropdown>
           <label for="announcement_detail_form_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
@@ -78,11 +81,12 @@
             id="announcement_detail_form_application_name"
             class="input-field"
             styleClass="w-full"
-            [options]="products"
+            [options]="allProducts"
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
             formControlName="productName"
-            [title]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
+            tooltipPosition="top"
           >
           </p-dropdown>
           <label for="announcement_detail_form_application_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }} </label>
@@ -107,7 +111,8 @@
                 [showOnFocus]="false"
                 ariaLabelledBy="date-from-label"
                 appendTo="body"
-                [title]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
+                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
+                tooltipPosition="top"
               ></p-calendar>
               <label class="ocx-required-label" for="announcement_detail_form_startDate">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
@@ -132,7 +137,8 @@
                 [showOnFocus]="false"
                 ariaLabelledBy="date-from-label"
                 appendTo="body"
-                [title]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
+                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
+                tooltipPosition="top"
               ></p-calendar>
               <label for="announcement_detail_form_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
             </span>
@@ -146,7 +152,8 @@
               formControlName="status"
               trueValue="ACTIVE"
               falseValue="INACTIVE"
-              [title]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
+              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
+              tooltipPosition="top"
             ></p-inputSwitch>
             <label class="text-xs text-center float-label mr-2" for="announcement_detail_form_status">
               {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
@@ -174,7 +181,8 @@
             id="announcement_detail_form_priority"
             formControlName="priority"
             [options]="(priorityOptions$ | async) ?? []"
-            [title]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
+            tooltipPosition="top"
           ></p-selectButton>
         </div>
         <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
@@ -185,7 +193,8 @@
             id="announcement_detail_form_type"
             formControlName="type"
             [options]="(typeOptions$ | async) ?? []"
-            [title]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
+            tooltipPosition="top"
           ></p-selectButton>
         </div>
       </div>
@@ -197,14 +206,16 @@
       <p-button
         id="announcement_detail_button_cancel"
         [label]="'GENERAL.CANCEL' | translate"
-        [title]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
+        tooltipPosition="top"
         (onClick)="onDialogHide()"
         icon="pi pi-times"
       ></p-button>
       <p-button
         id="announcement_detail_button_save"
         [label]="'GENERAL.SAVE' | translate"
-        [title]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        [pTooltip]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        tooltipPosition="top"
         (onClick)="onSave()"
         icon="pi pi-save"
         [disabled]="!formGroup.valid"

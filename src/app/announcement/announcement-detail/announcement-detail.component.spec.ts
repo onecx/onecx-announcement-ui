@@ -91,47 +91,6 @@ describe('AnnouncementDetailComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should getWorkspaces onInit', () => {
-    const workspaces = ['w1']
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
-    component.workspaces = []
-
-    component.ngOnInit()
-
-    expect(component.workspaces).toContain({ label: 'w1', value: 'w1' })
-  })
-
-  it('should log error if getWorkspaces fails', () => {
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => new Error()))
-    spyOn(console, 'error')
-
-    component.ngOnInit()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND'
-    })
-  })
-
-  it('should getProducts onInit', () => {
-    const productNames = { stream: [{ displayName: 'prod1' }, { displayName: 'prod2' }] }
-    apiServiceSpy.searchProductsByCriteria.and.returnValue(of(productNames))
-    component.products = []
-
-    component.ngOnInit()
-
-    expect(component.products).toContain({ label: 'prod1', value: 'prod1' })
-  })
-
-  it('should log error if getProducts fails', () => {
-    apiServiceSpy.searchProductsByCriteria.and.returnValue(throwError(() => new Error()))
-
-    component.ngOnInit()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND'
-    })
-  })
-
   it('should fill the form with Announcement', () => {
     const workspaceName = 'w1'
     const productName = 'app1'
@@ -262,11 +221,20 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should handle formGroup values in submitFormValues: workspaceName is "all"', () => {
     component.formGroup = formGroup
-    component.formGroup.patchValue({ workspaceName: 'all', productName: 'all' })
+    component.formGroup.patchValue({ workspaceName: 'All Workspaces', productName: 'all' })
 
     const result = (component as any).submitFormValues()
 
     expect(result.workspaceName).toBeUndefined()
+  })
+
+  it('should handle formGroup values in submitFormValues: productName is "all"', () => {
+    component.formGroup = formGroup
+    component.formGroup.patchValue({ workspaceName: 'all', productName: 'All Applications' })
+
+    const result = (component as any).submitFormValues()
+
+    expect(result.productName).toBeUndefined()
   })
 
   it('should handle formGroup values in submitFormValues: workspaceName is not "all"', () => {

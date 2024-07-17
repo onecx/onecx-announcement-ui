@@ -11,7 +11,7 @@ import {
   SearchAnnouncementsRequestParams,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
-import { limitText } from 'src/app/shared/utils'
+import { limitText, sortByLocale } from 'src/app/shared/utils'
 
 type ExtendedColumn = Column & {
   hasFilter?: boolean
@@ -45,7 +45,6 @@ export class AnnouncementSearchComponent implements OnInit {
   public allWorkspaces: string[] = []
   public usedProducts: SelectItem[] = []
   public allProducts: string[] = []
-  public nonExistingPortalIds = ['all', 'ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND']
   public filteredColumns: Column[] = []
 
   public limitText = limitText
@@ -126,9 +125,8 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getUsedWorkspaces()
+    this.getUsedWorkspacesAndProducts()
     this.getAllWorkspaces()
-    this.getUsedProducts()
     this.getAllProducts()
     this.prepareActionButtons()
     this.search({ announcementSearchCriteria: {} })
@@ -158,16 +156,9 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDetailDialog = false
     if (refresh) {
       this.search({ announcementSearchCriteria: {} }, true)
-      this.getUsedWorkspaces()
-      this.getUsedProducts()
+      this.getUsedWorkspacesAndProducts()
     }
   }
-
-  // public onSearch(): void {
-  //   this.changeMode = 'NEW'
-  //   this.appsChanged = true
-  //   this.search({ announcementSearchCriteria: {} }, true)
-  // }
 
   public reset(): void {
     this.criteria = {}
@@ -199,7 +190,11 @@ export class AnnouncementSearchComponent implements OnInit {
             this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+          })
       })
   }
 
@@ -250,7 +245,7 @@ export class AnnouncementSearchComponent implements OnInit {
           this.announcement = undefined
           this.appsChanged = true
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-          if (workspaceUsed) this.getUsedWorkspaces()
+          if (workspaceUsed) this.getUsedWorkspacesAndProducts()
         },
         error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
       })
@@ -258,21 +253,35 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // used in search criteria
-  private getUsedWorkspaces(): void {
+  private getUsedWorkspacesAndProducts(): void {
     this.usedWorkspaces = []
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+    this.usedProducts = []
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.usedWorkspaces.push({
         label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
         value: 'all'
       })
-      this.announcementApi.getAllProductsWithAnnouncements().subscribe({
+      this.usedProducts.push({
+        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
+        value: 'all'
+      })
+      this.announcementApi.getAllAnnouncementAssignments().subscribe({
         next: (data) => {
           if (data.workspaceNames)
             for (let workspace of data.workspaceNames) {
               this.usedWorkspaces.push({ label: workspace, value: workspace })
             }
+          if (data.productNames) {
+            for (let product of data.productNames) {
+              this.usedProducts.push({ label: product, value: product })
+            }
+          }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+          })
       })
     })
   }
@@ -285,10 +294,15 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.getAllWorkspaceNames().subscribe({
         next: (workspaces) => {
           for (let workspace of workspaces) {
-            this.allWorkspaces.push(workspace)
+            if (workspace.displayName) this.allWorkspaces.push(workspace.displayName)
+            this.allWorkspaces.sort(sortByLocale)
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+          })
       })
     })
   }
@@ -309,41 +323,25 @@ export class AnnouncementSearchComponent implements OnInit {
     return 'ANNOUNCEMENT.EVERY_WORKSPACE'
   }
 
-  // used in search criteria
-  private getUsedProducts(): void {
-    this.usedProducts = []
-    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      this.usedProducts.push({
-        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
-        value: 'all'
-      })
-      this.announcementApi.getAllProductsWithAnnouncements().subscribe({
-        next: (data) => {
-          if (data?.productNames) {
-            for (let product of data.productNames) {
-              this.usedProducts.push({ label: product, value: product })
-            }
-          }
-        },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
-      })
-    })
-  }
-
   // used in search results
   private getAllProducts() {
     this.allProducts = []
     this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.allProducts.push(data['ANNOUNCEMENT.EVERY_PRODUCT'])
-      this.announcementApi.searchProductsByCriteria({ productsSearchCriteria: {} }).subscribe({
+      this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).subscribe({
         next: (data) => {
           if (data.stream) {
             for (let product of data.stream) {
-              this.allProducts.push(product.name)
+              this.allProducts.push(product.displayName)
             }
+            this.allProducts.sort(sortByLocale)
           }
         },
-        error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
+        error: (err) =>
+          this.msgService.error({
+            summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
+          })
       })
     })
   }
