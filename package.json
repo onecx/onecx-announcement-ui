@@ -88,7 +88,7 @@
     "@docusaurus/module-type-aliases": "~3.2.0",
     "@openapitools/openapi-generator-cli": "^2.9.0",
     "@schematics/angular": "15.2.6",
-    "@storybook/addon-essentials": "7.0.4",
+    "@storybook/addon-essentials": "8.2.4",
     "@storybook/angular": "8.0.6",
     "@storybook/core-server": "7.6.17",
     "@svgr/webpack": "^7.0.0",
