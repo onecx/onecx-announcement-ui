@@ -12,8 +12,50 @@ import {
   PortalMessageService,
   UserService
 } from '@onecx/portal-integration-angular'
-import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
+
+const announcementData: any = [
+  {
+    modificationCount: 0,
+    id: '9abc8923-6200-4346-858e-cac3ce62e1a6',
+    title: 'Anncmt1',
+    content: null,
+    type: 'INFO',
+    priority: 'NORMAL',
+    status: 'INACTIVE',
+    startDate: '2024-07-17T13:18:11Z',
+    endDate: null,
+    productName: 'OneCX IAM',
+    workspaceName: null
+  },
+  {
+    modificationCount: 0,
+    id: '28fe929a-424b-4c6d-8cd1-abf8e87104d5',
+    title: 'Anncmt1 ADMIN',
+    content: null,
+    type: 'INFO',
+    priority: 'NORMAL',
+    status: 'INACTIVE',
+    startDate: '2024-07-16T13:42:40Z',
+    endDate: null,
+    productName: null,
+    workspaceName: 'ADMIN'
+  },
+  {
+    modificationCount: 0,
+    id: 'ff5fbfd7-da53-47e0-8898-e6a4e7c3125e',
+    title: 'Anncmt2',
+    content: null,
+    type: 'INFO',
+    priority: 'NORMAL',
+    status: 'INACTIVE',
+    startDate: '2024-07-16T13:42:54Z',
+    endDate: null,
+    productName: 'OneCX Permission',
+    workspaceName: 'WORK'
+  }
+]
 
 describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
@@ -30,11 +72,6 @@ describe('AnnouncementSearchComponent', () => {
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
 
   const newAnnArray: Announcement[] = [{ id: 'id', title: 'new' }]
-  const resultAllAnnouncements: Announcement[] = [
-    { id: 'id1', title: 'ann1', workspaceName: 'w1' },
-    { id: 'id2', title: 'ann2', workspaceName: 'w2' },
-    { id: 'id3', title: 'announcement without workspace' }
-  ]
   const mockUserService = {
     lang$: {
       getValue: jasmine.createSpy('getValue')
@@ -96,91 +133,94 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.filteredColumns[0].field).toEqual('workspaceName')
   })
 
-  it('should correctly assign results if API call returns some data', () => {
-    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [{ id: 'id', title: 'new' }] }))
-    component.announcements = []
+  describe('search', () => {
+    it('should search announcements without search criteria', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: announcementData }))
+      component.announcements = []
 
-    component.search({ announcementSearchCriteria: {} })
+      component.search({ announcementSearchCriteria: {} })
 
-    expect(component.announcements[0]).toEqual({ id: 'id', title: 'new' })
-  })
+      expect(component.announcements).toEqual(announcementData)
+    })
 
-  it('should search workspace', () => {
-    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
-    component.announcements = []
-    component.criteria = { workspaceName: 'w1' }
-    const reuseCriteria = false
-    const resultAnnouncements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
+    it('should search anncmts assigned to one workspace', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [announcementData[1]] }))
+      component.announcements = []
+      component.criteria = { workspaceName: 'ADMIN' }
+      const reuseCriteria = false
 
-    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
-    expect(component.announcements[0]).toEqual(resultAnnouncements)
-  })
+      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
 
-  it('should search all', () => {
-    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
-    component.criteria = { workspaceName: 'all', productName: 'all' }
-    const resultCriteria = {
-      workspaceName: undefined,
-      productName: undefined
-    }
-    const reuseCriteria = false
+      expect(component.announcements[0]).toEqual(announcementData[1])
+    })
 
-    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
-    expect(component.criteria).toEqual(resultCriteria)
-    expect(component.announcements).toEqual(resultAllAnnouncements)
-  })
+    it('should search anncmts in all workspaces and products', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: announcementData }))
+      component.criteria = { workspaceName: 'all', productName: 'all' }
+      const resultCriteria = {
+        workspaceName: undefined,
+        productName: undefined
+      }
+      const reuseCriteria = false
 
-  it('should handle empty announcements on search', () => {
-    msgServiceSpy.info.calls.reset()
-    apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
-    component.announcements = []
+      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      expect(component.criteria).toEqual(resultCriteria)
+      expect(component.announcements).toEqual(announcementData)
+    })
 
-    component.search({ announcementSearchCriteria: {} })
+    it('should display an info message if there are no announcements', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
+      component.announcements = []
 
-    expect(component.announcements.length).toEqual(0)
-    expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
-  })
+      component.search({ announcementSearchCriteria: {} })
 
-  it('should reset search criteria', () => {
-    apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: resultAllAnnouncements }))
-    component.announcements = []
-    component.criteria = { workspaceName: 'w1' }
-    const reuseCriteria = false
-    const resultAnnouncements = { id: 'id1', title: 'ann1', workspaceName: 'w1' }
+      expect(component.announcements.length).toEqual(0)
+      expect(msgServiceSpy.info).toHaveBeenCalledOnceWith({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
+    })
 
-    component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
-    expect(component.announcements[0]).toEqual(resultAnnouncements)
+    it('should reset search criteria and empty announcements for the next search', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [announcementData[1]] }))
+      component.announcements = []
+      component.criteria = { workspaceName: 'ADMIN' }
+      const reuseCriteria = false
 
-    component.reset()
-    expect(component.criteria).toEqual({})
-    expect(component.announcements).toEqual([])
-  })
+      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      expect(component.announcements[0]).toEqual(announcementData[1])
 
-  it('should handle API call error', () => {
-    msgServiceSpy.error.calls.reset()
-    const err = { status: '400' }
-    apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => err))
+      component.reset()
 
-    component.search({ announcementSearchCriteria: {} })
+      expect(component.criteria).toEqual({})
+      expect(component.announcements).toEqual([])
+    })
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+    it('should display an error message if the search call fails', () => {
+      const err = { status: '400' }
+      apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => err))
+
+      component.search({ announcementSearchCriteria: {} })
+
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
+        detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+      })
+    })
+
+    it('should search with newly defined criteria', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
+      component.criteria = { workspaceName: 'workspaceName', title: 'title' }
+      const newCriteria = { workspaceName: '', productName: '', title: 'new title' }
+      const reuseCriteria = false
+
+      component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)
+
+      expect(component.criteria).toEqual(newCriteria)
     })
   })
 
-  it('should use new criteria if reuseCriteria is false', () => {
-    apiServiceSpy.searchAnnouncements.and.returnValue(of([]))
-    component.criteria = { workspaceName: 'workspaceName', title: 'title' }
-    const newCriteria = { workspaceName: '', productName: '', title: 'new title' }
-    const reuseCriteria = false
-
-    component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)
-
-    expect(component.criteria).toEqual(newCriteria)
-  })
-
-  it('should set correct values onCreate', () => {
+  /*
+   * UI ACTIONS
+   */
+  it('should prepare the creation of a new announcement', () => {
     component.onCreate()
 
     expect(component.changeMode).toEqual('NEW')
@@ -189,46 +229,46 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.displayDetailDialog).toBeTrue()
   })
 
-  it('should set correct values onDetail', () => {
+  it('should show details of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
     const mode = 'EDIT'
 
-    component.onDetail(ev, newAnnArray[0], mode)
+    component.onDetail(ev, announcementData[0], mode)
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual(mode)
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArray[0])
+    expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
-  it('should set correct values onCopy', () => {
+  it('should prepare the copy of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
 
-    component.onCopy(ev, newAnnArray[0])
+    component.onCopy(ev, announcementData[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual('NEW')
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArray[0])
+    expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
-  it('should set correct values onDelete', () => {
+  it('should prepare the deletion of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
     spyOn(ev, 'stopPropagation')
 
-    component.onDelete(ev, newAnnArray[0])
+    component.onDelete(ev, announcementData[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.appsChanged).toBeFalse()
-    expect(component.announcement).toBe(newAnnArray[0])
+    expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDeleteDialog).toBeTrue()
   })
 
-  it('should delete announcement item with/without workspace', () => {
+  it('should delete an announcement item with and without workspace assignment', () => {
     const ev: MouseEvent = new MouseEvent('type')
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
     component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
@@ -247,7 +287,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.announcements.length).toBe(0)
   })
 
-  it('should display error on delete announcement failure', () => {
+  it('should display error if deleting an announcement fails', () => {
     apiServiceSpy.deleteAnnouncementById.and.returnValue(throwError(() => new Error()))
     component.announcement = {
       id: 'definedHere'
@@ -261,7 +301,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  it('should set correct values onCloseDetail', () => {
+  it('should set correct values when detail dialog is closed', () => {
     spyOn(component, 'search')
 
     component.onCloseDetail(true)
@@ -270,7 +310,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.displayDeleteDialog).toBeFalse()
   })
 
-  it('should update filteredColumns onColumnsChange', () => {
+  it('should update the columns that are seen in results', () => {
     const columns: Column[] = [
       {
         field: 'workspaceName',
@@ -290,7 +330,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.filteredColumns).toEqual([jasmine.objectContaining(expectedColumn)])
   })
 
-  it('should call filterGlobal onFilterChange', () => {
+  it('should apply a filter to the result table', () => {
     component.announcementTable = jasmine.createSpyObj('announcementTable', ['filterGlobal'])
 
     component.onFilterChange('test')
@@ -298,7 +338,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.announcementTable?.filterGlobal).toHaveBeenCalledWith('test', 'contains')
   })
 
-  it('should call onCreate when actionCallback is executed', () => {
+  it('should open create dialog', () => {
     translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
     spyOn(component, 'onCreate')
 
@@ -311,11 +351,11 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   /**
-   * test workspaces: used and all
+   * test workspaces: fetching used ws and all ws
    */
-  it('should get workspaces used by announcements (getUsedWorkspaces)', () => {
-    const apps = { appIds: [], workspaceNames: ['w1'] }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(apps))
+  it('should get all workspaces announcements are assigned to', () => {
+    const assignments: AnnouncementAssignments = { productNames: [], workspaceNames: ['w1'] }
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
     component.usedWorkspaces = []
 
     component.ngOnInit()
@@ -323,7 +363,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.usedWorkspaces).toContain({ label: 'w1', value: 'w1' })
   })
 
-  it('should log error if getUsedWorkspaces fails', () => {
+  it('should display error msg if that call fails', () => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
@@ -336,7 +376,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  it('should get all existing workspaces (getAllWorkspaceNames)', () => {
+  it('should get all existing workspaces', () => {
     const workspaceNames = [{ displayName: 'w1' }, { displayName: 'w2' }]
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaceNames))
     component.allWorkspaces = []
@@ -346,7 +386,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.allWorkspaces).toContain(workspaceNames[0].displayName)
   })
 
-  it('should log error if getAllWorkspaceNames fails', () => {
+  it('should log error if that fails', () => {
     const err = { status: '400' }
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
@@ -359,7 +399,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  it('should verify workspace', () => {
+  it('should verify a workspace to be one of all workspaces', () => {
     const workspaces = ['w1']
     component.allWorkspaces = workspaces
 
@@ -368,7 +408,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(result).toEqual(true)
   })
 
-  it('should verify unknown workspace', () => {
+  it('should not verify an unknown workspace', () => {
     const workspaces = ['w1']
     component.allWorkspaces = workspaces
 
@@ -377,24 +417,24 @@ describe('AnnouncementSearchComponent', () => {
     expect(result).toEqual(false)
   })
 
-  it('should getTranslationKeyForNonExistingWorkspaces: return Every workspace', () => {
+  it('should provide a translation if the workspace is undefined', () => {
     const result = component.getTranslationKeyForNonExistingWorkspaces(undefined)
 
     expect(result).toEqual('ANNOUNCEMENT.EVERY_WORKSPACE')
   })
 
-  it('should getTranslationKeyForNonExistingWorkspaces: return unknown workspace', () => {
+  it('should provide a translation if unknown workspace is listed', () => {
     const result = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
 
     expect(result).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
   })
 
   /**
-   * test products: used and all
+   * test products: fetching used products and all products
    */
-  it('should get products used by announcements (getUsedProducts)', () => {
-    const apps = { appIds: [], productNames: ['prod1'] }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(apps))
+  it('should get products announcements are assigned to', () => {
+    const assignments: AnnouncementAssignments = { workspaceNames: [], productNames: ['prod1'] }
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
     component.usedProducts = []
 
     component.ngOnInit()
@@ -402,7 +442,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.usedProducts).toContain({ label: 'prod1', value: 'prod1' })
   })
 
-  it('should log error if getUsedProducts fails', () => {
+  it('should display error if that call fails', () => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
@@ -415,7 +455,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  it('should get all existing products (getAllProductNames)', () => {
+  it('should get all existing products', () => {
     const productNames = { stream: [{ displayName: 'prod1' }, { displayName: 'prod2' }] }
     apiServiceSpy.getAllProductNames.and.returnValue(of(productNames))
     component.allProducts = []
@@ -425,7 +465,7 @@ describe('AnnouncementSearchComponent', () => {
     expect(component.allProducts).toContain(productNames.stream[0].displayName)
   })
 
-  it('should log error if getAllProductNames fails', () => {
+  it('should display error if that call fails', () => {
     const err = { status: '400' }
     apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
@@ -441,11 +481,11 @@ describe('AnnouncementSearchComponent', () => {
   /**
    * Language tests
    */
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
+  it('should set a German date format', () => {
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
 
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
+  it('should set default date format', () => {
     mockUserService.lang$.getValue.and.returnValue('en')
     fixture = TestBed.createComponent(AnnouncementSearchComponent)
     component = fixture.componentInstance
