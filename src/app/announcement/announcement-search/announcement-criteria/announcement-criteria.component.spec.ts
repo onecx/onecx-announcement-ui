@@ -10,6 +10,26 @@ import { AppStateService, UserService, createTranslateLoader } from '@onecx/port
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
 
+const filledCriteria = new FormGroup<AnnouncementCriteriaForm>({
+  title: new FormControl<string | null>('title'),
+  workspaceName: new FormControl<string | null>('workspaceName'),
+  productName: new FormControl<string | null>('productName'),
+  status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
+  type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
+  priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
+  startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
+})
+
+const emptyCriteria = new FormGroup<AnnouncementCriteriaForm>({
+  title: new FormControl<string | null>(null),
+  workspaceName: new FormControl<string | null>(null),
+  productName: new FormControl<string | null>(null),
+  status: new FormControl<AnnouncementStatus[] | null>(null),
+  type: new FormControl<AnnouncementType[] | null>(null),
+  priority: new FormControl<AnnouncementPriorityType[] | null>(null),
+  startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
+})
+
 describe('AnnouncementCriteriaComponent', () => {
   let component: AnnouncementCriteriaComponent
   let fixture: ComponentFixture<AnnouncementCriteriaComponent>
@@ -49,84 +69,56 @@ describe('AnnouncementCriteriaComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should handle criteria on submitCriteria if formGroup values empty', () => {
-    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
-      title: new FormControl<string | null>(null),
-      workspaceName: new FormControl<string | null>(null),
-      productName: new FormControl<string | null>(null),
-      status: new FormControl<AnnouncementStatus[] | null>(null),
-      type: new FormControl<AnnouncementType[] | null>(null),
-      priority: new FormControl<AnnouncementPriorityType[] | null>(null),
-      startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
+  describe('submitCriteria & resetCriteria', () => {
+    it('should search announcements without criteria', () => {
+      component.announcementCriteria = emptyCriteria
+      spyOn(component.criteriaEmitter, 'emit')
+
+      component.submitCriteria()
+
+      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
     })
-    component.announcementCriteria = newCriteria
-    spyOn(component.criteriaEmitter, 'emit')
 
-    component.submitCriteria()
+    it('should search announcements with criteria', () => {
+      component.announcementCriteria = filledCriteria
+      spyOn(component.criteriaEmitter, 'emit')
 
-    expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+      component.submitCriteria()
+
+      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+    })
+
+    it('should prevent user from searching for invalid dates', () => {
+      component.announcementCriteria = filledCriteria
+      component.announcementCriteria.patchValue({ startDateRange: [new Date('2023-01-02')] })
+      spyOn(component.criteriaEmitter, 'emit')
+
+      component.submitCriteria()
+
+      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+    })
+
+    it('should reset search criteria', () => {
+      component.announcementCriteria = filledCriteria
+      spyOn(component.criteriaEmitter, 'emit')
+
+      component.submitCriteria()
+
+      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+
+      spyOn(component.resetSearchEmitter, 'emit')
+      spyOn(component.announcementCriteria, 'reset')
+
+      component.resetCriteria()
+
+      expect(component.announcementCriteria.reset).toHaveBeenCalled()
+      expect(component.resetSearchEmitter.emit).toHaveBeenCalled()
+    })
   })
 
-  it('should handle criteria on submitCriteria if formGroup values exist', () => {
-    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
-      title: new FormControl<string | null>('title'),
-      workspaceName: new FormControl<string | null>('workspaceName'),
-      productName: new FormControl<string | null>(null),
-      status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
-      type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
-      priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
-      startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
-    })
-    component.announcementCriteria = newCriteria
-    spyOn(component.criteriaEmitter, 'emit')
-
-    component.submitCriteria()
-
-    expect(component.criteriaEmitter.emit).toHaveBeenCalled()
-  })
-
-  it('should handle criteria on submitCriteria with empty dateTo or equal dateFrom, dateTo', () => {
-    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
-      title: new FormControl<string | null>(null),
-      workspaceName: new FormControl<string | null>(null),
-      productName: new FormControl<string | null>(null),
-      status: new FormControl<AnnouncementStatus[] | null>(null),
-      type: new FormControl<AnnouncementType[] | null>(null),
-      priority: new FormControl<AnnouncementPriorityType[] | null>(null),
-      startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02')])
-    })
-    component.announcementCriteria = newCriteria
-    spyOn(component.criteriaEmitter, 'emit')
-
-    component.submitCriteria()
-
-    expect(component.criteriaEmitter.emit).toHaveBeenCalled()
-  })
-
-  it('should reset search criteria', () => {
-    const newCriteria = new FormGroup<AnnouncementCriteriaForm>({
-      title: new FormControl<string | null>('title'),
-      workspaceName: new FormControl<string | null>('workspaceName'),
-      productName: new FormControl<string | null>(null),
-      status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
-      type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
-      priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
-      startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02')])
-    })
-    component.announcementCriteria = newCriteria
-    spyOn(component.criteriaEmitter, 'emit')
-
-    component.submitCriteria()
-
-    expect(component.criteriaEmitter.emit).toHaveBeenCalled()
-
-    spyOn(component.resetSearchEmitter, 'emit')
-
-    component.resetCriteria()
-
-    expect(component.resetSearchEmitter.emit).toHaveBeenCalled()
-  })
-
+  /**
+   * Translations
+   */
   it('should load dropdown lists with translations', () => {
     let data2: SelectItem[] = []
     component.type$?.subscribe((data) => {
@@ -150,11 +142,11 @@ describe('AnnouncementCriteriaComponent', () => {
   /**
    * Language tests
    */
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
+  it('should set a German date format', () => {
     expect(component.dateFormatForRange).toEqual('dd.mm.yy')
   })
 
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
+  it('should set default date format', () => {
     mockUserService.lang$.getValue.and.returnValue('en')
     fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
     component = fixture.componentInstance
