@@ -215,6 +215,16 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(component.criteria).toEqual(newCriteria)
     })
+
+    it('should search with wildcard * in title', () => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: announcementData }))
+      component.criteria = { title: 'A*' }
+      const reuseCriteria = false
+
+      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+
+      expect(component.announcements).toEqual(announcementData)
+    })
   })
 
   /*
