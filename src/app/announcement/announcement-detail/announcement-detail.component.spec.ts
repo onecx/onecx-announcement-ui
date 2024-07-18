@@ -12,9 +12,21 @@ import {
   PortalMessageService,
   UserService
 } from '@onecx/portal-integration-angular'
-import { AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementDetailComponent } from './announcement-detail.component'
 import { dateRangeValidator } from './announcement-detail.component'
+
+const workspaceName = 'w1'
+const productName = 'app1'
+
+const announcement: Announcement = {
+  id: 'id',
+  title: 'title',
+  productName: productName,
+  workspaceName: workspaceName,
+  startDate: '2023-01-02',
+  endDate: '2023-01-03'
+}
 
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
@@ -91,210 +103,188 @@ describe('AnnouncementDetailComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should fill the form with Announcement', () => {
-    const workspaceName = 'w1'
-    const productName = 'app1'
-    component.changeMode = 'VIEW'
-    component.announcementId = 'id'
-    component.announcement = {
-      id: 'id',
-      title: 'title',
-      productName: productName,
-      workspaceName: workspaceName,
-      startDate: '2023-01-02',
-      endDate: '2023-01-03'
-    }
-    const result = (component as any).fillForm()
+  describe('ngOnChange, i.e. opening detail dialog', () => {
+    it('should prepare editing an announcement', () => {
+      component.changeMode = 'EDIT'
+      component.announcement = announcement
 
-    expect(component.formGroup.value['productName']).toEqual(productName)
-    expect(component.formGroup.value['workspaceName']).toEqual(workspaceName)
-    expect(result).not.toBeDefined()
-  })
+      component.ngOnChanges()
 
-  it('should behave correctly onChanges in edit mode', () => {
-    component.changeMode = 'EDIT'
-    const testId = 'test id'
-    component.announcement = { id: testId }
+      expect(component.displayDateRangeError).toBeFalse()
+      expect(component.announcementId).toEqual(announcement.id)
+    })
 
-    component.ngOnChanges()
+    it('should prepare copying an announcement', () => {
+      component.changeMode = 'NEW'
+      component.announcement = announcement
+      component.ngOnChanges()
 
-    expect(component.displayDateRangeError).toBeFalse()
-    expect(component.announcementId).toEqual(testId)
-  })
+      expect(component.announcementId).toBeUndefined()
+    })
 
-  it('should behave correctly onChanges in new mode', () => {
-    component.changeMode = 'NEW'
-    const testId = 'test id'
-    component.announcement = { id: testId }
+    it('should prepare creating an announcement', () => {
+      component.changeMode = 'NEW'
+      spyOn(component.formGroup, 'reset')
 
-    component.ngOnChanges()
+      component.ngOnChanges()
 
-    expect(component.announcementId).toBeUndefined()
-  })
+      expect(component.formGroup.reset).toHaveBeenCalled()
+    })
 
-  it('should behave correctly onChanges in new mode if no announcement', () => {
-    component.changeMode = 'NEW'
-    spyOn(component.formGroup, 'reset')
+    it('should display the current announcement', () => {
+      apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
+      component.changeMode = 'EDIT'
+      component.announcement = announcement
 
-    component.ngOnChanges()
+      component.ngOnChanges()
 
-    expect(component.formGroup.reset).toHaveBeenCalled()
-  })
+      expect(component.announcement).toEqual(announcement)
+    })
 
-  it('should update data if getAnnouncementById call succeeds', () => {
-    apiServiceSpy.getAnnouncementById.and.returnValue(of({ id: 'new id' }))
-    component.changeMode = 'EDIT'
-    component.announcement = { id: 'test id' }
-    const newAnnouncement = { id: 'new id' }
+    it('should display error if getting the anncmt fails', () => {
+      apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => new Error()))
+      component.changeMode = 'EDIT'
+      component.announcement = announcement
 
-    component.ngOnChanges()
+      component.ngOnChanges()
 
-    expect(component.announcement).toEqual(newAnnouncement)
-  })
-
-  it('should display error if getAnnouncementById call fails', () => {
-    apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'EDIT'
-    component.announcement = { id: 'test id' }
-
-    component.ngOnChanges()
-
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED'
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED'
+      })
     })
   })
 
-  it('should create an announcement onSave in new mode', () => {
-    apiServiceSpy.createAnnouncement.and.returnValue(of({}))
-    component.changeMode = 'NEW'
-    spyOn(component.hideDialogAndChanged, 'emit')
-    component.formGroup = formGroup
+  describe('onSave - creating and updating an announcement', () => {
+    it('should create an announcement', () => {
+      apiServiceSpy.createAnnouncement.and.returnValue(of({}))
+      component.changeMode = 'NEW'
+      spyOn(component.hideDialogAndChanged, 'emit')
+      component.formGroup = formGroup
 
-    component.onSave()
+      component.onSave()
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.CREATE.MESSAGE.OK'
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.CREATE.MESSAGE.OK'
+      })
+      expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
     })
-    expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
-  })
 
-  it('should handle api call error in new mode', () => {
-    apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'NEW'
-    component.formGroup = formGroup
+    it('should display error if creation fails', () => {
+      apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => new Error()))
+      component.changeMode = 'NEW'
+      component.formGroup = formGroup
 
-    component.onSave()
+      component.onSave()
 
-    expect(component.formGroup.valid).toBeTrue()
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK'
+      expect(component.formGroup.valid).toBeTrue()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK'
+      })
     })
-  })
 
-  it('should update an announcement onSave in edit mode', () => {
-    apiServiceSpy.updateAnnouncementById.and.returnValue(of({}))
-    component.changeMode = 'EDIT'
-    spyOn(component.hideDialogAndChanged, 'emit')
-    component.announcementId = 'id'
-    component.formGroup = formGroup
+    it('should update an announcement', () => {
+      apiServiceSpy.updateAnnouncementById.and.returnValue(of({}))
+      component.changeMode = 'EDIT'
+      spyOn(component.hideDialogAndChanged, 'emit')
+      component.announcementId = 'id'
+      component.formGroup = formGroup
 
-    component.onSave()
+      component.onSave()
 
-    expect(msgServiceSpy.success).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.EDIT.MESSAGE.OK'
+      expect(msgServiceSpy.success).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.EDIT.MESSAGE.OK'
+      })
+      expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
     })
-    expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
-  })
 
-  it('should handle api call error in edit mode', () => {
-    apiServiceSpy.updateAnnouncementById.and.returnValue(throwError(() => new Error()))
-    component.changeMode = 'EDIT'
-    component.announcementId = 'id'
-    component.formGroup = formGroup
+    it('should display error if update fails', () => {
+      apiServiceSpy.updateAnnouncementById.and.returnValue(throwError(() => new Error()))
+      component.changeMode = 'EDIT'
+      component.announcementId = 'id'
+      component.formGroup = formGroup
 
-    component.onSave()
+      component.onSave()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK'
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({
+        summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK'
+      })
     })
-  })
 
-  it('should handle formGroup values in submitFormValues: workspaceName is "all"', () => {
-    component.formGroup = formGroup
-    component.formGroup.patchValue({ workspaceName: 'All Workspaces', productName: 'all' })
+    describe('submitFormValues', () => {
+      it('should prevent non-existing workspace name from being saved', () => {
+        component.formGroup = formGroup
+        component.formGroup.patchValue({ workspaceName: 'All Workspaces', productName: 'all' })
 
-    const result = (component as any).submitFormValues()
+        const result = (component as any).submitFormValues()
 
-    expect(result.workspaceName).toBeUndefined()
-  })
+        expect(result.workspaceName).toBeUndefined()
+      })
 
-  it('should handle formGroup values in submitFormValues: productName is "all"', () => {
-    component.formGroup = formGroup
-    component.formGroup.patchValue({ workspaceName: 'all', productName: 'All Applications' })
+      it('should prevent non-existing product name from being saved', () => {
+        component.formGroup = formGroup
+        component.formGroup.patchValue({ workspaceName: 'all', productName: 'All Applications' })
 
-    const result = (component as any).submitFormValues()
+        const result = (component as any).submitFormValues()
 
-    expect(result.productName).toBeUndefined()
-  })
+        expect(result.productName).toBeUndefined()
+      })
+    })
 
-  it('should handle formGroup values in submitFormValues: workspaceName is not "all"', () => {
-    component.formGroup = formGroup
-    component.formGroup.patchValue({ workspaceName: 'workspace name' })
+    it('should display warning when trying to save an anncmt with invalid dateRange', () => {
+      component.formGroup = formGroup
+      component.formGroup.setErrors({ dateRange: true })
 
-    const result = (component as any).submitFormValues()
+      component.onSave()
 
-    expect(result.workspaceName).toEqual('workspace name')
-  })
-
-  it('should display warning onSave if dateRange invalid', () => {
-    component.formGroup = formGroup
-    component.formGroup.setErrors({ dateRange: true })
-
-    component.onSave()
-
-    expect(msgServiceSpy.warning).toHaveBeenCalledWith({
-      summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE'
+      expect(msgServiceSpy.warning).toHaveBeenCalledWith({
+        summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE'
+      })
     })
   })
 
-  it('should correct dateRange using validator fn', () => {
-    const dateFormGroup = new FormGroup({
-      startDate: new FormControl('2023-01-01'),
-      endDate: new FormControl('2023-01-02')
+  describe('dateFormGroup', () => {
+    it('should correct dateRange using validator fn', () => {
+      const dateFormGroup = new FormGroup({
+        startDate: new FormControl('2023-01-01'),
+        endDate: new FormControl('2023-01-02')
+      })
+
+      dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
+      dateFormGroup.updateValueAndValidity()
+
+      expect(dateFormGroup.valid).toBeTrue()
+      expect(dateFormGroup.errors).toBeNull()
     })
 
-    dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
-    dateFormGroup.updateValueAndValidity()
+    it('should catch dateRange error using validator fn', () => {
+      const dateFormGroup = new FormGroup({
+        startDate: new FormControl('2023-01-02'),
+        endDate: new FormControl('2023-01-01')
+      })
 
-    expect(dateFormGroup.valid).toBeTrue()
-    expect(dateFormGroup.errors).toBeNull()
-  })
+      dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
+      dateFormGroup.updateValueAndValidity()
 
-  it('should catch dateRange error using validator fn', () => {
-    const dateFormGroup = new FormGroup({
-      startDate: new FormControl('2023-01-02'),
-      endDate: new FormControl('2023-01-01')
+      expect(dateFormGroup.valid).toBeFalse()
+      expect(dateFormGroup.errors).toEqual({ invalidDateRange: true })
     })
 
-    dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
-    dateFormGroup.updateValueAndValidity()
+    it('should return null from validator fn if no endDate is present', () => {
+      const dateFormGroup = new FormGroup({
+        startDate: new FormControl('2023-01-02')
+      })
 
-    expect(dateFormGroup.valid).toBeFalse()
-    expect(dateFormGroup.errors).toEqual({ invalidDateRange: true })
-  })
+      dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
+      dateFormGroup.updateValueAndValidity()
 
-  it('should return null from validator fn if no endDate is present', () => {
-    const dateFormGroup = new FormGroup({
-      startDate: new FormControl('2023-01-02')
+      expect(dateFormGroup.errors).toEqual(null)
     })
-
-    dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
-    dateFormGroup.updateValueAndValidity()
-
-    expect(dateFormGroup.errors).toEqual(null)
   })
 
-  it('should set correct values onDialogHide', () => {
+  /*
+   * UI ACTIONS
+   */
+  it('should close the dialog', () => {
     spyOn(component.hideDialogAndChanged, 'emit')
     component.onDialogHide()
 
@@ -305,11 +295,11 @@ describe('AnnouncementDetailComponent', () => {
   /**
    * Language tests
    */
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to a german date format', () => {
+  it('should set a German date format', () => {
     expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
   })
 
-  it('should call this.user.lang$ from the constructor and set this.dateFormat to the default format if user.lang$ is not de', () => {
+  it('should set default date format', () => {
     mockUserService.lang$.getValue.and.returnValue('en')
     fixture = TestBed.createComponent(AnnouncementDetailComponent)
     component = fixture.componentInstance
