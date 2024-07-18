@@ -11,12 +11,7 @@ import {
   provideTranslateServiceForRoot,
   ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
-import {
-  AppConfigService,
-  REMOTE_COMPONENT_ID,
-  UserService,
-  createRemoteComponentTranslateLoader
-} from '@onecx/portal-integration-angular'
+import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
@@ -33,16 +28,12 @@ import { environment } from 'src/environments/environment'
       provide: BASE_URL,
       useValue: new ReplaySubject<string>(1)
     },
-    {
-      provide: REMOTE_COMPONENT_ID,
-      useValue: 'ocx-announcement-banner-component'
-    },
     provideTranslateServiceForRoot({
       isolate: true,
       loader: {
         provide: TranslateLoader,
         useFactory: createRemoteComponentTranslateLoader,
-        deps: [HttpClient, BASE_URL, REMOTE_COMPONENT_ID]
+        deps: [HttpClient, BASE_URL]
       }
     })
   ],
@@ -113,6 +104,14 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       console.error('Failed to hide the announcement:', error)
     }
   }
+  private getIgnoredAnnouncementsIds(): string[] {
+    try {
+      const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)
+      return ignored ? JSON.parse(ignored) : []
+    } catch {
+      return []
+    }
+  }
 
   getPriorityClasses(announcement: Announcement, bgOnly: boolean = false) {
     switch (announcement.priority) {
@@ -122,15 +121,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
         return bgOnly ? 'bg-orange-800' : 'bg-orange-200 text-orange-800'
       default:
         return bgOnly ? 'bg-green-800' : 'bg-green-200 text-green-800'
-    }
-  }
-
-  private getIgnoredAnnouncementsIds(): string[] {
-    try {
-      const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)
-      return ignored ? JSON.parse(ignored) : []
-    } catch {
-      return []
     }
   }
 }

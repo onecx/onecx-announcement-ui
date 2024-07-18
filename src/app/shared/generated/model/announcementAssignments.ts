@@ -11,7 +11,7 @@
  */
 
 
-export interface AnnouncementProducts { 
+export interface AnnouncementAssignments { 
     productNames?: Array<string>;
     workspaceNames?: Array<string>;
 }

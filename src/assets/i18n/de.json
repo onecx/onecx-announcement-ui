@@ -57,6 +57,7 @@
     "CANCEL": "Abbrechen",
     "SAVE": "Speichern",
     "VIEW": "Ansehen",
+    "ASSIGNMENTS.NOT_FOUND": "Workspaces und Applikationen mit zugewiesenen Neuigkeiten konnten nicht geladen werden",
     "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
     "APPLICATIONS.NOT_FOUND": "Applikationen konnten nicht geladen werden",
     "TOOLTIPS": {
@@ -101,7 +102,7 @@
       "TITLE": "Titel der Neuigkeit",
       "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
       "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
-      "PRODUCT": "Applikation, bei der die Neuigkeit angezeigt werden soll",
+      "APPLICATION": "Applikation, bei der die Neuigkeit angezeigt werden soll",
       "TYPE": "Typ der Neuigkeit",
       "STATUS": "Status der Neuigkeit",
       "PRIORITY": "Priorität der Neuigkeit",
@@ -139,6 +140,33 @@
       "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
       "MINIMUM_LENGTH": "Es sind mindestens {{chars}} Zeichen erforderlich.",
       "PATTERN_ERROR": "Ihre Eingabe entspricht nicht dem benötigten Format."
+    }
+  },
+  "EXCEPTIONS": {
+    "HTTP_STATUS_0": {
+      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeitsdaten - bitte versuchen Sie es noch einmal.",
+      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspace-Daten - bitte versuchen Sie es noch einmal.",
+      "PRODUCTS": "Unbekanntes Problem beim Abrufen von Applikationsdaten - bitte versuchen Sie es noch einmal."
+    },
+    "HTTP_STATUS_401": {
+      "ANNOUNCEMENTS": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
+      "WORKSPACES": "Sie sind nicht autorisiert, um Workspaces zu sehen.",
+      "PRODUCTS": "Sie sind nicht autorisiert, um Applikationen zu sehen."
+    },
+    "HTTP_STATUS_403": {
+      "ANNOUNCEMENTS": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
+      "WORKSPACES": "Sie haben keine Rechte, um Workspaces zu sehen.",
+      "PRODUCTS": "Sie haben keine Rechte, um Applikationen zu sehen."
+    },
+    "HTTP_STATUS_404": {
+      "ANNOUNCEMENTS": "Es konnten keine Neuigkeiten gefunden werden.",
+      "WORKSPACES": "Es konnten keine Workspaces gefunden werden.",
+      "PRODUCTS": "Es konnten keine Applikationen geladen werden."
+    },
+    "HTTP_STATUS_500": {
+      "ANNOUNCEMENTS": "Unbekanntes Server-Problem beim Abrufen von Neuigkeitsdaten - bitte versuchen Sie es noch einmal.",
+      "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace-Daten - bitte versuchen Sie es noch einmal.",
+      "PRODUCTS": "Unbekanntes Server-Problem beim Abrufen von Applikationdaten - bitte versuchen Sie es noch einmal."
     }
   }
 }

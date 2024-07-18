@@ -101,7 +101,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /announcements/products:
+  /announcements/assignments:
     get:
       x-onecx:
         permissions:
@@ -109,15 +109,15 @@ paths:
             - read
       tags:
         - AnnouncementInternal
-      summary: Get all product names to which announcements are assigned
-      operationId: getAllProductsWithAnnouncements
+      summary: Get all product and workspace names to which announcements are assigned
+      operationId: getAllAnnouncementAssignments
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AnnouncementProducts'
+                $ref: '#/components/schemas/AnnouncementAssignments'
   /announcements/{id}:
     get:
       x-onecx:
@@ -193,11 +193,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /announcements/workspaces:
+  /announcements/workspaces/available:
     get:
       x-onecx:
         permissions:
-          announcement:
+          workspace:
             - read
       tags:
         - AnnouncementInternal
@@ -211,7 +211,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/WorkspaceAbstract'
   /announcements/products/available:
     post:
       x-onecx:
@@ -221,7 +221,7 @@ paths:
       tags:
         - AnnouncementInternal
       summary: Get all available products
-      operationId: searchProductsByCriteria
+      operationId: getAllProductNames
       requestBody:
         content:
           application/json:
@@ -286,7 +286,7 @@ components:
           type: string
         displayName:
           type: string
-    AnnouncementProducts:
+    AnnouncementAssignments:
       type: object
       properties:
         productNames:
@@ -511,6 +511,13 @@ components:
         - INFO
         - SYSTEM_MAINTENANCE
       type: string
+    WorkspaceAbstract:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
     OffsetDateTime:
       format: date-time
       type: string

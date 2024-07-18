@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators, ValidationErrors, ValidatorFn } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { finalize, Observable, map, of } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
-import { Action, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import {
   CreateAnnouncementRequest,
   UpdateAnnouncementRequest,
@@ -14,7 +14,6 @@ import {
   AnnouncementType,
   AnnouncementInternalAPIService
 } from 'src/app/shared/generated'
-import { dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -33,17 +32,18 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   templateUrl: './announcement-detail.component.html',
   styleUrls: ['./announcement-detail.component.scss']
 })
-export class AnnouncementDetailComponent implements OnInit, OnChanges {
+export class AnnouncementDetailComponent implements OnChanges {
   @Input() public changeMode = 'NEW'
   @Input() public displayDetailDialog = false
   @Input() public announcement: Announcement | undefined
+  @Input() public allWorkspaces: string[] = []
+  @Input() public allProducts: string[] = []
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
   announcementId: string | undefined
   announcementDeleteVisible = false
   workspaces: SelectItem[] = []
   products: SelectItem[] = []
-  actions: Action[] = []
   public today = new Date()
   public dateFormat: string
   public isLoading = false
@@ -81,13 +81,6 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
     this.formGroup.controls['endDate'].addValidators([dateRangeValidator(this.formGroup)])
     this.autoResize = true
-  }
-
-  ngOnInit() {
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      this.getWorkspaces(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
-      this.getProducts(data['ANNOUNCEMENT.EVERY_PRODUCT'])
-    })
   }
 
   ngOnChanges() {
@@ -141,39 +134,7 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
       endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
     })
     if (!this.announcement?.workspaceName) this.formGroup.controls['workspaceName'].setValue('all')
-  }
-
-  private getWorkspaces(dropdownDefault: string): void {
-    this.workspaces.push({
-      label: dropdownDefault,
-      value: 'all'
-    })
-    this.announcementApi.getAllWorkspaceNames().subscribe({
-      next: (workspaces) => {
-        for (let workspace of workspaces) {
-          this.workspaces.push({ label: workspace, value: workspace })
-        }
-      },
-      error: () => this.msgService.error({ summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND' })
-    })
-  }
-
-  private getProducts(dropdownDefault: string): void {
-    this.products.push({
-      label: dropdownDefault,
-      value: 'all'
-    })
-    this.announcementApi.searchProductsByCriteria({ productsSearchCriteria: {} }).subscribe({
-      next: (data) => {
-        if (data.stream) {
-          for (let product of data.stream) {
-            this.products.push({ label: product.displayName, value: product.displayName })
-            this.products.sort(dropDownSortItemsByLabel)
-          }
-        }
-      },
-      error: () => this.msgService.error({ summaryKey: 'GENERAL.APPLICATIONS.NOT_FOUND' })
-    })
+    if (!this.announcement?.productName) this.formGroup.controls['productName'].setValue('all')
   }
 
   /**
@@ -216,10 +177,10 @@ export class AnnouncementDetailComponent implements OnInit, OnChanges {
 
   private submitFormValues(): any {
     const announcement: Announcement = { ...this.formGroup.value }
-    if (announcement.workspaceName === 'all') {
+    if (announcement.workspaceName === 'All Workspaces' || announcement.workspaceName === 'Alle Workspaces') {
       announcement.workspaceName = undefined
     }
-    if (announcement.productName === 'all') {
+    if (announcement.productName === 'All Applications' || announcement.productName === 'Alle Applikationen') {
       announcement.productName = undefined
     }
     return announcement
