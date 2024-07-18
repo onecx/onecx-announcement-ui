@@ -104,6 +104,14 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       console.error('Failed to hide the announcement:', error)
     }
   }
+  private getIgnoredAnnouncementsIds(): string[] {
+    try {
+      const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)
+      return ignored ? JSON.parse(ignored) : []
+    } catch {
+      return []
+    }
+  }
 
   getPriorityClasses(announcement: Announcement, bgOnly: boolean = false) {
     switch (announcement.priority) {
@@ -113,15 +121,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
         return bgOnly ? 'bg-orange-800' : 'bg-orange-200 text-orange-800'
       default:
         return bgOnly ? 'bg-green-800' : 'bg-green-200 text-green-800'
-    }
-  }
-
-  private getIgnoredAnnouncementsIds(): string[] {
-    try {
-      const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)
-      return ignored ? JSON.parse(ignored) : []
-    } catch {
-      return []
     }
   }
 }
