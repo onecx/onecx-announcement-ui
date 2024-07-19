@@ -448,6 +448,8 @@ components:
           $ref: '#/components/schemas/OffsetDateTime'
         workspaceName:
           type: string
+        productName:
+          type: string
         pageNumber:
           format: int32
           description: The number of page.
@@ -493,6 +495,8 @@ components:
         priority:
           $ref: '#/components/schemas/AnnouncementPriorityType'
         workspaceName:
+          type: string
+        productName:
           type: string
     AnnouncementPriorityType:
       enum:
