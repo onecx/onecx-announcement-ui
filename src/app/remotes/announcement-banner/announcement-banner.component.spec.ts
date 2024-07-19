@@ -24,6 +24,12 @@ class MockAppStateService {
         workspaceName: 'wsName'
       })
   }
+  currentMfe$ = {
+    asObservable: () =>
+      of({
+        productName: 'productName'
+      })
+  }
 }
 
 const importantAnnouncement: Announcement = {

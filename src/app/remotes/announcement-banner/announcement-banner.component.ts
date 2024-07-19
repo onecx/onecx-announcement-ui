@@ -65,7 +65,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
             .searchActiveAnnouncements({
               activeAnnouncementsSearchCriteria: {
                 workspaceName: currentWorkspace.workspaceName,
-                productName: currentMfe.displayName,
+                productName: currentMfe.productName,
                 currentDate: this.currentDate
               }
             })
