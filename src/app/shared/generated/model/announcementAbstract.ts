@@ -20,6 +20,7 @@ export interface AnnouncementAbstract {
     type?: AnnouncementType;
     priority?: AnnouncementPriorityType;
     workspaceName?: string;
+    productName?: string;
 }
 
 
