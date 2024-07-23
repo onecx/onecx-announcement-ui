@@ -36,8 +36,8 @@ export class AnnouncementDetailComponent implements OnChanges {
   @Input() public changeMode = 'NEW'
   @Input() public displayDetailDialog = false
   @Input() public announcement: Announcement | undefined
-  @Input() public allWorkspaces: string[] = []
-  @Input() public allProducts: string[] = []
+  @Input() public allWorkspaces: SelectItem[] = []
+  @Input() public allProducts: SelectItem[] = []
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
   announcementId: string | undefined

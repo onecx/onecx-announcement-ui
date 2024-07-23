@@ -42,9 +42,9 @@ export class AnnouncementSearchComponent implements OnInit {
   public loading = false
   public dateFormat: string
   public usedWorkspaces: SelectItem[] = []
-  public allWorkspaces: string[] = []
+  public allWorkspaces: SelectItem[] = []
   public usedProducts: SelectItem[] = []
-  public allProducts: string[] = []
+  public allProducts: SelectItem[] = []
   public filteredColumns: Column[] = []
 
   public limitText = limitText
@@ -290,13 +290,13 @@ export class AnnouncementSearchComponent implements OnInit {
   private getAllWorkspaces() {
     this.allWorkspaces = []
     this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
-      this.allWorkspaces.push(data['ANNOUNCEMENT.EVERY_WORKSPACE'])
+      this.allWorkspaces.push({ label: data['ANNOUNCEMENT.EVERY_WORKSPACE'], value: 'all' })
       this.announcementApi.getAllWorkspaceNames().subscribe({
         next: (workspaces) => {
           for (let workspace of workspaces) {
-            if (workspace.displayName) this.allWorkspaces.push(workspace.displayName)
-            this.allWorkspaces.sort(sortByLocale)
+            if (workspace.displayName) this.allWorkspaces.push({ label: workspace.displayName, value: workspace.name })
           }
+          this.allWorkspaces.sort(sortByLocale)
         },
         error: (err) =>
           this.msgService.error({
@@ -309,10 +309,21 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // workspace in list of all workspaces?
   public isWorkspace(workspaceName?: string): boolean {
-    if (workspaceName && this.allWorkspaces.includes(workspaceName)) {
+    if (
+      workspaceName &&
+      this.allWorkspaces.find((item) => JSON.stringify(item.value) === JSON.stringify(workspaceName)) !== undefined
+    ) {
       return true
     }
     return false
+  }
+
+  public getDisplayNameWorkspace(workspaceName?: string) {
+    return this.allWorkspaces.find((item) => JSON.stringify(item.value) === JSON.stringify(workspaceName))?.label
+  }
+
+  public getDisplayNameProduct(productName?: string) {
+    return this.allProducts.find((item) => JSON.stringify(item.value) === JSON.stringify(productName))?.label
   }
 
   // if not in list of all workspaces then get the suitable translation key
@@ -327,12 +338,15 @@ export class AnnouncementSearchComponent implements OnInit {
   private getAllProducts() {
     this.allProducts = []
     this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      this.allProducts.push(data['ANNOUNCEMENT.EVERY_PRODUCT'])
+      this.allProducts.push({
+        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
+        value: 'all'
+      })
       this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).subscribe({
         next: (data) => {
           if (data.stream) {
             for (let product of data.stream) {
-              this.allProducts.push(product.displayName)
+              this.allProducts.push({ label: product.displayName, value: product.name })
             }
             this.allProducts.sort(sortByLocale)
           }
