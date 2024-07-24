@@ -46,6 +46,7 @@ export class AnnouncementDetailComponent implements OnChanges {
   products: SelectItem[] = []
   public today = new Date()
   public dateFormat: string
+  public timeFormat: string
   public isLoading = false
   public displayDateRangeError = false
   // form
@@ -62,7 +63,8 @@ export class AnnouncementDetailComponent implements OnChanges {
     private translate: TranslateService,
     private msgService: PortalMessageService
   ) {
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'mm/dd/yy'
+    this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'
     this.prepareDropDownOptions()
     this.formGroup = fb.nonNullable.group({
       id: new FormControl(null),

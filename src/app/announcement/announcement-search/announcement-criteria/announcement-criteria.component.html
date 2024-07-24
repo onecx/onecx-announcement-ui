@@ -13,9 +13,10 @@
         pInputText
         type="text"
         formControlName="title"
-        class="w-12rem sm:w-18rem"
+        class="w-12rem sm:w-15rem"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       />
       <label for="announcement_search_criteria_title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
     </span>
@@ -32,6 +33,7 @@
         [dateFormat]="dateFormatForRange"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE_RANGE' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       ></p-calendar>
       <label for="announcement_search_criteria_start_date_range">
         {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label
@@ -40,12 +42,14 @@
     <span class="p-float-label">
       <p-dropdown
         id="announcement_search_criteria_workspace_name"
+        styleClass=""
         [options]="workspaces"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
         formControlName="workspaceName"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       >
       </p-dropdown>
       <label for="announcement_search_criteria_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
@@ -53,12 +57,14 @@
     <span class="p-float-label">
       <p-dropdown
         id="announcement_search_criteria_product_name"
+        styleClass="w-13rem"
         [options]="products"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
         formControlName="productName"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       >
       </p-dropdown>
       <label for="announcement_search_criteria_product_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }}</label>
@@ -72,6 +78,7 @@
         [filter]="false"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       >
       </p-multiSelect>
       <label for="announcement_search_criteria_status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
@@ -86,6 +93,7 @@
         [filter]="false"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       >
       </p-multiSelect>
       <label for="type">{{ 'ANNOUNCEMENT.TYPE' | translate }}</label>
@@ -100,6 +108,7 @@
         [filter]="false"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
         tooltipPosition="top"
+        tooltipEvent="hover"
       >
       </p-multiSelect>
       <label for="announcement_search_criteria_priority">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
