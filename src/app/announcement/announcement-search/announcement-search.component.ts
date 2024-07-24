@@ -268,11 +268,11 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.getAllAnnouncementAssignments().subscribe({
         next: (data) => {
           if (data.workspaceNames)
-            for (let workspace of data.workspaceNames) {
+            for (const workspace of data.workspaceNames) {
               this.usedWorkspaces.push({ label: workspace, value: workspace })
             }
           if (data.productNames) {
-            for (let product of data.productNames) {
+            for (const product of data.productNames) {
               this.usedProducts.push({ label: product, value: product })
             }
           }
@@ -293,7 +293,7 @@ export class AnnouncementSearchComponent implements OnInit {
       this.allWorkspaces.push({ label: data['ANNOUNCEMENT.EVERY_WORKSPACE'], value: 'all' })
       this.announcementApi.getAllWorkspaceNames().subscribe({
         next: (workspaces) => {
-          for (let workspace of workspaces) {
+          for (const workspace of workspaces) {
             if (workspace.displayName) this.allWorkspaces.push({ label: workspace.displayName, value: workspace.name })
           }
           this.allWorkspaces.sort(sortByLocale)
@@ -345,7 +345,7 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).subscribe({
         next: (data) => {
           if (data.stream) {
-            for (let product of data.stream) {
+            for (const product of data.stream) {
               this.allProducts.push({ label: product.displayName, value: product.name })
             }
             this.allProducts.sort(sortByLocale)
