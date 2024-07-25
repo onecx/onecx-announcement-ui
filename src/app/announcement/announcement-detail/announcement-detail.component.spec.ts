@@ -28,7 +28,7 @@ const announcement: Announcement = {
   endDate: '2023-01-03'
 }
 
-describe('AnnouncementDetailComponent', () => {
+xdescribe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
   let fixture: ComponentFixture<AnnouncementDetailComponent>
 

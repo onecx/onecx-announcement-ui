@@ -33,6 +33,7 @@
               appendTo="body"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
               tooltipPosition="top"
+              tooltipEvent="hover"
             ></textarea>
             <label class="ocx-required-label" for="announcement_detail_form_title">
               {{ 'ANNOUNCEMENT.TITLE' | translate }}
@@ -52,6 +53,7 @@
             appendTo="body"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
             tooltipPosition="top"
+            tooltipEvent="hover"
           ></textarea>
           <label for="announcement_detail_form_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
         </span>
@@ -69,6 +71,7 @@
             formControlName="workspaceName"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
             tooltipPosition="top"
+            tooltipEvent="hover"
           >
           </p-dropdown>
           <label for="announcement_detail_form_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
@@ -87,6 +90,7 @@
             formControlName="productName"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
             tooltipPosition="top"
+            tooltipEvent="hover"
           >
           </p-dropdown>
           <label for="announcement_detail_form_application_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }} </label>
@@ -101,8 +105,10 @@
                 id="announcement_detail_form_startDate"
                 type="text"
                 formControlName="startDate"
-                styleClass="w-14rem"
+                styleClass="w-15rem"
                 todayButtonStyleClass="calender-today"
+                [dateFormat]="dateFormat"
+                [hourFormat]="timeFormat"
                 [minDate]="today"
                 [showClear]="false"
                 [showTime]="true"
@@ -113,6 +119,7 @@
                 appendTo="body"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
                 tooltipPosition="top"
+                tooltipEvent="hover"
               ></p-calendar>
               <label class="ocx-required-label" for="announcement_detail_form_startDate">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
@@ -127,8 +134,10 @@
                 id="announcement_detail_form_endDate"
                 type="text"
                 formControlName="endDate"
-                styleClass="w-14rem"
+                styleClass="w-15rem"
                 todayButtonStyleClass="calender-today"
+                [dateFormat]="dateFormat"
+                [hourFormat]="timeFormat"
                 [minDate]="today"
                 [showClear]="true"
                 [showTime]="true"
@@ -139,6 +148,7 @@
                 appendTo="body"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
                 tooltipPosition="top"
+                tooltipEvent="hover"
               ></p-calendar>
               <label for="announcement_detail_form_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
             </span>
@@ -154,6 +164,7 @@
               falseValue="INACTIVE"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
               tooltipPosition="top"
+              tooltipEvent="hover"
             ></p-inputSwitch>
             <label class="text-xs text-center float-label mr-2" for="announcement_detail_form_status">
               {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
@@ -183,6 +194,7 @@
             [options]="(priorityOptions$ | async) ?? []"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
             tooltipPosition="top"
+            tooltipEvent="hover"
           ></p-selectButton>
         </div>
         <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
@@ -195,6 +207,7 @@
             [options]="(typeOptions$ | async) ?? []"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
             tooltipPosition="top"
+            tooltipEvent="hover"
           ></p-selectButton>
         </div>
       </div>
@@ -205,20 +218,22 @@
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
         id="announcement_detail_button_cancel"
+        icon="pi pi-times"
         [label]="'GENERAL.CANCEL' | translate"
+        (onClick)="onDialogHide()"
         [pTooltip]="'GENERAL.TOOLTIPS.CANCEL' | translate"
         tooltipPosition="top"
-        (onClick)="onDialogHide()"
-        icon="pi pi-times"
+        tooltipEvent="hover"
       ></p-button>
       <p-button
         id="announcement_detail_button_save"
+        icon="pi pi-save"
         [label]="'GENERAL.SAVE' | translate"
+        (onClick)="onSave()"
+        [disabled]="!formGroup.valid"
         [pTooltip]="'GENERAL.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
-        (onClick)="onSave()"
-        icon="pi pi-save"
-        [disabled]="!formGroup.valid"
+        tooltipEvent="hover"
       ></p-button>
     </div>
   </ng-template>
