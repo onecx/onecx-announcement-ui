@@ -6,14 +6,14 @@
   [manualBreadcrumbs]="false"
   [actions]="actions"
 >
-  <div [formGroup]="announcementCriteria" class="flex flex-wrap column-gap-3 row-gap-2 sm:row-gap-2">
+  <div [formGroup]="announcementCriteria" class="flex flex-wrap gap-3">
     <span class="p-float-label">
       <input
         id="announcement_search_criteria_title"
         pInputText
         type="text"
         formControlName="title"
-        class="w-12rem sm:w-15rem"
+        class="w-11rem sm:w-13rem"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -23,10 +23,10 @@
     <span class="p-float-label">
       <p-calendar
         inputId="announcement_search_criteria_start_date_range"
+        styleClass="w-13rem"
         selectionMode="range"
         [readonlyInput]="true"
         formControlName="startDateRange"
-        styleClass="w-13rem"
         appendTo="body"
         [showButtonBar]="true"
         [showWeek]="true"
@@ -42,7 +42,7 @@
     <span class="p-float-label">
       <p-dropdown
         id="announcement_search_criteria_workspace_name"
-        styleClass=""
+        styleClass="w-11rem sm:w-13rem"
         [options]="workspaces"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"

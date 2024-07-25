@@ -179,12 +179,9 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   private submitFormValues(): any {
     const announcement: Announcement = { ...this.formGroup.value }
-    if (announcement.workspaceName === 'All Workspaces' || announcement.workspaceName === 'Alle Workspaces') {
-      announcement.workspaceName = undefined
-    }
-    if (announcement.productName === 'All Applications' || announcement.productName === 'Alle Applikationen') {
-      announcement.productName = undefined
-    }
+    console.log('submitFormValues', announcement)
+    if (announcement.workspaceName === 'all') announcement.workspaceName = undefined
+    if (announcement.productName === 'all') announcement.productName = undefined
     return announcement
   }
 

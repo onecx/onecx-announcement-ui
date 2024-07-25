@@ -63,7 +63,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
         'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.SystemMaintenance
       ])
       .pipe(
-        map((data) => {
+        map((data: any) => {
           return [
             { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event], value: AnnouncementType.Event },
             { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Info], value: AnnouncementType.Info },

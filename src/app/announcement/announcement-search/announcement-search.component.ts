@@ -131,7 +131,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchMetaData()
+    this.loadAllData()
     this.prepareActionButtons()
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
@@ -163,11 +163,14 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  public reset(): void {
+  public onReset(): void {
     this.criteria = {}
     this.announcements = []
   }
 
+  /****************************************************************************
+   *  SEARCH announcements
+   */
   public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
     if (criteria.announcementSearchCriteria.workspaceName === 'all') {
       criteria.announcementSearchCriteria.workspaceName = undefined
@@ -185,14 +188,18 @@ export class AnnouncementSearchComponent implements OnInit {
     this.searching = true
     this.announcementApi
       .searchAnnouncements(criteria)
-      .pipe(finalize(() => (this.searching = false)))
+      .pipe(
+        finalize(() => {
+          this.searching = false
+          this.loading = false
+        })
+      )
       .subscribe({
         next: (data) => {
           this.announcements = data.stream || []
           if (this.announcements.length === 0) {
             this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
           }
-          this.loading = false
         },
         error: (err) =>
           this.msgService.error({
@@ -275,8 +282,6 @@ export class AnnouncementSearchComponent implements OnInit {
           this.usedProducts.sort(dropDownSortItemsByLabel)
         }
         this.addAllToUsedProductsAndWorkspaces()
-        console.log('this.usedWorkspaces', this.usedWorkspaces)
-        console.log('this.usedProducts', this.usedProducts)
       },
       error: (err) =>
         this.msgService.error({
@@ -295,25 +300,6 @@ export class AnnouncementSearchComponent implements OnInit {
         label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
         value: 'all'
       })
-    })
-  }
-
-  // used in search results
-  private getAllWorkspaces() {
-    this.allWorkspaces = []
-    this.announcementApi.getAllWorkspaceNames().subscribe({
-      next: (workspaces) => {
-        for (let workspace of workspaces) {
-          if (workspace.displayName) this.allWorkspaces.push({ label: workspace.displayName, value: workspace.name })
-        }
-        this.allWorkspaces.sort(dropDownSortItemsByLabel)
-        this.addAllWorkspaces()
-      },
-      error: (err) =>
-        this.msgService.error({
-          summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
-          detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
-        })
     })
   }
 
@@ -346,27 +332,6 @@ export class AnnouncementSearchComponent implements OnInit {
     return 'ANNOUNCEMENT.EVERY_WORKSPACE'
   }
 
-  // used in search results
-  private getAllProducts() {
-    this.allProducts = []
-    this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).subscribe({
-      next: (data) => {
-        if (data.stream) {
-          for (let product of data.stream) {
-            this.allProducts.push({ label: product.displayName, value: product.name })
-          }
-          this.allProducts.sort(dropDownSortItemsByLabel)
-        }
-        this.addAllProducts()
-      },
-      error: (err) =>
-        this.msgService.error({
-          summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
-          detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
-        })
-    })
-  }
-
   private addAllProducts() {
     this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
       this.allProducts.unshift({
@@ -383,6 +348,11 @@ export class AnnouncementSearchComponent implements OnInit {
       })
     })
   }
+
+  /****************************************************************************
+   *  SEARCHING of META DATA
+   *     used to display readable names in drop down lists and result set
+   */
 
   // declare searching for ALL workspaces
   private searchProducts(): Observable<SelectItem[]> {
@@ -425,8 +395,9 @@ export class AnnouncementSearchComponent implements OnInit {
       })
     )
   }
-  // declare searching every thing
-  private searchMetaData(): void {
+
+  // Loading every thing - triggered from HTML
+  private loadAllData(): void {
     this.loading = true
     this.allMataData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
       map(([w, p]: [SelectItem[], SelectItem[]]) => {
@@ -434,8 +405,6 @@ export class AnnouncementSearchComponent implements OnInit {
         this.allProducts = p
         this.addAllProducts()
         this.addAllWorkspaces()
-        console.log('searchMetaData w:', w)
-        console.log('searchMetaData p:', this.allProducts)
         this.getUsedWorkspacesAndProducts()
         this.search({ announcementSearchCriteria: {} })
         return 'ok'

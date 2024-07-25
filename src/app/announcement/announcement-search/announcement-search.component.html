@@ -4,7 +4,7 @@
     [workspaces]="usedWorkspaces"
     [products]="usedProducts"
     (criteriaEmitter)="search($event)"
-    (resetSearchEmitter)="reset()"
+    (resetSearchEmitter)="onReset()"
   ></app-announcement-criteria>
 
   <ocx-page-content styleClass="px-3" *ngIf="allMataData$ | async">
