@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs'
 import { Table } from 'primeng/table'
@@ -50,7 +50,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public usedProducts: SelectItem[] = []
   public allProducts: SelectItem[] = []
   public allProducts$!: Observable<ProductsPageResult>
-  public allMataData$!: Observable<string>
+  public allMetaData$!: Observable<string>
   public filteredColumns: Column[] = []
 
   public limitText = limitText
@@ -125,7 +125,8 @@ export class AnnouncementSearchComponent implements OnInit {
     private user: UserService,
     private announcementApi: AnnouncementInternalAPIService,
     private msgService: PortalMessageService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
   }
@@ -282,12 +283,15 @@ export class AnnouncementSearchComponent implements OnInit {
           this.usedProducts.sort(dropDownSortItemsByLabel)
         }
         this.addAllToUsedProductsAndWorkspaces()
+        this.cdr.detectChanges()
       },
-      error: (err) =>
+      error: (err) => {
         this.msgService.error({
           summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
           detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
         })
+        this.cdr.detectChanges()
+      }
     })
   }
   private addAllToUsedProductsAndWorkspaces() {
@@ -396,10 +400,10 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  // Loading every thing - triggered from HTML
+  // Loading everything - triggered from HTML
   private loadAllData(): void {
     this.loading = true
-    this.allMataData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
+    this.allMetaData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
       map(([w, p]: [SelectItem[], SelectItem[]]) => {
         this.allWorkspaces = w
         this.allProducts = p
