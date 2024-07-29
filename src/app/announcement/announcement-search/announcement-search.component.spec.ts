@@ -57,7 +57,7 @@ const announcementData: any = [
   }
 ]
 
-fdescribe('AnnouncementSearchComponent', () => {
+describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
   let fixture: ComponentFixture<AnnouncementSearchComponent>
 
