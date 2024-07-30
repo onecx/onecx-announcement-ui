@@ -279,7 +279,7 @@ describe('AnnouncementSearchComponent', () => {
   it('should delete an announcement item with and without workspace assignment', () => {
     const ev: MouseEvent = new MouseEvent('type')
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
-    component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
+    // component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
     component.announcements = [
       { id: 'a1', title: 'a1' },
       { id: 'a2', title: 'a2', workspaceName: 'workspace' }
@@ -361,29 +361,35 @@ describe('AnnouncementSearchComponent', () => {
   /**
    * test workspaces: fetching used ws and all ws
    */
-  it('should get all announcements assigned to workspaces', fakeAsync(() => {
+  it('should get all announcements assigned to workspaces', (done) => {
     const assignments: AnnouncementAssignments = { productNames: [], workspaceNames: ['w1'] }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
-    component.usedWorkspaces = []
     component.allWorkspaces = [{ label: 'Workspace1', value: 'w1' }]
 
     component['getUsedWorkspacesAndProducts']()
 
-    expect(component.usedWorkspaces).toContain({ label: 'Workspace1', value: 'w1' })
-  }))
+    component.usedWorkspaces$?.subscribe({
+      next: (ws) => {
+        expect(ws).toContain({ label: 'Workspace1', value: 'w1' })
+        done()
+      }
+    })
+  })
 
-  it('should display error msg if that call fails', fakeAsync(() => {
+  it('should display error msg if getAllAnnouncementAssignments call fails', (done) => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component['getUsedWorkspacesAndProducts']()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+    component.usedWorkspaces$?.subscribe({
+      next: () => {
+        expect(console.error).toHaveBeenCalledWith('getUsedWorkspacesAndProducts', err)
+        done()
+      }
     })
-  }))
+  })
 
   it('should get all existing workspaces', (done) => {
     const workspaceNames = [{ name: 'ws', displayName: 'Workspace' }]
@@ -401,7 +407,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  it('should log error if that fails', fakeAsync(() => {
+  it('should log error getting all existing wss fails', fakeAsync(() => {
     const err = { status: '400' }
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
@@ -448,27 +454,33 @@ describe('AnnouncementSearchComponent', () => {
   /**
    * test products: fetching used products and all products
    */
-  it('should get announcements assigned to products', fakeAsync(() => {
+  it('should get announcements assigned to products', (done) => {
     const assignments: AnnouncementAssignments = { workspaceNames: [], productNames: ['prod1'] }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
-    component.usedProducts = []
     component.allProducts = [{ label: 'Product1', value: 'prod1' }]
 
     component['getUsedWorkspacesAndProducts']()
 
-    expect(component.usedProducts).toContain({ label: 'Product1', value: 'prod1' })
-  }))
+    component.usedProducts$?.subscribe({
+      next: (p) => {
+        expect(p).toContain({ label: 'Product1', value: 'prod1' })
+        done()
+      }
+    })
+  })
 
-  it('should display error if that call fails', () => {
+  it('should display error if getting used products fails', (done) => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component['getUsedWorkspacesAndProducts']()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+    component.usedProducts$?.subscribe({
+      next: () => {
+        expect(console.error).toHaveBeenCalledWith('getUsedWorkspacesAndProducts', err)
+        done()
+      }
     })
   })
 

@@ -270,6 +270,10 @@ export class AnnouncementSearchComponent implements OnInit {
     const announcementAssignments$ = this.announcementApi.getAllAnnouncementAssignments()
 
     this.usedWorkspaces$ = announcementAssignments$.pipe(
+      catchError((err) => {
+        console.error('getUsedWorkspacesAndProducts', err)
+        return of([] as AnnouncementAssignments)
+      }),
       map((data: AnnouncementAssignments) =>
         (data.workspaceNames || []).map(
           (name) =>
@@ -282,6 +286,10 @@ export class AnnouncementSearchComponent implements OnInit {
       map((workspaces) => this.addAllToUsedWorkspaces(workspaces))
     )
     this.usedProducts$ = announcementAssignments$.pipe(
+      catchError((err) => {
+        console.error('getUsedWorkspacesAndProducts', err)
+        return of([] as AnnouncementAssignments)
+      }),
       map((data: AnnouncementAssignments) =>
         (data.productNames || []).map(
           (name) =>
