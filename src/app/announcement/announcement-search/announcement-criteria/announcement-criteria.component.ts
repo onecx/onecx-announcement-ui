@@ -37,7 +37,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
   public displayCreateDialog = false
   public announcementCriteria!: FormGroup<AnnouncementCriteriaForm>
   public dateFormatForRange: string
-  public filteredTitles: any[] = []
+  public filteredTitles = []
   public type$: Observable<SelectItem[]> = of([])
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityType$: Observable<SelectItem[]> = of([])
@@ -66,7 +66,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
         'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.SystemMaintenance
       ])
       .pipe(
-        map((data: any) => {
+        map((data) => {
           return [
             { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event], value: AnnouncementType.Event },
             { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Info], value: AnnouncementType.Info },

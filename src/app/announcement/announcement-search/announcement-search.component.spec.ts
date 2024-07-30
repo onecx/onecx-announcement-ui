@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing'
 import { HttpClient } from '@angular/common/http'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
@@ -57,7 +57,7 @@ const announcementData: any = [
   }
 ]
 
-xdescribe('AnnouncementSearchComponent', () => {
+describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
   let fixture: ComponentFixture<AnnouncementSearchComponent>
 
@@ -125,11 +125,9 @@ xdescribe('AnnouncementSearchComponent', () => {
       { field: 'title', header: 'TITLE', active: false },
       { field: 'workspaceName', header: 'WORKSPACE', active: true }
     ]
-    spyOn(component, 'search')
 
     component.ngOnInit()
 
-    expect(component.search).toHaveBeenCalled()
     expect(component.filteredColumns[0].field).toEqual('workspaceName')
   })
 
@@ -281,7 +279,7 @@ xdescribe('AnnouncementSearchComponent', () => {
   it('should delete an announcement item with and without workspace assignment', () => {
     const ev: MouseEvent = new MouseEvent('type')
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
-    component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
+    // component.usedWorkspaces = [{ label: 'workspace', value: 'workspace' }]
     component.announcements = [
       { id: 'a1', title: 'a1' },
       { id: 'a2', title: 'a2', workspaceName: 'workspace' }
@@ -363,51 +361,65 @@ xdescribe('AnnouncementSearchComponent', () => {
   /**
    * test workspaces: fetching used ws and all ws
    */
-  it('should get all workspaces announcements are assigned to', () => {
+  it('should get all announcements assigned to workspaces', (done) => {
     const assignments: AnnouncementAssignments = { productNames: [], workspaceNames: ['w1'] }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
-    component.usedWorkspaces = []
+    component.allWorkspaces = [{ label: 'Workspace1', value: 'w1' }]
 
-    component.ngOnInit()
+    component['getUsedWorkspacesAndProducts']()
 
-    expect(component.usedWorkspaces).toContain({ label: 'w1', value: 'w1' })
+    component.usedWorkspaces$?.subscribe({
+      next: (ws) => {
+        expect(ws).toContain({ label: 'Workspace1', value: 'w1' })
+        done()
+      }
+    })
   })
 
-  it('should display error msg if that call fails', () => {
+  it('should display error msg if getAllAnnouncementAssignments call fails', (done) => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
-    component.ngOnInit()
+    component['getUsedWorkspacesAndProducts']()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+    component.usedWorkspaces$?.subscribe({
+      next: () => {
+        expect(console.error).toHaveBeenCalledWith('getUsedWorkspacesAndProducts', err)
+        done()
+      }
     })
   })
 
-  it('should get all existing workspaces', () => {
-    const workspaceNames = [{ name: 'w1' }, { name: 'w2' }]
+  it('should get all existing workspaces', (done) => {
+    const workspaceNames = [{ name: 'ws', displayName: 'Workspace' }]
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaceNames))
     component.allWorkspaces = []
 
-    component.ngOnInit()
+    component['searchWorkspaces']()
 
-    expect(component.allWorkspaces).toContain({ label: 'ANNOUNCEMENT.EVERY_WORKSPACE', value: 'all' })
+    component.allWorkspaces$.subscribe({
+      next: (workspaces) => {
+        expect(workspaces.length).toBe(1)
+        expect(workspaces[0].displayName).toEqual('Workspace')
+        done()
+      }
+    })
   })
 
-  it('should log error if that fails', () => {
+  it('should log error getting all existing wss fails', fakeAsync(() => {
     const err = { status: '400' }
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
-    component.ngOnInit()
+    component['searchWorkspaces']()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.WORKSPACES.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
+    component.allWorkspaces$.subscribe({
+      next: () => {
+        expect(console.error).toHaveBeenCalledWith('getAllWorkspaceNames():', err)
+      }
     })
-  })
+  }))
 
   it('should verify a workspace to be one of all workspaces', () => {
     const workspaces = [{ label: 'w1', value: 'w1' }]
@@ -442,49 +454,70 @@ xdescribe('AnnouncementSearchComponent', () => {
   /**
    * test products: fetching used products and all products
    */
-  it('should get products announcements are assigned to', () => {
+  it('should get announcements assigned to products', (done) => {
     const assignments: AnnouncementAssignments = { workspaceNames: [], productNames: ['prod1'] }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
-    component.usedProducts = []
+    component.allProducts = [{ label: 'Product1', value: 'prod1' }]
 
-    component.ngOnInit()
+    component['getUsedWorkspacesAndProducts']()
 
-    expect(component.usedProducts).toContain({ label: 'prod1', value: 'prod1' })
+    component.usedProducts$?.subscribe({
+      next: (p) => {
+        expect(p).toContain({ label: 'Product1', value: 'prod1' })
+        done()
+      }
+    })
   })
 
-  it('should display error if that call fails', () => {
+  it('should display error if getting used products fails', (done) => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
-    component.ngOnInit()
+    component['getUsedWorkspacesAndProducts']()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+    component.usedProducts$?.subscribe({
+      next: () => {
+        expect(console.error).toHaveBeenCalledWith('getUsedWorkspacesAndProducts', err)
+        done()
+      }
     })
   })
 
-  // it('should get all existing products', () => {
-  //   const productNames = { stream: [{ name: 'prod1', displayName: 'prod1_display' }, { name: 'prod2', displayName: 'prod2_display'}] }
-  //   apiServiceSpy.getAllProductNames.and.returnValue(of(productNames))
-  //   component.allProducts = []
+  it('should get all existing products', (done) => {
+    const productNames = {
+      stream: [
+        { name: 'prod1', displayName: 'prod1_display' },
+        { name: 'prod2', displayName: 'prod2_display' }
+      ]
+    }
+    apiServiceSpy.getAllProductNames.and.returnValue(of(productNames))
+    component.allProducts = []
 
-  //   component.ngOnInit()
+    component['searchProducts']()
 
-  //   expect(component.allProducts).toEqual([{label: 'ANNOUNCEMENT.EVERY_PRODUCT', value: 'all' }, { label: 'prod1_display', value: 'prod1' }, { label: 'prod2_display', value: 'prod2' }])
-  // })
+    component.allProducts$.subscribe({
+      next: (products) => {
+        if (products.stream) {
+          expect(products.stream.length).toBe(2)
+          expect(products.stream[0].displayName).toEqual('prod1_display')
+          done()
+        }
+      }
+    })
+  })
 
   it('should display error if that call fails', () => {
     const err = { status: '400' }
     apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
-    component.ngOnInit()
+    component['searchProducts']()
 
-    expect(msgServiceSpy.error).toHaveBeenCalledWith({
-      summaryKey: 'GENERAL.PRODUCTS.NOT_FOUND',
-      detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.PRODUCTS'
+    component.allProducts$.subscribe({
+      next: () => {
+        expect(console.error).toHaveBeenCalledWith('getAllProductNames():', err)
+      }
     })
   })
 

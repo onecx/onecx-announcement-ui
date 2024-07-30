@@ -177,9 +177,9 @@ export class AnnouncementDetailComponent implements OnChanges {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private submitFormValues(): any {
     const announcement: Announcement = { ...this.formGroup.value }
-    console.log('submitFormValues', announcement)
     if (announcement.workspaceName === 'all') announcement.workspaceName = undefined
     if (announcement.productName === 'all') announcement.productName = undefined
     return announcement
