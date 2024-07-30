@@ -1,5 +1,6 @@
 <p-dialog
   header="{{ (this.changeMode === 'EDIT' ? 'ACTIONS.EDIT.ANNOUNCEMENT' : 'ACTIONS.CREATE.ANNOUNCEMENT') | translate }}"
+  class="p-dialog-titlebar-close"
   [(visible)]="displayDetailDialog"
   (onHide)="onDialogHide()"
   [baseZIndex]="10000"
@@ -163,6 +164,7 @@
           <div class="w-1 flex flex-column row-gap-2 mr-2">
             <p-inputSwitch
               id="announcement_detail_form_status"
+              inputId="announcement_detail_form_status"
               class="input-switch-xl"
               formControlName="status"
               trueValue="ACTIVE"
