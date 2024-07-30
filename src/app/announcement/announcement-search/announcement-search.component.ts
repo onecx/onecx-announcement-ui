@@ -271,13 +271,13 @@ export class AnnouncementSearchComponent implements OnInit {
     this.announcementApi.getAllAnnouncementAssignments().subscribe({
       next: (data) => {
         if (data.workspaceNames) {
-          for (let name of data.workspaceNames) {
+          for (const name of data.workspaceNames) {
             this.usedWorkspaces.push({ label: this.getDisplayNameWorkspace(name), value: name })
           }
           this.usedWorkspaces.sort(dropDownSortItemsByLabel)
         }
         if (data.productNames) {
-          for (let name of data.productNames) {
+          for (const name of data.productNames) {
             this.usedProducts.push({ label: this.getDisplayNameProduct(name), value: name })
           }
           this.usedProducts.sort(dropDownSortItemsByLabel)
@@ -370,7 +370,7 @@ export class AnnouncementSearchComponent implements OnInit {
       map((data: any) => {
         const si: SelectItem[] = []
         if (data.stream) {
-          for (let product of data.stream) {
+          for (const product of data.stream) {
             si.push({ label: product.displayName, value: product.name })
           }
           si.sort(dropDownSortItemsByLabel)
@@ -391,7 +391,7 @@ export class AnnouncementSearchComponent implements OnInit {
     return this.allWorkspaces$.pipe(
       map((workspaces: any) => {
         const si: SelectItem[] = []
-        for (let workspace of workspaces) {
+        for (const workspace of workspaces) {
           if (workspace.displayName) si.push({ label: workspace.displayName, value: workspace.name })
         }
         si.sort(dropDownSortItemsByLabel)
