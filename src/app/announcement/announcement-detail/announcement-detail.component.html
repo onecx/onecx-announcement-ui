@@ -104,7 +104,7 @@
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
-                id="announcement_detail_form_start_date"
+                inputId="announcement_detail_form_start_date_input"
                 type="text"
                 formControlName="startDate"
                 styleClass="w-15rem"
@@ -117,17 +117,12 @@
                 [showWeek]="true"
                 [showIcon]="true"
                 [showOnFocus]="false"
-                ariaLabelledBy="announcement_detail_form_start_date_label"
                 appendTo="body"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-calendar>
-              <label
-                id="announcement_detail_form_start_date_label"
-                class="ocx-required-label"
-                for="announcement_detail_form_start_date"
-              >
+              <label class="ocx-required-label" for="announcement_detail_form_start_date_input">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
               </label>
             </span>
@@ -137,7 +132,7 @@
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
-                id="announcement_detail_form_end_date"
+                inputId="announcement_detail_form_end_date_input"
                 type="text"
                 formControlName="endDate"
                 styleClass="w-15rem"
@@ -155,14 +150,13 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-calendar>
-              <label for="announcement_detail_form_end_date"> {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+              <label for="announcement_detail_form_end_date_input"> {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
             </span>
           </div>
         </div>
         <div class="col-6 sm:col-2 py-0 sm:pl-4">
           <div class="w-1 flex flex-column row-gap-2 mr-2">
             <p-inputSwitch
-              id="announcement_detail_form_status"
               inputId="announcement_detail_form_status_input"
               class="input-switch-xl"
               formControlName="status"
@@ -172,7 +166,7 @@
               tooltipPosition="top"
               tooltipEvent="hover"
             ></p-inputSwitch>
-            <label class="text-xs text-center float-label mr-2" for="announcement_detail_form_status">
+            <label class="text-xs text-center float-label mr-2" for="announcement_detail_form_status_input">
               {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
             </label>
           </div>
