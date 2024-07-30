@@ -64,14 +64,13 @@
         <span class="p-float-label">
           <p-dropdown
             id="announcement_detail_form_workspace_name"
-            aria-label="'ANNOUNCEMENT.WORKSPACE' | translate"
             class="input-field"
             styleClass="w-full"
             [options]="allWorkspaces"
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
             formControlName="workspaceName"
-            optionLabel="'ANNOUNCEMENT.WORKSPACE' | translate"
+            aria-label="'ANNOUNCEMENT.WORKSPACE' | translate"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -90,8 +89,7 @@
             [options]="allProducts"
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
-            formControlName="productName"
-            optionLabel="'ANNOUNCEMENT.APPLICATION' | translate"
+            aria-label="'ANNOUNCEMENT.APPLICATION' | translate"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -106,7 +104,7 @@
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
-                id="announcement_detail_form_startDate"
+                id="announcement_detail_form_start_date"
                 type="text"
                 formControlName="startDate"
                 styleClass="w-15rem"
@@ -119,13 +117,17 @@
                 [showWeek]="true"
                 [showIcon]="true"
                 [showOnFocus]="false"
-                ariaLabelledBy="date-from-label"
+                ariaLabelledBy="announcement_detail_form_start_date_label"
                 appendTo="body"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-calendar>
-              <label id="date-from-label" class="ocx-required-label" for="announcement_detail_form_startDate">
+              <label
+                id="announcement_detail_form_start_date_label"
+                class="ocx-required-label"
+                for="announcement_detail_form_start_date"
+              >
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
               </label>
             </span>
@@ -135,7 +137,7 @@
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
-                id="announcement_detail_form_endDate"
+                id="announcement_detail_form_end_date"
                 type="text"
                 formControlName="endDate"
                 styleClass="w-15rem"
@@ -148,15 +150,12 @@
                 [showWeek]="true"
                 [showIcon]="true"
                 [showOnFocus]="false"
-                ariaLabelledBy="date-from-label"
                 appendTo="body"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-calendar>
-              <label id="date-from-label" for="announcement_detail_form_endDate">
-                {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label
-              >
+              <label for="announcement_detail_form_end_date"> {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
             </span>
           </div>
         </div>
@@ -164,7 +163,7 @@
           <div class="w-1 flex flex-column row-gap-2 mr-2">
             <p-inputSwitch
               id="announcement_detail_form_status"
-              inputId="announcement_detail_form_status"
+              inputId="announcement_detail_form_status_input"
               class="input-switch-xl"
               formControlName="status"
               trueValue="ACTIVE"
@@ -184,7 +183,7 @@
             formGroup.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
           "
           class="col-12 py-0 ml-1 sm:pl-3 control-error"
-          for="announcement_detail_form_startDate"
+          for="announcement_detail_form_start_date"
         >
           {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
         </label>
