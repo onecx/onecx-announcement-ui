@@ -42,7 +42,10 @@ export class AnnouncementCriteriaComponent implements OnInit {
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityType$: Observable<SelectItem[]> = of([])
 
-  constructor(private user: UserService, public translate: TranslateService) {
+  constructor(
+    private user: UserService,
+    public translate: TranslateService
+  ) {
     this.dateFormatForRange = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'm/d/yy'
   }
 

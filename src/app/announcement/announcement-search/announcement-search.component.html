@@ -131,7 +131,7 @@
           </td>
           <td *ngFor="let col of columns" [class]="col.css">
             <ng-container *ngIf="col.limit"> {{ limitText(rowData[col.field], 25) }} </ng-container>
-            <ng-container *ngIf="col.isDate"> {{ rowData[col.field] | date : dateFormat }} </ng-container>
+            <ng-container *ngIf="col.isDate"> {{ rowData[col.field] | date: dateFormat }} </ng-container>
             <ng-container *ngIf="col.isDropdown">
               {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
             </ng-container>
