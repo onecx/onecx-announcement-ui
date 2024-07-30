@@ -15,7 +15,7 @@ import { AppConfigService, UserService, createRemoteComponentTranslateLoader } f
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
-import { Announcement, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
+import { Announcement, AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { environment } from 'src/environments/environment'
 
@@ -42,8 +42,8 @@ import { environment } from 'src/environments/environment'
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   private ignoredAnnouncementsKey = 'onecx_announcement_ignored_ids'
   private currentDate = new Date().toISOString()
-  private announcementsSubject = new BehaviorSubject<Announcement[]>([])
-  announcements$: Observable<Announcement[]> = this.announcementsSubject.asObservable()
+  private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
+  announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
@@ -72,7 +72,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
             .pipe(
               map((results) => {
                 const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-                return results.stream!.filter((result) => !ignoredAnnouncements.includes(result.id!))
+                return results.stream?.filter((result) => !ignoredAnnouncements.includes(result.id!))
               }),
               catchError(() => {
                 return of([])
@@ -103,7 +103,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
         ignoredAnnouncements.push(id)
         localStorage.setItem(this.ignoredAnnouncementsKey, JSON.stringify(ignoredAnnouncements))
         const currentAnnouncements = this.announcementsSubject.value
-        this.announcementsSubject.next(currentAnnouncements.filter((a) => a.id !== id))
+        this.announcementsSubject.next(currentAnnouncements?.filter((a) => a.id !== id))
       }
     } catch (error) {
       console.error('Failed to hide the announcement:', error)
@@ -118,7 +118,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     }
   }
 
-  getPriorityClasses(announcement: Announcement, bgOnly: boolean = false) {
+  getPriorityClasses(announcement: Announcement, bgOnly = false) {
     switch (announcement.priority) {
       case 'IMPORTANT':
         return bgOnly ? 'bg-red-800' : 'bg-red-200 text-red-800'

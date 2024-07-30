@@ -172,7 +172,7 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  SEARCH announcements
    */
-  public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
+  public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
     if (criteria.announcementSearchCriteria.workspaceName === 'all') {
       criteria.announcementSearchCriteria.workspaceName = undefined
     }
