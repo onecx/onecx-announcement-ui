@@ -33,6 +33,7 @@
       }
     },
     "EDIT": {
+      "LABEL": "Edit Announcement",
       "ANNOUNCEMENT": "Edit Announcement",
       "ANNOUNCEMENT.TOOLTIP": "Edit the Announcement properties",
       "MESSAGE": {

@@ -63,12 +63,14 @@
         <span class="p-float-label">
           <p-dropdown
             id="announcement_detail_form_workspace_name"
+            aria-label="'ANNOUNCEMENT.WORKSPACE' | translate"
             class="input-field"
             styleClass="w-full"
             [options]="allWorkspaces"
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
             formControlName="workspaceName"
+            optionLabel="'ANNOUNCEMENT.WORKSPACE' | translate"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -88,6 +90,7 @@
             [autoDisplayFirst]="true"
             [appendTo]="'body'"
             formControlName="productName"
+            optionLabel="'ANNOUNCEMENT.APPLICATION' | translate"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
@@ -121,7 +124,7 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-calendar>
-              <label class="ocx-required-label" for="announcement_detail_form_startDate">
+              <label id="date-from-label" class="ocx-required-label" for="announcement_detail_form_startDate">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
               </label>
             </span>
@@ -150,7 +153,9 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-calendar>
-              <label for="announcement_detail_form_endDate">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+              <label id="date-from-label" for="announcement_detail_form_endDate">
+                {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label
+              >
             </span>
           </div>
         </div>
@@ -177,7 +182,7 @@
             formGroup.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
           "
           class="col-12 py-0 ml-1 sm:pl-3 control-error"
-          for="announcement_detail_form_start_date"
+          for="announcement_detail_form_startDate"
         >
           {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
         </label>
