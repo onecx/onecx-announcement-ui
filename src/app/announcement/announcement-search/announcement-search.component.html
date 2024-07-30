@@ -1,4 +1,8 @@
-<ocx-portal-page permission="ANNOUNCEMENT#SEARCH" helpArticleId="PAGE_ANNOUNCEMENT_SEARCH">
+<ocx-portal-page
+  *ngIf="{ value: allMetaData$ | async } as allMetaData"
+  permission="ANNOUNCEMENT#SEARCH"
+  helpArticleId="PAGE_ANNOUNCEMENT_SEARCH"
+>
   <app-announcement-criteria
     [actions]="(actions$ | async) ?? []"
     [workspaces]="usedWorkspaces"
@@ -7,7 +11,7 @@
     (resetSearchEmitter)="onReset()"
   ></app-announcement-criteria>
 
-  <ocx-page-content styleClass="px-3" *ngIf="allMetaData$ | async">
+  <ocx-page-content styleClass="px-3">
     <p-table
       #announcementTable
       id="announcement_search_table"
