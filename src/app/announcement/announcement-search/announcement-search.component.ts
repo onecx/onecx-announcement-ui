@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs'
 import { Table } from 'primeng/table'
@@ -11,7 +11,8 @@ import {
   SearchAnnouncementsRequestParams,
   AnnouncementSearchCriteria,
   WorkspaceAbstract,
-  ProductsPageResult
+  ProductsPageResult,
+  AnnouncementAssignments
 } from 'src/app/shared/generated'
 import { limitText, dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
@@ -43,14 +44,14 @@ export class AnnouncementSearchComponent implements OnInit {
   public searching = false
   public loading = false
   public dateFormat: string
-  public usedWorkspaces: SelectItem[] = []
+  public usedWorkspaces$: Observable<SelectItem[]> | undefined
   public allWorkspaces: SelectItem[] = []
   public allWorkspaces$!: Observable<WorkspaceAbstract[]>
 
-  public usedProducts: SelectItem[] = []
+  public usedProducts$: Observable<SelectItem[]> | undefined
   public allProducts: SelectItem[] = []
   public allProducts$!: Observable<ProductsPageResult>
-  public allMataData$!: Observable<string>
+  public allMetaData$!: Observable<string>
   public filteredColumns: Column[] = []
 
   public limitText = limitText
@@ -125,7 +126,8 @@ export class AnnouncementSearchComponent implements OnInit {
     private user: UserService,
     private announcementApi: AnnouncementInternalAPIService,
     private msgService: PortalMessageService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
   }
@@ -155,7 +157,7 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  public onCloseDetail(refresh: any): void {
+  public onCloseDetail(refresh: boolean): void {
     this.displayDetailDialog = false
     if (refresh) {
       this.search({ announcementSearchCriteria: {} }, true)
@@ -171,7 +173,7 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  SEARCH announcements
    */
-  public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria: boolean = false): void {
+  public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
     if (criteria.announcementSearchCriteria.workspaceName === 'all') {
       criteria.announcementSearchCriteria.workspaceName = undefined
     }
@@ -265,42 +267,58 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // used in search criteria
   private getUsedWorkspacesAndProducts(): void {
-    this.usedWorkspaces = []
-    this.usedProducts = []
-    this.announcementApi.getAllAnnouncementAssignments().subscribe({
-      next: (data) => {
-        if (data.workspaceNames) {
-          for (const name of data.workspaceNames) {
-            this.usedWorkspaces.push({ label: this.getDisplayNameWorkspace(name), value: name })
-          }
-          this.usedWorkspaces.sort(dropDownSortItemsByLabel)
-        }
-        if (data.productNames) {
-          for (const name of data.productNames) {
-            this.usedProducts.push({ label: this.getDisplayNameProduct(name), value: name })
-          }
-          this.usedProducts.sort(dropDownSortItemsByLabel)
-        }
-        this.addAllToUsedProductsAndWorkspaces()
-      },
-      error: (err) =>
-        this.msgService.error({
-          summaryKey: 'GENERAL.ASSIGNMENTS.NOT_FOUND',
-          detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
-        })
-    })
+    const announcementAssignments$ = this.announcementApi.getAllAnnouncementAssignments()
+
+    this.usedWorkspaces$ = announcementAssignments$.pipe(
+      catchError((err) => {
+        console.error('getUsedWorkspacesAndProducts', err)
+        return of([] as AnnouncementAssignments)
+      }),
+      map((data: AnnouncementAssignments) =>
+        (data.workspaceNames || []).map(
+          (name) =>
+            ({
+              label: this.getDisplayNameWorkspace(name),
+              value: name
+            }) as SelectItem
+        )
+      ),
+      map((workspaces) => this.addAllToUsedWorkspaces(workspaces))
+    )
+    this.usedProducts$ = announcementAssignments$.pipe(
+      catchError((err) => {
+        console.error('getUsedWorkspacesAndProducts', err)
+        return of([] as AnnouncementAssignments)
+      }),
+      map((data: AnnouncementAssignments) =>
+        (data.productNames || []).map(
+          (name) =>
+            ({
+              label: this.getDisplayNameProduct(name),
+              value: name
+            }) as SelectItem
+        )
+      ),
+      map((products) => this.addAllToUsedProducts(products))
+    )
   }
-  private addAllToUsedProductsAndWorkspaces() {
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE', 'ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      this.usedWorkspaces.unshift({
+  private addAllToUsedWorkspaces(workspaces: SelectItem[]) {
+    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
+      workspaces.unshift({
         label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
         value: 'all'
       })
-      this.usedProducts.unshift({
+    })
+    return workspaces
+  }
+  private addAllToUsedProducts(products: SelectItem[]) {
+    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
+      products.unshift({
         label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
         value: 'all'
       })
     })
+    return products
   }
 
   // workspace in list of all workspaces?
@@ -363,7 +381,7 @@ export class AnnouncementSearchComponent implements OnInit {
       })
     )
     return this.allProducts$.pipe(
-      map((data: any) => {
+      map((data: ProductsPageResult) => {
         const si: SelectItem[] = []
         if (data.stream) {
           for (const product of data.stream) {
@@ -385,7 +403,7 @@ export class AnnouncementSearchComponent implements OnInit {
       })
     )
     return this.allWorkspaces$.pipe(
-      map((workspaces: any) => {
+      map((workspaces: WorkspaceAbstract[]) => {
         const si: SelectItem[] = []
         for (const workspace of workspaces) {
           if (workspace.displayName) si.push({ label: workspace.displayName, value: workspace.name })
@@ -396,10 +414,10 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  // Loading every thing - triggered from HTML
+  // Loading everything - triggered from HTML
   private loadAllData(): void {
     this.loading = true
-    this.allMataData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
+    this.allMetaData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
       map(([w, p]: [SelectItem[], SelectItem[]]) => {
         this.allWorkspaces = w
         this.allProducts = p

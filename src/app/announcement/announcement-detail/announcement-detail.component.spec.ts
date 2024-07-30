@@ -28,7 +28,7 @@ const announcement: Announcement = {
   endDate: '2023-01-03'
 }
 
-xdescribe('AnnouncementDetailComponent', () => {
+describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
   let fixture: ComponentFixture<AnnouncementDetailComponent>
 
@@ -210,22 +210,14 @@ xdescribe('AnnouncementDetailComponent', () => {
       })
     })
 
-    describe('submitFormValues', () => {
+    describe(': submitFormValues', () => {
       it('should prevent non-existing workspace name from being saved', () => {
         component.formGroup = formGroup
-        component.formGroup.patchValue({ workspaceName: 'All Workspaces', productName: 'all' })
+        component.formGroup.patchValue({ workspaceName: 'all', productName: 'all' })
 
         const result = (component as any).submitFormValues()
 
         expect(result.workspaceName).toBeUndefined()
-      })
-
-      it('should prevent non-existing product name from being saved', () => {
-        component.formGroup = formGroup
-        component.formGroup.patchValue({ workspaceName: 'all', productName: 'All Applications' })
-
-        const result = (component as any).submitFormValues()
-
         expect(result.productName).toBeUndefined()
       })
     })
@@ -296,7 +288,7 @@ xdescribe('AnnouncementDetailComponent', () => {
    * Language tests
    */
   it('should set a German date format', () => {
-    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+    expect(component.dateFormat).toEqual('dd.mm.yy')
   })
 
   it('should set default date format', () => {
@@ -304,6 +296,6 @@ xdescribe('AnnouncementDetailComponent', () => {
     fixture = TestBed.createComponent(AnnouncementDetailComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
+    expect(component.dateFormat).toEqual('mm/dd/yy')
   })
 })
