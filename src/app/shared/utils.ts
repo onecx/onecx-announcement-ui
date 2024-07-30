@@ -32,6 +32,7 @@ export function forceFormValidation(form: AbstractControl): void {
 /**
  *  DROPDOWN
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type DropDownChangeEvent = MouseEvent & { value: any }
 
 export function dropDownSortItemsByLabel(a: SelectItem, b: SelectItem): number {
@@ -40,11 +41,11 @@ export function dropDownSortItemsByLabel(a: SelectItem, b: SelectItem): number {
   )
 }
 export function dropDownGetLabelByValue(ddArray: SelectItem[], val: string): string | undefined {
-  const a: any = ddArray.find((item: SelectItem) => {
+  const a = ddArray.find((item: SelectItem) => {
     return item?.value == val
   })
-  return a.label
+  return a?.label
 }
-export function sortByLocale(a: any, b: any): number {
+export function sortByLocale(a: string, b: string): number {
   return a.toUpperCase().localeCompare(b.toUpperCase())
 }

@@ -15,7 +15,12 @@ import { AppConfigService, UserService, createRemoteComponentTranslateLoader } f
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
-import { Announcement, AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
+import {
+  Announcement,
+  AnnouncementAbstract,
+  AnnouncementInternalAPIService,
+  Configuration
+} from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { environment } from 'src/environments/environment'
 
