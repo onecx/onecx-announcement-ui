@@ -37,6 +37,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /announcements/banner/search:
+    post:
+      x-onecx:
+        permissions:
+          announcement:
+            - read
+      tags:
+        - AnnouncementInternal
+      summary: Find announcements by criteria
+      operationId: searchAnnouncementBanners
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnnouncementBannerSearchCriteria'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnnouncementPageResult'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /announcements/active/search:
     post:
       x-onecx:
@@ -341,6 +372,28 @@ components:
         endDateFrom:
           $ref: '#/components/schemas/OffsetDateTime'
         endDateTo:
+          $ref: '#/components/schemas/OffsetDateTime'
+        productName:
+          type: string
+        workspaceName:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          maximum: 1000
+          type: integer
+    AnnouncementBannerSearchCriteria:
+      type: object
+      required:
+        - currentDate
+      properties:
+        currentDate:
           $ref: '#/components/schemas/OffsetDateTime'
         productName:
           type: string
