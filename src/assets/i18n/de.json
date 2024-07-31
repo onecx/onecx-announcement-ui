@@ -33,6 +33,7 @@
       }
     },
     "EDIT": {
+      "LABEL": "Bearbeiten",
       "ANNOUNCEMENT": "Neuigkeit bearbeiten",
       "ANNOUNCEMENT.TOOLTIP": "Die Neuigkeit bearbeiten",
       "MESSAGE": {
