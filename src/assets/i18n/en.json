@@ -28,8 +28,8 @@
       "MESSAGE_TEXT": "Do you want to delete \"{{ITEM}}\"?",
       "MESSAGE_INFO": "This action cannot be undone!",
       "MESSAGE": {
-        "OK": "The announcement was deleted successfully",
-        "NOK": "An error has occurred. The announcement was not deleted."
+        "OK": "The Announcement was deleted successfully",
+        "NOK": "An error has occurred. The Announcement was not deleted."
       }
     },
     "EDIT": {
@@ -37,8 +37,8 @@
       "ANNOUNCEMENT": "Edit Announcement",
       "ANNOUNCEMENT.TOOLTIP": "Edit the Announcement properties",
       "MESSAGE": {
-        "OK": "The announcement was saved successfully",
-        "NOK": "An error has occurred. The announcement was not saved."
+        "OK": "The Announcement was saved successfully",
+        "NOK": "An error has occurred. The Announcement was not saved."
       }
     },
     "SEARCH": {
@@ -102,16 +102,16 @@
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",
       "TITLE.CRITERIA": "Title of the Announcement, Wildcard supported: *",
-      "WORKSPACE": "Workspace for which the announcement should be applied.",
-      "APPLICATION": "Application for which the announcement should be applied.",
+      "WORKSPACE": "Workspace for which the Announcement should be applied.",
+      "APPLICATION": "Application for which the Announcement should be applied.",
       "TYPE": "Type of the Announcement",
       "STATUS": "Status of the Announcement",
       "PRIORITY": "Priority of the Announcement",
-      "START_DATE": "Date and Time on which the announcement becomes active",
+      "START_DATE": "Date and Time on which the Announcement becomes active",
       "START_DATE_RANGE": "Date range of the start date",
-      "END_DATE": "Date and Time on which the announcement becomes inactive",
+      "END_DATE": "Date and Time on which the Announcement becomes inactive",
       "END_DATE_RANGE": "Date range of the end date",
-      "CONTENT": "The text of the displayed announcement"
+      "CONTENT": "The text of the displayed Announcement"
     }
   },
   "ENUMS": {

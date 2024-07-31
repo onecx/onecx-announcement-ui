@@ -44,7 +44,6 @@ export class AnnouncementDetailComponent implements OnChanges {
   announcementDeleteVisible = false
   workspaces: SelectItem[] = []
   products: SelectItem[] = []
-  public today = new Date()
   public dateFormat: string
   public timeFormat: string
   public isLoading = false
