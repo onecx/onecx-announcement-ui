@@ -51,8 +51,8 @@ describe('AnnouncementBannerComponent', () => {
   let mockAppStateService: MockAppStateService
 
   const apiServiceSpy = {
-    searchActiveAnnouncements: jasmine
-      .createSpy('searchActiveAnnouncements')
+    searchAnnouncementBanners: jasmine
+      .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
   }
 
@@ -92,7 +92,7 @@ describe('AnnouncementBannerComponent', () => {
 
     baseUrlSubject.next('base_url_mock')
 
-    apiServiceSpy.searchActiveAnnouncements.calls.reset()
+    apiServiceSpy.searchAnnouncementBanners.calls.reset()
   })
 
   function initializeComponent() {
@@ -107,7 +107,7 @@ describe('AnnouncementBannerComponent', () => {
   })
 
   it('should load announcements when the component starts', () => {
-    apiServiceSpy.searchActiveAnnouncements.and.returnValue(of({ stream: [normalAnnouncement] }))
+    apiServiceSpy.searchAnnouncementBanners.and.returnValue(of({ stream: [normalAnnouncement] }))
 
     initializeComponent()
 
@@ -118,7 +118,7 @@ describe('AnnouncementBannerComponent', () => {
   })
 
   it('should catch an error if loading announcements fails', () => {
-    apiServiceSpy.searchActiveAnnouncements.and.returnValue(throwError(() => new Error()))
+    apiServiceSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
 
     initializeComponent()
 

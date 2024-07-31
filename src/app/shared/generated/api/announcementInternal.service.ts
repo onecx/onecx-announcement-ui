@@ -27,6 +27,8 @@ import { Announcement } from '../model/announcement';
 // @ts-ignore
 import { AnnouncementAssignments } from '../model/announcementAssignments';
 // @ts-ignore
+import { AnnouncementBannerSearchCriteria } from '../model/announcementBannerSearchCriteria';
+// @ts-ignore
 import { AnnouncementPageResult } from '../model/announcementPageResult';
 // @ts-ignore
 import { AnnouncementSearchCriteria } from '../model/announcementSearchCriteria';
@@ -66,6 +68,10 @@ export interface GetAnnouncementByIdRequestParams {
 
 export interface SearchActiveAnnouncementsRequestParams {
     activeAnnouncementsSearchCriteria: ActiveAnnouncementsSearchCriteria;
+}
+
+export interface SearchAnnouncementBannersRequestParams {
+    announcementBannerSearchCriteria: AnnouncementBannerSearchCriteria;
 }
 
 export interface SearchAnnouncementsRequestParams {
@@ -562,6 +568,75 @@ export class AnnouncementInternalAPIService {
             {
                 context: localVarHttpContext,
                 body: activeAnnouncementsSearchCriteria,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: localVarHeaders,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Find announcements by criteria
+     * @param requestParameters
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementPageResult>;
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementPageResult>>;
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementPageResult>>;
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
+        const announcementBannerSearchCriteria = requestParameters.announcementBannerSearchCriteria;
+        if (announcementBannerSearchCriteria === null || announcementBannerSearchCriteria === undefined) {
+            throw new Error('Required parameter announcementBannerSearchCriteria was null or undefined when calling searchAnnouncementBanners.');
+        }
+
+        let localVarHeaders = this.defaultHeaders;
+
+        let localVarHttpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (localVarHttpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            localVarHttpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (localVarHttpHeaderAcceptSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Accept', localVarHttpHeaderAcceptSelected);
+        }
+
+        let localVarHttpContext: HttpContext | undefined = options && options.context;
+        if (localVarHttpContext === undefined) {
+            localVarHttpContext = new HttpContext();
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            localVarHeaders = localVarHeaders.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' | 'blob' = 'json';
+        if (localVarHttpHeaderAcceptSelected) {
+            if (localVarHttpHeaderAcceptSelected.startsWith('text')) {
+                responseType_ = 'text';
+            } else if (this.configuration.isJsonMime(localVarHttpHeaderAcceptSelected)) {
+                responseType_ = 'json';
+            } else {
+                responseType_ = 'blob';
+            }
+        }
+
+        let localVarPath = `/announcements/banner/search`;
+        return this.httpClient.request<AnnouncementPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
+            {
+                context: localVarHttpContext,
+                body: announcementBannerSearchCriteria,
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
                 headers: localVarHeaders,

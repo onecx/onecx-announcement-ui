@@ -3,6 +3,7 @@ export * from './activeAnnouncementsSearchCriteria';
 export * from './announcement';
 export * from './announcementAbstract';
 export * from './announcementAssignments';
+export * from './announcementBannerSearchCriteria';
 export * from './announcementPageResult';
 export * from './announcementPriorityType';
 export * from './announcementSearchCriteria';

@@ -13,6 +13,7 @@ model/activeAnnouncementsSearchCriteria.ts
 model/announcement.ts
 model/announcementAbstract.ts
 model/announcementAssignments.ts
+model/announcementBannerSearchCriteria.ts
 model/announcementPageResult.ts
 model/announcementPriorityType.ts
 model/announcementSearchCriteria.ts
