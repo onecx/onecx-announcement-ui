@@ -67,8 +67,8 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       .pipe(
         mergeMap(([_, currentWorkspace, currentMfe]) => {
           return this.apiV1
-            .searchActiveAnnouncements({
-              activeAnnouncementsSearchCriteria: {
+            .searchAnnouncementBanners({
+              announcementBannerSearchCriteria: {
                 workspaceName: currentWorkspace.workspaceName,
                 productName: currentMfe.productName,
                 currentDate: this.currentDate
@@ -77,7 +77,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
             .pipe(
               map((results) => {
                 const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-                return results.stream?.filter((result) => !ignoredAnnouncements.includes(result.id!))
+                return results.stream?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
               }),
               catchError(() => {
                 return of([])

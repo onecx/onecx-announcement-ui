@@ -583,9 +583,9 @@ export class AnnouncementInternalAPIService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<Array<AnnouncementPageResult>>;
-    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<Array<AnnouncementPageResult>>>;
-    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<Array<AnnouncementPageResult>>>;
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<AnnouncementPageResult>;
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpResponse<AnnouncementPageResult>>;
+    public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<HttpEvent<AnnouncementPageResult>>;
     public searchAnnouncementBanners(requestParameters: SearchAnnouncementBannersRequestParams, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json', context?: HttpContext}): Observable<any> {
         const announcementBannerSearchCriteria = requestParameters.announcementBannerSearchCriteria;
         if (announcementBannerSearchCriteria === null || announcementBannerSearchCriteria === undefined) {
@@ -633,7 +633,7 @@ export class AnnouncementInternalAPIService {
         }
 
         let localVarPath = `/announcements/banner/search`;
-        return this.httpClient.request<Array<AnnouncementPageResult>>('post', `${this.configuration.basePath}${localVarPath}`,
+        return this.httpClient.request<AnnouncementPageResult>('post', `${this.configuration.basePath}${localVarPath}`,
             {
                 context: localVarHttpContext,
                 body: announcementBannerSearchCriteria,
