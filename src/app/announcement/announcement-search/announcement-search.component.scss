@@ -1,7 +1,8 @@
 @import '/src/_mixins.scss';
 
-@include correct-search-criteria;
 @include danger-action;
+@include correct-search-criteria;
+@include correct-select-button;
 @include table-inline-buttons;
 
 :host ::ng-deep {

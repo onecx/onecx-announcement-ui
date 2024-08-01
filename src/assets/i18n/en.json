@@ -62,7 +62,7 @@
     "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
     "PRODUCTS.NOT_FOUND": "Applications could not be loaded",
     "TOOLTIPS": {
-      "CLOSE": "Leave dialog",
+      "CLOSE": "Close dialog",
       "CANCEL": "Cancel action",
       "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
