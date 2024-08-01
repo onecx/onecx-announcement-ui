@@ -323,30 +323,20 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // workspace in list of all workspaces?
   public isWorkspace(workspaceName?: string): boolean {
-    if (
-      workspaceName &&
-      this.allWorkspaces.find((item) => JSON.stringify(item.value) === JSON.stringify(workspaceName)) !== undefined
-    ) {
-      return true
-    }
-    return false
+    return this.allWorkspaces.find((item) => item.value === workspaceName ?? false) !== undefined
   }
 
   public getDisplayNameWorkspace(name?: string): string | undefined {
-    const label = this.allWorkspaces.find((item) => item.value === name)?.label
-    return label ? label : name
+    return this.allWorkspaces.find((item) => item.value === name)?.label ?? name
   }
 
   public getDisplayNameProduct(name?: string): string | undefined {
-    const label = this.allProducts.find((item) => item.value === name)?.label
-    return label ? label : name
+    return this.allProducts.find((item) => item.value === name)?.label ?? name
   }
 
   // if not in list of all workspaces then get the suitable translation key
   public getTranslationKeyForNonExistingWorkspaces(workspaceName?: string): string {
-    if (workspaceName && workspaceName?.length > 0) {
-      return 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
-    }
+    if (workspaceName && workspaceName?.length > 0) return 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
     return 'ANNOUNCEMENT.EVERY_WORKSPACE'
   }
 
