@@ -323,7 +323,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // workspace in list of all workspaces?
   public isWorkspace(workspaceName?: string): boolean {
-    return this.allWorkspaces.find((item) => item.value === workspaceName ?? false) !== undefined
+    return this.allWorkspaces.find((item) => item.value === workspaceName) !== undefined
   }
 
   public getDisplayNameWorkspace(name?: string): string | undefined {
@@ -336,8 +336,9 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // if not in list of all workspaces then get the suitable translation key
   public getTranslationKeyForNonExistingWorkspaces(workspaceName?: string): string {
-    if (workspaceName && workspaceName?.length > 0) return 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
-    return 'ANNOUNCEMENT.EVERY_WORKSPACE'
+    return workspaceName && workspaceName?.length > 0
+      ? 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
+      : 'ANNOUNCEMENT.EVERY_WORKSPACE'
   }
 
   private addAllProducts() {
