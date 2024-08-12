@@ -1,0 +1,8 @@
+:host ::ng-deep {
+  .p-carousel-item:not(.p-carousel-item-active) {
+    max-height: 0;
+  }
+  .p-carousel-item.p-carousel-item-active {
+    max-height: 100%;
+  }
+}
