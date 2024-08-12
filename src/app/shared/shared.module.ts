@@ -21,7 +21,6 @@ import { MultiSelectModule } from 'primeng/multiselect'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
-import { TooltipModule } from 'primeng/tooltip'
 
 import { LabelResolver } from './label.resolver'
 
@@ -47,8 +46,7 @@ import { LabelResolver } from './label.resolver'
     SelectButtonModule,
     TableModule,
     ToastModule,
-    TranslateModule,
-    TooltipModule
+    TranslateModule
   ],
   exports: [
     AutoCompleteModule,
@@ -69,8 +67,7 @@ import { LabelResolver } from './label.resolver'
     SelectButtonModule,
     TableModule,
     ToastModule,
-    TranslateModule,
-    TooltipModule
+    TranslateModule
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [
