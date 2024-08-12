@@ -14,7 +14,7 @@
   <ocx-page-content styleClass="px-3">
     <p-table
       #announcementTable
-      id="announcement_search_table"
+      id="am_announcement_search_table"
       [value]="announcements"
       [columns]="filteredColumns"
       styleClass="p-datatable-striped"
@@ -45,18 +45,20 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td id="announcement_search_table_emptymessage" colspan="16">{{ 'ACTIONS.SEARCH.NO_DATA' | translate }}</td>
+          <td id="am_announcement_search_table_emptymessage" colspan="16">
+            {{ 'ACTIONS.SEARCH.NO_DATA' | translate }}
+          </td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th id="announcement_search_table_header_actions" class="text-center white-space-nowrap">
+          <th id="am_announcement_search_table_header_actions" class="text-center white-space-nowrap">
             {{ 'ACTIONS.SEARCH.ACTIONS' | translate }}
           </th>
           <th
             *ngFor="let col of columns"
-            [id]="'announcement_search_table_header_col_' + col.field"
+            [id]="'am_announcement_search_table_header_col_' + col.field"
             [class]="col.css"
             [pSortableColumn]="col.field"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.' + col.header | translate"
@@ -72,14 +74,13 @@
 
       <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
         <tr [pSelectableRow]="announcements">
-          <td class="px-0 flex flex-row justify-content-center align-items-center white-space-nowrap">
+          <td class="px-0 text-center white-space-nowrap">
             <ng-container *ocxIfNotPermission="'ANNOUNCEMENT#EDIT'">
               <button
                 pbutton
-                type="button"
                 *ocxIfPermission="'ANNOUNCEMENT#VIEW'"
                 class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
-                [id]="'ahm_announcement_search_table_row_' + row + '_view_action'"
+                [id]="'am_announcement_search_table_row_' + row + '_view_action'"
                 (click)="onDetail($event, rowData, 'VIEW')"
                 aria-label="'ACTIONS.VIEW' | translate"
                 [pTooltip]="'ACTIONS.VIEW' | translate"
@@ -91,10 +92,9 @@
             </ng-container>
             <button
               pbutton
-              type="button"
               *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
-              [id]="'ahm_announcement_search_table_row_' + row + '_edit_action'"
+              [id]="'am_announcement_search_table_row_' + row + '_edit_action'"
               (click)="onDetail($event, rowData, 'EDIT')"
               aria-label="'ACTIONS.EDIT.LABEL' | translate"
               [pTooltip]="'ACTIONS.EDIT.ANNOUNCEMENT.TOOLTIP' | translate"
@@ -106,10 +106,9 @@
 
             <button
               pbutton
-              type="button"
               *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
-              [id]="'ahm_announcement_search_table_row_' + row + '_copy_action'"
+              [id]="'am_announcement_search_table_row_' + row + '_copy_action'"
               (click)="onCopy($event, rowData)"
               aria-label="'ACTIONS.COPY.LABEL' | translate"
               [pTooltip]="'ACTIONS.COPY.ANNOUNCEMENT.TOOLTIP' | translate"
@@ -123,7 +122,7 @@
               type="button"
               *ocxIfPermission="'ANNOUNCEMENT#DELETE'"
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
-              [id]="'ahm_announcement_search_table_row_' + row + '_delete_action'"
+              [id]="'am_announcement_search_table_row_' + row + '_delete_action'"
               (click)="onDelete($event, rowData)"
               aria-label="'ACTIONS.DELETE.LABEL' | translate"
               [pTooltip]="'ACTIONS.DELETE.ANNOUNCEMENT.TOOLTIP' | translate"
@@ -174,14 +173,16 @@
   <div class="flex column-gap-3 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
     <div>
-      <div>{{('ACTIONS.DELETE.MESSAGE_TEXT' | translate).replace('{{ITEM}}', announcement?.title)}}</div>
+      <div id="am_announcement_delete_message_text">
+        {{('ACTIONS.DELETE.MESSAGE_TEXT' | translate).replace('{{ITEM}}', announcement?.title)}}
+      </div>
       <div class="mt-2">{{ 'ACTIONS.DELETE.MESSAGE_INFO' | translate }}</div>
     </div>
   </div>
   <ng-template pTemplate="footer">
-    <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
+    <div class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
       <p-button
-        id="announcement_delete_button_no"
+        id="am_announcement_delete_button_no"
         icon="pi pi-times"
         (onClick)="displayDeleteDialog = false"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
@@ -190,7 +191,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="announcement_delete_button_yes"
+        id="am_announcement_delete_button_yes"
         icon="pi pi-check"
         (onClick)="onDeleteConfirmation()"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"

@@ -9,7 +9,7 @@
   <div [formGroup]="announcementCriteria" class="flex flex-wrap gap-3">
     <span class="p-float-label">
       <input
-        id="announcement_search_criteria_title"
+        id="am_announcement_search_criteria_title"
         pInputText
         type="text"
         formControlName="title"
@@ -41,7 +41,7 @@
     </span>
     <span class="p-float-label">
       <p-dropdown
-        id="announcement_search_criteria_workspace_name"
+        id="am_announcement_search_criteria_workspace_name"
         styleClass="w-11rem sm:w-13rem"
         [options]="workspaces"
         [autoDisplayFirst]="true"
@@ -56,7 +56,7 @@
     </span>
     <span class="p-float-label">
       <p-dropdown
-        id="announcement_search_criteria_product_name"
+        id="am_announcement_search_criteria_product_name"
         styleClass="w-13rem"
         [options]="products"
         [autoDisplayFirst]="true"
@@ -71,7 +71,7 @@
     </span>
     <span *ocxAdvanced class="p-float-label">
       <p-multiSelect
-        id="announcement_search_criteria_status"
+        id="am_announcement_search_criteria_status"
         [options]="(statusOptions$ | async) ?? []"
         formControlName="status"
         appendTo="body"
@@ -86,7 +86,7 @@
 
     <span *ocxAdvanced class="p-float-label">
       <p-multiSelect
-        id="announcement_search_criteria_type"
+        id="am_announcement_search_criteria_type"
         [options]="(type$ | async) ?? []"
         formControlName="type"
         appendTo="body"
@@ -101,7 +101,7 @@
 
     <span *ocxAdvanced class="p-float-label">
       <p-multiSelect
-        id="announcement_search_criteria_priority"
+        id="am_announcement_search_criteria_priority"
         [options]="(priorityType$ | async) ?? []"
         formControlName="priority"
         appendTo="body"

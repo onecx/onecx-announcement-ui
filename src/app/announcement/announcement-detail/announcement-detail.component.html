@@ -23,7 +23,7 @@
           <span class="p-float-label" controlErrorAnchor>
             <textarea
               pInputTextarea
-              id="announcement_detail_form_title"
+              id="am_announcement_detail_form_title"
               type="text"
               style="min-height: 2.5rem"
               class="w-full textarea-sm"
@@ -45,7 +45,7 @@
         <span class="p-float-label" controlErrorAnchor>
           <textarea
             pInputTextarea
-            id="announcement_detail_form_content"
+            id="am_announcement_detail_form_content"
             class="w-full textarea-md"
             formControlName="content"
             rows="3"
@@ -62,7 +62,7 @@
       <div class="w-full">
         <span class="p-float-label">
           <p-dropdown
-            id="announcement_detail_form_workspace_name"
+            id="am_announcement_detail_form_workspace_name"
             class="input-field"
             styleClass="w-full"
             [options]="allWorkspaces"
@@ -82,7 +82,7 @@
       <div class="w-full">
         <span class="p-float-label">
           <p-dropdown
-            id="announcement_detail_form_application_name"
+            id="am_announcement_detail_form_application_name"
             class="input-field"
             styleClass="w-full"
             [options]="allProducts"
@@ -187,7 +187,7 @@
             >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
           </label>
           <p-selectButton
-            id="announcement_detail_form_priority"
+            id="am_announcement_detail_form_priority"
             formControlName="priority"
             [options]="(priorityOptions$ | async) ?? []"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
@@ -200,7 +200,7 @@
             {{ 'ANNOUNCEMENT.TYPE' | translate }}
           </label>
           <p-selectButton
-            id="announcement_detail_form_type"
+            id="am_announcement_detail_form_type"
             formControlName="type"
             [options]="(typeOptions$ | async) ?? []"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
@@ -215,7 +215,7 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        id="announcement_detail_button_cancel"
+        id="am_announcement_detail_button_cancel"
         icon="pi pi-times"
         (onClick)="onDialogHide()"
         [label]="'ACTIONS.CANCEL' | translate"
@@ -224,7 +224,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        id="announcement_detail_button_save"
+        id="am_announcement_detail_button_save"
         icon="pi pi-save"
         (onClick)="onSave()"
         [disabled]="!formGroup.valid"
