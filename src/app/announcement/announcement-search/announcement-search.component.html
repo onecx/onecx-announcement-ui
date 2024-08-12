@@ -72,7 +72,7 @@
 
       <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
         <tr [pSelectableRow]="announcements">
-          <td class="px-2 py-1 sm:py-2 flex flex-row justify-content-center align-items-center white-space-nowrap">
+          <td class="px-0 flex flex-row justify-content-center align-items-center white-space-nowrap">
             <ng-container *ocxIfNotPermission="'ANNOUNCEMENT#EDIT'">
               <button
                 pbutton
