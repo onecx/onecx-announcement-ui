@@ -51,31 +51,23 @@
       "NO_RESULTS": "Die Suche ergab keine Ergebnisse",
       "SEARCH_FAILED": "Die Suche ist fehlgeschlagen",
       "NOT_FOUND": "Keine Daten gefunden"
-    }
-  },
-  "GENERAL": {
-    "CLOSE": "Schließen",
+    },
     "CANCEL": "Abbrechen",
+    "CHOOSE": "Auswählen",
+    "CONFIRM": "Bestätigen",
+    "LOADING": "...wird geladen",
+    "RELOAD": "Neuladen",
     "SAVE": "Speichern",
-    "VIEW": "Ansehen",
-    "ASSIGNMENTS.NOT_FOUND": "Workspaces und Applikationen mit zugewiesenen Neuigkeiten konnten nicht geladen werden",
-    "WORKSPACES.NOT_FOUND": "Workspaces konnten nicht geladen werden",
-    "APPLICATIONS.NOT_FOUND": "Applikationen konnten nicht geladen werden",
+    "SAVE_AS": "Speichern als ...",
+    "UPLOAD": "Hochladen",
+    "VIEW": "Details anzeigen",
     "TOOLTIPS": {
-      "CLOSE": "Dialog schließen",
-      "CANCEL": "Aktion abbrechen",
-      "CANCEL_EDIT": "Den Änderungsmodus verlassen",
+      "CANCEL": "Die Aktion abbrechen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
-      "CANCEL_WITHOUT_SAVE": "Aktion ohne Speichern abbrechen",
-      "EDIT": "Daten bearbeiten",
-      "SAVE": "Änderungen speichern"
+      "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
+      "SAVE": "Die Änderungen speichern",
+      "SAVE_AS": "Speichern als neues {{TYPE}}"
     }
-  },
-  "BREADCRUMBS": {
-    "CREATE": "Neu",
-    "DETAILS": "Details",
-    "RELOAD": "Neu Laden",
-    "SWITCH_TO_EDIT_MODE": "Bearbeiten"
   },
   "DIALOG": {
     "SEARCH.HEADER": "Neuigkeitsverwaltung",

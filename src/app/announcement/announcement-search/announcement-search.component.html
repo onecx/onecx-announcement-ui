@@ -72,17 +72,17 @@
 
       <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
         <tr [pSelectableRow]="announcements">
-          <td class="text-center white-space-nowrap">
+          <td class="px-2 py-1 sm:py-2 flex flex-row justify-content-center align-items-center white-space-nowrap">
             <ng-container *ocxIfNotPermission="'ANNOUNCEMENT#EDIT'">
               <button
                 pbutton
                 type="button"
                 *ocxIfPermission="'ANNOUNCEMENT#VIEW'"
-                class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+                class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 [id]="'ahm_announcement_search_table_row_' + row + '_view_action'"
                 (click)="onDetail($event, rowData, 'VIEW')"
-                aria-label="'GENERAL.VIEW' | translate"
-                [pTooltip]="'GENERAL.VIEW' | translate"
+                aria-label="'ACTIONS.VIEW' | translate"
+                [pTooltip]="'ACTIONS.VIEW' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
@@ -93,7 +93,7 @@
               pbutton
               type="button"
               *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
-              class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+              class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'ahm_announcement_search_table_row_' + row + '_edit_action'"
               (click)="onDetail($event, rowData, 'EDIT')"
               aria-label="'ACTIONS.EDIT.LABEL' | translate"
@@ -108,7 +108,7 @@
               pbutton
               type="button"
               *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
-              class="mr-1 my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+              class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'ahm_announcement_search_table_row_' + row + '_copy_action'"
               (click)="onCopy($event, rowData)"
               aria-label="'ACTIONS.COPY.LABEL' | translate"
@@ -122,7 +122,7 @@
               pbutton
               type="button"
               *ocxIfPermission="'ANNOUNCEMENT#DELETE'"
-              class="my-0 p-1 p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
+              class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'ahm_announcement_search_table_row_' + row + '_delete_action'"
               (click)="onDelete($event, rowData)"
               aria-label="'ACTIONS.DELETE.LABEL' | translate"
@@ -180,31 +180,24 @@
   </div>
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap column-gap-2 row-gap-1 justify-content-end">
-      <button
-        pButton
-        autofocus
-        type="button"
-        class="m-0"
+      <p-button
+        id="announcement_delete_button_no"
         icon="pi pi-times"
-        iconPos="left"
         (click)="displayDeleteDialog = false"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></button>
-      <button
-        pButton
-        (click)="onDeleteConfirmation()"
-        type="button"
-        class="m-0"
+      ></p-button>
+      <p-button
+        id="announcement_delete_button_yes"
         icon="pi pi-check"
-        iconPos="left"
+        (click)="onDeleteConfirmation()"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></button>
+      ></p-button>
     </div>
   </ng-template>
 </p-dialog>

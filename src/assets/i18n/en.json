@@ -51,31 +51,23 @@
       "NO_RESULTS": "Search returned no results",
       "SEARCH_FAILED": "Search failed",
       "NOT_FOUND": "No data found"
-    }
-  },
-  "GENERAL": {
-    "CLOSE": "Close",
+    },
     "CANCEL": "Cancel",
+    "CHOOSE": "Choose",
+    "CONFIRM": "Confirm",
+    "LOADING": "...is loading",
+    "RELOAD": "Reload",
     "SAVE": "Save",
-    "VIEW": "View",
-    "APPLICATIONS.NOT_FOUND": "Workspaces and Applications with assigned Announcements could not be loaded",
-    "WORKSPACES.NOT_FOUND": "Workspaces could not be loaded",
-    "PRODUCTS.NOT_FOUND": "Applications could not be loaded",
+    "SAVE_AS": "Save as ...",
+    "UPLOAD": "Upload",
+    "VIEW": "Show Details",
     "TOOLTIPS": {
-      "CLOSE": "Close dialog",
       "CANCEL": "Cancel action",
-      "CANCEL_EDIT": "Cancel edit mode",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
-      "EDIT": "Edit data",
-      "SAVE": "Save changes"
+      "SAVE": "Save changes",
+      "SAVE_AS": "Save as new {{TYPE}}"
     }
-  },
-  "BREADCRUMBS": {
-    "CREATE": "New",
-    "DETAILS": "Details",
-    "RELOAD": "Reload",
-    "SWITCH_TO_EDIT_MODE": "Edit"
   },
   "DIALOG": {
     "SEARCH.HEADER": "Announcement Management",
