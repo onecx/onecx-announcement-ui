@@ -1,45 +1,58 @@
 <ng-container *ngIf="announcements$ | async as announcements">
   <p-carousel
+    *ngIf="announcements && announcements.length > 0"
+    styleClass="mt-4 mb-2 "
     [value]="announcements"
     [numVisible]="1"
     [numScroll]="1"
-    *ngIf="announcements && announcements.length > 0"
     [showIndicators]="false"
-    class="relative"
     [style.zIndex]="990"
   >
     <ng-template let-announcement pTemplate="item">
-      <div class="flex h-full w-full align-items-center py-4">
-        <div
-          class="p-2 border-round flex flex-row align-items-center w-full"
-          [ngClass]="getPriorityClasses(announcement)"
-        >
-          <div class="w-full flex justify-content-between align-items-center">
-            <div class="flex gap-2 align-items-center">
-              <i class="pi pi-info-circle text-xl px-4"></i>
-              <div class="flex flex-column gap-1">
-                <div>
-                  <p class="font-bold m-0">{{ announcement.title }}</p>
-                  <p class="m-0">{{ announcement.content }}</p>
-                </div>
-              </div>
-            </div>
-            <div class="flex flex-row gap-1 align-items-center">
-              <div class="flex flex-row gap-2">
-                <p-tag
-                  [value]="announcement.workspaceName ?? 'Global'"
-                  [styleClass]="getPriorityClasses(announcement, true)"
-                  [rounded]="true"
-                ></p-tag>
-              </div>
-              <button
-                class="p-button-rounded p-button-text text-orange-800"
-                pButton
-                (click)="hide(announcement.id!)"
-                icon="pi pi-times"
-              ></button>
-            </div>
+      <div
+        class="p-2 border-round flex flex-row justify-content-between align-items-center"
+        [ngClass]="getPriorityClasses(announcement)"
+      >
+        <!-- content -->
+        <div class="px-3 flex flex-row align-items-center column-gap-4">
+          <span
+            id="am_announcement_banner_icon"
+            class="pi text-xl"
+            [ngClass]="announcement.type === 'INFO' ? 'pi-info-circle' : 'pi-exclamation-circle'"
+            aria-label="'ANNOUNCEMENT.PRIORITY' | translate + ': ' + announcement.priority"
+            [pTooltip]="('ANNOUNCEMENT.PRIORITY' | translate) + ': ' + announcement.priority"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></span>
+          <div class="flex flex-column row-gap-1">
+            <div id="am_announcement_banner_title" class="font-bold">{{ announcement.title }}</div>
+            <div id="am_announcement_banner_content">{{ announcement.content }}</div>
           </div>
+        </div>
+        <!-- context and clear -->
+        <div class="flex flex-row column-gap-2 align-items-center">
+          <p-tag
+            *ngIf="announcement.workspaceName"
+            id="am_announcement_banner_workspace"
+            [value]="announcement.workspaceName"
+            [styleClass]="getPriorityClasses(announcement, true) + ' px-2'"
+            [rounded]="true"
+            aria-label="'ANNOUNCEMENT.BANNER.WORKSPACE' | translate"
+            [pTooltip]="'ANNOUNCEMENT.BANNER.WORKSPACE' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></p-tag>
+          <button
+            id="am_announcement_banner_close"
+            pButton
+            icon="pi pi-times"
+            class="p-button-rounded p-button-text text-orange-800"
+            (click)="hide(announcement.id!)"
+            aria-label="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+            [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></button>
         </div>
       </div>
     </ng-template>

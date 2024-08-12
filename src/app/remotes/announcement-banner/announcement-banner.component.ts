@@ -42,7 +42,8 @@ import { environment } from 'src/environments/environment'
       }
     })
   ],
-  templateUrl: './announcement-banner.component.html'
+  templateUrl: './announcement-banner.component.html',
+  styleUrls: ['./announcement-banner.component.scss']
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   private ignoredAnnouncementsKey = 'onecx_announcement_ignored_ids'

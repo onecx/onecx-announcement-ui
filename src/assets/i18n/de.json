@@ -91,6 +91,11 @@
     "EVERY_WORKSPACE": "Alle Workspaces",
     "EVERY_PRODUCT": "Alle Applikationen",
     "WORKSPACE_NOT_FOUND": "-- nicht gefunden --",
+    "BANNER": {
+      "CLOSE": "Schließen",
+      "WORKSPACE": "Workspace",
+      "PRODUCT": "Produktname"
+    },
     "TOOLTIPS": {
       "TITLE": "Titel der Neuigkeit",
       "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
