@@ -36,7 +36,6 @@
               "src/styles.scss"
             ],
             "scripts": ["node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"],
-            "outputHashing": "all",
             "extraWebpackConfig": "webpack.config.js",
             "commonChunk": false
           },
@@ -78,7 +77,7 @@
           "defaultConfiguration": "development",
           "builder": "ngx-build-plus:dev-server",
           "options": {
-            "browserTarget": "onecx-announcement-ui:build",
+            "buildTarget": "onecx-announcement-ui:build",
             "port": 4200,
             "publicHost": "http://localhost:4200",
             "extraWebpackConfig": "webpack.config.js",
@@ -87,10 +86,10 @@
           },
           "configurations": {
             "development": {
-              "browserTarget": "onecx-announcement-ui:build:development"
+              "buildTarget": "onecx-announcement-ui:build:development"
             },
             "production": {
-              "browserTarget": "onecx-announcement-ui:build:production",
+              "buildTarget": "onecx-announcement-ui:build:production",
               "extraWebpackConfig": "webpack.prod.config.js"
             }
           }
@@ -98,7 +97,7 @@
         "extract-i18n": {
           "builder": "ngx-build-plus:extract-i18n",
           "options": {
-            "browserTarget": "onecx-announcement-ui:build",
+            "buildTarget": "onecx-announcement-ui:build",
             "extraWebpackConfig": "webpack.config.js"
           }
         },

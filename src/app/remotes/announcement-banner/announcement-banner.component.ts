@@ -1,7 +1,13 @@
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { Component, Inject, Input } from '@angular/core'
+import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
+
+import { CarouselModule } from 'primeng/carousel'
+import { TagModule } from 'primeng/tag'
+import { TooltipModule } from 'primeng/tooltip'
+
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
@@ -12,9 +18,6 @@ import {
   ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
 import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
-import { CarouselModule } from 'primeng/carousel'
-import { TagModule } from 'primeng/tag'
-import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import {
   Announcement,
   AnnouncementAbstract,
@@ -27,7 +30,15 @@ import { environment } from 'src/environments/environment'
 @Component({
   selector: 'app-announcement-banner',
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CommonModule, TranslateModule, SharedModule, CarouselModule, TagModule],
+  imports: [
+    AngularRemoteComponentsModule,
+    CommonModule,
+    TranslateModule,
+    SharedModule,
+    CarouselModule,
+    TagModule,
+    TooltipModule
+  ],
   providers: [
     {
       provide: BASE_URL,
@@ -46,7 +57,7 @@ import { environment } from 'src/environments/environment'
   styleUrls: ['./announcement-banner.component.scss']
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
-  private ignoredAnnouncementsKey = 'onecx_announcement_ignored_ids'
+  private ignoredAnnouncementsKey = 'onecx_announcement_banner_ignored_ids'
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
