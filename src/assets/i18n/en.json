@@ -91,6 +91,11 @@
     "EVERY_WORKSPACE": "All Workspaces",
     "EVERY_PRODUCT": "All Applications",
     "WORKSPACE_NOT_FOUND": "-- not found --",
+    "BANNER": {
+      "CLOSE": "Close",
+      "WORKSPACE": "Workspace",
+      "PRODUCT": "Product"
+    },
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",
       "TITLE.CRITERIA": "Title of the Announcement, Wildcard supported: *",
