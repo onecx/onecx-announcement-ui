@@ -183,7 +183,7 @@
       <p-button
         id="announcement_delete_button_no"
         icon="pi pi-times"
-        (click)="displayDeleteDialog = false"
+        (onClick)="displayDeleteDialog = false"
         [label]="'ACTIONS.CONFIRMATION.NO' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
         tooltipPosition="top"
@@ -192,7 +192,7 @@
       <p-button
         id="announcement_delete_button_yes"
         icon="pi pi-check"
-        (click)="onDeleteConfirmation()"
+        (onClick)="onDeleteConfirmation()"
         [label]="'ACTIONS.CONFIRMATION.YES' | translate"
         [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
         tooltipPosition="top"
