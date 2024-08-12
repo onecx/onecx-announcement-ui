@@ -1,12 +1,3 @@
 @import '/src/_mixins.scss';
 
 @include correct-search-criteria;
-@include search-criteria-select-button;
-
-:host ::ng-deep {
-  @media screen and (max-width: 640px) {
-    .p-multiselect {
-      width: 100%;
-    }
-  }
-}

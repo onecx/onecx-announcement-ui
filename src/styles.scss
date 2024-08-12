@@ -6,3 +6,15 @@
 @import '@onecx/portal-layout-styles/src/styles/shell/shell.scss';
 @import '@onecx/portal-layout-styles/src/styles/primeng/theme-light.scss';
 @import '../node_modules/@onecx/portal-integration-angular/assets/styles.scss';
+
+/* Specials for p-overlay */
+.p-dropdown-panel .p-dropdown-items {
+  // zebra rows
+  *:nth-child(odd) .p-dropdown-item {
+    background-color: #f8f9fa;
+  }
+  // compact
+  .p-dropdown-item {
+    padding: 0.5rem 1rem;
+  }
+}

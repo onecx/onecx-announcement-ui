@@ -3,6 +3,7 @@
 .docusaurus/
 .github/**
 .scannerwork/
+.eslintcache
 .prettierignore
 .browserslistrc
 dist/**
@@ -16,5 +17,4 @@ Dockerfile
 *.log
 *.sh
 src/app/shared/generated/**
-src/app/api/*
-src/app/model/*
+src/assets/api/*

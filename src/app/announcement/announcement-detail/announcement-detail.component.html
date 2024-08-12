@@ -11,10 +11,9 @@
   [style]="{ width: '600px' }"
   [showHeader]="true"
   [breakpoints]="{
-    '992px': '65vw',
-    '700px': '80vw',
-    '600px': '90vw',
-    '500px': '100vw'
+    '992px': '75vw',
+    '768px': '90vw',
+    '630px': '100vw'
   }"
 >
   <form [formGroup]="formGroup" errorTailor>
@@ -218,19 +217,19 @@
       <p-button
         id="announcement_detail_button_cancel"
         icon="pi pi-times"
-        [label]="'GENERAL.CANCEL' | translate"
         (onClick)="onDialogHide()"
-        [pTooltip]="'GENERAL.TOOLTIPS.CANCEL_AND_CLOSE' | translate"
+        [label]="'ACTIONS.CANCEL' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL_AND_CLOSE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
       <p-button
         id="announcement_detail_button_save"
         icon="pi pi-save"
-        [label]="'GENERAL.SAVE' | translate"
         (onClick)="onSave()"
         [disabled]="!formGroup.valid"
-        [pTooltip]="'GENERAL.TOOLTIPS.SAVE' | translate"
+        [label]="'ACTIONS.SAVE' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
