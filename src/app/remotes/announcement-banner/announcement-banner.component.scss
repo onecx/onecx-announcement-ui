@@ -1,3 +1,4 @@
+// correct item dimension: each item has its own height
 :host ::ng-deep {
   .p-carousel-item:not(.p-carousel-item-active) {
     max-height: 0;

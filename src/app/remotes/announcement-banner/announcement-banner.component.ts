@@ -134,15 +134,4 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       return []
     }
   }
-
-  getPriorityClasses(announcement: Announcement, bgOnly = false) {
-    switch (announcement.priority) {
-      case 'IMPORTANT':
-        return bgOnly ? 'bg-red-800' : 'bg-red-200 text-red-800'
-      case 'NORMAL':
-        return bgOnly ? 'bg-orange-800' : 'bg-orange-200 text-orange-800'
-      default:
-        return bgOnly ? 'bg-green-800' : 'bg-green-200 text-green-800'
-    }
-  }
 }

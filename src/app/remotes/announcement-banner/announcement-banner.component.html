@@ -11,16 +11,42 @@
     <ng-template let-announcement pTemplate="item">
       <div
         class="p-2 border-round flex flex-row justify-content-between align-items-center"
-        [ngClass]="getPriorityClasses(announcement)"
+        [ngClass]="
+          announcement.priority === 'IMPORTANT'
+            ? 'bg-red-100 text-red-800 border-red-600'
+            : announcement.priority === 'NORMAL'
+              ? 'bg-yellow-200 text-yellow-800 border-yellow-600'
+              : announcement.priority === 'LOW'
+                ? 'bg-blue-100 text-blue-800 border-blue-600'
+                : 'bg-green-200 text-green-800 border-green-600'
+        "
       >
         <!-- content -->
         <div class="px-3 flex flex-row align-items-center column-gap-4">
           <span
             id="am_announcement_banner_icon"
             class="pi text-xl"
-            [ngClass]="announcement.type === 'INFO' ? 'pi-info-circle' : 'pi-exclamation-circle'"
+            [ngClass]="
+              announcement.type === 'EVENT'
+                ? 'pi-calendar'
+                : announcement.type === 'INFO'
+                  ? 'pi-info-circle'
+                  : announcement.type === 'SYSTEM_MAINTENANCE'
+                    ? 'pi-wrench'
+                    : 'pi-info-circle'
+            "
             aria-label="'ANNOUNCEMENT.PRIORITY' | translate + ': ' + announcement.priority"
-            [pTooltip]="('ANNOUNCEMENT.PRIORITY' | translate) + ': ' + announcement.priority"
+            [pTooltip]="
+              ('ANNOUNCEMENT.PRIORITY' | translate) +
+              ': ' +
+              announcement.priority +
+              (announcement.workspaceName
+                ? ', ' + ('ANNOUNCEMENT.WORKSPACE' | translate) + ': ' + announcement.workspaceName
+                : '') +
+              (announcement.productName
+                ? ', ' + ('ANNOUNCEMENT.PRODUCT' | translate) + ': ' + announcement.productName
+                : '')
+            "
             tooltipPosition="top"
             tooltipEvent="hover"
           ></span>
@@ -29,31 +55,18 @@
             <div id="am_announcement_banner_content">{{ announcement.content }}</div>
           </div>
         </div>
-        <!-- context and clear -->
-        <div class="flex flex-row column-gap-2 align-items-center">
-          <p-tag
-            *ngIf="announcement.workspaceName"
-            id="am_announcement_banner_workspace"
-            [value]="announcement.workspaceName"
-            [styleClass]="getPriorityClasses(announcement, true) + ' px-2'"
-            [rounded]="true"
-            aria-label="'ANNOUNCEMENT.BANNER.WORKSPACE' | translate"
-            [pTooltip]="'ANNOUNCEMENT.BANNER.WORKSPACE' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></p-tag>
-          <button
-            id="am_announcement_banner_close"
-            pButton
-            icon="pi pi-times"
-            class="p-button-rounded p-button-text text-orange-800"
-            (click)="hide(announcement.id!)"
-            aria-label="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
-            [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></button>
-        </div>
+        <!-- clear -->
+        <button
+          id="am_announcement_banner_close"
+          pButton
+          icon="pi pi-times"
+          class="p-button-rounded p-button-text"
+          (click)="hide(announcement.id!)"
+          aria-label="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+          [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></button>
       </div>
     </ng-template>
   </p-carousel>

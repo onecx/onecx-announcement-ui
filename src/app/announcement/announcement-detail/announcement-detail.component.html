@@ -18,28 +18,26 @@
 >
   <form [formGroup]="formGroup" errorTailor>
     <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-1">
-      <div class="flex flex-wrap align-items-center justify-content-between">
-        <div class="w-12">
-          <span class="p-float-label" controlErrorAnchor>
-            <textarea
-              pInputTextarea
-              id="am_announcement_detail_form_title"
-              type="text"
-              style="min-height: 2.5rem"
-              class="w-full textarea-sm"
-              formControlName="title"
-              rows="1"
-              [autoResize]="true"
-              appendTo="body"
-              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            ></textarea>
-            <label class="ocx-required-label" for="announcement_detail_form_title">
-              {{ 'ANNOUNCEMENT.TITLE' | translate }}
-            </label>
-          </span>
-        </div>
+      <div class="w-full">
+        <span class="p-float-label" controlErrorAnchor>
+          <textarea
+            pInputTextarea
+            id="am_announcement_detail_form_title"
+            type="text"
+            style="min-height: 2.5rem"
+            class="w-full textarea-sm"
+            formControlName="title"
+            rows="1"
+            [autoResize]="true"
+            appendTo="body"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></textarea>
+          <label class="ocx-required-label" for="announcement_detail_form_title">
+            {{ 'ANNOUNCEMENT.TITLE' | translate }}
+          </label>
+        </span>
       </div>
       <div class="w-full">
         <span class="p-float-label" controlErrorAnchor>
@@ -59,7 +57,7 @@
         </span>
       </div>
 
-      <div class="w-full">
+      <div class="w-full mb-1">
         <span class="p-float-label">
           <p-dropdown
             id="am_announcement_detail_form_workspace_name"
@@ -79,7 +77,7 @@
         </span>
       </div>
 
-      <div class="w-full">
+      <div class="w-full mb-1">
         <span class="p-float-label">
           <p-dropdown
             id="am_announcement_detail_form_application_name"
@@ -99,8 +97,8 @@
         </span>
       </div>
 
-      <div class="grid grid-nogutter col-12 row-gap-3 sm:row-gap-1 pb-0">
-        <div class="col-12 sm:col-5 py-0 px-0 sm:pr-3 md:text-right flex sm:justify-content-end">
+      <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-1">
+        <div class="w-12 sm:w-5 py-0 px-0 sm:pr-3 md:text-right flex sm:justify-content-end">
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
@@ -127,7 +125,7 @@
             </span>
           </div>
         </div>
-        <div class="col-12 sm:col-5 p-0 sm:pl-3">
+        <div class="w-12 sm:w-5 p-0 sm:pl-3">
           <div>
             <span class="p-float-label" controlErrorAnchor>
               <p-calendar
@@ -152,22 +150,20 @@
             </span>
           </div>
         </div>
-        <div class="col-6 sm:col-2 py-0 sm:pl-4">
-          <div class="w-1 flex flex-column row-gap-2 mr-2">
-            <p-inputSwitch
-              inputId="announcement_detail_form_status"
-              class="input-switch-xl"
-              formControlName="status"
-              trueValue="ACTIVE"
-              falseValue="INACTIVE"
-              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            ></p-inputSwitch>
-            <label class="text-xs text-center float-label mr-2" for="announcement_detail_form_status">
-              {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
-            </label>
-          </div>
+        <div class="w-12 sm:w-2 flex flex-column justify-content-center sm:align-items-center row-gap-1">
+          <p-inputSwitch
+            inputId="announcement_detail_form_status"
+            class="input-switch-xl"
+            formControlName="status"
+            trueValue="ACTIVE"
+            falseValue="INACTIVE"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          ></p-inputSwitch>
+          <label class="text-xs float-label" for="announcement_detail_form_status">
+            {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
+          </label>
         </div>
         <label
           *ngIf="
@@ -181,9 +177,9 @@
         </label>
       </div>
 
-      <div class="grid grid-nogutter col-12 row-gap-2 pt-0">
-        <div class="col-12 md:col-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
-          <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_priority"
+      <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-1">
+        <div class="w-12 md:w-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
+          <label class="float-label mb-1 text-sm font-medium" for="announcement_detail_form_priority"
             >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
           </label>
           <p-selectButton
@@ -195,8 +191,8 @@
             tooltipEvent="hover"
           ></p-selectButton>
         </div>
-        <div class="col-12 md:col-7 flex flex-column p-0 md:pl-3">
-          <label class="float-label my-1 text-sm font-medium" for="announcement_detail_form_type">
+        <div class="w-12 md:w-7 flex flex-column p-0 md:pl-3">
+          <label class="float-label mb-1 text-sm font-medium" for="announcement_detail_form_type">
             {{ 'ANNOUNCEMENT.TYPE' | translate }}
           </label>
           <p-selectButton
