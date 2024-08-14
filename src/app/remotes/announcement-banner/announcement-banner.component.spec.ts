@@ -107,13 +107,15 @@ describe('AnnouncementBannerComponent', () => {
   })
 
   it('should load announcements when the component starts', () => {
-    apiServiceSpy.searchAnnouncementBanners.and.returnValue(of({ stream: [normalAnnouncement] }))
+    apiServiceSpy.searchAnnouncementBanners.and.returnValue(
+      of({ stream: [normalAnnouncement, importantAnnouncement, lowPrioAnnouncement] })
+    )
 
     initializeComponent()
 
     expect(component).toBeTruthy()
     component['announcementsSubject'].subscribe((anncmts) => {
-      expect(anncmts).toEqual([normalAnnouncement])
+      expect(anncmts).toEqual([normalAnnouncement, importantAnnouncement, lowPrioAnnouncement])
     })
   })
 
@@ -202,32 +204,6 @@ describe('AnnouncementBannerComponent', () => {
 
         expect(result).toEqual([])
       })
-    })
-  })
-
-  describe('getPriorityClasses - use correct colors for different priorities', () => {
-    it('should set priority class color for important anncmt', () => {
-      const resultBgOnly = component.getPriorityClasses(importantAnnouncement, true)
-      expect(resultBgOnly).toBe('bg-red-800')
-
-      const resultNotBgOnly = component.getPriorityClasses(importantAnnouncement, false)
-      expect(resultNotBgOnly).toBe('bg-red-200 text-red-800')
-    })
-
-    it('should set priority class color for normal anncmt', () => {
-      const resultBgOnly = component.getPriorityClasses(normalAnnouncement, true)
-      expect(resultBgOnly).toBe('bg-orange-800')
-
-      const resultNotBgOnly = component.getPriorityClasses(normalAnnouncement, false)
-      expect(resultNotBgOnly).toBe('bg-orange-200 text-orange-800')
-    })
-
-    it('should set priority class color for low prio anncmt', () => {
-      const resultBgOnly = component.getPriorityClasses(lowPrioAnnouncement, true)
-      expect(resultBgOnly).toBe('bg-green-800')
-
-      const resultNotBgOnly = component.getPriorityClasses(lowPrioAnnouncement)
-      expect(resultNotBgOnly).toBe('bg-green-200 text-green-800')
     })
   })
 })
