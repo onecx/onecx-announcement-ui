@@ -6,8 +6,7 @@ export const environment = {
   production: false,
   KEYCLOAK_URL: 'http://keycloak-app/',
   KEYCLOAK_REALM: 'OneCX',
-  KEYCLOAK_CLIENT_ID: 'tkit-angular-example',
-  TKIT_PORTAL_ID: 'ADMIN',
+  KEYCLOAK_CLIENT_ID: 'portal-mf-shell',
   skipRemoteConfigLoad: true,
   apiPrefix: 'bff'
 }
