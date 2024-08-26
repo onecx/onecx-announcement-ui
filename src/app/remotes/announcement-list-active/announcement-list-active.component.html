@@ -7,7 +7,6 @@
     [layout]="'list'"
     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
   >
-    <!-- LIST -->
     <ng-template let-announcements let-row="rowIndex" pTemplate="listItem">
       <div
         *ngFor="let announcement of announcements"

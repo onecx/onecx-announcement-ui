@@ -59,9 +59,9 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     private appConfigService: AppConfigService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
-    combineLatest([this.appStateService.currentWorkspace$.asObservable()])
+    combineLatest([this.baseUrl.asObservable(), this.appStateService.currentWorkspace$.asObservable()])
       .pipe(
-        mergeMap(([currentWorkspace]) => {
+        mergeMap(([_, currentWorkspace]) => {
           return this.apiV1
             .searchAnnouncementBanners({
               announcementBannerSearchCriteria: {
