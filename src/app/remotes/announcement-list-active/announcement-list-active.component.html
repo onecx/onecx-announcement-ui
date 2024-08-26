@@ -1,63 +1,64 @@
 <ng-container *ngIf="announcements$ | async as announcements">
-  <ng-template let-announcement pTemplate="item">
-    <div
-      class="p-2 border-round flex flex-row justify-content-between align-items-center"
-      [ngClass]="
-        announcement.priority === 'IMPORTANT'
-          ? 'bg-red-100 text-red-800 border-red-600'
-          : announcement.priority === 'NORMAL'
-            ? 'bg-yellow-200 text-yellow-800 border-yellow-600'
-            : announcement.priority === 'LOW'
-              ? 'bg-blue-100 text-blue-800 border-blue-600'
-              : 'bg-green-200 text-green-800 border-green-600'
-      "
-    >
-      <!-- content -->
-      <div class="px-3 flex flex-row align-items-center column-gap-4">
-        <span
-          id="am_announcement_banner_icon"
-          class="pi text-xl"
-          [ngClass]="
-            announcement.type === 'EVENT'
-              ? 'pi-calendar'
-              : announcement.type === 'INFO'
-                ? 'pi-info-circle'
-                : announcement.type === 'SYSTEM_MAINTENANCE'
-                  ? 'pi-wrench'
-                  : 'pi-info-circle'
-          "
-          aria-label="'ANNOUNCEMENT.PRIORITY' | translate + ': ' + announcement.priority"
-          [pTooltip]="
-            ('ANNOUNCEMENT.PRIORITY' | translate) +
-            ': ' +
-            announcement.priority +
-            (announcement.workspaceName
-              ? ', ' + ('ANNOUNCEMENT.WORKSPACE' | translate) + ': ' + announcement.workspaceName
-              : '') +
-            (announcement.productName
-              ? ', ' + ('ANNOUNCEMENT.APPLICATION' | translate) + ': ' + announcement.productName
-              : '')
-          "
+  <p-dataView
+    #table
+    id="am_announcement_list_active_dataview"
+    [value]="announcements"
+    [rows]="10"
+    [layout]="'list'"
+    [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+  >
+    <!-- LIST -->
+    <ng-template let-announcements let-row="rowIndex" pTemplate="listItem">
+      <div
+        *ngFor="let announcement of announcements"
+        class="flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 py-1 px-3 hover:bg-gray-200 cursor-pointer"
+      >
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_title'"
+          class="p-0 col-8 sm:col-6 md:col-6 lg:col-5 xl:col-3 sm:font-bold text-base sm:text-md md:text-lg"
+          [pTooltip]="'ANNOUNCEMENT.TITLE' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
-        ></span>
-        <div class="flex flex-column row-gap-1">
-          <div id="am_announcement_banner_title" class="font-bold">{{ announcement.title }}</div>
-          <div id="am_announcement_banner_content">{{ announcement.content }}</div>
+        >
+          {{ limitText(announcement.title, 60) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_content'"
+          class="p-0 hidden md:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.CONTENT' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.content, 40) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_type'"
+          class="p-0 hidden xl:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.TYPE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.type, 50) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_priority'"
+          class="p-0 hidden xl:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.PRIORITY| translate'"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.priority, 50) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_workspace'"
+          class="p-0 hidden xl:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.WORKSPACE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.workspaceName, 50) }}
         </div>
       </div>
-      <!-- clear -->
-      <button
-        id="am_announcement_banner_close"
-        pButton
-        icon="pi pi-times"
-        class="p-button-rounded p-button-text"
-        (click)="hide(announcement.id!)"
-        aria-label="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
-        [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      ></button>
-    </div>
-  </ng-template>
+    </ng-template>
+  </p-dataView>
 </ng-container>
