@@ -73,7 +73,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     combineLatest([
       this.baseUrl.asObservable(),
-      this.appStateService.currentPortal$.asObservable(),
+      this.appStateService.currentWorkspace$.asObservable(),
       this.appStateService.currentMfe$.asObservable()
     ])
       .pipe(
