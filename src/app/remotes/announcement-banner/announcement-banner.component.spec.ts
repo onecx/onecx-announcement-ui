@@ -18,7 +18,7 @@ import {
 } from 'src/app/shared/generated'
 
 class MockAppStateService {
-  currentPortal$ = {
+  currentWorkspace$ = {
     asObservable: () =>
       of({
         workspaceName: 'wsName'
