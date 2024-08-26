@@ -9,7 +9,7 @@ import { TagModule } from 'primeng/tag'
 
 import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { AppConfigService, AppStateService } from '@onecx/portal-integration-angular'
-import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
+import { OneCXAnnouncementListActiveComponent } from './announcement-list-active.component'
 import {
   Announcement,
   AnnouncementInternalAPIService,
@@ -45,9 +45,9 @@ const lowPrioAnnouncement: Announcement = {
   priority: AnnouncementPriorityType.Low
 }
 
-describe('AnnouncementBannerComponent', () => {
-  let component: OneCXAnnouncementBannerComponent
-  let fixture: ComponentFixture<OneCXAnnouncementBannerComponent>
+describe('AnnouncementListActiveComponent', () => {
+  let component: OneCXAnnouncementListActiveComponent
+  let fixture: ComponentFixture<OneCXAnnouncementListActiveComponent>
   let mockAppStateService: MockAppStateService
 
   const apiServiceSpy = {
@@ -78,7 +78,7 @@ describe('AnnouncementBannerComponent', () => {
         }
       ]
     })
-      .overrideComponent(OneCXAnnouncementBannerComponent, {
+      .overrideComponent(OneCXAnnouncementListActiveComponent, {
         set: {
           imports: [TranslateTestingModule, CarouselModule, TagModule],
           providers: [
@@ -96,7 +96,7 @@ describe('AnnouncementBannerComponent', () => {
   })
 
   function initializeComponent() {
-    fixture = TestBed.createComponent(OneCXAnnouncementBannerComponent)
+    fixture = TestBed.createComponent(OneCXAnnouncementListActiveComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
   }
@@ -155,54 +155,6 @@ describe('AnnouncementBannerComponent', () => {
       baseUrlSubject.asObservable().subscribe((item) => {
         expect(item).toEqual('base_url')
         done()
-      })
-    })
-  })
-
-  describe('hide - ignored announcements are not displayed', () => {
-    it('should hide the announcement', () => {
-      const mockAnnouncementsSubject = {
-        value: [{ id: 'announcement1' }, { id: 'announcement2' }],
-        next: jasmine.createSpy('next')
-      }
-      component['announcementsSubject'] = mockAnnouncementsSubject as any
-      spyOn(localStorage, 'setItem').and.callFake(() => {})
-      spyOn(component as any, 'getIgnoredAnnouncementsIds').and.returnValue([])
-
-      const id = 'announcement1'
-      component.hide(id)
-
-      expect(localStorage.setItem).toHaveBeenCalledWith(component['ignoredAnnouncementsKey'], JSON.stringify([id]))
-      expect(mockAnnouncementsSubject.next).toHaveBeenCalledWith([{ id: 'announcement2' }])
-    })
-
-    it('should log an error if an anncmt could not be hidden (an exception is thrown in the try block)', () => {
-      const error = new Error('test error')
-      spyOn(localStorage, 'setItem').and.throwError(error.message)
-      spyOn(console, 'error')
-
-      component.hide('some id')
-
-      expect(console.error).toHaveBeenCalledWith('Failed to hide the announcement:', error)
-    })
-
-    describe('getIgnoredAnnouncementIds', () => {
-      it('should return ignored anncmt id', () => {
-        const ignoredIds = ['id1', 'id2', 'id3']
-        spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(ignoredIds))
-
-        const result = component['getIgnoredAnnouncementsIds']()
-
-        expect(result).toEqual(ignoredIds)
-      })
-
-      it('should return an empty array on error', () => {
-        const error = new Error('test error')
-        spyOn(localStorage, 'getItem').and.throwError(error.message)
-
-        const result = component['getIgnoredAnnouncementsIds']()
-
-        expect(result).toEqual([])
       })
     })
   })

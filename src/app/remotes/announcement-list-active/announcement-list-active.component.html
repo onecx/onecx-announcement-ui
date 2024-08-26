@@ -1,0 +1,63 @@
+<ng-container *ngIf="announcements$ | async as announcements">
+  <p-dataView
+    #table
+    id="am_announcement_list_active_dataview"
+    [value]="announcements"
+    [rows]="10"
+    [layout]="'list'"
+    [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+  >
+    <ng-template let-announcements let-row="rowIndex" pTemplate="listItem">
+      <div
+        *ngFor="let announcement of announcements"
+        class="flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 py-1 px-3 hover:bg-gray-200 cursor-pointer"
+      >
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_title'"
+          class="p-0 col-8 sm:col-6 md:col-6 lg:col-5 xl:col-3 sm:font-bold text-base sm:text-md md:text-lg"
+          [pTooltip]="'ANNOUNCEMENT.TITLE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.title, 60) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_content'"
+          class="p-0 hidden md:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.CONTENT' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.content, 40) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_type'"
+          class="p-0 hidden xl:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.TYPE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.type, 50) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_priority'"
+          class="p-0 hidden xl:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.PRIORITY| translate'"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.priority, 50) }}
+        </div>
+        <div
+          [id]="'am_announcement_list_active_data_row_' + row + '_workspace'"
+          class="p-0 hidden xl:block col-2"
+          [pTooltip]="'ANNOUNCEMENT.WORKSPACE' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        >
+          {{ limitText(announcement.workspaceName, 50) }}
+        </div>
+      </div>
+    </ng-template>
+  </p-dataView>
+</ng-container>
