@@ -1,0 +1,63 @@
+<ng-container *ngIf="announcements$ | async as announcements">
+  <ng-template let-announcement pTemplate="item">
+    <div
+      class="p-2 border-round flex flex-row justify-content-between align-items-center"
+      [ngClass]="
+        announcement.priority === 'IMPORTANT'
+          ? 'bg-red-100 text-red-800 border-red-600'
+          : announcement.priority === 'NORMAL'
+            ? 'bg-yellow-200 text-yellow-800 border-yellow-600'
+            : announcement.priority === 'LOW'
+              ? 'bg-blue-100 text-blue-800 border-blue-600'
+              : 'bg-green-200 text-green-800 border-green-600'
+      "
+    >
+      <!-- content -->
+      <div class="px-3 flex flex-row align-items-center column-gap-4">
+        <span
+          id="am_announcement_banner_icon"
+          class="pi text-xl"
+          [ngClass]="
+            announcement.type === 'EVENT'
+              ? 'pi-calendar'
+              : announcement.type === 'INFO'
+                ? 'pi-info-circle'
+                : announcement.type === 'SYSTEM_MAINTENANCE'
+                  ? 'pi-wrench'
+                  : 'pi-info-circle'
+          "
+          aria-label="'ANNOUNCEMENT.PRIORITY' | translate + ': ' + announcement.priority"
+          [pTooltip]="
+            ('ANNOUNCEMENT.PRIORITY' | translate) +
+            ': ' +
+            announcement.priority +
+            (announcement.workspaceName
+              ? ', ' + ('ANNOUNCEMENT.WORKSPACE' | translate) + ': ' + announcement.workspaceName
+              : '') +
+            (announcement.productName
+              ? ', ' + ('ANNOUNCEMENT.APPLICATION' | translate) + ': ' + announcement.productName
+              : '')
+          "
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></span>
+        <div class="flex flex-column row-gap-1">
+          <div id="am_announcement_banner_title" class="font-bold">{{ announcement.title }}</div>
+          <div id="am_announcement_banner_content">{{ announcement.content }}</div>
+        </div>
+      </div>
+      <!-- clear -->
+      <button
+        id="am_announcement_banner_close"
+        pButton
+        icon="pi pi-times"
+        class="p-button-rounded p-button-text"
+        (click)="hide(announcement.id!)"
+        aria-label="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+        [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></button>
+    </div>
+  </ng-template>
+</ng-container>
