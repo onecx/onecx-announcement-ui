@@ -90,7 +90,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     this.apiV1.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
-    this.baseUrl.next(config.baseUrl)
     this.appConfigService.init(config['baseUrl'])
+    this.baseUrl.next(config.baseUrl)
   }
 }
