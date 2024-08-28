@@ -9,11 +9,17 @@ import { SharedModule } from '../shared/shared.module'
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
 import { AnnouncementCriteriaComponent } from './announcement-search/announcement-criteria/announcement-criteria.component'
 import { AnnouncementDetailComponent } from './announcement-detail/announcement-detail.component'
+import { OneCXAnnouncementListActiveComponent } from '../remotes/announcement-list-active/announcement-list-active.component'
 
 const routes: Routes = [
   {
     path: '',
     component: AnnouncementSearchComponent,
+    pathMatch: 'full'
+  },
+  {
+    path: 'list-active',
+    component: OneCXAnnouncementListActiveComponent,
     pathMatch: 'full'
   }
 ]

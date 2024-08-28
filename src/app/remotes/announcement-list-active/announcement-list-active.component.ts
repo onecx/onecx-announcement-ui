@@ -4,7 +4,6 @@ import { Component, Inject, Input } from '@angular/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 
-import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 import { TooltipModule } from 'primeng/tooltip'
 
@@ -18,27 +17,15 @@ import {
   ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
 import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
-import {
-  Announcement,
-  AnnouncementAbstract,
-  AnnouncementInternalAPIService,
-  Configuration
-} from 'src/app/shared/generated'
+import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { environment } from 'src/environments/environment'
+import { limitText } from 'src/app/shared/utils'
 
 @Component({
-  selector: 'app-announcement-banner',
+  selector: 'app-announcement-list-active',
   standalone: true,
-  imports: [
-    AngularRemoteComponentsModule,
-    CommonModule,
-    TranslateModule,
-    SharedModule,
-    CarouselModule,
-    TagModule,
-    TooltipModule
-  ],
+  imports: [AngularRemoteComponentsModule, CommonModule, TranslateModule, SharedModule, TagModule, TooltipModule],
   providers: [
     {
       provide: BASE_URL,
@@ -53,14 +40,15 @@ import { environment } from 'src/environments/environment'
       }
     })
   ],
-  templateUrl: './announcement-banner.component.html',
-  styleUrls: ['./announcement-banner.component.scss']
+  templateUrl: './announcement-list-active.component.html',
+  styleUrls: ['./announcement-list-active.component.scss']
 })
-export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
-  private ignoredAnnouncementsKey = 'onecx_announcement_banner_ignored_ids'
+export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
+
+  limitText = limitText
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
@@ -71,25 +59,19 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     private appConfigService: AppConfigService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
-    combineLatest([
-      this.baseUrl.asObservable(),
-      this.appStateService.currentWorkspace$.asObservable(),
-      this.appStateService.currentMfe$.asObservable()
-    ])
+    combineLatest([this.baseUrl.asObservable(), this.appStateService.currentWorkspace$.asObservable()])
       .pipe(
-        mergeMap(([_, currentWorkspace, currentMfe]) => {
+        mergeMap(([_, currentWorkspace]) => {
           return this.apiV1
             .searchAnnouncementBanners({
               announcementBannerSearchCriteria: {
                 workspaceName: currentWorkspace.workspaceName,
-                productName: currentMfe.productName,
                 currentDate: this.currentDate
               }
             })
             .pipe(
               map((results) => {
-                const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-                return results.stream?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
+                return results.stream
               }),
               catchError(() => {
                 return of([])
@@ -108,30 +90,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.apiV1.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
-    this.baseUrl.next(config.baseUrl)
     this.appConfigService.init(config['baseUrl'])
-  }
-
-  hide(id: string): void {
-    try {
-      const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-
-      if (!ignoredAnnouncements.includes(id)) {
-        ignoredAnnouncements.push(id)
-        localStorage.setItem(this.ignoredAnnouncementsKey, JSON.stringify(ignoredAnnouncements))
-        const currentAnnouncements = this.announcementsSubject.value
-        this.announcementsSubject.next(currentAnnouncements?.filter((a) => a.id !== id))
-      }
-    } catch (error) {
-      console.error('Failed to hide the announcement:', error)
-    }
-  }
-  private getIgnoredAnnouncementsIds(): string[] {
-    try {
-      const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)
-      return ignored ? JSON.parse(ignored) : []
-    } catch {
-      return []
-    }
+    this.baseUrl.next(config.baseUrl)
   }
 }
