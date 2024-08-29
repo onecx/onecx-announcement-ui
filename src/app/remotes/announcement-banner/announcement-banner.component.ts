@@ -14,8 +14,8 @@ import {
   BASE_URL,
   RemoteComponentConfig,
   ocxRemoteComponent,
-  provideTranslateServiceForRoot,
-  ocxRemoteWebcomponent
+  ocxRemoteWebcomponent,
+  provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
 import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
 import {
@@ -78,23 +78,26 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     ])
       .pipe(
         mergeMap(([_, currentWorkspace, currentMfe]) => {
-          return this.apiV1
-            .searchAnnouncementBanners({
-              announcementBannerSearchCriteria: {
-                workspaceName: currentWorkspace.workspaceName,
-                productName: currentMfe.productName,
-                currentDate: this.currentDate
-              }
-            })
-            .pipe(
-              map((results) => {
-                const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-                return results.stream?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
-              }),
-              catchError(() => {
-                return of([])
-              })
-            )
+          console.log(currentMfe.productName)
+          return currentMfe.productName === 'onecx-welcome'
+            ? of([]) // exclude onecx-welcome
+            : this.apiV1
+                .searchAnnouncementBanners({
+                  announcementBannerSearchCriteria: {
+                    workspaceName: currentWorkspace.workspaceName,
+                    productName: currentMfe.productName,
+                    currentDate: this.currentDate
+                  }
+                })
+                .pipe(
+                  map((results) => {
+                    const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
+                    return results.stream?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
+                  }),
+                  catchError(() => {
+                    return of([])
+                  })
+                )
         })
       )
       .subscribe((announcements) => this.announcementsSubject.next(announcements))

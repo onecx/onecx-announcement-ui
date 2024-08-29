@@ -13,10 +13,15 @@ import {
   BASE_URL,
   RemoteComponentConfig,
   ocxRemoteComponent,
-  provideTranslateServiceForRoot,
-  ocxRemoteWebcomponent
+  ocxRemoteWebcomponent,
+  provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
-import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
+import {
+  AppConfigService,
+  UserService,
+  createRemoteComponentTranslateLoader,
+  PortalCoreModule
+} from '@onecx/portal-integration-angular'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { environment } from 'src/environments/environment'
@@ -25,7 +30,15 @@ import { limitText } from 'src/app/shared/utils'
 @Component({
   selector: 'app-announcement-list-active',
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CommonModule, TranslateModule, SharedModule, TagModule, TooltipModule],
+  imports: [
+    AngularRemoteComponentsModule,
+    CommonModule,
+    TranslateModule,
+    SharedModule,
+    TagModule,
+    TooltipModule,
+    PortalCoreModule
+  ],
   providers: [
     {
       provide: BASE_URL,
@@ -52,8 +65,8 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
+    private announcementApi: AnnouncementInternalAPIService,
     private translateService: TranslateService,
-    private apiV1: AnnouncementInternalAPIService,
     private appStateService: AppStateService,
     private userService: UserService,
     private appConfigService: AppConfigService
@@ -62,7 +75,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     combineLatest([this.baseUrl.asObservable(), this.appStateService.currentWorkspace$.asObservable()])
       .pipe(
         mergeMap(([_, currentWorkspace]) => {
-          return this.apiV1
+          return this.announcementApi
             .searchAnnouncementBanners({
               announcementBannerSearchCriteria: {
                 workspaceName: currentWorkspace.workspaceName,
@@ -71,7 +84,16 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
             })
             .pipe(
               map((results) => {
+                // exclude product specific announcements
                 return results.stream
+                  ?.filter((ann) => !ann.productName)
+                  .sort((a, b) =>
+                    this.prioValue(a.priority) < this.prioValue(b.priority)
+                      ? 1
+                      : this.prioValue(a.priority) > this.prioValue(b.priority)
+                        ? -1
+                        : 0
+                  )
               }),
               catchError(() => {
                 return of([])
@@ -86,8 +108,12 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     this.ocxInitRemoteComponent(config)
   }
 
-  ocxInitRemoteComponent(config: RemoteComponentConfig): void {
-    this.apiV1.configuration = new Configuration({
+  private prioValue(prio: string | undefined): number {
+    return prio === 'IMPORTANT' ? 3 : prio === 'NORMAL' ? 2 : 1
+  }
+
+  public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
+    this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
     this.appConfigService.init(config['baseUrl'])
