@@ -1,7 +1,7 @@
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms'
 import { SelectItem } from 'primeng/api'
 
-export function limitText(text: string, limit: number): string {
+export function limitText(text: string | undefined, limit: number): string {
   if (text) {
     return text.length < limit ? text : text.substring(0, limit) + '...'
   } else {

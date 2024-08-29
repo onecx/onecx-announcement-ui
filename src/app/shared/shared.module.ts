@@ -18,6 +18,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
 import { ListboxModule } from 'primeng/listbox'
 import { MultiSelectModule } from 'primeng/multiselect'
+import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { ToastModule } from 'primeng/toast'
@@ -42,6 +43,7 @@ import { LabelResolver } from './label.resolver'
     KeyFilterModule,
     ListboxModule,
     MultiSelectModule,
+    OverlayPanelModule,
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
@@ -63,6 +65,7 @@ import { LabelResolver } from './label.resolver'
     KeyFilterModule,
     ListboxModule,
     MultiSelectModule,
+    OverlayPanelModule,
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
