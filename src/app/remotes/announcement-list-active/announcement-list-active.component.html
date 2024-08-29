@@ -1,50 +1,43 @@
 <ng-container *ngIf="announcements$ | async as announcements">
-  <p-dataView
-    #table
-    id="am_announcement_list_active_dataview"
-    [value]="announcements"
-    [rows]="10"
-    [layout]="'list'"
-    [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-  >
-    <ng-template let-announcements let-row="rowIndex" pTemplate="listItem">
-      <div class="flex flex-column row-gap-3 px-1">
+  <div class="flex flex-column row-gap-3 px-1">
+    <a
+      *ngFor="let announcement of announcements"
+      class="block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-4 hover:font-bold cursor-pointer"
+      (click)="announcementContent.toggle($event)"
+    >
+      <div
+        class="font-bold"
+        [ngClass]="
+          announcement.priority === 'IMPORTANT'
+            ? 'text-red-600'
+            : announcement.priority === 'NORMAL'
+              ? 'text-yellow-600'
+              : announcement.priority === 'LOW'
+                ? 'text-blue-600'
+                : 'text-green-600'
+        "
+        aria-hidden="true"
+      >
         <div
-          *ngFor="let announcement of announcements"
-          class="flex flex-row flex-nowrap justify-content-start align-items-center column-gap-4 hover:font-bold cursor-pointer"
-        >
-          <div
-            class="font-bold"
-            [ngClass]="
-              announcement.priority === 'IMPORTANT'
-                ? 'text-red-600'
-                : announcement.priority === 'NORMAL'
-                  ? 'text-yellow-600'
-                  : announcement.priority === 'LOW'
-                    ? 'text-blue-600'
-                    : 'text-green-600'
-            "
-          >
-            <div
-              id="am_announcement_list_active_icon"
-              class="pi text-xl"
-              [ngClass]="
-                announcement.type === 'EVENT'
-                  ? 'pi-calendar'
-                  : announcement.type === 'INFO'
-                    ? 'pi-info-circle'
-                    : announcement.type === 'SYSTEM_MAINTENANCE'
-                      ? 'pi-wrench'
-                      : 'pi-info-circle'
-              "
-              aria-label="'ANNOUNCEMENT.PRIORITY' | translate + ': ' + announcement.priority"
-            ></div>
-          </div>
-          <div [id]="'am_announcement_list_active_data_row_' + row + '_title'" class="text-base sm:text-md md:text-lg">
-            {{ limitText(announcement.title, 100) }}
-          </div>
-        </div>
+          id="am_announcement_list_active_icon"
+          class="pi text-xl"
+          [ngClass]="
+            announcement.type === 'EVENT'
+              ? 'pi-calendar'
+              : announcement.type === 'INFO'
+                ? 'pi-info-circle'
+                : announcement.type === 'SYSTEM_MAINTENANCE'
+                  ? 'pi-wrench'
+                  : 'pi-info-circle'
+          "
+        ></div>
       </div>
-    </ng-template>
-  </p-dataView>
+      <div [id]="'am_announcement_list_active_data_row_' + '_title'" class="text-base sm:text-md">
+        {{ limitText(announcement.title, 100) }}
+      </div>
+    </a>
+  </div>
+  <p-overlayPanel #announcementContent>
+    <div class="">Hallo Henry</div>
+  </p-overlayPanel>
 </ng-container>
