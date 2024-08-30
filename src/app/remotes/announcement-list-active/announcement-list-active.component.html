@@ -1,43 +1,62 @@
 <ng-container *ngIf="announcements$ | async as announcements">
-  <div class="flex flex-column row-gap-3 px-1">
-    <a
-      *ngFor="let announcement of announcements"
-      class="block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-4 hover:font-bold cursor-pointer"
-      (click)="announcementContent.toggle($event)"
-    >
-      <div
-        class="font-bold"
-        [ngClass]="
-          announcement.priority === 'IMPORTANT'
-            ? 'text-red-600'
-            : announcement.priority === 'NORMAL'
-              ? 'text-yellow-600'
-              : announcement.priority === 'LOW'
-                ? 'text-blue-600'
-                : 'text-green-600'
-        "
-        aria-hidden="true"
+  <div [ocxContent]="'Announcements'" class="surface-200 m-0 overflow-hidden">
+    <div class="flex flex-column row-gap-2 px-1">
+      <a
+        *ngFor="let announcement of announcements"
+        class="announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 hover:font-bold cursor-pointer border-none border-bottom-1 border-solid border-gray-400"
+        (click)="announcementContent.toggle($event)"
       >
-        <div
-          id="am_announcement_list_active_icon"
-          class="pi text-xl"
-          [ngClass]="
-            announcement.type === 'EVENT'
-              ? 'pi-calendar'
-              : announcement.type === 'INFO'
-                ? 'pi-info-circle'
-                : announcement.type === 'SYSTEM_MAINTENANCE'
-                  ? 'pi-wrench'
-                  : 'pi-info-circle'
-          "
-        ></div>
-      </div>
-      <div [id]="'am_announcement_list_active_data_row_' + '_title'" class="text-base sm:text-md">
-        {{ limitText(announcement.title, 100) }}
-      </div>
-    </a>
+        <div class="font-bold" aria-hidden="true">
+          <div
+            id="am_announcement_list_active_icon"
+            class="pi text-xl"
+            [ngClass]="
+              announcement.type === 'EVENT'
+                ? 'pi-calendar'
+                : announcement.type === 'INFO'
+                  ? 'pi-info-circle'
+                  : announcement.type === 'SYSTEM_MAINTENANCE'
+                    ? 'pi-wrench'
+                    : 'pi-info-circle'
+            "
+          ></div>
+        </div>
+        <div class="mb-2 flex flex-column row-gap-1">
+          <div
+            [id]="'am_announcement_list_active_data_row_' + '_title'"
+            class="mb-1 text-base sm:text-md font-bold white-space-nowrap text-overflow-hidden text-overflow-ellipsis"
+          >
+            {{ announcement.title }}
+          </div>
+          <div
+            [id]="'am_announcement_list_active_data_row_' + '_content'"
+            class="sm:text-base white-space-nowrap text-overflow-hidden text-overflow-ellipsis"
+          >
+            {{ announcement.content }}
+          </div>
+        </div>
+
+        <!-- DETAIL -->
+        <p-overlayPanel #announcementContent>
+          <a class="" (click)="announcementContent.toggle($event)">
+            <div class="flex flex-column row-gap-2 px-1">
+              <div
+                id="am_announcement_list_active_panel_icon"
+                class="pi text-xl"
+                [ngClass]="
+                  announcement.type === 'EVENT'
+                    ? 'pi-calendar'
+                    : announcement.type === 'INFO'
+                      ? 'pi-info-circle'
+                      : announcement.type === 'SYSTEM_MAINTENANCE'
+                        ? 'pi-wrench'
+                        : 'pi-info-circle'
+                "
+              ></div>
+            </div>
+          </a>
+        </p-overlayPanel>
+      </a>
+    </div>
   </div>
-  <p-overlayPanel #announcementContent>
-    <div class="">Hallo Henry</div>
-  </p-overlayPanel>
 </ng-container>

@@ -96,6 +96,9 @@
       "WORKSPACE": "Workspace",
       "PRODUCT": "Product"
     },
+    "LIST-ACTIVE": {
+      "TITLE": "Announcement"
+    },
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement",
       "TITLE.CRITERIA": "Title of the Announcement, Wildcard supported: *",
