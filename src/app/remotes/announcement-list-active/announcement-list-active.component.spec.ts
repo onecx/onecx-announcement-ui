@@ -65,7 +65,7 @@ describe('AnnouncementListActiveComponent', () => {
       declarations: [],
       imports: [
         TranslateTestingModule.withTranslations({
-          en: require('../../../assets/i18n/en.json')
+          en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
@@ -115,7 +115,7 @@ describe('AnnouncementListActiveComponent', () => {
 
     expect(component).toBeTruthy()
     component['announcementsSubject'].subscribe((anncmts) => {
-      expect(anncmts).toEqual([normalAnnouncement, importantAnnouncement, lowPrioAnnouncement])
+      expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
     })
   })
 

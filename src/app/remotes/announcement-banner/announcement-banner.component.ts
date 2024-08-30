@@ -78,7 +78,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     ])
       .pipe(
         mergeMap(([_, currentWorkspace, currentMfe]) => {
-          console.log(currentMfe.productName)
           return currentMfe.productName === 'onecx-welcome'
             ? of([]) // exclude onecx-welcome
             : this.apiV1
