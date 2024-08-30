@@ -111,7 +111,9 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   }
 
   private prioValue(prio: string | undefined): number {
-    return prio === 'IMPORTANT' ? 3 : prio === 'NORMAL' ? 2 : 1
+    if (prio === 'IMPORTANT') return 3
+    if (prio === 'NORMAL') return 2
+    else return 1
   }
 
   ocxInitRemoteComponent(config: RemoteComponentConfig): void {
