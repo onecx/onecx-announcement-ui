@@ -1,35 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-
-import { ReplaySubject, of, throwError } from 'rxjs'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { ReplaySubject, of, throwError } from 'rxjs'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 
 import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { AppConfigService, AppStateService } from '@onecx/portal-integration-angular'
-import { OneCXAnnouncementListActiveComponent } from './announcement-list-active.component'
 import {
   Announcement,
   AnnouncementInternalAPIService,
   AnnouncementPriorityType,
   AnnouncementStatus
 } from 'src/app/shared/generated'
+import { OneCXAnnouncementListActiveComponent } from './announcement-list-active.component'
 
 class MockAppStateService {
-  currentWorkspace$ = {
-    asObservable: () =>
-      of({
-        workspaceName: 'wsName'
-      })
-  }
-  currentMfe$ = {
-    asObservable: () =>
-      of({
-        productName: 'productName'
-      })
-  }
+  currentWorkspace$ = { asObservable: () => of({ workspaceName: 'wsName' }) }
+  currentMfe$ = { asObservable: () => of({ productName: 'productName' }) }
 }
 
 const importantAnnouncement: Announcement = {

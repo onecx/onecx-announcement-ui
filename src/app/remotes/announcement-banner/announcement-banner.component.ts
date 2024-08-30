@@ -1,9 +1,8 @@
+import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Component, Inject, Input } from '@angular/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 import { TooltipModule } from 'primeng/tooltip'
@@ -94,9 +93,13 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
                 .pipe(
                   map((results) => {
                     const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-                    return results.stream
-                      ?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
-                      .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+                    return (
+                      results.stream
+                        // exclude already seen items
+                        ?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
+                        // high prio first, low prio last
+                        .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+                    )
                   }),
                   catchError(() => {
                     return of([])

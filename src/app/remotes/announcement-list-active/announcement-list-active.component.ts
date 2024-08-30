@@ -1,9 +1,8 @@
+import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Component, Inject, Input } from '@angular/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-
 import { TagModule } from 'primeng/tag'
 import { TooltipModule } from 'primeng/tooltip'
 
@@ -85,10 +84,13 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
             })
             .pipe(
               map((results) => {
-                // exclude product specific announcements
-                return results.stream
-                  ?.filter((ann) => !ann.productName)
-                  .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+                return (
+                  results.stream
+                    // exclude product specific announcements
+                    ?.filter((ann) => !ann.productName)
+                    // high prio first, low prio last
+                    .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+                )
               }),
               catchError(() => {
                 return of([])
