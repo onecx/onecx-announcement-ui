@@ -1,9 +1,8 @@
+import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-import { Component, Inject, Input } from '@angular/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-
 import { TagModule } from 'primeng/tag'
 import { TooltipModule } from 'primeng/tooltip'
 
@@ -22,10 +21,11 @@ import {
   createRemoteComponentTranslateLoader,
   PortalCoreModule
 } from '@onecx/portal-integration-angular'
-import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
+
 import { SharedModule } from 'src/app/shared/shared.module'
-import { environment } from 'src/environments/environment'
+import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { limitText } from 'src/app/shared/utils'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-announcement-list-active',
@@ -84,16 +84,13 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
             })
             .pipe(
               map((results) => {
-                // exclude product specific announcements
-                return results.stream
-                  ?.filter((ann) => !ann.productName)
-                  .sort((a, b) =>
-                    this.prioValue(a.priority) < this.prioValue(b.priority)
-                      ? 1
-                      : this.prioValue(a.priority) > this.prioValue(b.priority)
-                        ? -1
-                        : 0
-                  )
+                return (
+                  results.stream
+                    // exclude product specific announcements
+                    ?.filter((ann) => !ann.productName)
+                    // high prio first, low prio last
+                    .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+                )
               }),
               catchError(() => {
                 return of([])
@@ -104,12 +101,14 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 
-  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
-    this.ocxInitRemoteComponent(config)
+  private prioValue(prio: string | undefined): number {
+    if (prio === 'IMPORTANT') return 3
+    if (prio === 'NORMAL') return 2
+    else return 1
   }
 
-  private prioValue(prio: string | undefined): number {
-    return prio === 'IMPORTANT' ? 3 : prio === 'NORMAL' ? 2 : 1
+  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
+    this.ocxInitRemoteComponent(config)
   }
 
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
