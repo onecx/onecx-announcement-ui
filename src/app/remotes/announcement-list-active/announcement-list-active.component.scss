@@ -1,0 +1,7 @@
+@import 'src/_mixins.scss';
+
+@include displaying-text-responsive;
+
+.announcement-row:last-of-type {
+  border-bottom: none !important;
+}
