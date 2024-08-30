@@ -108,14 +108,14 @@ describe('AnnouncementBannerComponent', () => {
 
   it('should load announcements when the component starts', () => {
     apiServiceSpy.searchAnnouncementBanners.and.returnValue(
-      of({ stream: [normalAnnouncement, importantAnnouncement, lowPrioAnnouncement] })
+      of({ stream: [normalAnnouncement, lowPrioAnnouncement, importantAnnouncement] })
     )
 
     initializeComponent()
 
     expect(component).toBeTruthy()
     component['announcementsSubject'].subscribe((anncmts) => {
-      expect(anncmts).toEqual([normalAnnouncement, importantAnnouncement, lowPrioAnnouncement])
+      expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
     })
   })
 
