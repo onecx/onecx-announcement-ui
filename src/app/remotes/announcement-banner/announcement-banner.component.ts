@@ -57,10 +57,13 @@ import { environment } from 'src/environments/environment'
   styleUrls: ['./announcement-banner.component.scss']
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
+  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
+    this.ocxInitRemoteComponent(config)
+  }
   private ignoredAnnouncementsKey = 'onecx_announcement_banner_ignored_ids'
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
-  announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
+  public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
@@ -91,7 +94,9 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
                 .pipe(
                   map((results) => {
                     const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
-                    return results.stream?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
+                    return results.stream
+                      ?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
+                      .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
                   }),
                   catchError(() => {
                     return of([])
@@ -102,8 +107,8 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 
-  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
-    this.ocxInitRemoteComponent(config)
+  private prioValue(prio: string | undefined): number {
+    return prio === 'IMPORTANT' ? 3 : prio === 'NORMAL' ? 2 : 1
   }
 
   ocxInitRemoteComponent(config: RemoteComponentConfig): void {
