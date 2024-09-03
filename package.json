@@ -66,10 +66,10 @@
     "keycloak-angular": "^16.0.1",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
-    "primeng": "^17.18.8",
-    "rxjs": "7.8.1",
-    "tslib": "^2.6.3",
-    "zone.js": "~0.14.8"
+    "primeng": "^17.18.9",
+    "rxjs": "~7.8.1",
+    "tslib": "^2.7.0",
+    "zone.js": "~0.14.10"
   },
   "devDependencies": {
     "@angular/cdk": "^18.1.3",

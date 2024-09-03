@@ -9,7 +9,7 @@
     "COPY": {
       "LABEL": "Copy",
       "ANNOUNCEMENT.TOOLTIP": "Create a new Announcement with the data",
-      "CLIPBOARD.TOOLTIP": "Copy to clipboard"
+      "CLIPBOARD": "Copy to clipboard"
     },
     "CREATE": {
       "LABEL": "Create",

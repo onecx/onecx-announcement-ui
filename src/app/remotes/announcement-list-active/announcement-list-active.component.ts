@@ -24,6 +24,7 @@ import {
 } from '@onecx/portal-integration-angular'
 
 import { SharedModule } from 'src/app/shared/shared.module'
+import { copyToClipboard } from 'src/app/shared/utils'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { environment } from 'src/environments/environment'
 
@@ -64,6 +65,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
   public displayDetailDialog = false
+  copyToClipboard = copyToClipboard
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
