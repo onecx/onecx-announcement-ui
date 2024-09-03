@@ -1,6 +1,8 @@
 import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { HttpClient, HttpClientModule } from '@angular/common/http'
+import { BrowserModule } from '@angular/platform-browser'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes } from '@angular/router'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 
@@ -27,6 +29,8 @@ const routes: Routes = [
   bootstrap: [AppComponent],
   declarations: [AppComponent],
   imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
     CommonModule,
     KeycloakAuthModule,
     HttpClientModule,
