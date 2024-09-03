@@ -1,10 +1,11 @@
 import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
+
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TagModule } from 'primeng/tag'
 import { TooltipModule } from 'primeng/tooltip'
+import { TagModule } from 'primeng/tag'
 
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -24,7 +25,6 @@ import {
 
 import { SharedModule } from 'src/app/shared/shared.module'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
-import { limitText } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 
 @Component({
@@ -57,11 +57,13 @@ import { environment } from 'src/environments/environment'
   styleUrls: ['./announcement-list-active.component.scss']
 })
 export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
+  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
+    this.ocxInitRemoteComponent(config)
+  }
   private currentDate = new Date().toISOString()
   private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
-  announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
-
-  limitText = limitText
+  public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
+  public displayDetailDialog = false
 
   constructor(
     @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
@@ -105,10 +107,6 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     if (prio === 'IMPORTANT') return 3
     if (prio === 'NORMAL') return 2
     else return 1
-  }
-
-  @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
-    this.ocxInitRemoteComponent(config)
   }
 
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {

@@ -2,7 +2,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/cor
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { ColorSketchModule } from 'ngx-color/sketch'
 import { provideErrorTailorConfig } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
@@ -30,7 +29,6 @@ import { LabelResolver } from './label.resolver'
   imports: [
     AutoCompleteModule,
     CalendarModule,
-    ColorSketchModule,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,

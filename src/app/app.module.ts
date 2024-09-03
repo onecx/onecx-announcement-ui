@@ -2,8 +2,6 @@ import { APP_INITIALIZER, CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } f
 import { CommonModule } from '@angular/common'
 import { HttpClient, HttpClientModule } from '@angular/common/http'
 import { RouterModule, Routes } from '@angular/router'
-import { BrowserModule } from '@angular/platform-browser'
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 
 import {
@@ -16,8 +14,8 @@ import {
 } from '@onecx/portal-integration-angular'
 import { KeycloakAuthModule } from '@onecx/keycloak-auth'
 
-import { AppComponent } from './app.component'
 import { environment } from 'src/environments/environment'
+import { AppComponent } from './app.component'
 
 const routes: Routes = [
   {
@@ -30,10 +28,8 @@ const routes: Routes = [
   declarations: [AppComponent],
   imports: [
     CommonModule,
-    BrowserModule,
-    HttpClientModule,
     KeycloakAuthModule,
-    BrowserAnimationsModule,
+    HttpClientModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledBlocking',
       enableTracing: true
