@@ -4,9 +4,12 @@
       <div class="mb-2 text-base md:text-lg font-bold">Announcements</div>
       <a
         *ngFor="let announcement of announcements; let i = index"
-        class="announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 hover:font-bold cursor-pointer border-none border-bottom-1 border-solid border-gray-400"
-        (click)="detailDialog.toggle($event)"
+        class="announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 hover:font-bold border-none border-bottom-1 border-solid border-gray-400"
       >
+        <!--
+        cursor-pointer
+        (click)="detailDialog.toggle($event)"
+        -->
         <div class="font-bold" aria-hidden="true">
           <div
             [id]="'am_list_active_data_row_' + i + '_icon'"
@@ -38,7 +41,7 @@
         </div>
 
         <!-- DETAIL -->
-        <p-overlayPanel
+        <!--p-overlayPanel
           #detailDialog
           [dismissable]="true"
           [showCloseIcon]="false"
@@ -68,7 +71,7 @@
               {{ announcement.content }}
             </div>
           </div>
-        </p-overlayPanel>
+        </p-overlayPanel-->
       </a>
     </div>
   </div>
