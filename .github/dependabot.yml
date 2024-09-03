@@ -6,6 +6,9 @@ updates:
       interval: daily
     labels:
       - dependencies
+    ignore:
+      - dependency-name: "@angular/*"
+      - dependency-name: "@angular-devkit/*"
     groups:
       angular:
         applies-to: version-updates
