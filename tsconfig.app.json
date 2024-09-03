@@ -11,9 +11,9 @@
     "src/main.ts",
     "src/polyfills.ts",
     "src/app/onecx-announcement-remote.module.ts",
-    "src/app/remotes/announcement-banner/announcement-banner.component.bootstrap.ts",
-    "src/app/remotes/announcement-list-active/announcement-list-active.component.bootstrap.ts"
+    "src/app/remotes/announcement-banner/announcement-banner.component.main.ts",
+    "src/app/remotes/announcement-list-active/announcement-list-active.component.main.ts"
   ],
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["src/test.ts", "src/**/*.spec.ts"]
 }

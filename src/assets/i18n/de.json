@@ -9,7 +9,7 @@
     "COPY": {
       "LABEL": "Kopieren",
       "ANNOUNCEMENT.TOOLTIP": "Mit den Daten eine neue Neuigkeit anlegen",
-      "CLIPBOARD.TOOLTIP": "In die Zwischenablage kopieren"
+      "CLIPBOARD": "In die Zwischenablage kopieren"
     },
     "CREATE": {
       "LABEL": "Erstellen",
