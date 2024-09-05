@@ -5,7 +5,7 @@ const config = withModuleFederationPlugin({
   name: 'onecx-announcement-ui',
   filename: 'remoteEntry.js',
   exposes: {
-    './OneCXAnnouncementModule': 'src/bootstrap.ts',
+    './OneCXAnnouncementModule': 'src/main.ts',
     './OneCXAnnouncementBannerComponent': 'src/app/remotes/announcement-banner/announcement-banner.component.main.ts',
     './OneCXAnnouncementListActiveComponent':
       'src/app/remotes/announcement-list-active/announcement-list-active.component.main.ts'
