@@ -34,11 +34,11 @@ import { environment } from 'src/environments/environment'
   imports: [
     AngularRemoteComponentsModule,
     CommonModule,
-    TranslateModule,
+    PortalCoreModule,
     SharedModule,
     TagModule,
     TooltipModule,
-    PortalCoreModule
+    TranslateModule
   ],
   providers: [
     {
