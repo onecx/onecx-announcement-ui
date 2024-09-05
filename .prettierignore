@@ -1,3 +1,4 @@
+# Add files here to ignore them from prettier formatting
 .angular/**
 .husky/**
 .docusaurus/
@@ -10,6 +11,7 @@ dist/**
 helm/**
 nginx/**
 reports/**
+coverage/**
 node_modules
 CHANGELOG.md
 README.md

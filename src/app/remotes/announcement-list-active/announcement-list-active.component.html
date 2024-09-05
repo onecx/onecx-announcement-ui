@@ -1,15 +1,15 @@
 <ng-container *ngIf="announcements$ | async as announcements">
+  <!-- UNDERGROUND and DIMENSIONs -->
   <div class="surface-200 m-0 p-2 sm:p-3 overflow-hidden">
     <div class="flex flex-column row-gap-2 px-1">
+      <!-- TITLE -->
       <div class="mb-2 text-base md:text-lg font-bold">Announcements</div>
+      <!-- LIST -->
       <a
         *ngFor="let announcement of announcements; let i = index"
-        class="announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 hover:font-bold border-none border-bottom-1 border-solid border-gray-400"
-      >
-        <!--
-        cursor-pointer
+        class="announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 border-none border-bottom-1 border-solid border-gray-400 cursor-pointer"
         (click)="detailDialog.toggle($event)"
-        -->
+      >
         <div class="font-bold" aria-hidden="true">
           <div
             [id]="'am_list_active_data_row_' + i + '_icon'"
@@ -40,12 +40,13 @@
           </div>
         </div>
 
-        <!-- DETAIL -->
-        <!--p-overlayPanel
+        <!-- DETAIL 
+             is located here due to use the same data => is absolute displayed ! -->
+        <p-overlayPanel
           #detailDialog
           [dismissable]="true"
           [showCloseIcon]="false"
-          styleClass="sm:m-0 w-11 sm:max-w-28rem md:max-w-30rem"
+          styleClass="sm:m-0 w-11 sm:max-w-28rem md:max-w-30rem lg:max-w-40rem"
         >
           <div class="flex flex-column row-gap-2 px-1">
             <div
@@ -71,7 +72,7 @@
               {{ announcement.content }}
             </div>
           </div>
-        </p-overlayPanel-->
+        </p-overlayPanel>
       </a>
     </div>
   </div>

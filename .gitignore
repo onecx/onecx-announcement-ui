@@ -4,40 +4,31 @@
 dist
 tmp
 out-tsc
-reports
 
 # dependencies
 node_modules
-
-# profiling files
-chrome-profiler-events*.json
-speed-measure-plugin*.json
 
 # IDEs and editors
 .idea
 .project
 .classpath
-.c9/
+.c9
+.settings
 *.launch
-.settings/
 *.sublime-workspace
 
 # IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
+.vscode
 
 # misc
+.nx
 .angular
 .eslintcache
 .husky/_
 .sass-cache
-.gitlab*
-.scannerwork
 connect.lock
+coverage
+reports
 typings
 *.log
 *.sh
