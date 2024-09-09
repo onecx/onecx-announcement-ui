@@ -1,0 +1,4 @@
+
+== onecx-announcement-ui
+
+include::onecx-announcement-ui-docs.adoc[opts=optional]
