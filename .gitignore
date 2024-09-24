@@ -14,11 +14,10 @@ node_modules
 .classpath
 .c9
 .settings
+.history
+.vscode
 *.launch
 *.sublime-workspace
-
-# IDE - VSCode
-.vscode
 
 # misc
 .nx
