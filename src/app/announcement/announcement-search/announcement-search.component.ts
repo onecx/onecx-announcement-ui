@@ -123,11 +123,11 @@ export class AnnouncementSearchComponent implements OnInit {
   ]
 
   constructor(
-    private user: UserService,
-    private announcementApi: AnnouncementInternalAPIService,
-    private msgService: PortalMessageService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef
+    private readonly user: UserService,
+    private readonly announcementApi: AnnouncementInternalAPIService,
+    private readonly msgService: PortalMessageService,
+    private readonly translate: TranslateService,
+    private readonly cdr: ChangeDetectorRef
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
   }

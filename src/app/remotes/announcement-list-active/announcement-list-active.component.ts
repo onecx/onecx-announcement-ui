@@ -68,12 +68,12 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   copyToClipboard = copyToClipboard
 
   constructor(
-    @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
-    private announcementApi: AnnouncementInternalAPIService,
-    private translateService: TranslateService,
-    private appStateService: AppStateService,
-    private userService: UserService,
-    private appConfigService: AppConfigService
+    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
+    private readonly announcementApi: AnnouncementInternalAPIService,
+    private readonly translateService: TranslateService,
+    private readonly appStateService: AppStateService,
+    private readonly userService: UserService,
+    private readonly appConfigService: AppConfigService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     combineLatest([this.baseUrl.asObservable(), this.appStateService.currentWorkspace$.asObservable()])

@@ -56,11 +56,11 @@ export class AnnouncementDetailComponent implements OnChanges {
   public priorityOptions$: Observable<SelectItem[]> = of([])
 
   constructor(
-    private user: UserService,
-    private announcementApi: AnnouncementInternalAPIService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private msgService: PortalMessageService
+    private readonly user: UserService,
+    private readonly announcementApi: AnnouncementInternalAPIService,
+    private readonly fb: FormBuilder,
+    private readonly translate: TranslateService,
+    private readonly msgService: PortalMessageService
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'mm/dd/yy'
     this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'

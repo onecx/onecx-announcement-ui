@@ -50,7 +50,8 @@
       "NO_DATA": "No data",
       "NO_RESULTS": "Search returned no results",
       "SEARCH_FAILED": "Search failed",
-      "NOT_FOUND": "No data found"
+      "NOT_FOUND": "No data found",
+      "OF": "of"
     },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
