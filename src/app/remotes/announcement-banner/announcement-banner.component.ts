@@ -65,12 +65,12 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
 
   constructor(
-    @Inject(BASE_URL) private baseUrl: ReplaySubject<string>,
-    private translateService: TranslateService,
-    private apiV1: AnnouncementInternalAPIService,
-    private appStateService: AppStateService,
-    private userService: UserService,
-    private appConfigService: AppConfigService
+    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
+    private readonly translateService: TranslateService,
+    private readonly apiV1: AnnouncementInternalAPIService,
+    private readonly appStateService: AppStateService,
+    private readonly userService: UserService,
+    private readonly appConfigService: AppConfigService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     combineLatest([

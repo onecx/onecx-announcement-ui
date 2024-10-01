@@ -69,6 +69,9 @@
       "SAVE_AS": "Speichern als neues {{TYPE}}"
     }
   },
+  "GENERAL": {
+    "OF": "von"
+  },
   "DIALOG": {
     "SEARCH.HEADER": "Neuigkeitsverwaltung",
     "SEARCH.SUBHEADER": "Suchen und Verwalten von Neuigkeiten",

@@ -69,6 +69,9 @@
       "SAVE_AS": "Save as new {{TYPE}}"
     }
   },
+  "GENERAL": {
+    "OF": "of"
+  },
   "DIALOG": {
     "SEARCH.HEADER": "Announcement Management",
     "SEARCH.SUBHEADER": "Searching and managing of Announcements",
