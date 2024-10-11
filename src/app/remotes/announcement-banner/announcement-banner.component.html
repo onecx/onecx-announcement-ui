@@ -1,7 +1,7 @@
 <ng-container *ngIf="announcements$ | async as announcements">
   <p-carousel
     *ngIf="announcements && announcements.length > 0"
-    styleClass="mt-4 mb-2 "
+    styleClass="mt-2 sm:mt-3 mb-0 sm:mb-1"
     [value]="announcements"
     [numVisible]="1"
     [numScroll]="1"
@@ -22,7 +22,7 @@
         "
       >
         <!-- content -->
-        <div class="px-3 flex flex-row align-items-center column-gap-4">
+        <div class="px-1 sm:px-3 flex flex-row align-items-center column-gap-3 sm:column-gap-4">
           <span
             id="am_announcement_banner_icon"
             class="pi text-xl"
