@@ -5,6 +5,10 @@
 @include dialog-non-full-size-modal;
 
 :host ::ng-deep {
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem;
+  }
+
   label.float-label {
     color: var(--emphasis-medium);
   }
