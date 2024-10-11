@@ -85,7 +85,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'APPLICATION',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'hidden lg:table-cell',
+      css: 'text-center hidden lg:table-cell',
       needsDisplayName: true
     },
     {
