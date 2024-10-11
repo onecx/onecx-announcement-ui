@@ -9,6 +9,7 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AnnouncementAppearance } from './announcementAppearance';
 import { AnnouncementStatus } from './announcementStatus';
 import { AnnouncementPriorityType } from './announcementPriorityType';
 import { AnnouncementType } from './announcementType';
@@ -26,6 +27,7 @@ export interface Announcement {
     type?: AnnouncementType;
     priority?: AnnouncementPriorityType;
     status?: AnnouncementStatus;
+    appearance?: AnnouncementAppearance;
     startDate?: string;
     endDate?: string;
     productName?: string;

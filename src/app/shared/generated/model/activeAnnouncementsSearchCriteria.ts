@@ -9,12 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { AnnouncementAppearance } from './announcementAppearance';
 
 
 export interface ActiveAnnouncementsSearchCriteria { 
     currentDate: string;
     workspaceName?: string;
     productName?: string;
+    appearance?: Array<AnnouncementAppearance>;
     /**
      * The number of page.
      */

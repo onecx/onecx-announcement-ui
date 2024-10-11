@@ -12,6 +12,7 @@ model/activeAnnouncementsPageResult.ts
 model/activeAnnouncementsSearchCriteria.ts
 model/announcement.ts
 model/announcementAbstract.ts
+model/announcementAppearance.ts
 model/announcementAssignments.ts
 model/announcementBannerSearchCriteria.ts
 model/announcementPageResult.ts

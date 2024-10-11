@@ -2,6 +2,7 @@ export * from './activeAnnouncementsPageResult';
 export * from './activeAnnouncementsSearchCriteria';
 export * from './announcement';
 export * from './announcementAbstract';
+export * from './announcementAppearance';
 export * from './announcementAssignments';
 export * from './announcementBannerSearchCriteria';
 export * from './announcementPageResult';
