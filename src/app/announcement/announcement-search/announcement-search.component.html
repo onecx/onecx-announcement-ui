@@ -58,13 +58,13 @@
           <th
             *ngFor="let col of columns"
             [id]="'am_announcement_search_table_header_col_' + col.field"
-            [class]="col.css"
+            [class]="col.css + ' text-center white-space-nowrap'"
             [pSortableColumn]="col.field"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.' + col.header | translate"
             tooltipPosition="top"
             tooltipEvent="hover"
           >
-            {{ col.translationPrefix + '.' + col.header | translate }}
+            <span> {{ col.translationPrefix + '.' + col.header | translate }}</span>
             <p-sortIcon [field]="col.field"></p-sortIcon>
             <p-columnFilter *ngIf="col.hasFilter" type="text" [field]="col.field" display="menu"></p-columnFilter>
           </th>
@@ -73,7 +73,7 @@
 
       <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
         <tr [pSelectableRow]="announcements">
-          <td class="px-0 text-center white-space-nowrap">
+          <td class="px-2 text-center white-space-nowrap">
             <ng-container *ocxIfNotPermission="'ANNOUNCEMENT#EDIT'">
               <button
                 pbutton
@@ -81,7 +81,7 @@
                 class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 [id]="'am_announcement_search_table_row_' + row + '_view_action'"
                 (click)="onDetail($event, rowData, 'VIEW')"
-                aria-label="'ACTIONS.VIEW' | translate"
+                [aria-label]="'ACTIONS.VIEW' | translate"
                 [pTooltip]="'ACTIONS.VIEW' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
@@ -95,7 +95,7 @@
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'am_announcement_search_table_row_' + row + '_edit_action'"
               (click)="onDetail($event, rowData, 'EDIT')"
-              aria-label="'ACTIONS.EDIT.LABEL' | translate"
+              [aria-label]="'ACTIONS.EDIT.LABEL' | translate"
               [pTooltip]="'ACTIONS.EDIT.ANNOUNCEMENT.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -109,7 +109,7 @@
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'am_announcement_search_table_row_' + row + '_copy_action'"
               (click)="onCopy($event, rowData)"
-              aria-label="'ACTIONS.COPY.LABEL' | translate"
+              [aria-label]="'ACTIONS.COPY.LABEL' | translate"
               [pTooltip]="'ACTIONS.COPY.ANNOUNCEMENT.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -123,7 +123,7 @@
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'am_announcement_search_table_row_' + row + '_delete_action'"
               (click)="onDelete($event, rowData)"
-              aria-label="'ACTIONS.DELETE.LABEL' | translate"
+              [aria-label]="'ACTIONS.DELETE.LABEL' | translate"
               [pTooltip]="'ACTIONS.DELETE.ANNOUNCEMENT.TOOLTIP' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
@@ -131,28 +131,56 @@
               <span class="danger-action-text font-medium p-button-icon pi pi-trash"></span>
             </button>
           </td>
-          <td *ngFor="let col of columns" [class]="col.css">
-            <ng-container *ngIf="col.limit"> {{ limitText(rowData[col.field], 25) }} </ng-container>
+          <td *ngFor="let col of columns" [class]="col.css" id="am_announcement_type">
+            <ng-container *ngIf="col.limit"> {{ limitText(rowData[col.field], 50) }} </ng-container>
             <ng-container *ngIf="col.isDate"> {{ rowData[col.field] | date: dateFormat }} </ng-container>
             <ng-container *ngIf="col.isDropdown">
               {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
             </ng-container>
-            <ng-container *ngIf="!(col.isDropdown || col.isDate || col.limit)">
-              <ng-container *ngIf="col.field !== 'workspaceName' && col.field !== 'productName'">
-                {{ rowData[col.field] }}</ng-container
-              >
-              <ng-container *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName)">
-                {{ getDisplayNameWorkspace(rowData[col.field]) }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
-                {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'productName'">
-                {{ getDisplayNameProduct(rowData[col.field]) }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName)">
-                {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}
-              </ng-container>
+
+            <ng-container *ngIf="col.field === 'status'">
+              <span
+                class="pi"
+                [class.pi-circle-on]="rowData[col.field] === 'ACTIVE'"
+                [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
+                [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
+                [class.text-red-600]="rowData['priority'] === 'IMPORTANT'"
+                [class.text-yellow-600]="rowData['priority'] === 'NORMAL'"
+                [class.text-blue-600]="rowData['priority'] === 'LOW'"
+                [aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate"
+                [pTooltip]="
+                  ('ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate) +
+                  ' - ' +
+                  ('ENUMS.ANNOUNCEMENT_PRIORITY.' + rowData['priority'] | translate)
+                "
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></span>
+            </ng-container>
+            <ng-container *ngIf="col.field === 'type'">
+              <span
+                class="pi text-xl"
+                [class.pi-info-circle]="rowData[col.field] === 'INFO'"
+                [class.pi-calendar]="rowData[col.field] === 'EVENT'"
+                [class.pi-wrench]="rowData[col.field] === 'SYSTEM_MAINTENANCE'"
+                [aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
+                [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></span>
+            </ng-container>
+
+            <ng-container *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName)">
+              {{ getDisplayNameWorkspace(rowData[col.field]) }}
+            </ng-container>
+            <ng-container *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName)">
+              {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}
+            </ng-container>
+            <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
+              {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
+            </ng-container>
+            <ng-container *ngIf="col.field === 'productName'">
+              {{ getDisplayNameProduct(rowData[col.field]) }}
             </ng-container>
           </td>
         </tr>

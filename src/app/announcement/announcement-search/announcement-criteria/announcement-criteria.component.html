@@ -13,12 +13,12 @@
         pInputText
         type="text"
         formControlName="title"
-        class="w-11rem sm:w-13rem"
+        class="w-9rem sm:w-13rem"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       />
-      <label for="announcement_search_criteria_title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
+      <label for="am_announcement_search_criteria_title">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
     </span>
     <span class="p-float-label">
       <p-calendar
@@ -35,7 +35,7 @@
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-calendar>
-      <label for="announcement_search_criteria_start_date_range">
+      <label for="am_announcement_search_criteria_start_date_range">
         {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label
       >
     </span>
@@ -43,31 +43,33 @@
       <p-dropdown
         id="am_announcement_search_criteria_workspace_name"
         styleClass="w-11rem sm:w-13rem"
-        [options]="workspaces"
+        [showClear]="true"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
+        [options]="workspaces"
         formControlName="workspaceName"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       >
       </p-dropdown>
-      <label for="announcement_search_criteria_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
+      <label for="am_announcement_search_criteria_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
     </span>
     <span class="p-float-label">
       <p-dropdown
         id="am_announcement_search_criteria_product_name"
-        styleClass="w-13rem"
-        [options]="products"
+        styleClass="w-11rem sm:w-13rem"
+        [showClear]="true"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
+        [options]="products"
         formControlName="productName"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       >
       </p-dropdown>
-      <label for="announcement_search_criteria_product_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }}</label>
+      <label for="am_announcement_search_criteria_product_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }}</label>
     </span>
     <span *ocxAdvanced class="p-float-label">
       <p-multiSelect
@@ -81,7 +83,7 @@
         tooltipEvent="hover"
       >
       </p-multiSelect>
-      <label for="announcement_search_criteria_status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
+      <label for="am_announcement_search_criteria_status">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
     </span>
 
     <span *ocxAdvanced class="p-float-label">
@@ -111,7 +113,7 @@
         tooltipEvent="hover"
       >
       </p-multiSelect>
-      <label for="announcement_search_criteria_priority">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
+      <label for="am_announcement_search_criteria_priority">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
     </span>
   </div>
 </ocx-search-header>

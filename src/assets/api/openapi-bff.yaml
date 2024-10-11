@@ -1,7 +1,7 @@
-openapi: '3.0.3'
+openapi: "3.0.3"
 info:
   title: onecx-announcement-bff
-  version: '1.0'
+  version: "1.0"
 servers:
   - url: https://onecx-announcement-bff:8080
 tags:
@@ -25,13 +25,13 @@ paths:
             schema:
               $ref: '#/components/schemas/AnnouncementSearchCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AnnouncementPageResult'
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -54,13 +54,13 @@ paths:
             schema:
               $ref: '#/components/schemas/AnnouncementBannerSearchCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/AnnouncementPageResult'
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -83,13 +83,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ActiveAnnouncementsSearchCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ActiveAnnouncementsPageResult'
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -112,7 +112,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateAnnouncementRequest'
       responses:
-        '201':
+        "201":
           description: OK
           headers:
             Location:
@@ -124,7 +124,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Announcement'
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -141,7 +141,7 @@ paths:
       summary: Get all product and workspace names to which announcements are assigned
       operationId: getAllAnnouncementAssignments
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -164,7 +164,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
@@ -186,7 +186,7 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: No content
     put:
       x-onecx:
@@ -210,13 +210,13 @@ paths:
             schema:
               $ref: '#/components/schemas/UpdateAnnouncementRequest'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Announcement'
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -233,14 +233,14 @@ paths:
       summary: retrieve list of all existing workspace names
       operationId: getAllWorkspaceNames
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/WorkspaceAbstract'
+                 $ref: "#/components/schemas/WorkspaceAbstract"
   /announcements/products/available:
     post:
       x-onecx:
@@ -257,13 +257,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ProductsSearchCriteria'
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductsPageResult'
-        '400':
+        "400":
           description: Bad request
           content:
             application/json:
@@ -342,6 +342,8 @@ components:
           $ref: '#/components/schemas/AnnouncementPriorityType'
         status:
           $ref: '#/components/schemas/AnnouncementStatus'
+        appearance:
+          $ref: '#/components/schemas/AnnouncementAppearance'
         startDate:
           $ref: '#/components/schemas/OffsetDateTime'
         endDate:
@@ -363,6 +365,10 @@ components:
           $ref: '#/components/schemas/AnnouncementPriorityType'
         status:
           $ref: '#/components/schemas/AnnouncementStatus'
+        appearance:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementAppearance'
         startDateFrom:
           $ref: '#/components/schemas/OffsetDateTime'
         startDateTo:
@@ -397,6 +403,10 @@ components:
           type: string
         workspaceName:
           type: string
+        appearance:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementAppearance'
         pageNumber:
           format: int32
           description: The number of page.
@@ -428,6 +438,8 @@ components:
           $ref: '#/components/schemas/AnnouncementPriorityType'
         status:
           $ref: '#/components/schemas/AnnouncementStatus'
+        appearance:
+          $ref: '#/components/schemas/AnnouncementAppearance'
         startDate:
           $ref: '#/components/schemas/OffsetDateTime'
         endDate:
@@ -462,6 +474,8 @@ components:
           $ref: '#/components/schemas/AnnouncementPriorityType'
         status:
           $ref: '#/components/schemas/AnnouncementStatus'
+        appearance:
+          $ref: '#/components/schemas/AnnouncementAppearance'
         startDate:
           $ref: '#/components/schemas/OffsetDateTime'
         endDate:
@@ -501,6 +515,10 @@ components:
           type: string
         productName:
           type: string
+        appearance:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementAppearance'
         pageNumber:
           format: int32
           description: The number of page.
@@ -545,6 +563,8 @@ components:
           $ref: '#/components/schemas/AnnouncementType'
         priority:
           $ref: '#/components/schemas/AnnouncementPriorityType'
+        appearance:
+          $ref: '#/components/schemas/AnnouncementAppearance'
         workspaceName:
           type: string
         productName:
@@ -565,6 +585,12 @@ components:
         - EVENT
         - INFO
         - SYSTEM_MAINTENANCE
+      type: string
+    AnnouncementAppearance:
+      enum:
+        - BANNER
+        - WELCOME
+        - ALL
       type: string
     WorkspaceAbstract:
       type: object
