@@ -63,7 +63,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'STATUS',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden sm:table-cell'
+      css: 'text-center'
     },
     {
       field: 'title',
