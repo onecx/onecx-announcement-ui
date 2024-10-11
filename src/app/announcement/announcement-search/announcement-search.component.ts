@@ -22,6 +22,7 @@ type ExtendedColumn = Column & {
   isDropdown?: true
   css?: string
   limit?: boolean
+  needsDisplayName?: boolean
 }
 type ChangeMode = 'VIEW' | 'NEW' | 'EDIT'
 
@@ -58,6 +59,13 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public columns: ExtendedColumn[] = [
     {
+      field: 'status',
+      header: 'STATUS',
+      active: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      css: 'text-center hidden sm:table-cell'
+    },
+    {
       field: 'title',
       header: 'TITLE',
       active: true,
@@ -69,14 +77,16 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'WORKSPACE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden xl:table-cell'
+      css: 'text-center hidden xl:table-cell',
+      needsDisplayName: true
     },
     {
       field: 'productName',
       header: 'APPLICATION',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'hidden sm:table-cell'
+      css: 'hidden lg:table-cell',
+      needsDisplayName: true
     },
     {
       field: 'type',
@@ -84,14 +94,6 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden xl:table-cell',
-      isDropdown: true
-    },
-    {
-      field: 'status',
-      header: 'STATUS',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden lg:table-cell',
       isDropdown: true
     },
     {
@@ -116,7 +118,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'END_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden sm:table-cell',
+      css: 'text-center hidden md:table-cell',
       hasFilter: true,
       isDate: true
     }

@@ -137,22 +137,35 @@
             <ng-container *ngIf="col.isDropdown">
               {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
             </ng-container>
-            <ng-container *ngIf="!(col.isDropdown || col.isDate || col.limit)">
-              <ng-container *ngIf="col.field !== 'workspaceName' && col.field !== 'productName'">
-                {{ rowData[col.field] }}</ng-container
-              >
-              <ng-container *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName)">
-                {{ getDisplayNameWorkspace(rowData[col.field]) }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
-                {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'productName'">
-                {{ getDisplayNameProduct(rowData[col.field]) }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName)">
-                {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}
-              </ng-container>
+
+            <ng-container *ngIf="col.field === 'status'">
+              <span
+                *ngIf="rowData[col.field] === 'ACTIVE'"
+                class="pi pi-circle-on"
+                [pTooltip]="'ENUMS.ANNOUNCEMENT_STATUS.ACTIVE' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></span>
+              <span
+                *ngIf="rowData[col.field] === 'INACTIVE'"
+                class="pi pi-circle-off"
+                [pTooltip]="'ENUMS.ANNOUNCEMENT_STATUS.INACTIVE' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></span>
+            </ng-container>
+
+            <ng-container *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName)">
+              {{ getDisplayNameWorkspace(rowData[col.field]) }}
+            </ng-container>
+            <ng-container *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName)">
+              {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}
+            </ng-container>
+            <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
+              {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
+            </ng-container>
+            <ng-container *ngIf="col.field === 'productName'">
+              {{ getDisplayNameProduct(rowData[col.field]) }}
             </ng-container>
           </td>
         </tr>
