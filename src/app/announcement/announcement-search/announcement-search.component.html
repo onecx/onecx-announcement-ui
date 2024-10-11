@@ -73,7 +73,7 @@
 
       <ng-template pTemplate="body" let-row="rowIndex" let-rowData let-columns="columns">
         <tr [pSelectableRow]="announcements">
-          <td class="px-0 text-center white-space-nowrap">
+          <td class="px-2 text-center white-space-nowrap">
             <ng-container *ocxIfNotPermission="'ANNOUNCEMENT#EDIT'">
               <button
                 pbutton
@@ -132,7 +132,7 @@
             </button>
           </td>
           <td *ngFor="let col of columns" [class]="col.css">
-            <ng-container *ngIf="col.limit"> {{ limitText(rowData[col.field], 25) }} </ng-container>
+            <ng-container *ngIf="col.limit"> {{ limitText(rowData[col.field], 50) }} </ng-container>
             <ng-container *ngIf="col.isDate"> {{ rowData[col.field] | date: dateFormat }} </ng-container>
             <ng-container *ngIf="col.isDropdown">
               {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
