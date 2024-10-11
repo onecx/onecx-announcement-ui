@@ -1,5 +1,5 @@
 <p-dialog
-  header="{{ (this.changeMode === 'EDIT' ? 'ACTIONS.EDIT.ANNOUNCEMENT' : 'ACTIONS.CREATE.ANNOUNCEMENT') | translate }}"
+  [header]="(this.changeMode === 'EDIT' ? 'ACTIONS.EDIT.ANNOUNCEMENT' : 'ACTIONS.CREATE.ANNOUNCEMENT') | translate"
   class="p-dialog-titlebar-close"
   [(visible)]="displayDetailDialog"
   (onHide)="onDialogHide()"
