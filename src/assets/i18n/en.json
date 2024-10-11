@@ -106,7 +106,7 @@
       "WORKSPACE": "Workspace for which the Announcement should be applied.",
       "APPLICATION": "Application for which the Announcement should be applied.",
       "TYPE": "Type of the Announcement",
-      "STATUS": "Status of the Announcement",
+      "STATUS": "Is the Announcement active?",
       "PRIORITY": "Priority of the Announcement",
       "START_DATE": "Date and Time on which the Announcement becomes active",
       "START_DATE_RANGE": "Date range of the start date",

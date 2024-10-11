@@ -93,8 +93,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'TYPE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden xl:table-cell',
-      isDropdown: true
+      css: 'text-center hidden xl:table-cell'
     },
     {
       field: 'priority',
@@ -110,7 +109,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden sm:table-cell',
-      hasFilter: true,
+      hasFilter: false,
       isDate: true
     },
     {
@@ -119,7 +118,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       css: 'text-center hidden md:table-cell',
-      hasFilter: true,
+      hasFilter: false,
       isDate: true
     }
   ]

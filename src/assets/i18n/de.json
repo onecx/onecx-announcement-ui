@@ -106,7 +106,7 @@
       "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
       "APPLICATION": "Applikation, bei der die Neuigkeit angezeigt werden soll",
       "TYPE": "Typ der Neuigkeit",
-      "STATUS": "Status der Neuigkeit",
+      "STATUS": "Ist die Neuigkeit aktiv?",
       "PRIORITY": "Priorität der Neuigkeit",
       "START_DATE": "Datum und Zeit zu dem die Neuigkeit aktiv wird",
       "START_DATE_RANGE": "Datumsbereich des Startdatums",

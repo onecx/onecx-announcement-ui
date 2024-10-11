@@ -26,16 +26,10 @@
           <span
             id="am_announcement_banner_icon"
             class="pi text-xl"
-            [ngClass]="
-              announcement.type === 'EVENT'
-                ? 'pi-calendar'
-                : announcement.type === 'INFO'
-                  ? 'pi-info-circle'
-                  : announcement.type === 'SYSTEM_MAINTENANCE'
-                    ? 'pi-wrench'
-                    : 'pi-info-circle'
-            "
-            aria-label="'ANNOUNCEMENT.PRIORITY' | translate + ': ' + announcement.priority"
+            [class.pi-info-circle]="announcement.type === 'INFO'"
+            [class.pi-calendar]="announcement.type === 'EVENT'"
+            [class.pi-wrench]="announcement.type === 'SYSTEM_MAINTENANCE'"
+            [attr.aria-label]="('ANNOUNCEMENT.PRIORITY' | translate) + ': ' + announcement.priority"
             [pTooltip]="
               ('ANNOUNCEMENT.PRIORITY' | translate) +
               ': ' +
@@ -62,7 +56,7 @@
           icon="pi pi-times"
           class="p-button-rounded p-button-text"
           (click)="hide(announcement.id!)"
-          aria-label="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
+          [attr.aria-label]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
           [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
