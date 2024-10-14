@@ -1,6 +1,6 @@
 import { importProvidersFrom } from '@angular/core'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { AngularAuthModule } from '@onecx/angular-auth'
