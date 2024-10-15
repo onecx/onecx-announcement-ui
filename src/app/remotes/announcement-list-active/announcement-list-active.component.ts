@@ -2,7 +2,7 @@ import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 
-import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
+import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TooltipModule } from 'primeng/tooltip'
 import { TagModule } from 'primeng/tag'
@@ -76,33 +76,6 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     private readonly appConfigService: AppConfigService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
-    combineLatest([this.baseUrl.asObservable(), this.appStateService.currentWorkspace$.asObservable()])
-      .pipe(
-        mergeMap(([_, currentWorkspace]) => {
-          return this.announcementApi
-            .searchAnnouncementBanners({
-              announcementBannerSearchCriteria: {
-                workspaceName: currentWorkspace.workspaceName,
-                currentDate: this.currentDate
-              }
-            })
-            .pipe(
-              map((results) => {
-                return (
-                  results.stream
-                    // exclude product specific announcements
-                    ?.filter((ann) => !ann.productName)
-                    // high prio first, low prio last
-                    .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
-                )
-              }),
-              catchError(() => {
-                return of([])
-              })
-            )
-        })
-      )
-      .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 
   private prioValue(prio: string | undefined): number {
@@ -117,5 +90,34 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     })
     this.appConfigService.init(config['baseUrl'])
     this.baseUrl.next(config.baseUrl)
+    this.searchWorkspaceAnnouncements().subscribe((announcements) => this.announcementsSubject.next(announcements))
+  }
+
+  private searchWorkspaceAnnouncements() {
+    return this.appStateService.currentWorkspace$.pipe(
+      mergeMap((currentWorkspace) => {
+        return this.announcementApi
+          .searchAnnouncementBanners({
+            announcementBannerSearchCriteria: {
+              workspaceName: currentWorkspace.workspaceName,
+              currentDate: this.currentDate
+            }
+          })
+          .pipe(
+            map((results) => {
+              return (
+                results.stream
+                  // exclude product specific announcements
+                  ?.filter((ann) => !ann.productName)
+                  // high prio first, low prio last
+                  .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+              )
+            }),
+            catchError(() => {
+              return of([])
+            })
+          )
+      })
+    )
   }
 }
