@@ -94,7 +94,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   }
 
   private searchWorkspaceAnnouncements() {
-    return this.appStateService.currentWorkspace$.pipe(
+    return this.appStateService.currentWorkspace$.asObservable().pipe(
       mergeMap((currentWorkspace) => {
         return this.announcementApi
           .searchAnnouncementBanners({
