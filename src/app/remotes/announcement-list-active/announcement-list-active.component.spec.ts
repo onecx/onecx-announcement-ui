@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
@@ -17,7 +17,9 @@ import {
 import { OneCXAnnouncementListActiveComponent } from './announcement-list-active.component'
 
 class MockAppStateService {
-  currentWorkspace$ = { asObservable: () => of({ workspaceName: 'wsName' }) }
+  currentWorkspace$ = {
+    asObservable: () => of({ workspaceName: 'wsName' })
+  }
   currentMfe$ = { asObservable: () => of({ productName: 'productName' }) }
 }
 
@@ -95,7 +97,7 @@ describe('AnnouncementListActiveComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  it('should load announcements when the component starts', () => {
+  it('should load announcements when the component starts', fakeAsync(() => {
     apiServiceSpy.searchAnnouncementBanners.and.returnValue(
       of({ stream: [normalAnnouncement, importantAnnouncement, lowPrioAnnouncement] })
     )
@@ -103,10 +105,20 @@ describe('AnnouncementListActiveComponent', () => {
     initializeComponent()
 
     expect(component).toBeTruthy()
+    const mockConfig: RemoteComponentConfig = {
+      appId: 'appId',
+      productName: 'prodName',
+      permissions: ['permission'],
+      baseUrl: 'base'
+    }
+
+    component.ocxRemoteComponentConfig = mockConfig
+
     component['announcementsSubject'].subscribe((anncmts) => {
+      tick(500)
       expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
     })
-  })
+  }))
 
   it('should catch an error if loading announcements fails', () => {
     apiServiceSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
