@@ -30,6 +30,8 @@ import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-announcement-list-active',
+  templateUrl: './announcement-list-active.component.html',
+  styleUrls: ['./announcement-list-active.component.scss'],
   standalone: true,
   imports: [
     AngularRemoteComponentsModule,
@@ -41,10 +43,7 @@ import { environment } from 'src/environments/environment'
     TranslateModule
   ],
   providers: [
-    {
-      provide: BASE_URL,
-      useValue: new ReplaySubject<string>(1)
-    },
+    { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
     provideTranslateServiceForRoot({
       isolate: true,
       loader: {
@@ -53,9 +52,7 @@ import { environment } from 'src/environments/environment'
         deps: [HttpClient, BASE_URL]
       }
     })
-  ],
-  templateUrl: './announcement-list-active.component.html',
-  styleUrls: ['./announcement-list-active.component.scss']
+  ]
 })
 export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
