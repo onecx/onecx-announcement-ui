@@ -33,3 +33,18 @@
     }
   }
 }
+
+:host ::ng-deep {
+  .correct-overlay-position {
+    margin-left: -5rem !important;
+    max-width: 40rem !important;
+    .p-overlaypanel .p-overlaypanel-content {
+      padding: 0;
+    }
+  }
+  @media screen and (min-width: 992px) {
+    .lg\:max-w-40rem {
+      max-width: 40rem !important;
+    }
+  }
+}
