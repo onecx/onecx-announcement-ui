@@ -1,13 +1,24 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { importProvidersFrom } from '@angular/core'
-import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
-import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
+import { BrowserModule } from '@angular/platform-browser'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { provideRouter } from '@angular/router'
+
 import { AngularAuthModule } from '@onecx/angular-auth'
+import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+
 import { environment } from 'src/environments/environment'
+import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
 
 bootstrapRemoteComponent(
   OneCXAnnouncementBannerComponent,
   'ocx-announcement-banner-component',
   environment.production,
-  [provideHttpClient(withInterceptorsFromDi()), importProvidersFrom(AngularAuthModule)]
+  [
+    provideHttpClient(withInterceptorsFromDi()),
+    importProvidersFrom(AngularAuthModule),
+    importProvidersFrom(BrowserModule),
+    importProvidersFrom(BrowserAnimationsModule),
+    provideRouter([{ path: '**', children: [] }])
+  ]
 )

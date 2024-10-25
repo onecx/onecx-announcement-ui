@@ -1,20 +1,18 @@
 import { Component, Inject, Input } from '@angular/core'
-import { CommonModule, Location } from '@angular/common'
+import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
+import { TranslateLoader, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
 import { CarouselModule } from 'primeng/carousel'
-import { TagModule } from 'primeng/tag'
-import { TooltipModule } from 'primeng/tooltip'
 
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
-  RemoteComponentConfig,
   ocxRemoteComponent,
   ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot
+  provideTranslateServiceForRoot,
+  RemoteComponentConfig
 } from '@onecx/angular-remote-components'
 import {
   AppConfigService,
@@ -33,17 +31,10 @@ import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-announcement-banner',
+  templateUrl: './announcement-banner.component.html',
+  styleUrls: ['./announcement-banner.component.scss'],
   standalone: true,
-  imports: [
-    AngularRemoteComponentsModule,
-    CommonModule,
-    PortalCoreModule,
-    TranslateModule,
-    SharedModule,
-    CarouselModule,
-    TagModule,
-    TooltipModule
-  ],
+  imports: [AngularRemoteComponentsModule, CarouselModule, PortalCoreModule, SharedModule],
   providers: [
     {
       provide: BASE_URL,
@@ -57,9 +48,7 @@ import { environment } from 'src/environments/environment'
         deps: [HttpClient, BASE_URL]
       }
     })
-  ],
-  templateUrl: './announcement-banner.component.html',
-  styleUrls: ['./announcement-banner.component.scss']
+  ]
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -72,11 +61,11 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
-    private readonly translateService: TranslateService,
-    private readonly apiV1: AnnouncementInternalAPIService,
+    private readonly appConfigService: AppConfigService,
     private readonly appStateService: AppStateService,
+    private readonly translateService: TranslateService,
     private readonly userService: UserService,
-    private readonly appConfigService: AppConfigService
+    private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     combineLatest([
@@ -88,7 +77,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
         mergeMap(([_, currentWorkspace, currentMfe]) => {
           return currentMfe.productName === 'onecx-welcome'
             ? of([]) // exclude onecx-welcome
-            : this.apiV1
+            : this.announcementApi
                 .searchAnnouncementBanners({
                   announcementBannerSearchCriteria: {
                     workspaceName: currentWorkspace.workspaceName,
@@ -123,7 +112,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   }
 
   ocxInitRemoteComponent(config: RemoteComponentConfig): void {
-    this.apiV1.configuration = new Configuration({
+    this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
     this.baseUrl.next(config.baseUrl)

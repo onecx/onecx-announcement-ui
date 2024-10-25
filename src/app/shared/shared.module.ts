@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA, NgModule } from '@angular/core'
+import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -11,6 +11,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
+import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
@@ -20,13 +21,18 @@ import { MultiSelectModule } from 'primeng/multiselect'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
+import { TagModule } from 'primeng/tag'
 import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
+
+import { PortalCoreModule, PortalDialogService } from '@onecx/portal-integration-angular'
 
 import { LabelResolver } from './label.resolver'
 
 @NgModule({
   declarations: [],
   imports: [
+    PortalCoreModule.forMicroFrontend(),
     AutoCompleteModule,
     CalendarModule,
     CommonModule,
@@ -35,6 +41,7 @@ import { LabelResolver } from './label.resolver'
     DataViewModule,
     DialogModule,
     DropdownModule,
+    DynamicDialogModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -45,7 +52,9 @@ import { LabelResolver } from './label.resolver'
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
+    TagModule,
     ToastModule,
+    TooltipModule,
     TranslateModule
   ],
   exports: [
@@ -57,6 +66,7 @@ import { LabelResolver } from './label.resolver'
     DataViewModule,
     DialogModule,
     DropdownModule,
+    DynamicDialogModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -67,13 +77,16 @@ import { LabelResolver } from './label.resolver'
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
+    TagModule,
     ToastModule,
+    TooltipModule,
     TranslateModule
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [
     ConfirmationService,
     LabelResolver,
+    { provide: DialogService, useClass: PortalDialogService },
     provideErrorTailorConfig({
       controlErrorsOn: { async: true, blur: true, change: true },
       errors: {
@@ -96,7 +109,6 @@ import { LabelResolver } from './label.resolver'
         )
       }
     })
-  ],
-  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA]
+  ]
 })
 export class SharedModule {}
