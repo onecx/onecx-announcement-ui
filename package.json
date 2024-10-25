@@ -85,7 +85,7 @@
     "@angular/language-service": "^18.2.2",
     "@commitlint/cli": "^19.4.1",
     "@commitlint/config-conventional": "^19.4.1",
-    "@openapitools/openapi-generator-cli": "^2.13.9",
+    "@openapitools/openapi-generator-cli": "^2.15.0",
     "@schematics/angular": "18.2.5",
     "@svgr/webpack": "^8.1.0",
     "@types/jasmine": "~5.1.4",
