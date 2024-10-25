@@ -1,11 +1,8 @@
 import { Component, Inject, Input } from '@angular/core'
-import { CommonModule, Location } from '@angular/common'
+import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
-
+import { TranslateLoader, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core'
-import { TooltipModule } from 'primeng/tooltip'
-import { TagModule } from 'primeng/tag'
 
 import { AppStateService } from '@onecx/angular-integration-interface'
 import {
@@ -33,15 +30,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-list-active.component.html',
   styleUrls: ['./announcement-list-active.component.scss'],
   standalone: true,
-  imports: [
-    AngularRemoteComponentsModule,
-    CommonModule,
-    PortalCoreModule,
-    SharedModule,
-    TagModule,
-    TooltipModule,
-    TranslateModule
-  ],
+  imports: [AngularRemoteComponentsModule, PortalCoreModule, SharedModule],
   providers: [
     { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
     provideTranslateServiceForRoot({
