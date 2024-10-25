@@ -15,5 +15,5 @@
     "src/app/remotes/announcement-list-active/announcement-list-active.component.main.ts"
   ],
   "include": ["src/**/*.ts"],
-  "exclude": ["src/test.ts", "src/**/*.spec.ts"]
+  "exclude": ["src/test.ts", "src/**/*.spec.ts", "src/environments/environment.prod.ts"]
 }
