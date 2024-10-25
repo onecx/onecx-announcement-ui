@@ -16,7 +16,12 @@ import {
   ocxRemoteWebcomponent,
   provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
-import { AppConfigService, UserService, createRemoteComponentTranslateLoader } from '@onecx/portal-integration-angular'
+import {
+  AppConfigService,
+  PortalCoreModule,
+  UserService,
+  createRemoteComponentTranslateLoader
+} from '@onecx/portal-integration-angular'
 import {
   Announcement,
   AnnouncementAbstract,
@@ -32,6 +37,7 @@ import { environment } from 'src/environments/environment'
   imports: [
     AngularRemoteComponentsModule,
     CommonModule,
+    PortalCoreModule,
     TranslateModule,
     SharedModule,
     CarouselModule,
