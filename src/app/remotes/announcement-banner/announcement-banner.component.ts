@@ -141,4 +141,8 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       return []
     }
   }
+
+  public convertLineFeeds(text: string) {
+    return text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+  }
 }

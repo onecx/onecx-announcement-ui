@@ -111,7 +111,8 @@
       "START_DATE_RANGE": "Datumsbereich des Startdatums",
       "END_DATE": "Datum und Zeit zu dem die Neuigkeit inaktiv wird",
       "END_DATE_RANGE": "Datumsbereich des Endedatums",
-      "CONTENT": "Der Text der angezeigten Neuigkeit"
+      "CONTENT": "Der Text der angezeigten Neuigkeit, maximal 1000 Zeichen",
+      "CHARACTERS": "Noch mögliche Zeichen"
     }
   },
   "ENUMS": {

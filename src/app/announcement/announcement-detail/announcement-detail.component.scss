@@ -1,10 +1,17 @@
 @import '/src/app/_am-mixins.scss';
 
+@include card-badges;
 @include correct-select-button;
 @include dialog-footer-buttons;
 @include dialog-non-full-size-modal;
 
 :host ::ng-deep {
+  .card-badge-right {
+    display: inline-block;
+    position: absolute;
+    right: -12px;
+  }
+
   label.float-label {
     color: var(--emphasis-medium);
   }
