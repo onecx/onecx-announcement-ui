@@ -10,7 +10,7 @@
   >
     <ng-template let-announcement pTemplate="item">
       <div
-        class="py-2 px-1 border-round flex flex-row justify-content-between align-items-center"
+        class="p-2 border-round flex flex-row justify-content-between align-items-center"
         [ngClass]="
           announcement.priority === 'IMPORTANT'
             ? 'bg-red-100 text-red-800 border-red-600'
@@ -22,10 +22,10 @@
         "
       >
         <!-- content -->
-        <div class="px-1 sm:px-2 flex flex-row align-items-center column-gap-2 sm:column-gap-3">
+        <div class="flex flex-row align-items-center column-gap-2">
           <span
             id="am_announcement_banner_icon"
-            class="pi text-xl"
+            class="px-1 sm:px-2 pi text-xl"
             [class.pi-info-circle]="announcement.type === 'INFO'"
             [class.pi-calendar]="announcement.type === 'EVENT'"
             [class.pi-wrench]="announcement.type === 'SYSTEM_MAINTENANCE'"
@@ -49,12 +49,12 @@
             <div id="am_announcement_banner_content">{{ announcement.content }}</div>
           </div>
         </div>
-        <!-- clear -->
+        <!-- close -->
         <button
           id="am_announcement_banner_close"
           pButton
           icon="pi pi-times"
-          class="p-button-rounded p-button-text w-6rem p-3"
+          class="p-button-rounded p-button-text p-3"
           [class.text-red-800]="announcement.priority === 'IMPORTANT'"
           [class.text-yellow-800]="announcement.priority === 'NORMAL'"
           [class.text-blue-800]="announcement.priority === 'LOW'"
