@@ -71,9 +71,8 @@
     }
   },
   "DIALOG": {
-    "SEARCH.HEADER": "Neuigkeitsverwaltung",
-    "SEARCH.SUBHEADER": "Suchen und Verwalten von Neuigkeiten",
-    "DETAIL.SUBHEADER": "Neuigkeitendetails"
+    "SEARCH.HEADER": "Neuigkeiten",
+    "SEARCH.SUBHEADER": "Suchen und Verwalten von Neuigkeiten"
   },
   "ANNOUNCEMENT": {
     "ID": "Id",
