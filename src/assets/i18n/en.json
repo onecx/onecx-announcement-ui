@@ -71,9 +71,8 @@
     }
   },
   "DIALOG": {
-    "SEARCH.HEADER": "Announcement Management",
-    "SEARCH.SUBHEADER": "Searching and managing of Announcements",
-    "DETAIL.SUBHEADER": "Announcement Details"
+    "SEARCH.HEADER": "Announcements",
+    "SEARCH.SUBHEADER": "Searching and managing of Announcements"
   },
   "ANNOUNCEMENT": {
     "ID": "Id",
