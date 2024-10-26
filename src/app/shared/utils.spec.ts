@@ -3,6 +3,7 @@ import { SelectItem } from 'primeng/api'
 
 import {
   limitText,
+  convertLineBreaks,
   copyToClipboard,
   forceFormValidation,
   dropDownSortItemsByLabel,
@@ -104,6 +105,14 @@ describe('util functions', () => {
       const sortedStrings = strings.sort(sortByLocale)
 
       expect(sortedStrings[0]).toEqual('str1')
+    })
+  })
+
+  describe('sortByLocale', () => {
+    it('should convert line breaks to br', () => {
+      const text = '123\r456'
+
+      expect(convertLineBreaks(text)).toEqual('123<br/>456')
     })
   })
 })

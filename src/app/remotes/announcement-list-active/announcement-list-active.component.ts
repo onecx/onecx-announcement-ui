@@ -107,6 +107,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
       })
     )
   }
+
   // display simple formatted text
   public convertLineBreaks(text?: string) {
     return text?.replace(/(?:\r\n|\r|\n)/g, '<br/>') ?? ''
