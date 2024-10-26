@@ -49,3 +49,8 @@ export function dropDownGetLabelByValue(ddArray: SelectItem[], val: string): str
 export function sortByLocale(a: string, b: string): number {
   return a.toUpperCase().localeCompare(b.toUpperCase())
 }
+
+// display simple formatted text
+export function convertLineBreaks(text?: string) {
+  return text?.replace(/(?:\r\n|\r|\n)/g, '<br/>') ?? ''
+}

@@ -7,12 +7,13 @@ import { SelectItem } from 'primeng/api'
 import { Action, Column, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import {
   Announcement,
+  AnnouncementAssignments,
+  AnnouncementPageResult,
   AnnouncementInternalAPIService,
-  SearchAnnouncementsRequestParams,
   AnnouncementSearchCriteria,
+  SearchAnnouncementsRequestParams,
   WorkspaceAbstract,
-  ProductsPageResult,
-  AnnouncementAssignments
+  ProductsPageResult
 } from 'src/app/shared/generated'
 import { limitText, dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
@@ -38,12 +39,12 @@ export class AnnouncementSearchComponent implements OnInit {
   public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
   public announcement: Announcement | undefined
-  public announcements: Announcement[] = []
+  public announcements$: Observable<Announcement[]> | undefined
   public displayDeleteDialog = false
   public displayDetailDialog = false
   public appsChanged = false
-  public searching = false
-  public loading = false
+  public searchInProgress = false
+  public exceptionKey: string | undefined = undefined
   public dateFormat: string
   public usedWorkspaces$: Observable<SelectItem[]> | undefined
   public allWorkspaces: SelectItem[] = []
@@ -166,9 +167,8 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  public onReset(): void {
+  public onCriteriaReset(): void {
     this.criteria = {}
-    this.announcements = []
   }
 
   /****************************************************************************
@@ -188,28 +188,17 @@ export class AnnouncementSearchComponent implements OnInit {
         criteria.announcementSearchCriteria.productName = undefined
       this.criteria = criteria.announcementSearchCriteria
     }
-    this.searching = true
-    this.announcementApi
-      .searchAnnouncements(criteria)
-      .pipe(
-        finalize(() => {
-          this.searching = false
-          this.loading = false
-        })
-      )
-      .subscribe({
-        next: (data) => {
-          this.announcements = data.stream || []
-          if (this.announcements.length === 0) {
-            this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.NO_RESULTS' })
-          }
-        },
-        error: (err) =>
-          this.msgService.error({
-            summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
-            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
-          })
-      })
+    this.searchInProgress = true
+    this.announcements$ = this.announcementApi.searchAnnouncements(criteria).pipe(
+      catchError((err) => {
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.HELP_ITEM'
+        console.error('searchHelps():', err)
+        this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MSG_SEARCH_FAILED' })
+        return of({ stream: [] } as AnnouncementPageResult)
+      }),
+      map((data: AnnouncementPageResult) => data.stream ?? []),
+      finalize(() => (this.searchInProgress = false))
+    )
   }
 
   onColumnsChange(activeIds: string[]) {
@@ -255,8 +244,7 @@ export class AnnouncementSearchComponent implements OnInit {
       this.announcementApi.deleteAnnouncementById({ id: this.announcement?.id }).subscribe({
         next: () => {
           this.displayDeleteDialog = false
-          this.announcements = this.announcements.filter((a) => a.id !== this.announcement?.id)
-          this.announcement = undefined
+          //this.announcements = this.announcements.filter((a) => a.id !== this.announcement?.id)
           this.appsChanged = true
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
           if (workspaceUsed) this.getUsedWorkspacesAndProducts()
@@ -364,7 +352,7 @@ export class AnnouncementSearchComponent implements OnInit {
    *     used to display readable names in drop down lists and result set
    */
 
-  // declare searching for ALL workspaces
+  // declare search for ALL products
   private searchProducts(): Observable<SelectItem[]> {
     this.allProducts$ = this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).pipe(
       catchError((err) => {
@@ -386,7 +374,7 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  // declare searching for ALL workspaces
+  // declare search for ALL workspaces
   private searchWorkspaces(): Observable<SelectItem[]> {
     this.allWorkspaces$ = this.announcementApi.getAllWorkspaceNames().pipe(
       catchError((err) => {
@@ -408,7 +396,6 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // Loading everything - triggered from HTML
   private loadAllData(): void {
-    this.loading = true
     this.allMetaData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
       map(([w, p]: [SelectItem[], SelectItem[]]) => {
         this.allWorkspaces = w

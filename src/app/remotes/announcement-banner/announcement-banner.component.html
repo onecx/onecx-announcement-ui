@@ -46,12 +46,12 @@
           ></span>
           <div class="flex flex-column row-gap-1">
             <div id="am_announcement_banner_title" class="font-bold">{{ announcement.title }}</div>
-            <div id="am_announcement_banner_content">{{ announcement.content }}</div>
+            <div id="am_announcement_banner_content" [innerHTML]="convertLineBreaks(announcement.content)"></div>
           </div>
         </div>
         <!-- close -->
         <button
-          id="am_announcement_banner_close"
+          id="am_announcement_banner_action_close"
           pButton
           icon="pi pi-times"
           class="p-button-rounded p-button-text p-3"
