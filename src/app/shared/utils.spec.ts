@@ -108,7 +108,7 @@ describe('util functions', () => {
     })
   })
 
-  describe('sortByLocale', () => {
+  describe('convertLineBreaks', () => {
     it('should convert line breaks to br', () => {
       const text = '123\r456'
 

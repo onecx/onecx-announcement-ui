@@ -22,7 +22,7 @@ import {
 } from '@onecx/portal-integration-angular'
 
 import { SharedModule } from 'src/app/shared/shared.module'
-import { copyToClipboard } from 'src/app/shared/utils'
+import { convertLineBreaks, copyToClipboard } from 'src/app/shared/utils'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { environment } from 'src/environments/environment'
 
@@ -53,6 +53,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
   public displayDetailDialog = false
   copyToClipboard = copyToClipboard
+  convertLineBreaks = convertLineBreaks
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
@@ -106,10 +107,5 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
           )
       })
     )
-  }
-
-  // display simple formatted text
-  public convertLineBreaks(text?: string) {
-    return text?.replace(/(?:\r\n|\r|\n)/g, '<br/>') ?? ''
   }
 }
