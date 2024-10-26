@@ -103,6 +103,17 @@
   }
 }
 
+@mixin text-badges {
+  :host ::ng-deep {
+    .text-badge-right {
+      display: inline-block;
+      position: absolute;
+      right: -12px;
+      top: -6px;
+    }
+  }
+}
+
 @mixin card-badges {
   :host ::ng-deep {
     .card-badge-right {

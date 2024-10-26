@@ -86,7 +86,7 @@
     "START_DATE_RANGE": "Startdatum von - bis",
     "END_DATE": "Ende",
     "END_DATE_RANGE": "Endedatum von - bis",
-    "CONTENT": "Text",
+    "CONTENT": "Inhalt",
     "DATE_RANGES_ERROR": "Falsche Datumsbereiche: Der Bereich des Enddatums sollte nach/gleich dem Bereich des Startdatums liegen.",
     "EVERY_WORKSPACE": "Alle",
     "EVERY_PRODUCT": "Alle",
@@ -112,7 +112,8 @@
       "END_DATE": "Datum und Zeit zu dem die Neuigkeit inaktiv wird",
       "END_DATE_RANGE": "Datumsbereich des Endedatums",
       "CONTENT": "Der Text der angezeigten Neuigkeit, maximal 1000 Zeichen",
-      "CHARACTERS": "Noch mögliche Zeichen"
+      "CHARACTERS": "Noch mögliche Zeichen",
+      "PREVIEW.ICON": "Vorschau"
     }
   },
   "ENUMS": {

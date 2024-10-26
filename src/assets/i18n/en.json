@@ -112,7 +112,8 @@
       "END_DATE": "Date and Time on which the Announcement becomes inactive",
       "END_DATE_RANGE": "Date range of the end date",
       "CONTENT": "The text of the displayed Announcement, maximum of 1000 characters",
-      "CHARACTERS": "Still remaining characters"
+      "CHARACTERS": "Still remaining characters",
+      "PREVIEW.ICON": "Preview"
     }
   },
   "ENUMS": {

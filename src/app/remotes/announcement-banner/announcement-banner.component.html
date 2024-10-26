@@ -46,7 +46,7 @@
           ></span>
           <div class="flex flex-column row-gap-1">
             <div id="am_announcement_banner_title" class="font-bold">{{ announcement.title }}</div>
-            <div id="am_announcement_banner_content" [innerHTML]="convertLineFeeds(announcement.content)"></div>
+            <div id="am_announcement_banner_content" [innerHTML]="convertLineBreaks(announcement.content)"></div>
           </div>
         </div>
         <!-- close -->

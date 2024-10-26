@@ -22,7 +22,7 @@
         <p-badge
           severity="primary"
           [value]="255 - announcementTitle.value.length"
-          class="z-1 card-badge-right"
+          class="z-1 text-badge-right"
           [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
           [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
           tooltipPosition="top"
@@ -54,7 +54,7 @@
         <p-badge
           severity="primary"
           [value]="1000 - announcementContent.value.length"
-          class="z-1 card-badge-right"
+          class="z-1 text-badge-right"
           [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
           [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
           tooltipPosition="top"
@@ -203,12 +203,13 @@
         </label>
       </div>
 
-      <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-1">
-        <div class="w-12 md:w-5 py-0 px-0 md:pr-3 md:text-right flex flex-column md:justify-content-end">
+      <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-1 sm:justify-content-evenly align-items-end">
+        <div class="p-0 md:text-right flex flex-column md:justify-content-end">
           <label class="float-label mb-1 text-sm font-medium" for="am_announcement_detail_form_priority"
             >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
           </label>
           <p-selectButton
+            #announcmenPriority
             id="am_announcement_detail_form_priority"
             formControlName="priority"
             [options]="(priorityOptions$ | async) ?? []"
@@ -217,11 +218,25 @@
             tooltipEvent="hover"
           ></p-selectButton>
         </div>
-        <div class="w-12 md:w-7 flex flex-column p-0 md:pl-3">
+        <span
+          id="am_announcement_detail_preview_icon"
+          class="p-2 pi text-xl border-round hidden sm:block"
+          [class.pi-info-circle]="announcmentType.value === 'INFO'"
+          [class.pi-calendar]="announcmentType.value === 'EVENT'"
+          [class.pi-wrench]="announcmentType.value === 'SYSTEM_MAINTENANCE'"
+          [class.bg-red-100]="announcmenPriority.value === 'IMPORTANT'"
+          [class.bg-yellow-100]="announcmenPriority.value === 'NORMAL'"
+          [class.bg-blue-100]="announcmenPriority.value === 'LOW'"
+          [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PREVIEW.ICON' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></span>
+        <div class="p-0 flex flex-column">
           <label class="float-label mb-1 text-sm font-medium" for="am_announcement_detail_form_type">
             {{ 'ANNOUNCEMENT.TYPE' | translate }}
           </label>
           <p-selectButton
+            #announcmentType
             id="am_announcement_detail_form_type"
             formControlName="type"
             [options]="(typeOptions$ | async) ?? []"
