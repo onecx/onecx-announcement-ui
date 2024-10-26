@@ -8,11 +8,18 @@
     [workspaces]="(usedWorkspaces$ | async) ?? []"
     [products]="(usedProducts$ | async) ?? []"
     (criteriaEmitter)="search($event)"
-    (resetSearchEmitter)="onReset()"
+    (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
-  <ocx-page-content styleClass="px-3">
+  <ocx-page-content *ngIf="announcements$ | async as announcements" styleClass="px-3">
+    <p-message
+      *ngIf="searchInProgress"
+      severity="info"
+      styleClass="my-3 p-2"
+      [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
+    ></p-message>
     <p-table
+      *ngIf="!searchInProgress"
       #announcementTable
       id="am_announcement_search_table"
       [value]="announcements"
@@ -35,7 +42,6 @@
           [enableFiltering]="true"
           [enableSorting]="false"
           [columnDefinitions]="columns"
-          [columnTemplates]="[]"
           (columnsChange)="onColumnsChange($event)"
           (filterChange)="onFilterChange($event)"
           [filterColumns]="['ANNOUNCEMENT.TITLE' | translate, 'ANNOUNCEMENT.WORKSPACE' | translate]"
