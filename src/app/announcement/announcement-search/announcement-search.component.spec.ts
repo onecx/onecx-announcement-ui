@@ -134,7 +134,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should search announcements without search criteria', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: announcementData }))
 
-      component.search({ announcementSearchCriteria: {} })
+      component.onSearch({ announcementSearchCriteria: {} })
 
       component.announcements$!.subscribe({
         next: (data) => {
@@ -153,7 +153,7 @@ describe('AnnouncementSearchComponent', () => {
       component.criteria = { workspaceName: 'ADMIN' }
       const reuseCriteria = false
 
-      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      component.onSearch({ announcementSearchCriteria: component.criteria }, reuseCriteria)
 
       component.announcements$!.subscribe({
         next: (data) => {
@@ -174,7 +174,7 @@ describe('AnnouncementSearchComponent', () => {
       }
       const reuseCriteria = false
 
-      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      component.onSearch({ announcementSearchCriteria: component.criteria }, reuseCriteria)
       expect(component.criteria).toEqual(resultCriteria)
 
       component.announcements$!.subscribe({
@@ -194,7 +194,7 @@ describe('AnnouncementSearchComponent', () => {
       component.criteria = { workspaceName: 'ADMIN' }
       const reuseCriteria = false
 
-      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      component.onSearch({ announcementSearchCriteria: component.criteria }, reuseCriteria)
 
       component.announcements$!.subscribe({
         next: (data) => {
@@ -214,7 +214,7 @@ describe('AnnouncementSearchComponent', () => {
       const err = { status: '400' }
       apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => err))
 
-      component.search({ announcementSearchCriteria: {} })
+      component.onSearch({ announcementSearchCriteria: {} })
 
       component.announcements$!.subscribe({
         next: (data) => {
@@ -238,7 +238,7 @@ describe('AnnouncementSearchComponent', () => {
       const newCriteria = { workspaceName: '', productName: '', title: 'new title' }
       const reuseCriteria = false
 
-      component.search({ announcementSearchCriteria: newCriteria }, reuseCriteria)
+      component.onSearch({ announcementSearchCriteria: newCriteria }, reuseCriteria)
 
       expect(component.criteria).toEqual(newCriteria)
     })
@@ -248,7 +248,7 @@ describe('AnnouncementSearchComponent', () => {
       component.criteria = { title: 'A*' }
       const reuseCriteria = false
 
-      component.search({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      component.onSearch({ announcementSearchCriteria: component.criteria }, reuseCriteria)
 
       component.announcements$!.subscribe({
         next: (data) => {
@@ -267,7 +267,6 @@ describe('AnnouncementSearchComponent', () => {
     component.onCreate()
 
     expect(component.changeMode).toEqual('NEW')
-    expect(component.appsChanged).toBeFalse()
     expect(component.announcement).toBe(undefined)
     expect(component.displayDetailDialog).toBeTrue()
   })
@@ -281,7 +280,6 @@ describe('AnnouncementSearchComponent', () => {
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual(mode)
-    expect(component.appsChanged).toBeFalse()
     expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
@@ -294,7 +292,6 @@ describe('AnnouncementSearchComponent', () => {
 
     expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual('NEW')
-    expect(component.appsChanged).toBeFalse()
     expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
@@ -306,7 +303,6 @@ describe('AnnouncementSearchComponent', () => {
     component.onDelete(ev, announcementData[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
-    expect(component.appsChanged).toBeFalse()
     expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDeleteDialog).toBeTrue()
   })
@@ -336,24 +332,18 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should set correct values when detail dialog is closed', () => {
-    spyOn(component, 'search')
+    spyOn(component, 'onSearch')
 
     component.onCloseDetail(true)
 
-    expect(component.search).toHaveBeenCalled()
+    expect(component.onSearch).toHaveBeenCalled()
     expect(component.displayDeleteDialog).toBeFalse()
   })
 
   it('should update the columns that are seen in results', () => {
     const columns: Column[] = [
-      {
-        field: 'workspaceName',
-        header: 'WORKSPACE'
-      },
-      {
-        field: 'context',
-        header: 'CONTEXT'
-      }
+      { field: 'workspaceName', header: 'WORKSPACE' },
+      { field: 'context', header: 'CONTEXT' }
     ]
     const expectedColumn = { field: 'workspaceName', header: 'WORKSPACE' }
     component.columns = columns
@@ -388,30 +378,32 @@ describe('AnnouncementSearchComponent', () => {
    * test workspaces: fetching used ws and all ws
    */
   it('should get all announcements assigned to workspaces', (done) => {
-    const assignments: AnnouncementAssignments = { productNames: [], workspaceNames: ['w1'] }
+    const assignments: AnnouncementAssignments = { productNames: ['prod1'], workspaceNames: ['w1'] }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
     component.allWorkspaces = [{ label: 'Workspace1', value: 'w1' }]
+    component.allProducts = [{ label: 'Product1', value: 'prod1' }]
 
     component['getUsedWorkspacesAndProducts']()
 
-    component.usedWorkspaces$?.subscribe({
-      next: (ws) => {
-        expect(ws).toContain({ label: 'Workspace1', value: 'w1' })
+    component.allCriteriaLists$?.subscribe({
+      next: (data) => {
+        expect(data.workspaces).toContain({ label: 'Workspace1', value: 'w1' })
+        expect(data.products).toContain({ label: 'Product1', value: 'prod1' })
         done()
       }
     })
   })
 
-  it('should display error msg if getAllAnnouncementAssignments call fails', (done) => {
+  it('should display error message on getting all announcements assigned to', (done) => {
     const err = { status: '400' }
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
     spyOn(console, 'error')
 
     component['getUsedWorkspacesAndProducts']()
 
-    component.usedWorkspaces$?.subscribe({
+    component.allCriteriaLists$?.subscribe({
       next: () => {
-        expect(console.error).toHaveBeenCalledWith('getUsedWorkspacesAndProducts', err)
+        expect(console.error).toHaveBeenCalledWith('getAllAnnouncementAssignments', err)
         done()
       }
     })
@@ -465,49 +457,14 @@ describe('AnnouncementSearchComponent', () => {
     expect(result).toEqual(false)
   })
 
-  it('should provide a translation if the workspace is undefined', () => {
-    const result = component.getTranslationKeyForNonExistingWorkspaces(undefined)
-
-    expect(result).toEqual('ANNOUNCEMENT.EVERY_WORKSPACE')
+  it('should provide the translation for ALL', () => {
+    expect(component.allItem?.label).toEqual('ANNOUNCEMENT.ALL')
   })
 
   it('should provide a translation if unknown workspace is listed', () => {
     const result = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
 
     expect(result).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
-  })
-
-  /**
-   * test products: fetching used products and all products
-   */
-  it('should get announcements assigned to products', (done) => {
-    const assignments: AnnouncementAssignments = { workspaceNames: [], productNames: ['prod1'] }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
-    component.allProducts = [{ label: 'Product1', value: 'prod1' }]
-
-    component['getUsedWorkspacesAndProducts']()
-
-    component.usedProducts$?.subscribe({
-      next: (p) => {
-        expect(p).toContain({ label: 'Product1', value: 'prod1' })
-        done()
-      }
-    })
-  })
-
-  it('should display error if getting used products fails', (done) => {
-    const err = { status: '400' }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
-    spyOn(console, 'error')
-
-    component['getUsedWorkspacesAndProducts']()
-
-    component.usedProducts$?.subscribe({
-      next: () => {
-        expect(console.error).toHaveBeenCalledWith('getUsedWorkspacesAndProducts', err)
-        done()
-      }
-    })
   })
 
   it('should get all existing products', (done) => {

@@ -26,6 +26,7 @@ type ExtendedColumn = Column & {
   needsDisplayName?: boolean
 }
 type ChangeMode = 'VIEW' | 'NEW' | 'EDIT'
+type allCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
 
 @Component({
   selector: 'app-announcement-search',
@@ -42,13 +43,14 @@ export class AnnouncementSearchComponent implements OnInit {
   public announcements$: Observable<Announcement[]> | undefined
   public displayDeleteDialog = false
   public displayDetailDialog = false
-  public appsChanged = false
   public searchInProgress = false
   public exceptionKey: string | undefined = undefined
   public dateFormat: string
+  public allCriteriaLists$: Observable<allCriteriaLists> | undefined
   public usedWorkspaces$: Observable<SelectItem[]> | undefined
   public allWorkspaces: SelectItem[] = []
   public allWorkspaces$!: Observable<WorkspaceAbstract[]>
+  public allItem: SelectItem | undefined
 
   public usedProducts$: Observable<SelectItem[]> | undefined
   public allProducts: SelectItem[] = []
@@ -136,9 +138,20 @@ export class AnnouncementSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAllData()
+    this.translateAllItem()
     this.prepareActionButtons()
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
+    })
+  }
+
+  public translateAllItem() {
+    this.allItem = undefined
+    this.translate.get(['ANNOUNCEMENT.ALL']).subscribe((data) => {
+      this.allItem = {
+        label: data['ANNOUNCEMENT.ALL'],
+        value: 'all'
+      } as SelectItem
     })
   }
 
@@ -159,22 +172,10 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  public onCloseDetail(refresh: boolean): void {
-    this.displayDetailDialog = false
-    if (refresh) {
-      this.search({ announcementSearchCriteria: {} }, true)
-      this.getUsedWorkspacesAndProducts()
-    }
-  }
-
-  public onCriteriaReset(): void {
-    this.criteria = {}
-  }
-
   /****************************************************************************
    *  SEARCH announcements
    */
-  public search(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
+  public onSearch(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
     if (criteria.announcementSearchCriteria.workspaceName === 'all') {
       criteria.announcementSearchCriteria.workspaceName = undefined
     }
@@ -201,33 +202,44 @@ export class AnnouncementSearchComponent implements OnInit {
     )
   }
 
-  onColumnsChange(activeIds: string[]) {
+  public onCriteriaReset(): void {
+    this.criteria = {}
+  }
+
+  public onColumnsChange(activeIds: string[]) {
     this.filteredColumns = activeIds.map((id) => this.columns.find((col) => col.field === id)) as Column[]
   }
-  onFilterChange(event: string): void {
+  public onFilterChange(event: string): void {
     this.announcementTable?.filterGlobal(event, 'contains')
   }
 
   /****************************************************************************
    *  CHANGES
    */
+  public onCloseDetail(refresh: boolean): void {
+    this.displayDetailDialog = false
+    this.displayDeleteDialog = false
+    this.announcement = undefined
+    if (refresh) {
+      this.onSearch({ announcementSearchCriteria: {} }, true)
+      this.getUsedWorkspacesAndProducts()
+    }
+  }
+
   public onCreate() {
     this.changeMode = 'NEW'
-    this.appsChanged = false
     this.announcement = undefined
     this.displayDetailDialog = true
   }
   public onDetail(ev: MouseEvent, item: Announcement, mode: ChangeMode): void {
     ev.stopPropagation()
     this.changeMode = mode
-    this.appsChanged = false
     this.announcement = item
     this.displayDetailDialog = true
   }
   public onCopy(ev: MouseEvent, item: Announcement) {
     ev.stopPropagation()
     this.changeMode = 'NEW'
-    this.appsChanged = false
     this.announcement = item
     this.announcement.id = undefined
     this.displayDetailDialog = true
@@ -235,19 +247,17 @@ export class AnnouncementSearchComponent implements OnInit {
   public onDelete(ev: MouseEvent, item: Announcement): void {
     ev.stopPropagation()
     this.announcement = item
-    this.appsChanged = false
     this.displayDeleteDialog = true
   }
   public onDeleteConfirmation(): void {
+    console.log(this.announcementTable?._value)
     if (this.announcement?.id) {
-      const workspaceUsed = this.announcement?.workspaceName !== undefined
+      //const workspaceUsed = this.announcement?.workspaceName !== undefined
       this.announcementApi.deleteAnnouncementById({ id: this.announcement?.id }).subscribe({
         next: () => {
-          this.displayDeleteDialog = false
-          //this.announcements = this.announcements.filter((a) => a.id !== this.announcement?.id)
-          this.appsChanged = true
+          this.onCloseDetail(true)
+          //this.announcementTable?._value = this.announcementTable?._value.filter((a) => a.id !== this.announcement?.id)
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-          if (workspaceUsed) this.getUsedWorkspacesAndProducts()
         },
         error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
       })
@@ -256,58 +266,34 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // used in search criteria
   private getUsedWorkspacesAndProducts(): void {
-    const announcementAssignments$ = this.announcementApi.getAllAnnouncementAssignments()
-
-    this.usedWorkspaces$ = announcementAssignments$.pipe(
-      catchError((err) => {
-        console.error('getUsedWorkspacesAndProducts', err)
-        return of([] as AnnouncementAssignments)
+    const acl: allCriteriaLists = { products: [], workspaces: [] }
+    this.allCriteriaLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
+      map((data: AnnouncementAssignments) => {
+        if (data.workspaceNames)
+          acl.workspaces = data.workspaceNames.map(
+            (name) =>
+              ({
+                label: this.getDisplayNameWorkspace(name),
+                value: name
+              }) as SelectItem
+          )
+        if (this.allItem) acl.workspaces.unshift(this.allItem)
+        if (data.productNames)
+          acl.products = data.productNames.map(
+            (name) =>
+              ({
+                label: this.getDisplayNameProduct(name),
+                value: name
+              }) as SelectItem
+          )
+        if (this.allItem) acl.products.unshift(this.allItem)
+        return acl
       }),
-      map((data: AnnouncementAssignments) =>
-        (data.workspaceNames || []).map(
-          (name) =>
-            ({
-              label: this.getDisplayNameWorkspace(name),
-              value: name
-            }) as SelectItem
-        )
-      ),
-      map((workspaces) => this.addAllToUsedWorkspaces(workspaces))
-    )
-    this.usedProducts$ = announcementAssignments$.pipe(
       catchError((err) => {
-        console.error('getUsedWorkspacesAndProducts', err)
-        return of([] as AnnouncementAssignments)
-      }),
-      map((data: AnnouncementAssignments) =>
-        (data.productNames || []).map(
-          (name) =>
-            ({
-              label: this.getDisplayNameProduct(name),
-              value: name
-            }) as SelectItem
-        )
-      ),
-      map((products) => this.addAllToUsedProducts(products))
+        console.error('getAllAnnouncementAssignments', err)
+        return of(acl)
+      })
     )
-  }
-  private addAllToUsedWorkspaces(workspaces: SelectItem[]) {
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
-      workspaces.unshift({
-        label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
-        value: 'all'
-      })
-    })
-    return workspaces
-  }
-  private addAllToUsedProducts(products: SelectItem[]) {
-    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      products.unshift({
-        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
-        value: 'all'
-      })
-    })
-    return products
   }
 
   // workspace in list of all workspaces?
@@ -325,26 +311,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // if not in list of all workspaces then get the suitable translation key
   public getTranslationKeyForNonExistingWorkspaces(workspaceName?: string): string {
-    return workspaceName && workspaceName?.length > 0
-      ? 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND'
-      : 'ANNOUNCEMENT.EVERY_WORKSPACE'
-  }
-
-  private addAllProducts() {
-    this.translate.get(['ANNOUNCEMENT.EVERY_PRODUCT']).subscribe((data) => {
-      this.allProducts.unshift({
-        label: data['ANNOUNCEMENT.EVERY_PRODUCT'],
-        value: 'all'
-      })
-    })
-  }
-  private addAllWorkspaces() {
-    this.translate.get(['ANNOUNCEMENT.EVERY_WORKSPACE']).subscribe((data) => {
-      this.allWorkspaces.unshift({
-        label: data['ANNOUNCEMENT.EVERY_WORKSPACE'],
-        value: 'all'
-      })
-    })
+    return workspaceName && workspaceName?.length > 0 ? 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND' : 'ANNOUNCEMENT.ALL'
   }
 
   /****************************************************************************
@@ -369,6 +336,7 @@ export class AnnouncementSearchComponent implements OnInit {
           }
           si.sort(dropDownSortItemsByLabel)
         }
+        if (this.allItem) si.unshift(this.allItem)
         return si
       })
     )
@@ -389,6 +357,7 @@ export class AnnouncementSearchComponent implements OnInit {
           if (workspace.displayName) si.push({ label: workspace.displayName, value: workspace.name })
         }
         si.sort(dropDownSortItemsByLabel)
+        if (this.allItem) si.unshift(this.allItem)
         return si
       })
     )
@@ -400,10 +369,8 @@ export class AnnouncementSearchComponent implements OnInit {
       map(([w, p]: [SelectItem[], SelectItem[]]) => {
         this.allWorkspaces = w
         this.allProducts = p
-        this.addAllProducts()
-        this.addAllWorkspaces()
         this.getUsedWorkspacesAndProducts()
-        this.search({ announcementSearchCriteria: {} })
+        this.onSearch({ announcementSearchCriteria: {} })
         return 'ok'
       })
     )

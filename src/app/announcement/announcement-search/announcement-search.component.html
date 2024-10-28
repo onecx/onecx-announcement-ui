@@ -4,10 +4,11 @@
   helpArticleId="PAGE_ANNOUNCEMENT_SEARCH"
 >
   <app-announcement-criteria
+    *ngIf="allCriteriaLists$ | async as allCriteriaLists"
     [actions]="(actions$ | async) ?? []"
-    [workspaces]="(usedWorkspaces$ | async) ?? []"
-    [products]="(usedProducts$ | async) ?? []"
-    (criteriaEmitter)="search($event)"
+    [products]="allCriteriaLists.products"
+    [workspaces]="allCriteriaLists.workspaces"
+    (criteriaEmitter)="onSearch($event)"
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
@@ -195,9 +196,10 @@
   </ocx-page-content>
 </ocx-portal-page>
 
+<!-- DELETE -->
 <p-dialog
-  [(visible)]="displayDeleteDialog"
   [header]="'ACTIONS.DELETE.ANNOUNCEMENT' | translate"
+  [(visible)]="displayDeleteDialog"
   [modal]="true"
   [resizable]="false"
   [dismissableMask]="true"
@@ -236,6 +238,7 @@
   </ng-template>
 </p-dialog>
 
+<!-- DETAIL -->
 <app-announcement-detail
   [displayDetailDialog]="displayDetailDialog"
   (hideDialogAndChanged)="onCloseDetail($event)"

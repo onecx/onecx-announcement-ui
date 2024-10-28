@@ -88,6 +88,7 @@
     "END_DATE_RANGE": "End Date from - to",
     "CONTENT": "Content",
     "DATE_RANGES_ERROR": "Invalid date ranges: The end date range should be after/equal the start date range.",
+    "ALL": "All",
     "EVERY_WORKSPACE": "All",
     "EVERY_PRODUCT": "All",
     "WORKSPACE_NOT_FOUND": "-- not found --",
