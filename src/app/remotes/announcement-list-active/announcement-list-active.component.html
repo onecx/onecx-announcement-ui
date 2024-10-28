@@ -1,5 +1,9 @@
 <ng-container *ngIf="announcements$ | async as announcements">
-  <div [ocxContent]="'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate" class="min-height-10rem surface-200">
+  <div
+    *ngIf="announcements.length > 0"
+    [ocxContent]="'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate"
+    class="min-height-10rem surface-200"
+  >
     <div class="pr-2 flex flex-column row-gap-2 max-h-20rem overflow-x-hidden overflow-y-auto">
       <a
         *ngFor="let announcement of announcements; let i = index"

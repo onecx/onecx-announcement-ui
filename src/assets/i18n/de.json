@@ -25,7 +25,7 @@
       "LABEL": "Löschen",
       "ANNOUNCEMENT": "Neuigkeit löschen",
       "ANNOUNCEMENT.TOOLTIP": "Diese Neuigkeit löschen",
-      "MESSAGE_TEXT": "Möchten Sie \"{{ITEM}}\" löschen?",
+      "MESSAGE_TEXT": "Möchten Sie diese Neuigkeit löschen?",
       "MESSAGE_INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
       "MESSAGE": {
         "OK": "Die Neuigkeit wurde erfolgreich gelöscht",

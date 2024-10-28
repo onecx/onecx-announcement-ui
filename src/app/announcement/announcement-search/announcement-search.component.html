@@ -207,11 +207,14 @@
 >
   <div class="flex column-gap-3 row-gap-1 justify-content-start align-items-center">
     <div class="pi pi-question-circle text-3xl danger-action-text"></div>
-    <div>
+    <div class="flex flex-column row-gap-2">
       <div id="am_announcement_delete_message_text" class="font-bold">
-        {{('ACTIONS.DELETE.MESSAGE_TEXT' | translate).replace('{{ITEM}}', announcement?.title)}}
+        {{ 'ACTIONS.DELETE.MESSAGE_TEXT' | translate }}
       </div>
-      <div class="mt-2">{{ 'ACTIONS.DELETE.MESSAGE_INFO' | translate }}</div>
+      <div id="am_announcement_delete_announcement_title" class="px-5 text-center danger-action-text">
+        {{ announcement?.title }}
+      </div>
+      <div>{{ 'ACTIONS.DELETE.MESSAGE_INFO' | translate }}</div>
     </div>
   </div>
   <ng-template pTemplate="footer">
