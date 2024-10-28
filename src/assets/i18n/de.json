@@ -88,6 +88,7 @@
     "END_DATE_RANGE": "Endedatum von - bis",
     "CONTENT": "Inhalt",
     "DATE_RANGES_ERROR": "Falsche Datumsbereiche: Der Bereich des Enddatums sollte nach/gleich dem Bereich des Startdatums liegen.",
+    "ALL": "Alle",
     "EVERY_WORKSPACE": "Alle",
     "EVERY_PRODUCT": "Alle",
     "WORKSPACE_NOT_FOUND": "-- nicht gefunden --",

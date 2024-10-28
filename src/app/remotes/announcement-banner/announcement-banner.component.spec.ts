@@ -17,18 +17,13 @@ import {
 import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
 
 class MockAppStateService {
-  currentWorkspace$ = {
-    asObservable: () =>
-      of({
-        workspaceName: 'wsName'
-      })
-  }
-  currentMfe$ = {
-    asObservable: () =>
-      of({
-        productName: 'productName'
-      })
-  }
+  currentWorkspace$ = { asObservable: () => of({ workspaceName: 'wsName' }) }
+  currentMfe$ = { asObservable: () => of({ productName: 'productName' }) }
+}
+
+class MockAppStateServiceWelcome {
+  currentWorkspace$ = { asObservable: () => of({}) }
+  currentMfe$ = { asObservable: () => of({ productName: 'onecx-welcome' }) }
 }
 
 const importantAnnouncement: Announcement = {
@@ -44,7 +39,7 @@ const lowPrioAnnouncement: Announcement = {
   priority: AnnouncementPriorityType.Low
 }
 
-describe('AnnouncementBannerComponent', () => {
+describe('AnnouncementBannerComponent - common case', () => {
   let component: OneCXAnnouncementBannerComponent
   let fixture: ComponentFixture<OneCXAnnouncementBannerComponent>
   let mockAppStateService: MockAppStateService
@@ -64,7 +59,7 @@ describe('AnnouncementBannerComponent', () => {
       declarations: [],
       imports: [
         TranslateTestingModule.withTranslations({
-          en: require('../../../assets/i18n/en.json')
+          en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
       providers: [
@@ -203,6 +198,72 @@ describe('AnnouncementBannerComponent', () => {
 
         expect(result).toEqual([])
       })
+    })
+  })
+})
+
+describe('AnnouncementBannerComponent - on welcome product', () => {
+  let component: OneCXAnnouncementBannerComponent
+  let fixture: ComponentFixture<OneCXAnnouncementBannerComponent>
+  let mockAppStateService: MockAppStateServiceWelcome
+
+  const apiServiceSpy = {
+    searchAnnouncementBanners: jasmine
+      .createSpy('searchAnnouncementBanners')
+      .and.returnValue(of({ stream: [normalAnnouncement] }))
+  }
+
+  let baseUrlSubject: ReplaySubject<any>
+  beforeEach(() => {
+    mockAppStateService = new MockAppStateServiceWelcome()
+    baseUrlSubject = new ReplaySubject<any>(1)
+
+    TestBed.configureTestingModule({
+      declarations: [],
+      imports: [
+        TranslateTestingModule.withTranslations({
+          en: require('src/assets/i18n/en.json')
+        }).withDefaultLanguage('en')
+      ],
+      providers: [
+        { provide: AppStateService, useValue: MockAppStateServiceWelcome },
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: BASE_URL,
+          useValue: baseUrlSubject
+        }
+      ]
+    })
+      .overrideComponent(OneCXAnnouncementBannerComponent, {
+        set: {
+          imports: [TranslateTestingModule, CarouselModule, TagModule],
+          providers: [
+            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
+            { provide: AppConfigService },
+            { provide: AppStateService, useValue: mockAppStateService }
+          ]
+        }
+      })
+      .compileComponents()
+
+    baseUrlSubject.next('base_url_mock')
+
+    apiServiceSpy.searchAnnouncementBanners.calls.reset()
+  })
+
+  function initializeComponent() {
+    fixture = TestBed.createComponent(OneCXAnnouncementBannerComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
+  it('should load announcements when the component starts', () => {
+    initializeComponent()
+
+    expect(component).toBeTruthy()
+    component['announcementsSubject'].subscribe((anncmts) => {
+      expect(anncmts).toEqual([])
     })
   })
 })
