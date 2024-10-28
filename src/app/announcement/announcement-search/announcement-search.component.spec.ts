@@ -462,9 +462,13 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should provide a translation if unknown workspace is listed', () => {
-    const result = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
+    let key = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
 
-    expect(result).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
+    expect(key).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
+
+    key = component.getTranslationKeyForNonExistingWorkspaces()
+
+    expect(key).toEqual('ANNOUNCEMENT.ALL')
   })
 
   it('should get all existing products', (done) => {
