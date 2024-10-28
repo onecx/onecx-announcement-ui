@@ -12,7 +12,7 @@
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
-  <ocx-page-content *ngIf="announcements$ | async as announcements" styleClass="px-3">
+  <ocx-page-content *ngIf="announcements$ | async as announcements" styleClass="px-3 pb-2">
     <p-message
       *ngIf="searchInProgress"
       severity="info"
