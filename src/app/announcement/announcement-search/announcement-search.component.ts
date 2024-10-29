@@ -138,20 +138,9 @@ export class AnnouncementSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAllData()
-    this.translateAllItem()
     this.prepareActionButtons()
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
-    })
-  }
-
-  public translateAllItem() {
-    this.allItem = undefined
-    this.translate.get(['ANNOUNCEMENT.ALL']).subscribe((data) => {
-      this.allItem = {
-        label: data['ANNOUNCEMENT.ALL'],
-        value: 'all'
-      } as SelectItem
     })
   }
 
@@ -176,12 +165,6 @@ export class AnnouncementSearchComponent implements OnInit {
    *  SEARCH announcements
    */
   public onSearch(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
-    if (criteria.announcementSearchCriteria.workspaceName === 'all') {
-      criteria.announcementSearchCriteria.workspaceName = undefined
-    }
-    if (criteria.announcementSearchCriteria.productName === 'all') {
-      criteria.announcementSearchCriteria.productName = undefined
-    }
     if (!reuseCriteria) {
       if (criteria.announcementSearchCriteria.workspaceName === '')
         criteria.announcementSearchCriteria.workspaceName = undefined
@@ -192,7 +175,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.searchInProgress = true
     this.announcements$ = this.announcementApi.searchAnnouncements(criteria).pipe(
       catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.HELP_ITEM'
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         console.error('searchHelps():', err)
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MSG_SEARCH_FAILED' })
         return of({ stream: [] } as AnnouncementPageResult)
@@ -221,8 +204,8 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDeleteDialog = false
     this.announcement = undefined
     if (refresh) {
-      this.onSearch({ announcementSearchCriteria: {} }, true)
       this.getUsedWorkspacesAndProducts()
+      this.onSearch({ announcementSearchCriteria: {} }, true)
     }
   }
 
@@ -264,7 +247,7 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  // used in search criteria
+  // Prepare drop down list content used in search criteria
   private getUsedWorkspacesAndProducts(): void {
     const acl: allCriteriaLists = { products: [], workspaces: [] }
     this.allCriteriaLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
@@ -277,7 +260,6 @@ export class AnnouncementSearchComponent implements OnInit {
                 value: name
               }) as SelectItem
           )
-        if (this.allItem) acl.workspaces.unshift(this.allItem)
         if (data.productNames)
           acl.products = data.productNames.map(
             (name) =>
@@ -286,10 +268,10 @@ export class AnnouncementSearchComponent implements OnInit {
                 value: name
               }) as SelectItem
           )
-        if (this.allItem) acl.products.unshift(this.allItem)
         return acl
       }),
       catchError((err) => {
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
         console.error('getAllAnnouncementAssignments', err)
         return of(acl)
       })
@@ -336,7 +318,6 @@ export class AnnouncementSearchComponent implements OnInit {
           }
           si.sort(dropDownSortItemsByLabel)
         }
-        if (this.allItem) si.unshift(this.allItem)
         return si
       })
     )
@@ -357,7 +338,6 @@ export class AnnouncementSearchComponent implements OnInit {
           if (workspace.displayName) si.push({ label: workspace.displayName, value: workspace.name })
         }
         si.sort(dropDownSortItemsByLabel)
-        if (this.allItem) si.unshift(this.allItem)
         return si
       })
     )

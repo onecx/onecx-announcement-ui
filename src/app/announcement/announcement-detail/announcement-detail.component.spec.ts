@@ -210,18 +210,6 @@ describe('AnnouncementDetailComponent', () => {
       })
     })
 
-    describe(': submitFormValues', () => {
-      it('should prevent non-existing workspace name from being saved', () => {
-        component.formGroup = formGroup
-        component.formGroup.patchValue({ workspaceName: 'all', productName: 'all' })
-
-        const result = (component as any).submitFormValues()
-
-        expect(result.workspaceName).toBeUndefined()
-        expect(result.productName).toBeUndefined()
-      })
-    })
-
     it('should display warning when trying to save an anncmt with invalid dateRange', () => {
       component.formGroup = formGroup
       component.formGroup.setErrors({ dateRange: true })

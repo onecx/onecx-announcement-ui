@@ -9,20 +9,20 @@ import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
-  RemoteComponentConfig,
   ocxRemoteComponent,
   ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot
+  provideTranslateServiceForRoot,
+  RemoteComponentConfig
 } from '@onecx/angular-remote-components'
 import {
   AppConfigService,
-  UserService,
   createRemoteComponentTranslateLoader,
-  PortalCoreModule
+  PortalCoreModule,
+  UserService
 } from '@onecx/portal-integration-angular'
 
 import { SharedModule } from 'src/app/shared/shared.module'
-import { convertLineBreaks, copyToClipboard } from 'src/app/shared/utils'
+import { convertLineBreaks } from 'src/app/shared/utils'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { environment } from 'src/environments/environment'
 
@@ -48,11 +48,10 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
     this.ocxInitRemoteComponent(config)
   }
-  private currentDate = new Date().toISOString()
-  private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
+  private readonly currentDate = new Date().toISOString()
+  private readonly announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
   public displayDetailDialog = false
-  copyToClipboard = copyToClipboard
   convertLineBreaks = convertLineBreaks
 
   constructor(
