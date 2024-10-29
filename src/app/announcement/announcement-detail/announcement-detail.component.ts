@@ -42,15 +42,12 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   announcementId: string | undefined
   announcementDeleteVisible = false
-  workspaces: SelectItem[] = []
-  products: SelectItem[] = []
   public dateFormat: string
   public timeFormat: string
   public isLoading = false
   public displayDateRangeError = false
   // form
   formGroup: FormGroup
-  autoResize!: boolean
   public typeOptions$: Observable<SelectItem[]> = of([])
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityOptions$: Observable<SelectItem[]> = of([])
@@ -81,7 +78,6 @@ export class AnnouncementDetailComponent implements OnChanges {
     })
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
     this.formGroup.controls['endDate'].addValidators([dateRangeValidator(this.formGroup)])
-    this.autoResize = true
   }
 
   ngOnChanges() {
@@ -134,8 +130,6 @@ export class AnnouncementDetailComponent implements OnChanges {
       startDate: this.announcement?.startDate ? new Date(this.announcement.startDate) : null,
       endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
     })
-    if (!this.announcement?.workspaceName) this.formGroup.controls['workspaceName'].setValue('all')
-    if (!this.announcement?.productName) this.formGroup.controls['productName'].setValue('all')
   }
 
   /**
@@ -176,11 +170,8 @@ export class AnnouncementDetailComponent implements OnChanges {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private submitFormValues(): any {
     const announcement: Announcement = { ...this.formGroup.value }
-    if (announcement.workspaceName === 'all') announcement.workspaceName = undefined
-    if (announcement.productName === 'all') announcement.productName = undefined
     return announcement
   }
 

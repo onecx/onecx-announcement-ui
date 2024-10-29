@@ -148,7 +148,7 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should search anncmts assigned to one workspace', (done) => {
+    it('should search announcements assigned to one workspace', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [announcementData[1]] }))
       component.criteria = { workspaceName: 'ADMIN' }
       const reuseCriteria = false
@@ -165,17 +165,12 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should search anncmts in all workspaces and products', (done) => {
+    it('should search announcements for all workspaces and products', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: announcementData }))
-      component.criteria = { workspaceName: 'all', productName: 'all' }
-      const resultCriteria = {
-        workspaceName: undefined,
-        productName: undefined
-      }
+      component.criteria = {}
       const reuseCriteria = false
 
       component.onSearch({ announcementSearchCriteria: component.criteria }, reuseCriteria)
-      expect(component.criteria).toEqual(resultCriteria)
 
       component.announcements$!.subscribe({
         next: (data) => {
@@ -455,10 +450,6 @@ describe('AnnouncementSearchComponent', () => {
     const result = component.isWorkspace('w2')
 
     expect(result).toEqual(false)
-  })
-
-  it('should provide the translation for ALL', () => {
-    expect(component.allItem?.label).toEqual('ANNOUNCEMENT.ALL')
   })
 
   it('should provide a translation if unknown workspace is listed', () => {

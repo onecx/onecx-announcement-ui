@@ -95,7 +95,7 @@
     "BANNER": {
       "CLOSE": "Close",
       "WORKSPACE": "Workspace",
-      "PRODUCT": "Product"
+      "PRODUCT": "Application"
     },
     "LIST-ACTIVE": {
       "TITLE": "Announcements"
@@ -148,32 +148,32 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
-      "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Products with assigned Announcements - please try again.",
       "ANNOUNCEMENTS": "Unknown problem retrieving Announcement data - please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
       "WORKSPACES": "Unknown problem retrieving Workspace data - please try again.",
       "PRODUCTS": "Unknown problem retrieving Application data - please try again."
     },
     "HTTP_STATUS_401": {
-      "ASSIGNMENTS": "You are not authorized to see Workspaces and Products with assigned Announcements.",
       "ANNOUNCEMENTS": "You are not authorized to see Announcements.",
+      "ASSIGNMENTS": "You are not authorized to see Workspaces and Applications with assigned Announcements.",
       "WORKSPACES": "You are not authorized to see Workspaces.",
       "PRODUCTS": "You are not authorized to see Applications."
     },
     "HTTP_STATUS_403": {
-      "ASSIGNMENTS": "You have no permissions to see Workspaces and Products with assigned Announcements.",
       "ANNOUNCEMENTS": "You have no permissions to see Announcements.",
+      "ASSIGNMENTS": "You have no permissions to see Workspaces and Applications with assigned Announcements.",
       "WORKSPACES": "You have no permissions to see Workspaces.",
       "PRODUCTS": "You have no permissions to see Applications."
     },
     "HTTP_STATUS_404": {
-      "ASSIGNMENTS": "No Workspaces and Products with assigned Announcements could be loaded.",
       "ANNOUNCEMENTS": "No Announcements could be loaded.",
+      "ASSIGNMENTS": "No Workspaces and Applications with assigned Announcements could be loaded.",
       "WORKSPACES": "No Workspaces could be loaded.",
       "PRODUCTS": "No Applications could be loaded."
     },
     "HTTP_STATUS_500": {
-      "ASSIGNMENTS": "Unknown server problem retrieving Workspaces and Products with assigned Announcements - please try again.",
       "ANNOUNCEMENTS": "Unknown server problem retrieving Announcement data - please try again.",
+      "ASSIGNMENTS": "Unknown server problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
       "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again.",
       "PRODUCTS": "Unknown server problem retrieving Application data - please try again."
     }
