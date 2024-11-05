@@ -112,6 +112,13 @@ describe('AnnouncementDetailComponent', () => {
 
       expect(component.displayDateRangeError).toBeFalse()
       expect(component.announcementId).toEqual(announcement.id)
+
+      component.changeMode = 'VIEW'
+      component.announcement = announcement
+
+      component.ngOnChanges()
+
+      expect(component.formGroup.disabled).toBeTrue()
     })
 
     it('should prepare copying an announcement', () => {
