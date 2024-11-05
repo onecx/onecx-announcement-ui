@@ -82,9 +82,10 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   ngOnChanges() {
     this.displayDateRangeError = false
-    if (this.changeMode === 'EDIT') {
+    if (this.changeMode === 'EDIT' || this.changeMode === 'VIEW') {
       this.announcementId = this.announcement?.id
       this.getAnnouncement()
+      if (this.changeMode === 'VIEW') this.formGroup.disable()
     }
     if (this.changeMode === 'NEW') {
       this.announcementId = undefined
@@ -93,8 +94,8 @@ export class AnnouncementDetailComponent implements OnChanges {
       } else {
         this.formGroup.reset()
         this.formGroup.controls['type'].setValue(AnnouncementType.Info)
-        this.formGroup.controls['priority'].setValue(AnnouncementPriorityType.Normal)
         this.formGroup.controls['status'].setValue(AnnouncementStatus.Inactive)
+        this.formGroup.controls['priority'].setValue(AnnouncementPriorityType.Normal)
       }
     }
   }

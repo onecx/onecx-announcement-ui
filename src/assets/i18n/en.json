@@ -54,18 +54,24 @@
       "NOT_FOUND": "No data found",
       "OF": "of"
     },
+    "VIEW": {
+      "LABEL": "Show Details",
+      "ANNOUNCEMENT": "Announcement Details",
+      "ANNOUNCEMENT.TOOLTIP": "Show the details of the Announcement"
+    },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
+    "CLOSE": "Close",
     "CONFIRM": "Confirm",
     "RELOAD": "Reload",
     "SAVE": "Save",
     "SAVE_AS": "Save as ...",
     "UPLOAD": "Upload",
-    "VIEW": "Show Details",
     "TOOLTIPS": {
       "CANCEL": "Cancel action",
       "CANCEL_AND_CLOSE": "Cancel and close dialog",
       "CANCEL_WITHOUT_SAVE": "Cancel action without saving",
+      "CLOSE": "Close dialog",
       "SAVE": "Save changes",
       "SAVE_AS": "Save as new {{TYPE}}"
     }
