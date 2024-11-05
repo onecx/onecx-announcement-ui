@@ -54,18 +54,24 @@
       "NOT_FOUND": "Keine Daten gefunden",
       "OF": "von"
     },
+    "VIEW": {
+      "LABEL": "Details anzeigen",
+      "ANNOUNCEMENT": "Neuigkeit Details",
+      "ANNOUNCEMENT.TOOLTIP": "Die Details der Neuigkeit anzeigen"
+    },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
+    "CLOSE": "Schließen",
     "CONFIRM": "Bestätigen",
     "RELOAD": "Neuladen",
     "SAVE": "Speichern",
     "SAVE_AS": "Speichern als ...",
     "UPLOAD": "Hochladen",
-    "VIEW": "Details anzeigen",
     "TOOLTIPS": {
       "CANCEL": "Die Aktion abbrechen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
+      "CLOSE": "Dialog schließen",
       "SAVE": "Die Änderungen speichern",
       "SAVE_AS": "Speichern als neues {{TYPE}}"
     }

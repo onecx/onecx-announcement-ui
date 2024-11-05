@@ -1,6 +1,5 @@
 <p-dialog
-  [header]="(this.changeMode === 'EDIT' ? 'ACTIONS.EDIT.ANNOUNCEMENT' : 'ACTIONS.CREATE.ANNOUNCEMENT') | translate"
-  class="p-dialog-titlebar-close"
+  [header]="'ACTIONS.' + this.changeMode + '.ANNOUNCEMENT' | translate"
   [(visible)]="displayDetailDialog"
   (onHide)="onDialogHide()"
   [baseZIndex]="10000"
@@ -20,6 +19,7 @@
     <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
       <div class="w-full relative">
         <p-badge
+          *ngIf="changeMode !== 'VIEW'"
           severity="primary"
           [value]="255 - announcementTitle.value.length"
           class="z-1 text-badge-right"
@@ -50,6 +50,7 @@
       </div>
       <div class="w-full relative">
         <p-badge
+          *ngIf="changeMode !== 'VIEW'"
           severity="primary"
           [value]="1000 - announcementContent.value.length"
           class="z-1 text-badge-right"
@@ -253,6 +254,18 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
+        *ngIf="changeMode === 'VIEW'"
+        id="am_detail_action_close"
+        icon="pi pi-times"
+        (onClick)="onDialogHide()"
+        [label]="'ACTIONS.CLOSE' | translate"
+        [ariaLabel]="'ACTIONS.CLOSE' | translate"
+        [pTooltip]="'ACTIONS.TOOLTIPS.CLOSE' | translate"
+        tooltipPosition="top"
+        tooltipEvent="hover"
+      ></p-button>
+      <p-button
+        *ngIf="changeMode !== 'VIEW'"
         id="am_detail_action_cancel"
         icon="pi pi-times"
         (onClick)="onDialogHide()"
@@ -263,6 +276,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
+        *ngIf="changeMode !== 'VIEW'"
         id="am_detail_action_save"
         icon="pi pi-save"
         (onClick)="onSave()"
