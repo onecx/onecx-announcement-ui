@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { MfeInfo } from '@onecx/portal-integration-angular'
 import { environment } from 'src/environments/environment'
 
@@ -11,8 +11,9 @@ describe('SharedModule', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      schemas: [NO_ERRORS_SCHEMA]
+      imports: [],
+      schemas: [NO_ERRORS_SCHEMA],
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     })
 
     httpClient = TestBed.inject(HttpClient)

@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -62,14 +63,12 @@ describe('AnnouncementBannerComponent - common case', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: AppStateService, useValue: mockAppStateService },
         provideHttpClient(),
         provideHttpClientTesting(),
-        {
-          provide: BASE_URL,
-          useValue: baseUrlSubject
-        }
+        { provide: AppStateService, useValue: mockAppStateService },
+        { provide: BASE_URL, useValue: baseUrlSubject }
       ]
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
@@ -108,7 +107,7 @@ describe('AnnouncementBannerComponent - common case', () => {
     initializeComponent()
 
     expect(component).toBeTruthy()
-    component['announcementsSubject'].subscribe((anncmts) => {
+    component.announcementsSubject.subscribe((anncmts) => {
       expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
     })
   })

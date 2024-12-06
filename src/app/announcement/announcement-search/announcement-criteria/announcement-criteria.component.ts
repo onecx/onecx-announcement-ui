@@ -5,6 +5,7 @@ import { SelectItem } from 'primeng/api'
 import { Observable, map, of } from 'rxjs'
 
 import { Action, UserService } from '@onecx/portal-integration-angular'
+
 import {
   AnnouncementPriorityType,
   AnnouncementStatus,
@@ -122,7 +123,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
       )
   }
 
-  public submitCriteria(): void {
+  public onSubmitCriteria(): void {
     const criteriaRequest: SearchAnnouncementsRequestParams = {
       announcementSearchCriteria: {
         title: this.announcementCriteria.value.title === null ? undefined : this.announcementCriteria.value.title,
@@ -149,7 +150,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
     this.criteriaEmitter.emit(criteriaRequest)
   }
 
-  public resetCriteria(): void {
+  public onResetCriteria(): void {
     this.announcementCriteria.reset()
     this.resetSearchEmitter.emit(true)
   }

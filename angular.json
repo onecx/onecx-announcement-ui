@@ -5,7 +5,7 @@
   "projects": {
     "onecx-announcement-ui": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": { "@schematics/angular:component": { "style": "scss" } },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -29,14 +29,10 @@
                 "output": "/onecx-portal-lib/assets/"
               }
             ],
-            "styles": [
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/@onecx/portal-integration-angular/assets/styles.scss",
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": ["node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"],
             "extraWebpackConfig": "webpack.config.js",
+            "outputHashing": "all",
             "commonChunk": false
           },
           "configurations": {
@@ -67,22 +63,19 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all",
               "extraWebpackConfig": "webpack.prod.config.js"
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "defaultConfiguration": "development",
           "builder": "ngx-build-plus:dev-server",
           "options": {
             "buildTarget": "onecx-announcement-ui:build",
             "port": 4200,
             "publicHost": "http://localhost:4200",
             "extraWebpackConfig": "webpack.config.js",
-            "proxyConfig": "proxy.conf.js",
-            "disableHostCheck": true
+            "proxyConfig": "proxy.conf.js"
           },
           "configurations": {
             "development": {

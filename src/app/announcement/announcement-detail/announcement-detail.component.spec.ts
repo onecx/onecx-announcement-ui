@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 import { FormControl, FormGroup } from '@angular/forms'
@@ -61,7 +61,6 @@ describe('AnnouncementDetailComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementDetailComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -72,6 +71,8 @@ describe('AnnouncementDetailComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService }
@@ -122,7 +123,7 @@ describe('AnnouncementDetailComponent', () => {
     })
 
     it('should prepare copying an announcement', () => {
-      component.changeMode = 'NEW'
+      component.changeMode = 'CREATE'
       component.announcement = announcement
       component.ngOnChanges()
 
@@ -130,7 +131,7 @@ describe('AnnouncementDetailComponent', () => {
     })
 
     it('should prepare creating an announcement', () => {
-      component.changeMode = 'NEW'
+      component.changeMode = 'CREATE'
       spyOn(component.formGroup, 'reset')
 
       component.ngOnChanges()
@@ -164,7 +165,7 @@ describe('AnnouncementDetailComponent', () => {
   describe('onSave - creating and updating an announcement', () => {
     it('should create an announcement', () => {
       apiServiceSpy.createAnnouncement.and.returnValue(of({}))
-      component.changeMode = 'NEW'
+      component.changeMode = 'CREATE'
       spyOn(component.hideDialogAndChanged, 'emit')
       component.formGroup = formGroup
 
@@ -178,7 +179,7 @@ describe('AnnouncementDetailComponent', () => {
 
     it('should display error if creation fails', () => {
       apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => new Error()))
-      component.changeMode = 'NEW'
+      component.changeMode = 'CREATE'
       component.formGroup = formGroup
 
       component.onSave()

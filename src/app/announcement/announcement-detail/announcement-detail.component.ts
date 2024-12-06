@@ -33,7 +33,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   styleUrls: ['./announcement-detail.component.scss']
 })
 export class AnnouncementDetailComponent implements OnChanges {
-  @Input() public changeMode = 'NEW'
+  @Input() public changeMode = 'CREATE'
   @Input() public displayDetailDialog = false
   @Input() public announcement: Announcement | undefined
   @Input() public allWorkspaces: SelectItem[] = []
@@ -87,7 +87,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       this.getAnnouncement()
       if (this.changeMode === 'VIEW') this.formGroup.disable()
     }
-    if (this.changeMode === 'NEW') {
+    if (this.changeMode === 'CREATE') {
       this.announcementId = undefined
       if (this.announcement) {
         this.fillForm() // on COPY
@@ -155,7 +155,7 @@ export class AnnouncementDetailComponent implements OnChanges {
             },
             error: () => this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
           })
-      } else if (this.changeMode === 'NEW') {
+      } else if (this.changeMode === 'CREATE') {
         this.announcementApi
           .createAnnouncement({
             createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest

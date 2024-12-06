@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { provideErrorTailorConfig } from '@ngneat/error-tailor'
+import { provideErrorTailorConfig, errorTailorImports } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
 import { CalendarModule } from 'primeng/calendar'
@@ -55,7 +55,8 @@ import { LabelResolver } from './label.resolver'
     TagModule,
     ToastModule,
     TooltipModule,
-    TranslateModule
+    TranslateModule,
+    errorTailorImports
   ],
   exports: [
     AutoCompleteModule,
@@ -80,7 +81,8 @@ import { LabelResolver } from './label.resolver'
     TagModule,
     ToastModule,
     TooltipModule,
-    TranslateModule
+    TranslateModule,
+    errorTailorImports
   ],
   //this is not elegant, for some reason the injection token from primeng does not work across federated module
   providers: [

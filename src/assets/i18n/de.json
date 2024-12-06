@@ -55,7 +55,7 @@
       "OF": "von"
     },
     "VIEW": {
-      "LABEL": "Details anzeigen",
+      "LABEL": "Details",
       "ANNOUNCEMENT": "Neuigkeit Details",
       "ANNOUNCEMENT.TOOLTIP": "Die Details der Neuigkeit anzeigen"
     },

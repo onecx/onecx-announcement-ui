@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core'
+import { Component, Inject, Input, NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
 import { HttpClient } from '@angular/common/http'
 import { TranslateLoader, TranslateService } from '@ngx-translate/core'
@@ -36,6 +36,7 @@ import { environment } from 'src/environments/environment'
   styleUrls: ['./announcement-banner.component.scss'],
   standalone: true,
   imports: [AngularRemoteComponentsModule, CarouselModule, PortalCoreModule, SharedModule],
+  schemas: [NO_ERRORS_SCHEMA],
   providers: [
     {
       provide: BASE_URL,
@@ -57,9 +58,9 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   }
   private readonly ignoredAnnouncementsKey = 'onecx_announcement_banner_ignored_ids'
   private readonly currentDate = new Date().toISOString()
-  private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
+  public announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
-  convertLineBreaks = convertLineBreaks
+  public convertLineBreaks = convertLineBreaks
 
   constructor(
     @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
