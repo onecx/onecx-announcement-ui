@@ -1,5 +1,5 @@
 <ocx-portal-page
-  *ngIf="{ value: allMetaData$ | async } as allMetaData"
+  *ngIf="allMetaData$ | async as allMetaData"
   permission="ANNOUNCEMENT#SEARCH"
   helpArticleId="PAGE_ANNOUNCEMENT_SEARCH"
 >
@@ -177,23 +177,37 @@
               ></span>
             </ng-container>
 
-            <ng-container *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName)">
-              {{ getDisplayNameWorkspace(rowData[col.field]) }}
+            <ng-container
+              *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName, allMetaData.allWorkspaces)"
+            >
+              {{ getDisplayNameWorkspace(rowData[col.field], allMetaData.allWorkspaces) }}
             </ng-container>
-            <ng-container *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName)">
+            <ng-container
+              *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName, allMetaData.allWorkspaces)"
+            >
               {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}
             </ng-container>
             <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
               {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
             </ng-container>
             <ng-container *ngIf="col.field === 'productName'">
-              {{ getDisplayNameProduct(rowData[col.field]) }}
+              {{ getDisplayNameProduct(rowData[col.field], allMetaData.allWorkspaces) }}
             </ng-container>
           </td>
         </tr>
       </ng-template>
     </p-table>
   </ocx-page-content>
+
+  <!-- DETAIL -->
+  <app-announcement-detail
+    [displayDetailDialog]="displayDetailDialog"
+    (hideDialogAndChanged)="onCloseDetail($event)"
+    [announcement]="announcement"
+    [allWorkspaces]="allMetaData.allWorkspaces"
+    [allProducts]="allMetaData.allProducts"
+    [changeMode]="changeMode"
+  ></app-announcement-detail>
 </ocx-portal-page>
 
 <!-- DELETE -->
@@ -240,13 +254,3 @@
     </div>
   </ng-template>
 </p-dialog>
-
-<!-- DETAIL -->
-<app-announcement-detail
-  [displayDetailDialog]="displayDetailDialog"
-  (hideDialogAndChanged)="onCloseDetail($event)"
-  [announcement]="announcement"
-  [allWorkspaces]="allWorkspaces"
-  [allProducts]="allProducts"
-  [changeMode]="changeMode"
-></app-announcement-detail>

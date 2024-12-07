@@ -25,7 +25,13 @@ type ExtendedColumn = Column & {
   needsDisplayName?: boolean
 }
 type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT'
-type allCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
+type AllCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
+type AllMetaData = {
+  allProducts: SelectItem[]
+  allWorkspaces: SelectItem[]
+  usedProducts?: SelectItem[]
+  usedWorkspaces?: SelectItem[]
+}
 
 @Component({
   selector: 'app-announcement-search',
@@ -45,16 +51,15 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDetailDialog = false
   public changeMode: ChangeMode = 'CREATE'
   public dateFormat: string
-  public allCriteriaLists$: Observable<allCriteriaLists> | undefined
+
+  public allCriteriaLists$: Observable<AllCriteriaLists> | undefined
   public usedWorkspaces$: Observable<SelectItem[]> | undefined
-  public allWorkspaces: SelectItem[] = []
   public allWorkspaces$!: Observable<SelectItem[]>
   public allItem: SelectItem | undefined
 
   public usedProducts$: Observable<SelectItem[]> | undefined
-  public allProducts: SelectItem[] = []
   public allProducts$!: Observable<SelectItem[]>
-  public allMetaData$!: Observable<string>
+  public allMetaData$!: Observable<AllMetaData>
   public filteredColumns: Column[] = []
   public limitText = limitText
 
@@ -203,7 +208,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDeleteDialog = false
     this.announcement = undefined
     if (refresh) {
-      this.getUsedWorkspacesAndProducts()
+      //this.getUsedWorkspacesAndProducts()
       this.onSearch({ announcementSearchCriteria: {} }, true)
     }
   }
@@ -250,15 +255,15 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // Prepare drop down list content used in search criteria
-  private getUsedWorkspacesAndProducts(): void {
-    const acl: allCriteriaLists = { products: [], workspaces: [] }
+  private getUsedWorkspacesAndProducts(allProducts: SelectItem[], allWorkspaces: SelectItem[]): void {
+    const acl: AllCriteriaLists = { products: [], workspaces: [] }
     this.allCriteriaLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
       map((data: AnnouncementAssignments) => {
         if (data.workspaceNames)
           acl.workspaces = data.workspaceNames.map(
             (name) =>
               ({
-                label: this.getDisplayNameWorkspace(name),
+                label: this.getDisplayNameWorkspace(name, allWorkspaces),
                 value: name
               }) as SelectItem
           )
@@ -266,7 +271,7 @@ export class AnnouncementSearchComponent implements OnInit {
           acl.products = data.productNames.map(
             (name) =>
               ({
-                label: this.getDisplayNameProduct(name),
+                label: this.getDisplayNameProduct(name, allProducts),
                 value: name
               }) as SelectItem
           )
@@ -281,16 +286,16 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // workspace in list of all workspaces?
-  public isWorkspace(workspaceName?: string): boolean {
-    return this.allWorkspaces.find((item) => item.value === workspaceName) !== undefined
+  public isWorkspace(workspaceName: string | undefined, allWorkspaces: SelectItem[]): boolean {
+    return allWorkspaces.find((item) => item.value === workspaceName) !== undefined
   }
 
-  public getDisplayNameWorkspace(name?: string): string | undefined {
-    return this.allWorkspaces.find((item) => item.value === name)?.label ?? name
+  public getDisplayNameWorkspace(name: string | undefined, allWorkspaces: SelectItem[]): string | undefined {
+    return allWorkspaces.find((item) => item.value === name)?.label ?? name
   }
 
-  public getDisplayNameProduct(name?: string): string | undefined {
-    return this.allProducts.find((item) => item.value === name)?.label ?? name
+  public getDisplayNameProduct(name: string | undefined, allProducts: SelectItem[]): string | undefined {
+    return allProducts.find((item) => item.value === name)?.label ?? name
   }
 
   // if not in list of all workspaces then get the suitable translation key
@@ -344,12 +349,10 @@ export class AnnouncementSearchComponent implements OnInit {
   // Loading everything - triggered from HTML
   private loadAllData(): void {
     this.allMetaData$ = combineLatest([this.allWorkspaces$, this.allProducts$]).pipe(
-      map(([w, p]: [SelectItem[], SelectItem[]]) => {
-        this.allWorkspaces = w
-        this.allProducts = p
-        this.getUsedWorkspacesAndProducts()
+      map(([aW, aP]: [SelectItem[], SelectItem[]]) => {
+        this.getUsedWorkspacesAndProducts(aP, aW)
         this.onSearch({ announcementSearchCriteria: {} })
-        return 'ok'
+        return { allProducts: aP, allWorkspaces: aW }
       })
     )
   }
