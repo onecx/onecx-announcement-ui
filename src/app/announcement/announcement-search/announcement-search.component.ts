@@ -25,13 +25,13 @@ type ExtendedColumn = Column & {
   needsDisplayName?: boolean
 }
 type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT'
-type AllCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
 type AllMetaData = {
   allProducts: SelectItem[]
   allWorkspaces: SelectItem[]
   usedProducts?: SelectItem[]
   usedWorkspaces?: SelectItem[]
 }
+type AllUsedLists = { products: SelectItem[]; workspaces: SelectItem[] }
 
 @Component({
   selector: 'app-announcement-search',
@@ -51,17 +51,13 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDetailDialog = false
   public changeMode: ChangeMode = 'CREATE'
   public dateFormat: string
-
-  public allCriteriaLists$: Observable<AllCriteriaLists> | undefined
-  public usedWorkspaces$: Observable<SelectItem[]> | undefined
-  public allWorkspaces$!: Observable<SelectItem[]>
-  public allItem: SelectItem | undefined
-
-  public usedProducts$: Observable<SelectItem[]> | undefined
-  public allProducts$!: Observable<SelectItem[]>
-  public allMetaData$!: Observable<AllMetaData>
   public filteredColumns: Column[] = []
   public limitText = limitText
+
+  public allMetaData$!: Observable<AllMetaData> // collection of data used in UI
+  public allWorkspaces$!: Observable<SelectItem[]> // getting data from bff endpoint
+  public allProducts$!: Observable<SelectItem[]> // getting data from bff endpoint
+  public allUsedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
 
   public columns: ExtendedColumn[] = [
     {
@@ -139,9 +135,8 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchProducts()
-    this.searchWorkspaces()
-    this.loadAllData()
+    this.prepareDataLoad()
+    this.loadData()
     this.prepareActionButtons()
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
@@ -254,37 +249,6 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  // Prepare drop down list content used in search criteria
-  private getUsedWorkspacesAndProducts(allProducts: SelectItem[], allWorkspaces: SelectItem[]): void {
-    const acl: AllCriteriaLists = { products: [], workspaces: [] }
-    this.allCriteriaLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
-      map((data: AnnouncementAssignments) => {
-        if (data.workspaceNames)
-          acl.workspaces = data.workspaceNames.map(
-            (name) =>
-              ({
-                label: this.getDisplayNameWorkspace(name, allWorkspaces),
-                value: name
-              }) as SelectItem
-          )
-        if (data.productNames)
-          acl.products = data.productNames.map(
-            (name) =>
-              ({
-                label: this.getDisplayNameProduct(name, allProducts),
-                value: name
-              }) as SelectItem
-          )
-        return acl
-      }),
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
-        console.error('getAllAnnouncementAssignments', err)
-        return of(acl)
-      })
-    )
-  }
-
   // workspace in list of all workspaces?
   public isWorkspace(workspaceName: string | undefined, allWorkspaces: SelectItem[]): boolean {
     return allWorkspaces.find((item) => item.value === workspaceName) !== undefined
@@ -307,9 +271,8 @@ export class AnnouncementSearchComponent implements OnInit {
    *  SEARCHING of META DATA
    *     used to display readable names in drop down lists and result set
    */
-
-  // declare search for ALL products
-  private searchProducts(): void {
+  private prepareDataLoad(): void {
+    // declare search for ALL products privided by bff
     this.allProducts$ = this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).pipe(
       map((data: ProductsPageResult) => {
         const si: SelectItem[] = []
@@ -326,10 +289,7 @@ export class AnnouncementSearchComponent implements OnInit {
         return of([] as SelectItem[])
       })
     )
-  }
-
-  // declare search for ALL workspaces
-  private searchWorkspaces(): void {
+    // declare search for ALL workspaces provided by bff
     this.allWorkspaces$ = this.announcementApi.getAllWorkspaceNames().pipe(
       map((workspaces: WorkspaceAbstract[]) => {
         const si: SelectItem[] = []
@@ -344,15 +304,38 @@ export class AnnouncementSearchComponent implements OnInit {
         return of([] as SelectItem[])
       })
     )
+    // declare search for used products/workspaces (used === assigned to announcement)
+    // hereby SelectItem[] are prepared but with a temporary label (=> displayName)
+    this.allUsedLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
+      map((data: AnnouncementAssignments) => {
+        const ul: AllUsedLists = { products: [], workspaces: [] }
+        if (data.productNames)
+          ul.products = data.productNames.map((name) => ({ label: name, value: name }) as SelectItem)
+        if (data.workspaceNames)
+          ul.workspaces = data.workspaceNames.map((name) => ({ label: name, value: name }) as SelectItem)
+        return ul
+      }),
+      catchError((err) => {
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+        console.error('getAllAnnouncementAssignments', err)
+        return of({ products: [], workspaces: [] } as AllUsedLists)
+      })
+    )
   }
 
-  // Loading everything - triggered from HTML
-  private loadAllData(): void {
-    this.allMetaData$ = combineLatest([this.allWorkspaces$, this.allProducts$]).pipe(
-      map(([aW, aP]: [SelectItem[], SelectItem[]]) => {
-        this.getUsedWorkspacesAndProducts(aP, aW)
+  private loadData(): void {
+    const allDataLists$ = combineLatest([this.allWorkspaces$, this.allProducts$])
+    this.allMetaData$ = combineLatest([allDataLists$, this.allUsedLists$]).pipe(
+      map(([[aW, aP], aul]: [[SelectItem[], SelectItem[]], AllUsedLists]) => {
+        // enrich the temporary prepared lists with display names contained in allLists
+        aul.products.forEach((p) => {
+          p.label = this.getDisplayNameProduct(p.value, aP)
+        })
+        aul.workspaces.forEach((w) => {
+          w.label = this.getDisplayNameWorkspace(w.value, aW)
+        })
         this.onSearch({ announcementSearchCriteria: {} })
-        return { allProducts: aP, allWorkspaces: aW }
+        return { allProducts: aP, allWorkspaces: aW, usedProducts: aul.products, usedWorkspaces: aul.workspaces }
       })
     )
   }

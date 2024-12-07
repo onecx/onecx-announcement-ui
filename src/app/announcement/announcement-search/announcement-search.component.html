@@ -4,10 +4,9 @@
   helpArticleId="PAGE_ANNOUNCEMENT_SEARCH"
 >
   <app-announcement-criteria
-    *ngIf="allCriteriaLists$ | async as allCriteriaLists"
     [actions]="(actions$ | async) ?? []"
-    [products]="allCriteriaLists.products"
-    [workspaces]="allCriteriaLists.workspaces"
+    [products]="allMetaData.usedProducts ?? []"
+    [workspaces]="allMetaData.usedWorkspaces ?? []"
     (criteriaEmitter)="onSearch($event)"
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
@@ -191,7 +190,7 @@
               {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
             </ng-container>
             <ng-container *ngIf="col.field === 'productName'">
-              {{ getDisplayNameProduct(rowData[col.field], allMetaData.allWorkspaces) }}
+              {{ getDisplayNameProduct(rowData[col.field], allMetaData.allProducts) }}
             </ng-container>
           </td>
         </tr>
