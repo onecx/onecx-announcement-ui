@@ -1,7 +1,7 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
@@ -44,7 +44,6 @@ describe('AnnouncementCriteriaComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementCriteriaComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -54,7 +53,7 @@ describe('AnnouncementCriteriaComponent', () => {
         })
       ],
       schemas: [NO_ERRORS_SCHEMA],
-      providers: [{ provide: UserService, useValue: mockUserService }]
+      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
     }).compileComponents()
   }))
 
@@ -69,12 +68,12 @@ describe('AnnouncementCriteriaComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  describe('submitCriteria & resetCriteria', () => {
+  describe('onSubmitCriteria & onResetCriteria', () => {
     it('should search announcements without criteria', () => {
       component.announcementCriteria = emptyCriteria
       spyOn(component.criteriaEmitter, 'emit')
 
-      component.submitCriteria()
+      component.onSubmitCriteria()
 
       expect(component.criteriaEmitter.emit).toHaveBeenCalled()
     })
@@ -83,7 +82,7 @@ describe('AnnouncementCriteriaComponent', () => {
       component.announcementCriteria = filledCriteria
       spyOn(component.criteriaEmitter, 'emit')
 
-      component.submitCriteria()
+      component.onSubmitCriteria()
 
       expect(component.criteriaEmitter.emit).toHaveBeenCalled()
     })
@@ -93,7 +92,7 @@ describe('AnnouncementCriteriaComponent', () => {
       component.announcementCriteria.patchValue({ startDateRange: [new Date('2023-01-02')] })
       spyOn(component.criteriaEmitter, 'emit')
 
-      component.submitCriteria()
+      component.onSubmitCriteria()
 
       expect(component.criteriaEmitter.emit).toHaveBeenCalled()
     })
@@ -102,14 +101,14 @@ describe('AnnouncementCriteriaComponent', () => {
       component.announcementCriteria = filledCriteria
       spyOn(component.criteriaEmitter, 'emit')
 
-      component.submitCriteria()
+      component.onSubmitCriteria()
 
       expect(component.criteriaEmitter.emit).toHaveBeenCalled()
 
       spyOn(component.resetSearchEmitter, 'emit')
       spyOn(component.announcementCriteria, 'reset')
 
-      component.resetCriteria()
+      component.onResetCriteria()
 
       expect(component.announcementCriteria.reset).toHaveBeenCalled()
       expect(component.resetSearchEmitter.emit).toHaveBeenCalled()

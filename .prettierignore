@@ -1,22 +1,22 @@
-# Add files here to ignore them from prettier formatting
 .angular/**
 .husky/**
 .docusaurus/
 .github/**
 .scannerwork/
-.eslintcache
+.dockerignore
 .prettierignore
 .browserslistrc
+.eslintcache
 dist/**
 helm/**
 nginx/**
 reports/**
-coverage/**
 node_modules
+LICENSE
 CHANGELOG.md
 README.md
 Dockerfile
 *.log
 *.sh
 src/app/shared/generated/**
-src/assets/api/*
+src/assets/api

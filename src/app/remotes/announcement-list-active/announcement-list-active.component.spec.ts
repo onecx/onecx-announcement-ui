@@ -1,13 +1,15 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ReplaySubject, of, throwError } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ReplaySubject, of, throwError } from 'rxjs'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 
 import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
 import { AppConfigService, AppStateService } from '@onecx/portal-integration-angular'
+
 import {
   Announcement,
   AnnouncementInternalAPIService,
@@ -59,14 +61,12 @@ describe('AnnouncementListActiveComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: AppStateService, useValue: mockAppStateService },
         provideHttpClient(),
         provideHttpClientTesting(),
-        {
-          provide: BASE_URL,
-          useValue: baseUrlSubject
-        }
+        { provide: AppStateService, useValue: mockAppStateService },
+        { provide: BASE_URL, useValue: baseUrlSubject }
       ]
     })
       .overrideComponent(OneCXAnnouncementListActiveComponent, {

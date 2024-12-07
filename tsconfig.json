@@ -25,12 +25,19 @@
     "module": "ES2022",
     "lib": ["ES2022", "DOM"],
     "inlineSources": true,
-    "types": []
+    "types": ["node"]
   },
   "files": [],
   "include": [],
   "exclude": ["node_modules", "tmp"],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.spec.json" }],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
   "angularCompilerOptions": {
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,

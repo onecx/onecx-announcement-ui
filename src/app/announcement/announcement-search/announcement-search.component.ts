@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core'
+import { Component, OnInit, ViewChild } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs'
 import { Table } from 'primeng/table'
@@ -8,7 +8,6 @@ import { Action, Column, PortalMessageService, UserService } from '@onecx/portal
 import {
   Announcement,
   AnnouncementAssignments,
-  AnnouncementPageResult,
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria,
   SearchAnnouncementsRequestParams,
@@ -25,7 +24,7 @@ type ExtendedColumn = Column & {
   limit?: boolean
   needsDisplayName?: boolean
 }
-type ChangeMode = 'VIEW' | 'NEW' | 'EDIT'
+type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT'
 type allCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
 
 @Component({
@@ -36,28 +35,27 @@ type allCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
 export class AnnouncementSearchComponent implements OnInit {
   @ViewChild('announcementTable', { static: false }) announcementTable: Table | undefined
 
-  public changeMode: ChangeMode = 'NEW'
+  public loading = false
+  public exceptionKey: string | undefined = undefined
   public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
   public announcement: Announcement | undefined
   public announcements$: Observable<Announcement[]> | undefined
   public displayDeleteDialog = false
   public displayDetailDialog = false
-  public searchInProgress = false
-  public exceptionKey: string | undefined = undefined
+  public changeMode: ChangeMode = 'CREATE'
   public dateFormat: string
   public allCriteriaLists$: Observable<allCriteriaLists> | undefined
   public usedWorkspaces$: Observable<SelectItem[]> | undefined
   public allWorkspaces: SelectItem[] = []
-  public allWorkspaces$!: Observable<WorkspaceAbstract[]>
+  public allWorkspaces$!: Observable<SelectItem[]>
   public allItem: SelectItem | undefined
 
   public usedProducts$: Observable<SelectItem[]> | undefined
   public allProducts: SelectItem[] = []
-  public allProducts$!: Observable<ProductsPageResult>
+  public allProducts$!: Observable<SelectItem[]>
   public allMetaData$!: Observable<string>
   public filteredColumns: Column[] = []
-
   public limitText = limitText
 
   public columns: ExtendedColumn[] = [
@@ -130,13 +128,14 @@ export class AnnouncementSearchComponent implements OnInit {
     private readonly user: UserService,
     private readonly announcementApi: AnnouncementInternalAPIService,
     private readonly msgService: PortalMessageService,
-    private readonly translate: TranslateService,
-    private readonly cdr: ChangeDetectorRef
+    private readonly translate: TranslateService
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
   }
 
   ngOnInit(): void {
+    this.searchProducts()
+    this.searchWorkspaces()
     this.loadAllData()
     this.prepareActionButtons()
     this.filteredColumns = this.columns.filter((a) => {
@@ -172,16 +171,16 @@ export class AnnouncementSearchComponent implements OnInit {
         criteria.announcementSearchCriteria.productName = undefined
       this.criteria = criteria.announcementSearchCriteria
     }
-    this.searchInProgress = true
+    this.loading = true
     this.announcements$ = this.announcementApi.searchAnnouncements(criteria).pipe(
+      map((data) => data.stream ?? []),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
-        console.error('searchHelps():', err)
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MSG_SEARCH_FAILED' })
-        return of({ stream: [] } as AnnouncementPageResult)
+        console.error('searchAnnouncements', err)
+        return of([] as Announcement[])
       }),
-      map((data: AnnouncementPageResult) => data.stream ?? []),
-      finalize(() => (this.searchInProgress = false))
+      finalize(() => (this.loading = false))
     )
   }
 
@@ -210,7 +209,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   public onCreate() {
-    this.changeMode = 'NEW'
+    this.changeMode = 'CREATE'
     this.announcement = undefined
     this.displayDetailDialog = true
   }
@@ -222,18 +221,18 @@ export class AnnouncementSearchComponent implements OnInit {
   }
   public onCopy(ev: MouseEvent, item: Announcement) {
     ev.stopPropagation()
-    this.changeMode = 'NEW'
+    this.changeMode = 'CREATE'
     this.announcement = item
     this.announcement.id = undefined
     this.displayDetailDialog = true
   }
+
   public onDelete(ev: MouseEvent, item: Announcement): void {
     ev.stopPropagation()
     this.announcement = item
     this.displayDeleteDialog = true
   }
   public onDeleteConfirmation(): void {
-    console.log(this.announcementTable?._value)
     if (this.announcement?.id) {
       //const workspaceUsed = this.announcement?.workspaceName !== undefined
       this.announcementApi.deleteAnnouncementById({ id: this.announcement?.id }).subscribe({
@@ -242,7 +241,10 @@ export class AnnouncementSearchComponent implements OnInit {
           //this.announcementTable?._value = this.announcementTable?._value.filter((a) => a.id !== this.announcement?.id)
           this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
         },
-        error: () => this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
+        error: (err) => {
+          console.error('deleteAnnouncementById', err)
+          this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
+        }
       })
     }
   }
@@ -302,14 +304,8 @@ export class AnnouncementSearchComponent implements OnInit {
    */
 
   // declare search for ALL products
-  private searchProducts(): Observable<SelectItem[]> {
+  private searchProducts(): void {
     this.allProducts$ = this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).pipe(
-      catchError((err) => {
-        console.error('getAllProductNames():', err)
-        return of([] as ProductsPageResult)
-      })
-    )
-    return this.allProducts$.pipe(
       map((data: ProductsPageResult) => {
         const si: SelectItem[] = []
         if (data.stream) {
@@ -319,19 +315,17 @@ export class AnnouncementSearchComponent implements OnInit {
           si.sort(dropDownSortItemsByLabel)
         }
         return si
+      }),
+      catchError((err) => {
+        console.error('getAllProductNames', err)
+        return of([] as SelectItem[])
       })
     )
   }
 
   // declare search for ALL workspaces
-  private searchWorkspaces(): Observable<SelectItem[]> {
+  private searchWorkspaces(): void {
     this.allWorkspaces$ = this.announcementApi.getAllWorkspaceNames().pipe(
-      catchError((err) => {
-        console.error('getAllWorkspaceNames():', err)
-        return of([] as WorkspaceAbstract[])
-      })
-    )
-    return this.allWorkspaces$.pipe(
       map((workspaces: WorkspaceAbstract[]) => {
         const si: SelectItem[] = []
         for (const workspace of workspaces) {
@@ -339,13 +333,17 @@ export class AnnouncementSearchComponent implements OnInit {
         }
         si.sort(dropDownSortItemsByLabel)
         return si
+      }),
+      catchError((err) => {
+        console.error('getAllWorkspaceNames', err)
+        return of([] as SelectItem[])
       })
     )
   }
 
   // Loading everything - triggered from HTML
   private loadAllData(): void {
-    this.allMetaData$ = combineLatest([this.searchWorkspaces(), this.searchProducts()]).pipe(
+    this.allMetaData$ = combineLatest([this.allWorkspaces$, this.allProducts$]).pipe(
       map(([w, p]: [SelectItem[], SelectItem[]]) => {
         this.allWorkspaces = w
         this.allProducts = p

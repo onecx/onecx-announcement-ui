@@ -14,13 +14,13 @@
 
   <ocx-page-content *ngIf="announcements$ | async as announcements" styleClass="px-3 pb-2">
     <p-message
-      *ngIf="searchInProgress"
+      *ngIf="loading"
       severity="info"
       styleClass="my-3 p-2"
       [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
     ></p-message>
     <p-table
-      *ngIf="!searchInProgress"
+      *ngIf="!loading"
       #announcementTable
       id="am_announcement_search_table"
       [value]="announcements"
@@ -88,7 +88,7 @@
                 class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
                 [id]="'am_announcement_search_table_row_' + row + '_view_action'"
                 (click)="onDetail($event, rowData, 'VIEW')"
-                [aria-label]="'ACTIONS.VIEW.LABEL' | translate"
+                [ariaLabel]="'ACTIONS.VIEW.LABEL' | translate"
                 [pTooltip]="'ACTIONS.VIEW.LABEL' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
@@ -102,8 +102,8 @@
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'am_announcement_search_table_row_' + row + '_edit_action'"
               (click)="onDetail($event, rowData, 'EDIT')"
-              [aria-label]="'ACTIONS.EDIT.LABEL' | translate"
-              [pTooltip]="'ACTIONS.EDIT.ANNOUNCEMENT.TOOLTIP' | translate"
+              [ariaLabel]="'ACTIONS.EDIT.LABEL' | translate"
+              [pTooltip]="'ACTIONS.EDIT.LABEL' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
@@ -116,8 +116,8 @@
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'am_announcement_search_table_row_' + row + '_copy_action'"
               (click)="onCopy($event, rowData)"
-              [aria-label]="'ACTIONS.COPY.LABEL' | translate"
-              [pTooltip]="'ACTIONS.COPY.ANNOUNCEMENT.TOOLTIP' | translate"
+              [ariaLabel]="'ACTIONS.COPY.LABEL' | translate"
+              [pTooltip]="'ACTIONS.COPY.LABEL' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
@@ -130,8 +130,8 @@
               class="p-button-rounded font-medium p-button-text p-button p-component p-button-icon-only"
               [id]="'am_announcement_search_table_row_' + row + '_delete_action'"
               (click)="onDelete($event, rowData)"
-              [aria-label]="'ACTIONS.DELETE.LABEL' | translate"
-              [pTooltip]="'ACTIONS.DELETE.ANNOUNCEMENT.TOOLTIP' | translate"
+              [ariaLabel]="'ACTIONS.DELETE.LABEL' | translate"
+              [pTooltip]="'ACTIONS.DELETE.LABEL' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
             >
@@ -154,7 +154,7 @@
                 [class.text-red-600]="rowData['priority'] === 'IMPORTANT'"
                 [class.text-yellow-600]="rowData['priority'] === 'NORMAL'"
                 [class.text-blue-600]="rowData['priority'] === 'LOW'"
-                [aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate"
+                [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate"
                 [pTooltip]="
                   ('ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate) +
                   ' - ' +
@@ -170,7 +170,7 @@
                 [class.pi-info-circle]="rowData[col.field] === 'INFO'"
                 [class.pi-calendar]="rowData[col.field] === 'EVENT'"
                 [class.pi-wrench]="rowData[col.field] === 'SYSTEM_MAINTENANCE'"
-                [aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
+                [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
                 [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"

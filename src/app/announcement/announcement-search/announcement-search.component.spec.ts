@@ -1,17 +1,19 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { ComponentFixture, fakeAsync, TestBed, waitForAsync } from '@angular/core/testing'
+import { provideHttpClient } from '@angular/common/http'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 
 import {
   AppStateService,
-  createTranslateLoader,
   Column,
+  createTranslateLoader,
   PortalMessageService,
   UserService
 } from '@onecx/portal-integration-angular'
+
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
 
@@ -81,7 +83,6 @@ describe('AnnouncementSearchComponent', () => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementSearchComponent],
       imports: [
-        HttpClientTestingModule,
         TranslateModule.forRoot({
           isolate: true,
           loader: {
@@ -93,6 +94,8 @@ describe('AnnouncementSearchComponent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
         { provide: UserService, useValue: mockUserService }
@@ -105,6 +108,15 @@ describe('AnnouncementSearchComponent', () => {
     apiServiceSpy.deleteAnnouncementById.calls.reset()
     apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
     apiServiceSpy.getAllProductNames.calls.reset()
+    apiServiceSpy.getAllWorkspaceNames.calls.reset()
+
+    // refill with neutral data
+    apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
+    apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of({}))
+    apiServiceSpy.getAllProductNames.and.returnValue(of([]))
+    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of([]))
+
     translateServiceSpy.get.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
@@ -206,9 +218,9 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should display an error message if the search call fails', (done) => {
-      const err = { status: '400' }
-      apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => err))
-
+      const errorResponse = { status: '403', statusText: 'Not authorized' }
+      apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
       component.onSearch({ announcementSearchCriteria: {} })
 
       component.announcements$!.subscribe({
@@ -217,10 +229,11 @@ describe('AnnouncementSearchComponent', () => {
           done()
         },
         error: () => {
-          expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_400.HELP_ITEM')
+          expect(console.error).toHaveBeenCalledWith('searchAnnouncements', errorResponse)
+          expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENTS')
           expect(msgServiceSpy.error).toHaveBeenCalledWith({
             summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED',
-            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENTS'
           })
           done.fail
         }
@@ -261,7 +274,7 @@ describe('AnnouncementSearchComponent', () => {
   it('should prepare the creation of a new announcement', () => {
     component.onCreate()
 
-    expect(component.changeMode).toEqual('NEW')
+    expect(component.changeMode).toEqual('CREATE')
     expect(component.announcement).toBe(undefined)
     expect(component.displayDetailDialog).toBeTrue()
   })
@@ -286,7 +299,7 @@ describe('AnnouncementSearchComponent', () => {
     component.onCopy(ev, announcementData[0])
 
     expect(ev.stopPropagation).toHaveBeenCalled()
-    expect(component.changeMode).toEqual('NEW')
+    expect(component.changeMode).toEqual('CREATE')
     expect(component.announcement).toBe(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
@@ -316,13 +329,14 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should display error if deleting an announcement fails', () => {
-    apiServiceSpy.deleteAnnouncementById.and.returnValue(throwError(() => new Error()))
-    component.announcement = {
-      id: 'definedHere'
-    }
+    const errorResponse = { status: '400', statusText: 'Deletion failed' }
+    apiServiceSpy.deleteAnnouncementById.and.returnValue(throwError(() => errorResponse))
+    component.announcement = { id: 'definedHere' }
+    spyOn(console, 'error')
 
     component.onDeleteConfirmation()
 
+    expect(console.error).toHaveBeenCalledWith('deleteAnnouncementById', errorResponse)
     expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
   })
 
@@ -390,127 +404,134 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   it('should display error message on getting all announcements assigned to', (done) => {
-    const err = { status: '400' }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => err))
+    const errorResponse = { status: '404', statusText: 'An error occur' }
+    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => errorResponse))
     spyOn(console, 'error')
 
     component['getUsedWorkspacesAndProducts']()
 
     component.allCriteriaLists$?.subscribe({
       next: () => {
-        expect(console.error).toHaveBeenCalledWith('getAllAnnouncementAssignments', err)
+        expect(console.error).toHaveBeenCalledWith('getAllAnnouncementAssignments', errorResponse)
         done()
       }
     })
   })
 
-  it('should get all existing workspaces', (done) => {
-    const workspaceNames = [{ name: 'ws', displayName: 'Workspace' }]
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaceNames))
-    component.allWorkspaces = []
+  describe('Getting Workspaces', () => {
+    it('should get all existing workspaces', (done) => {
+      const workspaces = [{ name: 'ws', displayName: 'Workspace' }]
+      apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
+      component.allWorkspaces = []
 
-    component['searchWorkspaces']()
+      component['searchWorkspaces']()
 
-    component.allWorkspaces$.subscribe({
-      next: (workspaces) => {
-        expect(workspaces.length).toBe(1)
-        expect(workspaces[0].displayName).toEqual('Workspace')
-        done()
-      }
-    })
-  })
-
-  it('should log error getting all existing wss fails', fakeAsync(() => {
-    const err = { status: '400' }
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => err))
-    spyOn(console, 'error')
-
-    component['searchWorkspaces']()
-
-    component.allWorkspaces$.subscribe({
-      next: () => {
-        expect(console.error).toHaveBeenCalledWith('getAllWorkspaceNames():', err)
-      }
-    })
-  }))
-
-  it('should verify a workspace to be one of all workspaces', () => {
-    const workspaces = [{ label: 'w1', value: 'w1' }]
-    component.allWorkspaces = workspaces
-
-    const result = component.isWorkspace(workspaces[0].value)
-
-    expect(result).toEqual(true)
-  })
-
-  it('should not verify an unknown workspace', () => {
-    const workspaces = [{ label: 'w1', value: 'w1' }]
-    component.allWorkspaces = workspaces
-
-    const result = component.isWorkspace('w2')
-
-    expect(result).toEqual(false)
-  })
-
-  it('should provide a translation if unknown workspace is listed', () => {
-    let key = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
-
-    expect(key).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
-
-    key = component.getTranslationKeyForNonExistingWorkspaces()
-
-    expect(key).toEqual('ANNOUNCEMENT.ALL')
-  })
-
-  it('should get all existing products', (done) => {
-    const productNames = {
-      stream: [
-        { name: 'prod1', displayName: 'prod1_display' },
-        { name: 'prod2', displayName: 'prod2_display' }
-      ]
-    }
-    apiServiceSpy.getAllProductNames.and.returnValue(of(productNames))
-    component.allProducts = []
-
-    component['searchProducts']()
-
-    component.allProducts$.subscribe({
-      next: (products) => {
-        if (products.stream) {
-          expect(products.stream.length).toBe(2)
-          expect(products.stream[0].displayName).toEqual('prod1_display')
+      component.allWorkspaces$.subscribe({
+        next: (workspaces) => {
+          expect(workspaces.length).toBe(1)
+          expect(workspaces[0].label).toEqual('Workspace')
           done()
         }
-      }
+      })
+    })
+
+    it('should log error getting all existing workspaces fails', (done) => {
+      const errorResponse = { status: '404', statusText: 'Not Found' }
+      apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component['searchWorkspaces']()
+
+      component.allWorkspaces$.subscribe({
+        next: () => {
+          expect(console.error).toHaveBeenCalledWith('getAllWorkspaceNames', errorResponse)
+          done()
+        }
+      })
+    })
+
+    it('should verify a workspace to be one of all workspaces', () => {
+      const workspaces = [{ label: 'w1', value: 'w1' }]
+      component.allWorkspaces = workspaces
+
+      const result = component.isWorkspace(workspaces[0].value)
+
+      expect(result).toEqual(true)
+    })
+
+    it('should not verify an unknown workspace', () => {
+      const workspaces = [{ label: 'w1', value: 'w1' }]
+      component.allWorkspaces = workspaces
+
+      const result = component.isWorkspace('w2')
+
+      expect(result).toEqual(false)
+    })
+
+    it('should provide a translation if unknown workspace is listed', () => {
+      let key = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
+
+      expect(key).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
+
+      key = component.getTranslationKeyForNonExistingWorkspaces()
+
+      expect(key).toEqual('ANNOUNCEMENT.ALL')
     })
   })
 
-  it('should display error if that call fails', () => {
-    const err = { status: '400' }
-    apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => err))
-    spyOn(console, 'error')
-
-    component['searchProducts']()
-
-    component.allProducts$.subscribe({
-      next: () => {
-        expect(console.error).toHaveBeenCalledWith('getAllProductNames():', err)
+  describe('get all existing products', () => {
+    it('should get all existing products - successful', (done) => {
+      const products = {
+        stream: [
+          { name: 'prod1', displayName: 'prod1_display' },
+          { name: 'prod2', displayName: 'prod2_display' }
+        ]
       }
+      apiServiceSpy.getAllProductNames.and.returnValue(of(products))
+      component.allProducts = []
+
+      component['searchProducts']()
+
+      component.allProducts$.subscribe({
+        next: (products) => {
+          if (products) {
+            expect(products.length).toBe(2)
+            expect(products[0].label).toEqual('prod1_display')
+            done()
+          }
+        }
+      })
+    })
+
+    it('should display error if that call fails', () => {
+      const errorResponse = { status: '404', statusText: 'Not found' }
+      apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component['searchProducts']()
+
+      component.allProducts$.subscribe({
+        next: () => {
+          expect(console.error).toHaveBeenCalledWith('getAllProductNames', errorResponse)
+        }
+      })
     })
   })
 
   /**
    * Language tests
    */
-  it('should set a German date format', () => {
-    expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
-  })
+  describe('Language tests', () => {
+    it('should set a German date format', () => {
+      expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+    })
 
-  it('should set default date format', () => {
-    mockUserService.lang$.getValue.and.returnValue('en')
-    fixture = TestBed.createComponent(AnnouncementSearchComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
+    it('should set default date format', () => {
+      mockUserService.lang$.getValue.and.returnValue('en')
+      fixture = TestBed.createComponent(AnnouncementSearchComponent)
+      component = fixture.componentInstance
+      fixture.detectChanges()
+      expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
+    })
   })
 })
