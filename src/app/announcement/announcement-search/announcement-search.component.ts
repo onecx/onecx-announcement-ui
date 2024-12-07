@@ -25,7 +25,13 @@ type ExtendedColumn = Column & {
   needsDisplayName?: boolean
 }
 type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT'
-type allCriteriaLists = { products: SelectItem[]; workspaces: SelectItem[] }
+type AllMetaData = {
+  allProducts: SelectItem[]
+  allWorkspaces: SelectItem[]
+  usedProducts?: SelectItem[]
+  usedWorkspaces?: SelectItem[]
+}
+type AllUsedLists = { products: SelectItem[]; workspaces: SelectItem[] }
 
 @Component({
   selector: 'app-announcement-search',
@@ -45,18 +51,13 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDetailDialog = false
   public changeMode: ChangeMode = 'CREATE'
   public dateFormat: string
-  public allCriteriaLists$: Observable<allCriteriaLists> | undefined
-  public usedWorkspaces$: Observable<SelectItem[]> | undefined
-  public allWorkspaces: SelectItem[] = []
-  public allWorkspaces$!: Observable<SelectItem[]>
-  public allItem: SelectItem | undefined
-
-  public usedProducts$: Observable<SelectItem[]> | undefined
-  public allProducts: SelectItem[] = []
-  public allProducts$!: Observable<SelectItem[]>
-  public allMetaData$!: Observable<string>
   public filteredColumns: Column[] = []
   public limitText = limitText
+
+  public allMetaData$!: Observable<AllMetaData> // collection of data used in UI
+  public allWorkspaces$!: Observable<SelectItem[]> // getting data from bff endpoint
+  public allProducts$!: Observable<SelectItem[]> // getting data from bff endpoint
+  public allUsedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
 
   public columns: ExtendedColumn[] = [
     {
@@ -134,9 +135,8 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchProducts()
-    this.searchWorkspaces()
-    this.loadAllData()
+    this.prepareDataLoad()
+    this.loadData()
     this.prepareActionButtons()
     this.filteredColumns = this.columns.filter((a) => {
       return a.active === true
@@ -203,7 +203,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDeleteDialog = false
     this.announcement = undefined
     if (refresh) {
-      this.getUsedWorkspacesAndProducts()
+      //this.getUsedWorkspacesAndProducts()
       this.onSearch({ announcementSearchCriteria: {} }, true)
     }
   }
@@ -249,48 +249,17 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  // Prepare drop down list content used in search criteria
-  private getUsedWorkspacesAndProducts(): void {
-    const acl: allCriteriaLists = { products: [], workspaces: [] }
-    this.allCriteriaLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
-      map((data: AnnouncementAssignments) => {
-        if (data.workspaceNames)
-          acl.workspaces = data.workspaceNames.map(
-            (name) =>
-              ({
-                label: this.getDisplayNameWorkspace(name),
-                value: name
-              }) as SelectItem
-          )
-        if (data.productNames)
-          acl.products = data.productNames.map(
-            (name) =>
-              ({
-                label: this.getDisplayNameProduct(name),
-                value: name
-              }) as SelectItem
-          )
-        return acl
-      }),
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
-        console.error('getAllAnnouncementAssignments', err)
-        return of(acl)
-      })
-    )
-  }
-
   // workspace in list of all workspaces?
-  public isWorkspace(workspaceName?: string): boolean {
-    return this.allWorkspaces.find((item) => item.value === workspaceName) !== undefined
+  public isWorkspace(workspaceName: string | undefined, allWorkspaces: SelectItem[]): boolean {
+    return allWorkspaces.find((item) => item.value === workspaceName) !== undefined
   }
 
-  public getDisplayNameWorkspace(name?: string): string | undefined {
-    return this.allWorkspaces.find((item) => item.value === name)?.label ?? name
+  public getDisplayNameWorkspace(name: string | undefined, allWorkspaces: SelectItem[]): string | undefined {
+    return allWorkspaces.find((item) => item.value === name)?.label ?? name
   }
 
-  public getDisplayNameProduct(name?: string): string | undefined {
-    return this.allProducts.find((item) => item.value === name)?.label ?? name
+  public getDisplayNameProduct(name: string | undefined, allProducts: SelectItem[]): string | undefined {
+    return allProducts.find((item) => item.value === name)?.label ?? name
   }
 
   // if not in list of all workspaces then get the suitable translation key
@@ -302,9 +271,8 @@ export class AnnouncementSearchComponent implements OnInit {
    *  SEARCHING of META DATA
    *     used to display readable names in drop down lists and result set
    */
-
-  // declare search for ALL products
-  private searchProducts(): void {
+  private prepareDataLoad(): void {
+    // declare search for ALL products privided by bff
     this.allProducts$ = this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).pipe(
       map((data: ProductsPageResult) => {
         const si: SelectItem[] = []
@@ -321,10 +289,7 @@ export class AnnouncementSearchComponent implements OnInit {
         return of([] as SelectItem[])
       })
     )
-  }
-
-  // declare search for ALL workspaces
-  private searchWorkspaces(): void {
+    // declare search for ALL workspaces provided by bff
     this.allWorkspaces$ = this.announcementApi.getAllWorkspaceNames().pipe(
       map((workspaces: WorkspaceAbstract[]) => {
         const si: SelectItem[] = []
@@ -339,17 +304,38 @@ export class AnnouncementSearchComponent implements OnInit {
         return of([] as SelectItem[])
       })
     )
+    // declare search for used products/workspaces (used === assigned to announcement)
+    // hereby SelectItem[] are prepared but with a temporary label (=> displayName)
+    this.allUsedLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
+      map((data: AnnouncementAssignments) => {
+        const ul: AllUsedLists = { products: [], workspaces: [] }
+        if (data.productNames)
+          ul.products = data.productNames.map((name) => ({ label: name, value: name }) as SelectItem)
+        if (data.workspaceNames)
+          ul.workspaces = data.workspaceNames.map((name) => ({ label: name, value: name }) as SelectItem)
+        return ul
+      }),
+      catchError((err) => {
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+        console.error('getAllAnnouncementAssignments', err)
+        return of({ products: [], workspaces: [] } as AllUsedLists)
+      })
+    )
   }
 
-  // Loading everything - triggered from HTML
-  private loadAllData(): void {
-    this.allMetaData$ = combineLatest([this.allWorkspaces$, this.allProducts$]).pipe(
-      map(([w, p]: [SelectItem[], SelectItem[]]) => {
-        this.allWorkspaces = w
-        this.allProducts = p
-        this.getUsedWorkspacesAndProducts()
+  private loadData(): void {
+    const allDataLists$ = combineLatest([this.allWorkspaces$, this.allProducts$])
+    this.allMetaData$ = combineLatest([allDataLists$, this.allUsedLists$]).pipe(
+      map(([[aW, aP], aul]: [[SelectItem[], SelectItem[]], AllUsedLists]) => {
+        // enrich the temporary prepared lists with display names contained in allLists
+        aul.products.forEach((p) => {
+          p.label = this.getDisplayNameProduct(p.value, aP)
+        })
+        aul.workspaces.forEach((w) => {
+          w.label = this.getDisplayNameWorkspace(w.value, aW)
+        })
         this.onSearch({ announcementSearchCriteria: {} })
-        return 'ok'
+        return { allProducts: aP, allWorkspaces: aW, usedProducts: aul.products, usedWorkspaces: aul.workspaces }
       })
     )
   }
