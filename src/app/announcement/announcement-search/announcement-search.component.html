@@ -151,10 +151,10 @@
             </button>
           </td>
           <td *ngFor="let col of columns" [class]="col.css" id="am_announcement_type">
-            <div *ngIf="col.limit" class="max-h-2rem overflow-hidden text-overflow-ellipsis" style="min-width: 130px">
-              {{ limitText(rowData[col.field], 50) }}
-            </div>
-            <ng-container *ngIf="col.isDate"> {{ rowData[col.field] | date: dateFormat }} </ng-container>
+            <div *ngIf="col.limit" class="announcement-title" style="min-width: 130px">{{ rowData[col.field] }}</div>
+            <ng-container *ngIf="col.isDate" class="max-height-for-2-lines">
+              {{ rowData[col.field] | date: dateFormat }}
+            </ng-container>
             <ng-container *ngIf="col.isDropdown">
               {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
             </ng-container>
