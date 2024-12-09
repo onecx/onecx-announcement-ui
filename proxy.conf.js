@@ -3,7 +3,7 @@
  *   Request proxy to rewrite URLs and prevent CORS errors
  */
 const logFn = function (req, res) {
-  console.log(new Date().toISOString() + `: bypassing ${req.method} ${req.url} `)
+  //console.log(new Date().toISOString() + `: bypassing ${req.method} ${req.url} `)
 }
 const onProxyRes = function (proxyRes, req, res) {
   logFn(req, res)
