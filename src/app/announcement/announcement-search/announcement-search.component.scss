@@ -25,4 +25,12 @@
   ocx-data-view-controls div {
     justify-content: center !important;
   }
+
+  .max-height-for-2-lines {
+    max-height: 2.5rem;
+  }
+
+  .announcement-title {
+    @include displaying-text-ellipsis(2);
+  }
 }
