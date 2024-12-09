@@ -63,6 +63,7 @@
     "CHOOSE": "Auswählen",
     "CLOSE": "Schließen",
     "CONFIRM": "Bestätigen",
+    "LOADING": "...wird geladen",
     "RELOAD": "Neuladen",
     "SAVE": "Speichern",
     "SAVE_AS": "Speichern als ...",
@@ -77,12 +78,14 @@
     }
   },
   "DIALOG": {
+    "DETAIL.ANNOUNCEMENT.PROPERTIES": "Eigenschaften",
+    "DETAIL.ANNOUNCEMENT.PROPERTIES.TOOLTIP": "Eigenschaften der Neuigkeit",
     "SEARCH.HEADER": "Neuigkeiten",
     "SEARCH.SUBHEADER": "Suchen und Verwalten von Neuigkeiten"
   },
   "ANNOUNCEMENT": {
     "ID": "Id",
-    "APPLICATION": "Applikation",
+    "PRODUCT_NAME": "Applikation",
     "WORKSPACE": "Workspace",
     "TITLE": "Titel",
     "TYPE": "Typ",
@@ -110,7 +113,7 @@
       "TITLE": "Titel der Neuigkeit",
       "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
       "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
-      "APPLICATION": "Applikation, bei der die Neuigkeit angezeigt werden soll",
+      "PRODUCT_NAME": "Applikation, bei der die Neuigkeit angezeigt werden soll",
       "TYPE": "Typ der Neuigkeit",
       "STATUS": "Ist die Neuigkeit aktiv?",
       "PRIORITY": "Priorität der Neuigkeit",
@@ -145,6 +148,7 @@
     },
     "ERRORS": {
       "INTERNAL_ERROR": "Interner Fehler",
+      "INVALID_FORM": "Speichern nicht möglich weil es noch Fehler gibt.",
       "INVALID_DATE_RANGE": "Das Startdatum liegt nach dem Enddatum. Es muss davor liegen.",
       "EMPTY_REQUIRED_FIELD": "Dieses Feld ist ein Pflichtfeld.",
       "MAXIMUM_LENGTH": "Es sind nur {{chars}} Zeichen erlaubt.",
@@ -154,30 +158,35 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
+      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
       "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal.",
       "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - bitte versuchen Sie es noch einmal.",
       "PRODUCTS": "Unbekanntes Problem beim Abrufen von Applikationen - bitte versuchen Sie es noch einmal."
     },
     "HTTP_STATUS_401": {
+      "ANNOUNCEMENT": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
       "ANNOUNCEMENTS": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
       "ASSIGNMENTS": "Sie sind nicht autorisiert, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind.",
       "WORKSPACES": "Sie sind nicht autorisiert, um Workspaces zu sehen.",
       "PRODUCTS": "Sie sind nicht autorisiert, um Applikationen zu sehen."
     },
     "HTTP_STATUS_403": {
+      "ANNOUNCEMENT": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
       "ANNOUNCEMENTS": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
       "ASSIGNMENTS": "Sie haben keine Rechte, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind.",
       "WORKSPACES": "Sie haben keine Rechte, um Workspaces zu sehen.",
       "PRODUCTS": "Sie haben keine Rechte, um Applikationen zu sehen."
     },
     "HTTP_STATUS_404": {
+      "ANNOUNCEMENT": "Neuigkeit nicht gefunden.",
       "ANNOUNCEMENTS": "Es konnten keine Neuigkeiten gefunden werden.",
       "ASSIGNMENTS": "Es konnten keine Workspaces und Applikationen gefunden werden, die Neuigkeiten zugeordnet sind.",
       "WORKSPACES": "Es konnten keine Workspaces gefunden werden.",
       "PRODUCTS": "Es konnten keine Applikationen geladen werden."
     },
     "HTTP_STATUS_500": {
+      "ANNOUNCEMENT": "Unbekanntes Server-Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
       "ANNOUNCEMENTS": "Unbekanntes Server-Problem beim Abrufen von Neuigkeitsdaten - bitte versuchen Sie es noch einmal.",
       "ASSIGNMENTS": "Unbekanntes Server-Problem beim Abrufen von Workspaces und Applikationen - bitte versuchen Sie es noch einmal.",
       "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace-Daten - bitte versuchen Sie es noch einmal.",

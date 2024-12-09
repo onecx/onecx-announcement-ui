@@ -104,21 +104,20 @@ describe('AnnouncementSearchComponent', () => {
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     msgServiceSpy.info.calls.reset()
+    translateServiceSpy.get.calls.reset()
+    mockUserService.lang$.getValue.and.returnValue('de')
+    // to spy data: reset
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
     apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
     apiServiceSpy.getAllProductNames.calls.reset()
     apiServiceSpy.getAllWorkspaceNames.calls.reset()
-
-    // refill with neutral data
+    // to spy data: refill with neutral data
     apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of({}))
     apiServiceSpy.getAllProductNames.and.returnValue(of([]))
     apiServiceSpy.getAllWorkspaceNames.and.returnValue(of([]))
-
-    translateServiceSpy.get.calls.reset()
-    mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
   beforeEach(() => {
@@ -281,26 +280,22 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should show details of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
-    spyOn(ev, 'stopPropagation')
     const mode = 'EDIT'
 
     component.onDetail(ev, announcementData[0], mode)
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual(mode)
-    expect(component.announcement).toBe(announcementData[0])
+    expect(component.announcement).toEqual(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
   it('should prepare the copy of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
-    spyOn(ev, 'stopPropagation')
 
-    component.onCopy(ev, announcementData[0])
+    component.onDetail(ev, announcementData[0], 'COPY')
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual('CREATE')
-    expect(component.announcement).toBe(announcementData[0])
+    expect(component.announcement).toEqual({ ...announcementData[0], id: undefined })
     expect(component.displayDetailDialog).toBeTrue()
   })
 
@@ -376,6 +371,7 @@ describe('AnnouncementSearchComponent', () => {
     spyOn(component, 'onCreate')
 
     component.ngOnInit()
+
     component.actions$?.subscribe((action) => {
       action[0].actionCallback()
     })
@@ -384,47 +380,51 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   /**
-   * test workspaces: fetching used ws and all ws
+   * META data: used products/workspaces (which were assigned to announcements)
    */
-  it('should get all announcements assigned to workspaces', (done) => {
-    const assignments: AnnouncementAssignments = { productNames: ['prod1'], workspaceNames: ['w1'] }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
-    component.allWorkspaces = [{ label: 'Workspace1', value: 'w1' }]
-    component.allProducts = [{ label: 'Product1', value: 'prod1' }]
+  describe('META data: load used products/workspaces', () => {
+    it('should get all announcements assigned to workspaces', (done) => {
+      const assignments: AnnouncementAssignments = { productNames: ['prod1'], workspaceNames: ['w1'] }
+      apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
 
-    component['getUsedWorkspacesAndProducts']()
+      component.ngOnInit()
 
-    component.allCriteriaLists$?.subscribe({
-      next: (data) => {
-        expect(data.workspaces).toContain({ label: 'Workspace1', value: 'w1' })
-        expect(data.products).toContain({ label: 'Product1', value: 'prod1' })
-        done()
-      }
+      component.allUsedLists$?.subscribe({
+        next: (data) => {
+          expect(data.workspaces).toContain({ label: 'w1', value: 'w1' })
+          expect(data.products).toContain({ label: 'prod1', value: 'prod1' })
+          done()
+        }
+      })
+    })
+
+    it('should get all announcements assigned to workspaces', (done) => {
+      const errorResponse = { status: '404', statusText: 'An error occur' }
+      apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
+
+      component.ngOnInit()
+
+      component.allUsedLists$?.subscribe({
+        next: (data) => {
+          expect(data.workspaces).toEqual([])
+          expect(data.products).toEqual([])
+          done()
+        },
+        error: (err) => {
+          expect(console.error).toHaveBeenCalledOnceWith('getAllAnnouncementAssignments', errorResponse)
+          done.fail
+        }
+      })
     })
   })
 
-  it('should display error message on getting all announcements assigned to', (done) => {
-    const errorResponse = { status: '404', statusText: 'An error occur' }
-    apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => errorResponse))
-    spyOn(console, 'error')
-
-    component['getUsedWorkspacesAndProducts']()
-
-    component.allCriteriaLists$?.subscribe({
-      next: () => {
-        expect(console.error).toHaveBeenCalledWith('getAllAnnouncementAssignments', errorResponse)
-        done()
-      }
-    })
-  })
-
-  describe('Getting Workspaces', () => {
+  describe('META data: load all workspaces', () => {
     it('should get all existing workspaces', (done) => {
       const workspaces = [{ name: 'ws', displayName: 'Workspace' }]
       apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
-      component.allWorkspaces = []
 
-      component['searchWorkspaces']()
+      component.ngOnInit()
 
       component.allWorkspaces$.subscribe({
         next: (workspaces) => {
@@ -440,7 +440,7 @@ describe('AnnouncementSearchComponent', () => {
       apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component['searchWorkspaces']()
+      component.ngOnInit()
 
       component.allWorkspaces$.subscribe({
         next: () => {
@@ -452,18 +452,12 @@ describe('AnnouncementSearchComponent', () => {
 
     it('should verify a workspace to be one of all workspaces', () => {
       const workspaces = [{ label: 'w1', value: 'w1' }]
-      component.allWorkspaces = workspaces
 
-      const result = component.isWorkspace(workspaces[0].value)
+      let result = component.isWorkspace(workspaces[0].value, workspaces)
 
       expect(result).toEqual(true)
-    })
 
-    it('should not verify an unknown workspace', () => {
-      const workspaces = [{ label: 'w1', value: 'w1' }]
-      component.allWorkspaces = workspaces
-
-      const result = component.isWorkspace('w2')
+      result = component.isWorkspace('unknown value', workspaces)
 
       expect(result).toEqual(false)
     })
@@ -479,7 +473,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  describe('get all existing products', () => {
+  describe('META data: load all products', () => {
     it('should get all existing products - successful', (done) => {
       const products = {
         stream: [
@@ -488,9 +482,8 @@ describe('AnnouncementSearchComponent', () => {
         ]
       }
       apiServiceSpy.getAllProductNames.and.returnValue(of(products))
-      component.allProducts = []
 
-      component['searchProducts']()
+      component.ngOnInit()
 
       component.allProducts$.subscribe({
         next: (products) => {
@@ -508,11 +501,50 @@ describe('AnnouncementSearchComponent', () => {
       apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
 
-      component['searchProducts']()
+      component.ngOnInit()
 
       component.allProducts$.subscribe({
         next: () => {
           expect(console.error).toHaveBeenCalledWith('getAllProductNames', errorResponse)
+        }
+      })
+    })
+  })
+
+  describe('META data: load all meta data together and check enrichments', () => {
+    it('should get all existing products - successful', (done) => {
+      const products = {
+        stream: [{ name: 'product', displayName: 'Product' }]
+      }
+      apiServiceSpy.getAllProductNames.and.returnValue(of(products))
+      const workspaces = [{ name: 'ws', displayName: 'Workspace' }]
+      apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
+      // product and workspace are used...
+      const assignments: AnnouncementAssignments = {
+        productNames: ['product', 'unknown'],
+        workspaceNames: ['ws', 'unknown']
+      }
+      apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
+
+      component.ngOnInit()
+
+      component.allMetaData$.subscribe({
+        next: (meta) => {
+          if (meta) {
+            expect(meta.allProducts.length).toBe(1)
+            expect(meta.allWorkspaces.length).toBe(1)
+            expect(meta.usedProducts?.length).toBe(2)
+            expect(meta.usedWorkspaces?.length).toBe(2)
+            expect(meta.usedProducts).toEqual([
+              { label: 'Product', value: 'product' },
+              { label: 'unknown', value: 'unknown' }
+            ])
+            expect(meta.usedWorkspaces).toEqual([
+              { label: 'Workspace', value: 'ws' },
+              { label: 'unknown', value: 'unknown' }
+            ])
+            done()
+          }
         }
       })
     })

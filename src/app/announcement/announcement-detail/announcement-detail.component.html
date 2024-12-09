@@ -2,254 +2,286 @@
   [header]="'ACTIONS.' + this.changeMode + '.ANNOUNCEMENT' | translate"
   [(visible)]="displayDetailDialog"
   (onHide)="onDialogHide()"
+  [showHeader]="true"
   [baseZIndex]="10000"
+  [modal]="true"
+  [closable]="true"
   [draggable]="true"
   [resizable]="true"
-  [closable]="true"
-  [modal]="true"
-  [style]="{ width: '600px' }"
-  [showHeader]="true"
+  [style]="{ width: '650px' }"
   [breakpoints]="{
     '992px': '75vw',
     '768px': '90vw',
     '630px': '100vw'
   }"
 >
-  <form [formGroup]="formGroup" errorTailor>
-    <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
-      <div class="w-full relative">
-        <p-badge
-          *ngIf="changeMode !== 'VIEW'"
-          severity="primary"
-          [value]="255 - announcementTitle.value.length"
-          class="z-1 text-badge-right"
-          [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
-          [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
-          tooltipPosition="top"
-          tooltipEvent="hover"
-        />
-        <span class="p-float-label" controlErrorAnchor>
-          <textarea
-            #announcementTitle
-            pInputTextarea
-            id="am_detail_form_title"
-            type="text"
-            style="min-height: 2.5rem"
-            class="w-full textarea-sm"
-            formControlName="title"
-            rows="1"
-            [autoResize]="true"
-            appendTo="body"
-            [ariaLabel]="'ANNOUNCEMENT.TITLE' | translate"
-            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></textarea>
-          <label class="ocx-required-label" for="am_detail_form_title"> {{ 'ANNOUNCEMENT.TITLE' | translate }} </label>
-        </span>
-      </div>
-      <div class="w-full relative">
-        <p-badge
-          *ngIf="changeMode !== 'VIEW'"
-          severity="primary"
-          [value]="1000 - announcementContent.value.length"
-          class="z-1 text-badge-right"
-          [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
-          [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
-          tooltipPosition="top"
-          tooltipEvent="hover"
-        />
-        <span class="p-float-label" controlErrorAnchor>
-          <textarea
-            #announcementContent
-            pInputTextarea
-            id="am_detail_form_content"
-            class="w-full textarea-md"
-            formControlName="content"
-            rows="5"
-            [autoResize]="true"
-            appendTo="body"
-            [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
-            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></textarea>
-          <label for="am_detail_form_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
-        </span>
-      </div>
+  <p-message
+    *ngIf="exceptionKey"
+    id="am_detail_message_error"
+    severity="error"
+    [text]="exceptionKey | translate"
+  ></p-message>
 
-      <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
-        <div class="flex-grow-1">
-          <span class="p-float-label">
-            <p-dropdown
-              #workspaceName
-              id="am_detail_form_workspace_name"
-              class="input-field"
-              styleClass="w-full"
-              formControlName="workspaceName"
-              [options]="allWorkspaces"
-              [autoDisplayFirst]="true"
-              [appendTo]="'body'"
-              [showClear]="true"
-              [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-              ariaLabelledBy="am_detail_form_workspace_name"
-              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
+  <form *ngIf="!exceptionKey" [formGroup]="formGroup" errorTailor>
+    <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
+      <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
+        <div class="w-full relative">
+          <p-badge
+            *ngIf="changeMode !== 'VIEW'"
+            severity="primary"
+            [value]="255 - announcementTitle.value.length"
+            class="z-1 text-badge-right"
+            [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <span class="p-float-label" controlErrorAnchor>
+            <textarea
+              #announcementTitle
+              pInputTextarea
+              id="am_detail_form_title"
+              type="text"
+              style="min-height: 3rem"
+              class="w-full textarea-sm"
+              [class.bg-red-100]="
+                formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'IMPORTANT'
+              "
+              [class.bg-yellow-100]="
+                formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'NORMAL'
+              "
+              [class.bg-blue-100]="
+                formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'LOW'
+              "
+              formControlName="title"
+              rows="1"
+              [autoResize]="true"
+              appendTo="body"
+              [ariaLabel]="'ANNOUNCEMENT.TITLE' | translate"
+              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
-            >
-            </p-dropdown>
-            <label for="am_detail_form_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
+            ></textarea>
+            <label class="ocx-required-label" for="am_detail_form_title">
+              {{ 'ANNOUNCEMENT.TITLE' | translate }}
+            </label>
           </span>
         </div>
-
-        <div class="flex-grow-1">
-          <span class="p-float-label">
-            <p-dropdown
-              id="am_detail_form_application_name"
-              class="input-field"
-              styleClass="w-full"
-              formControlName="productName"
-              [options]="allProducts"
-              [autoDisplayFirst]="true"
-              [appendTo]="'body'"
-              [showClear]="true"
-              [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-              ariaLabelledBy="am_detail_form_application_name"
-              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.APPLICATION' | translate"
+        <div class="w-full relative">
+          <p-badge
+            *ngIf="changeMode !== 'VIEW'"
+            severity="primary"
+            [value]="1000 - announcementContent.value.length"
+            class="z-1 text-badge-right"
+            [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
+            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          />
+          <span class="p-float-label" controlErrorAnchor>
+            <textarea
+              #announcementContent
+              pInputTextarea
+              id="am_detail_form_content"
+              class="w-full textarea-md"
+              formControlName="content"
+              rows="5"
+              [autoResize]="true"
+              appendTo="body"
+              [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
+              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
-            >
-            </p-dropdown>
-            <label for="am_detail_form_application_name"> {{ 'ANNOUNCEMENT.APPLICATION' | translate }} </label>
+            ></textarea>
+            <label for="am_detail_form_content">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
           </span>
         </div>
       </div>
+      <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
+        <ng-template pTemplate="header">
+          <span
+            [pTooltip]="'DIALOG.DETAIL.ANNOUNCEMENT.PROPERTIES.TOOLTIP' | translate"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+            {{ 'DIALOG.DETAIL.ANNOUNCEMENT.PROPERTIES' | translate }}
+          </span>
+        </ng-template>
+        <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
+          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
+            <div class="flex-grow-1">
+              <span class="p-float-label">
+                <p-dropdown
+                  #workspaceName
+                  id="am_detail_form_workspace_name"
+                  class="input-field"
+                  styleClass="w-full"
+                  formControlName="workspaceName"
+                  [options]="allWorkspaces"
+                  [autoDisplayFirst]="true"
+                  [appendTo]="'body'"
+                  [showClear]="true"
+                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  ariaLabelledBy="am_detail_form_workspace_name"
+                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                </p-dropdown>
+                <label for="am_detail_form_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
+              </span>
+            </div>
 
-      <div class="w-full flex flex-column row-gap-3 sm:row-gap-4 sm:flex-row sm:justify-content-between">
-        <div class="py-0 px-0">
-          <div>
-            <span class="p-float-label" controlErrorAnchor>
-              <p-calendar
-                inputId="am_detail_form_start_date"
-                type="text"
-                formControlName="startDate"
-                styleClass="w-15rem"
-                todayButtonStyleClass="calender-today"
-                [dateFormat]="dateFormat"
-                [hourFormat]="timeFormat"
-                [showClear]="false"
-                [showTime]="true"
-                [showWeek]="true"
-                [showIcon]="true"
-                [showOnFocus]="false"
-                appendTo="body"
-                aria-labelledby="am_detail_form_start_date"
-                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
+            <div class="flex-grow-1">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="am_detail_form_application_name"
+                  class="input-field"
+                  styleClass="w-full"
+                  formControlName="productName"
+                  [options]="allProducts"
+                  [autoDisplayFirst]="true"
+                  [appendTo]="'body'"
+                  [showClear]="true"
+                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  ariaLabelledBy="am_detail_form_application_name"
+                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRODUCT_NAME' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                </p-dropdown>
+                <label for="am_detail_form_application_name"> {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
+              </span>
+            </div>
+          </div>
+
+          <div class="w-full flex flex-column row-gap-3 sm:row-gap-4 sm:flex-row sm:justify-content-between">
+            <div class="py-0 px-0">
+              <div>
+                <span class="p-float-label" controlErrorAnchor>
+                  <p-calendar
+                    inputId="am_detail_form_start_date"
+                    type="text"
+                    formControlName="startDate"
+                    styleClass="w-15rem"
+                    todayButtonStyleClass="calender-today"
+                    [dateFormat]="dateFormat"
+                    [hourFormat]="timeFormat"
+                    [showClear]="false"
+                    [showTime]="true"
+                    [showWeek]="true"
+                    [showIcon]="true"
+                    [showOnFocus]="false"
+                    appendTo="body"
+                    aria-labelledby="am_detail_form_start_date"
+                    [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></p-calendar>
+                  <label class="ocx-required-label" for="am_detail_form_start_date">
+                    {{ 'ANNOUNCEMENT.START_DATE' | translate }}
+                  </label>
+                </span>
+              </div>
+            </div>
+            <div class="">
+              <div>
+                <span class="p-float-label" controlErrorAnchor>
+                  <p-calendar
+                    inputId="am_detail_form_end_date"
+                    type="text"
+                    formControlName="endDate"
+                    styleClass="w-15rem"
+                    todayButtonStyleClass="calender-today"
+                    [dateFormat]="dateFormat"
+                    [hourFormat]="timeFormat"
+                    [showClear]="true"
+                    [showTime]="true"
+                    [showWeek]="true"
+                    [showIcon]="true"
+                    [showOnFocus]="false"
+                    appendTo="body"
+                    [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></p-calendar>
+                  <label for="am_detail_form_end_date"> {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+                </span>
+              </div>
+            </div>
+            <div class="mr-4 flex flex-column justify-content-center sm:align-items-center row-gap-1">
+              <p-inputSwitch
+                inputId="am_detail_form_status"
+                class="input-switch-xl"
+                formControlName="status"
+                trueValue="ACTIVE"
+                falseValue="INACTIVE"
+                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              ></p-calendar>
-              <label class="ocx-required-label" for="am_detail_form_start_date">
-                {{ 'ANNOUNCEMENT.START_DATE' | translate }}
+              ></p-inputSwitch>
+              <label class="text-sm float-label" for="am_detail_form_status">
+                {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
               </label>
-            </span>
+            </div>
+            <label
+              *ngIf="
+                formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange') ||
+                formGroup.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
+              "
+              class="col-12 py-0 ml-1 sm:pl-3 control-error"
+              for="am_detail_form_start_date"
+            >
+              {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
+            </label>
           </div>
-        </div>
-        <div class="">
-          <div>
-            <span class="p-float-label" controlErrorAnchor>
-              <p-calendar
-                inputId="am_detail_form_end_date"
-                type="text"
-                formControlName="endDate"
-                styleClass="w-15rem"
-                todayButtonStyleClass="calender-today"
-                [dateFormat]="dateFormat"
-                [hourFormat]="timeFormat"
-                [showClear]="true"
-                [showTime]="true"
-                [showWeek]="true"
-                [showIcon]="true"
-                [showOnFocus]="false"
-                appendTo="body"
-                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
+
+          <div class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end">
+            <div class="p-0 md:text-right flex flex-column md:justify-content-end">
+              <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority"
+                >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
+              </label>
+              <p-selectButton
+                #announcmentPriority
+                id="am_detail_form_priority"
+                formControlName="priority"
+                [options]="(priorityOptions$ | async) ?? []"
+                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              ></p-calendar>
-              <label for="am_detail_form_end_date"> {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
-            </span>
+              ></p-selectButton>
+            </div>
+            <span
+              id="am_detail_preview_icon"
+              class="p-2 pi text-xl border-round hidden sm:block"
+              [class.pi-info-circle]="announcmentType.value === 'INFO'"
+              [class.pi-calendar]="announcmentType.value === 'EVENT'"
+              [class.pi-wrench]="announcmentType.value === 'SYSTEM_MAINTENANCE'"
+              [class.bg-red-100]="announcmentPriority.value === 'IMPORTANT'"
+              [class.bg-yellow-100]="announcmentPriority.value === 'NORMAL'"
+              [class.bg-blue-100]="announcmentPriority.value === 'LOW'"
+              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PREVIEW.ICON' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            ></span>
+            <div class="p-0 flex flex-column">
+              <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_type">
+                {{ 'ANNOUNCEMENT.TYPE' | translate }}
+              </label>
+              <p-selectButton
+                #announcmentType
+                id="am_detail_form_type"
+                formControlName="type"
+                [options]="(typeOptions$ | async) ?? []"
+                [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
+                [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              ></p-selectButton>
+            </div>
           </div>
         </div>
-        <div class="mr-4 flex flex-column justify-content-center sm:align-items-center row-gap-1">
-          <p-inputSwitch
-            inputId="am_detail_form_status"
-            class="input-switch-xl"
-            formControlName="status"
-            trueValue="ACTIVE"
-            falseValue="INACTIVE"
-            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></p-inputSwitch>
-          <label class="text-xs float-label" for="am_detail_form_status">
-            {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
-          </label>
-        </div>
-        <label
-          *ngIf="
-            formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange') ||
-            formGroup.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
-          "
-          class="col-12 py-0 ml-1 sm:pl-3 control-error"
-          for="am_detail_form_start_date"
-        >
-          {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
-        </label>
-      </div>
-
-      <div class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end">
-        <div class="p-0 md:text-right flex flex-column md:justify-content-end">
-          <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority"
-            >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
-          </label>
-          <p-selectButton
-            #announcmenPriority
-            id="am_detail_form_priority"
-            formControlName="priority"
-            [options]="(priorityOptions$ | async) ?? []"
-            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></p-selectButton>
-        </div>
-        <span
-          id="am_detail_preview_icon"
-          class="p-2 pi text-xl border-round hidden sm:block"
-          [class.pi-info-circle]="announcmentType.value === 'INFO'"
-          [class.pi-calendar]="announcmentType.value === 'EVENT'"
-          [class.pi-wrench]="announcmentType.value === 'SYSTEM_MAINTENANCE'"
-          [class.bg-red-100]="announcmenPriority.value === 'IMPORTANT'"
-          [class.bg-yellow-100]="announcmenPriority.value === 'NORMAL'"
-          [class.bg-blue-100]="announcmenPriority.value === 'LOW'"
-          [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PREVIEW.ICON' | translate"
-          tooltipPosition="top"
-          tooltipEvent="hover"
-        ></span>
-        <div class="p-0 flex flex-column">
-          <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_type">
-            {{ 'ANNOUNCEMENT.TYPE' | translate }}
-          </label>
-          <p-selectButton
-            #announcmentType
-            id="am_detail_form_type"
-            formControlName="type"
-            [options]="(typeOptions$ | async) ?? []"
-            [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
-            [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          ></p-selectButton>
-        </div>
-      </div>
+      </p-fieldset>
     </div>
   </form>
 
