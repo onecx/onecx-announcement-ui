@@ -151,9 +151,7 @@
             </button>
           </td>
           <td *ngFor="let col of columns" [class]="col.css" id="am_announcement_type">
-            <div *ngIf="col.limit" class="max-height-for-2-lines announcement-title" style="min-width: 130px">
-              {{ rowData[col.field] }}
-            </div>
+            <div *ngIf="col.limit" class="announcement-title" style="min-width: 130px">{{ rowData[col.field] }}</div>
             <ng-container *ngIf="col.isDate" class="max-height-for-2-lines">
               {{ rowData[col.field] | date: dateFormat }}
             </ng-container>
