@@ -6,6 +6,8 @@
 @include dialog-non-full-size-modal;
 
 :host ::ng-deep {
+  --input-switch-handle-off-bg: red;
+
   label.float-label {
     color: var(--emphasis-medium);
   }
@@ -45,6 +47,17 @@
         height: 1.6rem;
         margin-top: -0.8rem;
       }
+    }
+  }
+
+  .p-fieldset {
+    &.p-fieldset-toggleable .p-fieldset-legend a,
+    .p-fieldset-legend {
+      background-color: transparent;
+      padding: 0.3rem 0.4rem;
+    }
+    .p-fieldset-content {
+      padding: 0.5rem 0.2rem 0rem;
     }
   }
 }

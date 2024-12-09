@@ -13,6 +13,7 @@ import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
 import { DropdownModule } from 'primeng/dropdown'
+import { FieldsetModule } from 'primeng/fieldset'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputTextareaModule } from 'primeng/inputtextarea'
 import { KeyFilterModule } from 'primeng/keyfilter'
@@ -42,6 +43,7 @@ import { LabelResolver } from './label.resolver'
     DialogModule,
     DropdownModule,
     DynamicDialogModule,
+    FieldsetModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -68,6 +70,7 @@ import { LabelResolver } from './label.resolver'
     DialogModule,
     DropdownModule,
     DynamicDialogModule,
+    FieldsetModule,
     FormsModule,
     InputTextModule,
     InputTextareaModule,

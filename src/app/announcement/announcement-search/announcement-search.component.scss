@@ -1,7 +1,9 @@
 @import '/src/app/_am-mixins.scss';
 
 @include danger-action;
+@include displaying-text-responsive;
 @include table-inline-buttons;
+@include table-zebra-rows;
 @include table-responsive-columns;
 @include dialog-footer-buttons;
 
@@ -19,5 +21,8 @@
   ocx-column-group-selection,
   ocx-data-view-controls div div button {
     display: none;
+  }
+  ocx-data-view-controls div {
+    justify-content: center !important;
   }
 }

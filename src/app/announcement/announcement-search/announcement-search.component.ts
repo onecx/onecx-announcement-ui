@@ -16,6 +16,7 @@ import {
 } from 'src/app/shared/generated'
 import { limitText, dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
+export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
 type ExtendedColumn = Column & {
   hasFilter?: boolean
   isDate?: boolean
@@ -24,7 +25,6 @@ type ExtendedColumn = Column & {
   limit?: boolean
   needsDisplayName?: boolean
 }
-type ChangeMode = 'VIEW' | 'CREATE' | 'EDIT'
 type AllMetaData = {
   allProducts: SelectItem[]
   allWorkspaces: SelectItem[]
@@ -42,15 +42,16 @@ export class AnnouncementSearchComponent implements OnInit {
   @ViewChild('announcementTable', { static: false }) announcementTable: Table | undefined
 
   public loading = false
+  public searching = false
   public exceptionKey: string | undefined = undefined
+  public changeMode: ChangeMode = 'CREATE'
+  public dateFormat: string
   public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
   public announcement: Announcement | undefined
   public announcements$: Observable<Announcement[]> | undefined
   public displayDeleteDialog = false
   public displayDetailDialog = false
-  public changeMode: ChangeMode = 'CREATE'
-  public dateFormat: string
   public filteredColumns: Column[] = []
   public limitText = limitText
 
@@ -79,15 +80,15 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'WORKSPACE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden xl:table-cell',
+      css: 'text-center',
       needsDisplayName: true
     },
     {
       field: 'productName',
-      header: 'APPLICATION',
+      header: 'PRODUCT_NAME',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden lg:table-cell',
+      css: 'text-center',
       needsDisplayName: true
     },
     {
@@ -110,7 +111,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'START_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden sm:table-cell',
+      css: 'text-center',
       hasFilter: false,
       isDate: true
     },
@@ -119,7 +120,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'END_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden md:table-cell',
+      css: 'text-center',
       hasFilter: false,
       isDate: true
     }
@@ -135,6 +136,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loading = true
     this.prepareDataLoad()
     this.loadData()
     this.prepareActionButtons()
@@ -171,7 +173,8 @@ export class AnnouncementSearchComponent implements OnInit {
         criteria.announcementSearchCriteria.productName = undefined
       this.criteria = criteria.announcementSearchCriteria
     }
-    this.loading = true
+    this.searching = true
+    this.exceptionKey = undefined
     this.announcements$ = this.announcementApi.searchAnnouncements(criteria).pipe(
       map((data) => data.stream ?? []),
       catchError((err) => {
@@ -180,7 +183,7 @@ export class AnnouncementSearchComponent implements OnInit {
         console.error('searchAnnouncements', err)
         return of([] as Announcement[])
       }),
-      finalize(() => (this.loading = false))
+      finalize(() => (this.searching = false))
     )
   }
 
@@ -215,15 +218,8 @@ export class AnnouncementSearchComponent implements OnInit {
   }
   public onDetail(ev: MouseEvent, item: Announcement, mode: ChangeMode): void {
     ev.stopPropagation()
-    this.changeMode = mode
-    this.announcement = item
-    this.displayDetailDialog = true
-  }
-  public onCopy(ev: MouseEvent, item: Announcement) {
-    ev.stopPropagation()
-    this.changeMode = 'CREATE'
-    this.announcement = item
-    this.announcement.id = undefined
+    this.changeMode = mode === 'COPY' ? 'CREATE' : mode
+    this.announcement = { ...item, id: ['COPY', 'CREATE'].includes(mode) ? undefined : item.id }
     this.displayDetailDialog = true
   }
 
@@ -334,6 +330,7 @@ export class AnnouncementSearchComponent implements OnInit {
         aul.workspaces.forEach((w) => {
           w.label = this.getDisplayNameWorkspace(w.value, aW)
         })
+        this.loading = false
         this.onSearch({ announcementSearchCriteria: {} })
         return { allProducts: aP, allWorkspaces: aW, usedProducts: aul.products, usedWorkspaces: aul.workspaces }
       })

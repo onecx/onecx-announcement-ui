@@ -63,6 +63,7 @@
     "CHOOSE": "Choose",
     "CLOSE": "Close",
     "CONFIRM": "Confirm",
+    "LOADING": "...is loading",
     "RELOAD": "Reload",
     "SAVE": "Save",
     "SAVE_AS": "Save as ...",
@@ -77,12 +78,14 @@
     }
   },
   "DIALOG": {
+    "DETAIL.ANNOUNCEMENT.PROPERTIES": "Properties",
+    "DETAIL.ANNOUNCEMENT.PROPERTIES.TOOLTIP": "Properties of the Announcement",
     "SEARCH.HEADER": "Announcements",
     "SEARCH.SUBHEADER": "Searching and managing of Announcements"
   },
   "ANNOUNCEMENT": {
     "ID": "Id",
-    "APPLICATION": "Application",
+    "PRODUCT_NAME": "Application",
     "WORKSPACE": "Workspace",
     "TITLE": "Title",
     "TYPE": "Type",
@@ -110,7 +113,7 @@
       "TITLE": "Title of the Announcement, maximum of 255 characters",
       "TITLE.CRITERIA": "Title of the Announcement, Wildcard supported: *",
       "WORKSPACE": "Workspace for which the Announcement should be applied.",
-      "APPLICATION": "Application for which the Announcement should be applied.",
+      "PRODUCT_NAME": "Application for which the Announcement should be applied.",
       "TYPE": "Type of the Announcement",
       "STATUS": "Is the Announcement active?",
       "PRIORITY": "Priority of the Announcement",
@@ -145,6 +148,7 @@
     },
     "ERRORS": {
       "INTERNAL_ERROR": "Internal error",
+      "INVALID_FORM": "Saving not possible because there are still errors.",
       "INVALID_DATE_RANGE": "The start date is after the end date. It must be before that.",
       "EMPTY_REQUIRED_FIELD": "This field is required.",
       "MAXIMUM_LENGTH": "Only {{chars}} characters are allowed.",
@@ -154,30 +158,35 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_0": {
+      "ANNOUNCEMENT": "Unknown problem retrieving Announcement data - please try again.",
       "ANNOUNCEMENTS": "Unknown problem retrieving Announcement data - please try again.",
       "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
       "WORKSPACES": "Unknown problem retrieving Workspace data - please try again.",
       "PRODUCTS": "Unknown problem retrieving Application data - please try again."
     },
     "HTTP_STATUS_401": {
+      "ANNOUNCEMENT": "You are not authorized to see Announcements.",
       "ANNOUNCEMENTS": "You are not authorized to see Announcements.",
       "ASSIGNMENTS": "You are not authorized to see Workspaces and Applications with assigned Announcements.",
       "WORKSPACES": "You are not authorized to see Workspaces.",
       "PRODUCTS": "You are not authorized to see Applications."
     },
     "HTTP_STATUS_403": {
+      "ANNOUNCEMENT": "You have no permissions to see Announcements.",
       "ANNOUNCEMENTS": "You have no permissions to see Announcements.",
       "ASSIGNMENTS": "You have no permissions to see Workspaces and Applications with assigned Announcements.",
       "WORKSPACES": "You have no permissions to see Workspaces.",
       "PRODUCTS": "You have no permissions to see Applications."
     },
     "HTTP_STATUS_404": {
-      "ANNOUNCEMENTS": "No Announcements could be loaded.",
+      "ANNOUNCEMENT": "Announcements could not be found.",
+      "ANNOUNCEMENTS": "Announcements could not be found.",
       "ASSIGNMENTS": "No Workspaces and Applications with assigned Announcements could be loaded.",
       "WORKSPACES": "No Workspaces could be loaded.",
       "PRODUCTS": "No Applications could be loaded."
     },
     "HTTP_STATUS_500": {
+      "ANNOUNCEMENT": "Unknown server problem retrieving Announcement data - please try again.",
       "ANNOUNCEMENTS": "Unknown server problem retrieving Announcement data - please try again.",
       "ASSIGNMENTS": "Unknown server problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
       "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again.",

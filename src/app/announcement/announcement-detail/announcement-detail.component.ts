@@ -14,6 +14,7 @@ import {
   AnnouncementType,
   AnnouncementInternalAPIService
 } from 'src/app/shared/generated'
+import { ChangeMode } from '../announcement-search/announcement-search.component'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -33,21 +34,20 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   styleUrls: ['./announcement-detail.component.scss']
 })
 export class AnnouncementDetailComponent implements OnChanges {
-  @Input() public changeMode = 'CREATE'
   @Input() public displayDetailDialog = false
+  @Input() public changeMode: ChangeMode = 'CREATE'
   @Input() public announcement: Announcement | undefined
   @Input() public allWorkspaces: SelectItem[] = []
   @Input() public allProducts: SelectItem[] = []
   @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
 
-  announcementId: string | undefined
-  announcementDeleteVisible = false
+  public loading = false
+  public exceptionKey: string | undefined = undefined
   public dateFormat: string
   public timeFormat: string
-  public isLoading = false
   public displayDateRangeError = false
   // form
-  formGroup: FormGroup
+  public formGroup: FormGroup
   public typeOptions$: Observable<SelectItem[]> = of([])
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityOptions$: Observable<SelectItem[]> = of([])
@@ -70,67 +70,68 @@ export class AnnouncementDetailComponent implements OnChanges {
       appId: new FormControl(null),
       workspaceName: new FormControl(null),
       productName: new FormControl(null),
-      type: new FormControl(null),
-      priority: new FormControl(null),
-      status: new FormControl(null),
-      startDate: new FormControl(null, [Validators.required]),
+      type: new FormControl(AnnouncementType.Info, { nonNullable: true }),
+      priority: new FormControl(AnnouncementPriorityType.Normal, { nonNullable: true }),
+      status: new FormControl(AnnouncementStatus.Inactive, { nonNullable: true }),
+      startDate: new FormControl(null),
       endDate: new FormControl(null)
     })
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
     this.formGroup.controls['endDate'].addValidators([dateRangeValidator(this.formGroup)])
   }
 
-  ngOnChanges() {
+  public ngOnChanges() {
+    if (!this.displayDetailDialog) return
     this.displayDateRangeError = false
+    this.formGroup.disable()
     if (this.changeMode === 'EDIT' || this.changeMode === 'VIEW') {
-      this.announcementId = this.announcement?.id
-      this.getAnnouncement()
-      if (this.changeMode === 'VIEW') this.formGroup.disable()
+      if (!this.announcement?.id) return // id is mandatory
+      // refresh data and fill form
+      this.getAnnouncement(this.announcement.id)
+      if (this.changeMode === 'EDIT') this.formGroup.enable()
     }
     if (this.changeMode === 'CREATE') {
-      this.announcementId = undefined
-      if (this.announcement) {
-        this.fillForm() // on COPY
-      } else {
-        this.formGroup.reset()
-        this.formGroup.controls['type'].setValue(AnnouncementType.Info)
-        this.formGroup.controls['status'].setValue(AnnouncementStatus.Inactive)
-        this.formGroup.controls['priority'].setValue(AnnouncementPriorityType.Normal)
-      }
+      if (this.announcement?.id) return // error
+      this.fillForm(this.announcement) // on COPY?
+      this.formGroup.enable()
     }
   }
 
   public onDialogHide() {
     this.displayDetailDialog = false
     this.hideDialogAndChanged.emit(false)
+    this.formGroup.disable()
   }
 
   /**
    * READING data
    */
-  private getAnnouncement(): void {
-    if (this.announcementId) {
-      this.isLoading = true
-      this.announcement = undefined
-      this.announcementApi
-        .getAnnouncementById({ id: this.announcementId })
-        .pipe(finalize(() => (this.isLoading = false)))
-        .subscribe({
-          next: (item) => {
-            this.announcement = item
-            this.fillForm()
-          },
-          error: () => this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
-        })
-    }
+  private getAnnouncement(id: string): void {
+    this.loading = true
+    this.exceptionKey = undefined
+    this.announcementApi
+      .getAnnouncementById({ id: id })
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
+        next: (data) => this.fillForm(data),
+        error: (err) => {
+          this.formGroup.reset()
+          this.formGroup.disable()
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENT'
+          this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
+          console.error('getAnnouncementById', err)
+        }
+      })
   }
 
-  private fillForm(): void {
-    this.formGroup.patchValue({
-      ...this.announcement,
-      startDate: this.announcement?.startDate ? new Date(this.announcement.startDate) : null,
-      endDate: this.announcement?.endDate ? new Date(this.announcement.endDate) : null
-    })
+  private fillForm(item?: Announcement): void {
+    if (item)
+      this.formGroup.patchValue({
+        ...item,
+        startDate: item?.startDate ? new Date(item.startDate) : null,
+        endDate: item?.endDate ? new Date(item.endDate) : null
+      })
+    else this.formGroup.reset()
   }
 
   /**
@@ -138,42 +139,50 @@ export class AnnouncementDetailComponent implements OnChanges {
    */
   public onSave(): void {
     if (this.formGroup.errors?.['dateRange']) {
-      this.msgService.warning({
-        summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE'
-      })
-    } else if (this.formGroup.valid) {
-      if (this.changeMode === 'EDIT' && this.announcementId) {
-        this.announcementApi
-          .updateAnnouncementById({
-            id: this.announcementId,
-            updateAnnouncementRequest: this.submitFormValues() as UpdateAnnouncementRequest
-          })
-          .subscribe({
-            next: () => {
-              this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
-              this.hideDialogAndChanged.emit(true)
-            },
-            error: () => this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
-          })
-      } else if (this.changeMode === 'CREATE') {
-        this.announcementApi
-          .createAnnouncement({
-            createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest
-          })
-          .subscribe({
-            next: () => {
-              this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
-              this.hideDialogAndChanged.emit(true)
-            },
-            error: () => this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
-          })
-      }
+      this.msgService.warning({ summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE' })
+      return
+    }
+    if (!this.formGroup.valid) {
+      this.msgService.warning({ summaryKey: 'VALIDATION.ERRORS.INVALID_FORM' })
+      return
+    }
+    if (this.changeMode === 'EDIT') {
+      this.announcementApi
+        .updateAnnouncementById({
+          id: this.formGroup.controls['id'].value,
+          updateAnnouncementRequest: this.submitFormValues() as UpdateAnnouncementRequest
+        })
+        .subscribe({
+          next: () => {
+            this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
+            this.hideDialogAndChanged.emit(true)
+          },
+          error: (err) => {
+            this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
+            console.error('updateAnnouncementById', err)
+          }
+        })
+    }
+    if (this.changeMode === 'CREATE') {
+      this.announcementApi
+        .createAnnouncement({
+          createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest
+        })
+        .subscribe({
+          next: () => {
+            this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
+            this.hideDialogAndChanged.emit(true)
+          },
+          error: (err) => {
+            this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
+            console.error('createAnnouncement', err)
+          }
+        })
     }
   }
 
-  private submitFormValues(): any {
-    const announcement: Announcement = { ...this.formGroup.value }
-    return announcement
+  private submitFormValues(): Announcement {
+    return { ...this.formGroup.value } as Announcement
   }
 
   /****************************************************************************

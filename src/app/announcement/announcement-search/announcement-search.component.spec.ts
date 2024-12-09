@@ -280,26 +280,22 @@ describe('AnnouncementSearchComponent', () => {
 
   it('should show details of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
-    spyOn(ev, 'stopPropagation')
     const mode = 'EDIT'
 
     component.onDetail(ev, announcementData[0], mode)
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual(mode)
-    expect(component.announcement).toBe(announcementData[0])
+    expect(component.announcement).toEqual(announcementData[0])
     expect(component.displayDetailDialog).toBeTrue()
   })
 
   it('should prepare the copy of an announcement', () => {
     const ev: MouseEvent = new MouseEvent('type')
-    spyOn(ev, 'stopPropagation')
 
-    component.onCopy(ev, announcementData[0])
+    component.onDetail(ev, announcementData[0], 'COPY')
 
-    expect(ev.stopPropagation).toHaveBeenCalled()
     expect(component.changeMode).toEqual('CREATE')
-    expect(component.announcement).toBe(announcementData[0])
+    expect(component.announcement).toEqual({ ...announcementData[0], id: undefined })
     expect(component.displayDetailDialog).toBeTrue()
   })
 
