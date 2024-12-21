@@ -7,6 +7,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 
 import { AppStateService, UserService, createTranslateLoader } from '@onecx/portal-integration-angular'
+
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
 
@@ -19,7 +20,6 @@ const filledCriteria = new FormGroup<AnnouncementCriteriaForm>({
   priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
   startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
 })
-
 const emptyCriteria = new FormGroup<AnnouncementCriteriaForm>({
   title: new FormControl<string | null>(null),
   workspaceName: new FormControl<string | null>(null),
@@ -68,49 +68,49 @@ describe('AnnouncementCriteriaComponent', () => {
     expect(component).toBeTruthy()
   })
 
-  describe('onSubmitCriteria & onResetCriteria', () => {
+  describe('onSearch & onResetCriteria', () => {
     it('should search announcements without criteria', () => {
-      component.announcementCriteria = emptyCriteria
-      spyOn(component.criteriaEmitter, 'emit')
+      component.criteriaForm = emptyCriteria
+      spyOn(component.searchEmitter, 'emit')
 
-      component.onSubmitCriteria()
+      component.onSearch()
 
-      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+      expect(component.searchEmitter.emit).toHaveBeenCalled()
     })
 
     it('should search announcements with criteria', () => {
-      component.announcementCriteria = filledCriteria
-      spyOn(component.criteriaEmitter, 'emit')
+      component.criteriaForm = filledCriteria
+      spyOn(component.searchEmitter, 'emit')
 
-      component.onSubmitCriteria()
+      component.onSearch()
 
-      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+      expect(component.searchEmitter.emit).toHaveBeenCalled()
     })
 
     it('should prevent user from searching for invalid dates', () => {
-      component.announcementCriteria = filledCriteria
-      component.announcementCriteria.patchValue({ startDateRange: [new Date('2023-01-02')] })
-      spyOn(component.criteriaEmitter, 'emit')
+      component.criteriaForm = filledCriteria
+      component.criteriaForm.patchValue({ startDateRange: [new Date('2023-01-02')] })
+      spyOn(component.searchEmitter, 'emit')
 
-      component.onSubmitCriteria()
+      component.onSearch()
 
-      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+      expect(component.searchEmitter.emit).toHaveBeenCalled()
     })
 
     it('should reset search criteria', () => {
-      component.announcementCriteria = filledCriteria
-      spyOn(component.criteriaEmitter, 'emit')
+      component.criteriaForm = filledCriteria
+      spyOn(component.searchEmitter, 'emit')
 
-      component.onSubmitCriteria()
+      component.onSearch()
 
-      expect(component.criteriaEmitter.emit).toHaveBeenCalled()
+      expect(component.searchEmitter.emit).toHaveBeenCalled()
 
       spyOn(component.resetSearchEmitter, 'emit')
-      spyOn(component.announcementCriteria, 'reset')
+      spyOn(component.criteriaForm, 'reset')
 
       component.onResetCriteria()
 
-      expect(component.announcementCriteria.reset).toHaveBeenCalled()
+      expect(component.criteriaForm.reset).toHaveBeenCalled()
       expect(component.resetSearchEmitter.emit).toHaveBeenCalled()
     })
   })

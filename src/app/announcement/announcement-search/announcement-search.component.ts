@@ -4,7 +4,8 @@ import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
-import { Action, Column, PortalMessageService, UserService } from '@onecx/portal-integration-angular'
+import { UserService } from '@onecx/angular-integration-interface'
+import { Action, Column, DataViewControlTranslations, PortalMessageService } from '@onecx/portal-integration-angular'
 import {
   Announcement,
   AnnouncementAssignments,
@@ -12,7 +13,7 @@ import {
   AnnouncementSearchCriteria,
   SearchAnnouncementsRequestParams,
   WorkspaceAbstract,
-  ProductsPageResult
+  Product
 } from 'src/app/shared/generated'
 import { limitText, dropDownSortItemsByLabel } from 'src/app/shared/utils'
 
@@ -20,10 +21,9 @@ export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
 type ExtendedColumn = Column & {
   hasFilter?: boolean
   isDate?: boolean
-  isDropdown?: true
-  css?: string
+  isDropdown?: boolean
   limit?: boolean
-  needsDisplayName?: boolean
+  css?: string
 }
 type AllMetaData = {
   allProducts: SelectItem[]
@@ -39,26 +39,30 @@ type AllUsedLists = { products: SelectItem[]; workspaces: SelectItem[] }
   styleUrls: ['./announcement-search.component.scss']
 })
 export class AnnouncementSearchComponent implements OnInit {
-  @ViewChild('announcementTable', { static: false }) announcementTable: Table | undefined
-
+  // dialog
   public loading = false
   public searching = false
   public exceptionKey: string | undefined = undefined
-  public changeMode: ChangeMode = 'CREATE'
+  public changeMode: ChangeMode = 'VIEW'
   public dateFormat: string
   public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
-  public announcement: Announcement | undefined
-  public announcements$: Observable<Announcement[]> | undefined
-  public displayDeleteDialog = false
   public displayDetailDialog = false
+  public displayDeleteDialog = false
   public filteredColumns: Column[] = []
   public limitText = limitText
 
-  public allMetaData$!: Observable<AllMetaData> // collection of data used in UI
+  @ViewChild('dataTable', { static: false }) dataTable: Table | undefined
+  public dataViewControlsTranslations: DataViewControlTranslations = {}
+
+  // data
+  public data$: Observable<Announcement[]> | undefined
+  public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public allWorkspaces$!: Observable<SelectItem[]> // getting data from bff endpoint
   public allProducts$!: Observable<SelectItem[]> // getting data from bff endpoint
-  public allUsedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
+  public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
+  public item4Detail: Announcement | undefined // used on detail
+  public item4Delete: Announcement | undefined // used on deletion
 
   public columns: ExtendedColumn[] = [
     {
@@ -80,16 +84,14 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'WORKSPACE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center',
-      needsDisplayName: true
+      css: 'text-center'
     },
     {
       field: 'productName',
       header: 'PRODUCT_NAME',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center',
-      needsDisplayName: true
+      css: 'text-center'
     },
     {
       field: 'type',
@@ -128,31 +130,57 @@ export class AnnouncementSearchComponent implements OnInit {
 
   constructor(
     private readonly user: UserService,
-    private readonly announcementApi: AnnouncementInternalAPIService,
     private readonly msgService: PortalMessageService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
+    this.filteredColumns = this.columns.filter((a) => a.active === true)
   }
 
-  ngOnInit(): void {
-    this.loading = true
+  public ngOnInit(): void {
     this.prepareDataLoad()
     this.loadData()
+    this.prepareDialogTranslations()
     this.prepareActionButtons()
-    this.filteredColumns = this.columns.filter((a) => {
-      return a.active === true
-    })
   }
 
+  /**
+   * Dialog preparation
+   */
+  private prepareDialogTranslations(): void {
+    this.translate
+      .get([
+        'DIALOG.DATAVIEW.FILTER',
+        'DIALOG.DATAVIEW.FILTER_BY',
+        'ANNOUNCEMENT.TITLE',
+        'ANNOUNCEMENT.WORKSPACE',
+        'ANNOUNCEMENT.PRODUCT_NAME'
+      ])
+      .pipe(
+        map((data) => {
+          this.dataViewControlsTranslations = {
+            filterInputPlaceholder: data['DIALOG.DATAVIEW.FILTER'],
+            filterInputTooltip:
+              data['DIALOG.DATAVIEW.FILTER_BY'] +
+              data['ANNOUNCEMENT.TITLE'] +
+              ', ' +
+              data['ANNOUNCEMENT.WORKSPACE'] +
+              ', ' +
+              data['ANNOUNCEMENT.PRODUCT_NAME']
+          }
+        })
+      )
+      .subscribe()
+  }
   private prepareActionButtons(): void {
-    this.actions$ = this.translate.get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP']).pipe(
+    this.actions$ = this.translate.get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.TOOLTIP']).pipe(
       map((data) => {
         return [
           {
             label: data['ACTIONS.CREATE.LABEL'],
-            title: data['ACTIONS.CREATE.ANNOUNCEMENT.TOOLTIP'],
-            actionCallback: () => this.onCreate(),
+            title: data['ACTIONS.CREATE.TOOLTIP'],
+            actionCallback: () => this.onDetail('CREATE', undefined),
             icon: 'pi pi-plus',
             show: 'always',
             permission: 'ANNOUNCEMENT#EDIT'
@@ -163,86 +191,59 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   /****************************************************************************
-   *  SEARCH announcements
+   *  UI Events
    */
-  public onSearch(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
-    if (!reuseCriteria) {
-      if (criteria.announcementSearchCriteria.workspaceName === '')
-        criteria.announcementSearchCriteria.workspaceName = undefined
-      if (criteria.announcementSearchCriteria.productName === '')
-        criteria.announcementSearchCriteria.productName = undefined
-      this.criteria = criteria.announcementSearchCriteria
-    }
-    this.searching = true
-    this.exceptionKey = undefined
-    this.announcements$ = this.announcementApi.searchAnnouncements(criteria).pipe(
-      map((data) => data.stream ?? []),
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
-        this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MSG_SEARCH_FAILED' })
-        console.error('searchAnnouncements', err)
-        return of([] as Announcement[])
-      }),
-      finalize(() => (this.searching = false))
-    )
-  }
-
   public onCriteriaReset(): void {
     this.criteria = {}
   }
-
   public onColumnsChange(activeIds: string[]) {
     this.filteredColumns = activeIds.map((id) => this.columns.find((col) => col.field === id)) as Column[]
   }
   public onFilterChange(event: string): void {
-    this.announcementTable?.filterGlobal(event, 'contains')
+    this.dataTable?.filterGlobal(event, 'contains')
   }
 
-  /****************************************************************************
-   *  CHANGES
-   */
+  // Detail => CREATE, COPY, EDIT, VIEW
+  public onDetail(mode: ChangeMode, item: Announcement | undefined, ev?: Event): void {
+    ev?.stopPropagation()
+    this.changeMode = mode
+    this.item4Detail = item // do not manipulate the item here
+    this.displayDetailDialog = true
+  }
   public onCloseDetail(refresh: boolean): void {
     this.displayDetailDialog = false
-    this.displayDeleteDialog = false
-    this.announcement = undefined
+    this.item4Detail = undefined
     if (refresh) {
-      //this.getUsedWorkspacesAndProducts()
-      this.onSearch({ announcementSearchCriteria: {} }, true)
+      this.loadData()
     }
   }
 
-  public onCreate() {
-    this.changeMode = 'CREATE'
-    this.announcement = undefined
-    this.displayDetailDialog = true
-  }
-  public onDetail(ev: MouseEvent, item: Announcement, mode: ChangeMode): void {
+  // DELETE => Ask for confirmation
+  public onDelete(ev: Event, item: Announcement): void {
     ev.stopPropagation()
-    this.changeMode = mode === 'COPY' ? 'CREATE' : mode
-    this.announcement = { ...item, id: ['COPY', 'CREATE'].includes(mode) ? undefined : item.id }
-    this.displayDetailDialog = true
-  }
-
-  public onDelete(ev: MouseEvent, item: Announcement): void {
-    ev.stopPropagation()
-    this.announcement = item
+    this.item4Delete = item
     this.displayDeleteDialog = true
   }
-  public onDeleteConfirmation(): void {
-    if (this.announcement?.id) {
-      //const workspaceUsed = this.announcement?.workspaceName !== undefined
-      this.announcementApi.deleteAnnouncementById({ id: this.announcement?.id }).subscribe({
-        next: () => {
-          this.onCloseDetail(true)
-          //this.announcementTable?._value = this.announcementTable?._value.filter((a) => a.id !== this.announcement?.id)
-          this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-        },
-        error: (err) => {
-          console.error('deleteAnnouncementById', err)
-          this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
-        }
-      })
-    }
+  // user confirmed deletion
+  public onDeleteConfirmation(data: Announcement[]): void {
+    if (!this.item4Delete?.id) return
+    this.announcementApi.deleteAnnouncementById({ id: this.item4Delete?.id }).subscribe({
+      next: () => {
+        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
+        // remove item from data
+        data = data?.filter((d) => d.id !== this.item4Delete?.id)
+        // check remaing data if product still exists - if not then reload
+        const d = data?.filter((d) => d.productName === this.item4Delete?.productName)
+        this.item4Delete = undefined
+        this.displayDeleteDialog = false
+        if (d?.length === 0) this.loadData()
+        else this.onSearch({ announcementSearchCriteria: {} }, true)
+      },
+      error: (err) => {
+        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
+        console.error('deleteAnnouncementById', err)
+      }
+    })
   }
 
   // workspace in list of all workspaces?
@@ -264,13 +265,14 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   /****************************************************************************
-   *  SEARCHING of META DATA
-   *     used to display readable names in drop down lists and result set
+   *  SEARCHING
+   *   1. Loading META DATA used to display drop down lists => products, workspaces
+   *   2. Trigger searching data
    */
   private prepareDataLoad(): void {
-    // declare search for ALL products privided by bff
+    // declare search for ALL products provided by bff
     this.allProducts$ = this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).pipe(
-      map((data: ProductsPageResult) => {
+      map((data) => {
         const si: SelectItem[] = []
         if (data.stream) {
           for (const product of data.stream) {
@@ -296,13 +298,14 @@ export class AnnouncementSearchComponent implements OnInit {
         return si
       }),
       catchError((err) => {
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
         console.error('getAllWorkspaceNames', err)
         return of([] as SelectItem[])
       })
     )
     // declare search for used products/workspaces (used === assigned to announcement)
     // hereby SelectItem[] are prepared but with a temporary label (=> displayName)
-    this.allUsedLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
+    this.usedLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
       map((data: AnnouncementAssignments) => {
         const ul: AllUsedLists = { products: [], workspaces: [] }
         if (data.productNames)
@@ -320,8 +323,9 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   private loadData(): void {
+    this.loading = true
     const allDataLists$ = combineLatest([this.allWorkspaces$, this.allProducts$])
-    this.allMetaData$ = combineLatest([allDataLists$, this.allUsedLists$]).pipe(
+    this.metaData$ = combineLatest([allDataLists$, this.usedLists$]).pipe(
       map(([[aW, aP], aul]: [[SelectItem[], SelectItem[]], AllUsedLists]) => {
         // enrich the temporary prepared lists with display names contained in allLists
         aul.products.forEach((p) => {
@@ -330,10 +334,34 @@ export class AnnouncementSearchComponent implements OnInit {
         aul.workspaces.forEach((w) => {
           w.label = this.getDisplayNameWorkspace(w.value, aW)
         })
-        this.loading = false
-        this.onSearch({ announcementSearchCriteria: {} })
+        if (!this.exceptionKey) this.onSearch({ announcementSearchCriteria: {} })
         return { allProducts: aP, allWorkspaces: aW, usedProducts: aul.products, usedWorkspaces: aul.workspaces }
-      })
+      }),
+      finalize(() => (this.loading = false))
+    )
+  }
+  /****************************************************************************
+   *  SEARCH announcements
+   */
+  public onSearch(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
+    if (!reuseCriteria) {
+      if (criteria.announcementSearchCriteria.workspaceName === '')
+        criteria.announcementSearchCriteria.workspaceName = undefined
+      if (criteria.announcementSearchCriteria.productName === '')
+        criteria.announcementSearchCriteria.productName = undefined
+      this.criteria = criteria.announcementSearchCriteria
+    }
+    this.searching = true
+    this.exceptionKey = undefined
+    this.data$ = this.announcementApi.searchAnnouncements(criteria).pipe(
+      map((data) => data.stream ?? []),
+      catchError((err) => {
+        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+        this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
+        console.error('searchAnnouncements', err)
+        return of([] as Announcement[])
+      }),
+      finalize(() => (this.searching = false))
     )
   }
 }

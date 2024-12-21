@@ -2,9 +2,10 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { provideErrorTailorConfig, errorTailorImports } from '@ngneat/error-tailor'
+import { provideErrorTailorConfig, errorTailorImports, DefaultControlErrorComponent } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
+
 import { CalendarModule } from 'primeng/calendar'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
@@ -98,6 +99,7 @@ import { LabelResolver } from './label.resolver'
         useFactory: (i18n: TranslateService) => {
           return {
             required: () => i18n.instant('VALIDATION.ERRORS.EMPTY_REQUIRED_FIELD'),
+            //required: 'henry',
             maxlength: ({ requiredLength }) =>
               i18n.instant('VALIDATION.ERRORS.MAXIMUM_LENGTH').replace('{{chars}}', requiredLength),
             minlength: ({ requiredLength }) =>
@@ -107,6 +109,7 @@ import { LabelResolver } from './label.resolver'
         },
         deps: [TranslateService]
       },
+      controlErrorComponent: DefaultControlErrorComponent,
       //this is required because primeng calendar wraps things in an ugly way
       blurPredicate: (element: Element) => {
         return ['INPUT', 'TEXTAREA', 'SELECT', 'CUSTOM-DATE', 'P-CALENDAR', 'P-DROPDOWN'].some(

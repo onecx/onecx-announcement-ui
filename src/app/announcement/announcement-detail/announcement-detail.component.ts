@@ -34,7 +34,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   styleUrls: ['./announcement-detail.component.scss']
 })
 export class AnnouncementDetailComponent implements OnChanges {
-  @Input() public displayDetailDialog = false
+  @Input() public displayDialog = false
   @Input() public changeMode: ChangeMode = 'CREATE'
   @Input() public announcement: Announcement | undefined
   @Input() public allWorkspaces: SelectItem[] = []
@@ -63,7 +63,6 @@ export class AnnouncementDetailComponent implements OnChanges {
     this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'
     this.prepareDropDownOptions()
     this.formGroup = fb.nonNullable.group({
-      id: new FormControl(null),
       modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),
       content: new FormControl(null, [Validators.maxLength(1000)]),
@@ -81,57 +80,68 @@ export class AnnouncementDetailComponent implements OnChanges {
   }
 
   public ngOnChanges() {
-    if (!this.displayDetailDialog) return
-    this.displayDateRangeError = false
-    this.formGroup.disable()
-    if (this.changeMode === 'EDIT' || this.changeMode === 'VIEW') {
-      if (!this.announcement?.id) return // id is mandatory
-      // refresh data and fill form
-      this.getAnnouncement(this.announcement.id)
-      if (this.changeMode === 'EDIT') this.formGroup.enable()
-    }
-    if (this.changeMode === 'CREATE') {
-      if (this.announcement?.id) return // error
-      this.fillForm(this.announcement) // on COPY?
-      this.formGroup.enable()
-    }
+    if (!this.displayDialog) return
+    // matching mode and given data?
+    if ('CREATE' === this.changeMode && this.announcement) return
+    if (['EDIT', 'VIEW'].includes(this.changeMode))
+      if (!this.announcement) return
+      else this.getData(this.announcement?.id)
+    else this.prepareForm(this.announcement)
   }
 
-  public onDialogHide() {
-    this.displayDetailDialog = false
-    this.hideDialogAndChanged.emit(false)
-    this.formGroup.disable()
+  private prepareForm(data?: Announcement): void {
+    if (data) {
+      this.formGroup.patchValue(data)
+      this.formGroup.controls['startDate'].patchValue(data?.startDate ? new Date(data.startDate) : null)
+      this.formGroup.controls['endDate'].patchValue(data?.endDate ? new Date(data.endDate) : null)
+    }
+    switch (this.changeMode) {
+      case 'COPY':
+        this.formGroup.enable()
+        break
+      case 'CREATE':
+        this.formGroup.reset()
+        this.formGroup.enable()
+        break
+      case 'EDIT':
+        this.formGroup.enable()
+        break
+      case 'VIEW':
+        this.formGroup.disable()
+        break
+    }
   }
 
   /**
    * READING data
    */
-  private getAnnouncement(id: string): void {
+  private getData(id?: string): void {
+    if (!id) return
     this.loading = true
     this.exceptionKey = undefined
     this.announcementApi
       .getAnnouncementById({ id: id })
       .pipe(finalize(() => (this.loading = false)))
       .subscribe({
-        next: (data) => this.fillForm(data),
+        next: (data) => this.prepareForm(data),
         error: (err) => {
           this.formGroup.reset()
           this.formGroup.disable()
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENT'
-          this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
+          this.msgService.error({ summaryKey: this.exceptionKey })
           console.error('getAnnouncementById', err)
         }
       })
   }
 
-  private fillForm(item?: Announcement): void {
-    if (item)
-      this.formGroup.patchValue({
-        ...item,
-        startDate: item?.startDate ? new Date(item.startDate) : null,
-        endDate: item?.endDate ? new Date(item.endDate) : null
-      })
-    else this.formGroup.reset()
+  /****************************************************************************
+   *  UI Events
+   */
+  public onDialogHide() {
+    this.displayDialog = false
+    this.hideDialogAndChanged.emit(false)
+    this.formGroup.reset()
+    this.formGroup.disable()
   }
 
   /**
@@ -146,10 +156,10 @@ export class AnnouncementDetailComponent implements OnChanges {
       this.msgService.warning({ summaryKey: 'VALIDATION.ERRORS.INVALID_FORM' })
       return
     }
-    if (this.changeMode === 'EDIT') {
+    if (this.changeMode === 'EDIT' && this.announcement?.id) {
       this.announcementApi
         .updateAnnouncementById({
-          id: this.formGroup.controls['id'].value,
+          id: this.announcement?.id,
           updateAnnouncementRequest: this.submitFormValues() as UpdateAnnouncementRequest
         })
         .subscribe({

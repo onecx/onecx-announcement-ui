@@ -1,12 +1,12 @@
 <ocx-search-header
   [header]="'DIALOG.SEARCH.HEADER' | translate"
   [subheader]="'DIALOG.SEARCH.SUBHEADER' | translate"
-  (searched)="onSubmitCriteria()"
+  (searched)="onSearch()"
   (resetted)="onResetCriteria()"
   [manualBreadcrumbs]="false"
   [actions]="actions"
 >
-  <div [formGroup]="announcementCriteria" class="flex flex-wrap gap-3">
+  <div [formGroup]="criteriaForm" class="flex flex-wrap gap-3">
     <span class="p-float-label">
       <input
         id="am_search_criteria_title"
@@ -22,7 +22,7 @@
     </span>
     <span class="p-float-label">
       <p-calendar
-        inputId="announcement_search_criteria_start_date_range"
+        inputId="am_search_criteria_start_date_range"
         styleClass="w-13rem"
         selectionMode="range"
         [readonlyInput]="true"
@@ -35,7 +35,7 @@
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-calendar>
-      <label for="am_search_criteria_start_date_range"> {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label>
+      <label for="am_search_criteria_start_date_range">{{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}</label>
     </span>
     <span class="p-float-label">
       <p-dropdown
@@ -47,31 +47,31 @@
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
         [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-        ariaLabelledBy="am_search_criteria_workspace_name"
+        [ariaLabel]="'ANNOUNCEMENT.WORKSPACE' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       >
       </p-dropdown>
-      <label for="am_search_criteria_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
+      <label for="am_search_criteria_workspace_name">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</label>
     </span>
     <span class="p-float-label">
       <p-dropdown
         id="am_search_criteria_product_name"
         styleClass="w-11rem sm:w-13rem"
         formControlName="productName"
-        [options]="products"
+        [options]="usedProducts"
         [showClear]="true"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
         [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-        ariaLabelledBy="am_search_criteria_product_name"
+        [ariaLabel]="'ANNOUNCEMENT.PRODUCT_NAME' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRODUCT_NAME' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       >
       </p-dropdown>
-      <label for="am_search_criteria_product_name"> {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}</label>
+      <label for="am_search_criteria_product_name">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}</label>
     </span>
     <span *ocxAdvanced class="p-float-label">
       <p-multiSelect
