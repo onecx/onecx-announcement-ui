@@ -1,5 +1,7 @@
 {
   "ACTIONS": {
+    "LABEL": "Actions",
+    "TOOLTIP": "Actions for the data of the table row",
     "CONFIRMATION": {
       "NO": "No",
       "YES": "Yes",
@@ -8,56 +10,71 @@
     },
     "COPY": {
       "LABEL": "Copy",
-      "ANNOUNCEMENT.TOOLTIP": "Create a new Announcement with the data",
+      "TOOLTIP": "Create a new Announcement with the data",
       "CLIPBOARD": "Copy to clipboard"
     },
     "CREATE": {
       "LABEL": "Create",
-      "ANNOUNCEMENT": "Create Announcement",
-      "ANNOUNCEMENT.TOOLTIP": "Create a new Announcement",
+      "TOOLTIP": "Create a new Announcement",
       "MESSAGE": {
-        "ANNOUNCEMENT_ALREADY_EXIST": "An Announcement with that title already exists",
         "OK": "The Announcement was created successfully",
         "NOK": "An error has occurred. The Announcement was not created."
       }
     },
     "DELETE": {
       "LABEL": "Delete",
-      "ANNOUNCEMENT": "Delete Announcement",
-      "ANNOUNCEMENT.TOOLTIP": "Delete this Announcement",
-      "MESSAGE_TEXT": "Do you want to delete this?",
-      "MESSAGE_INFO": "This action cannot be undone!",
+      "TOOLTIP": "Delete Announcement",
       "MESSAGE": {
+        "TEXT": "Do you want to delete this Announcement?",
+        "INFO": "This action cannot be undone!",
         "OK": "The Announcement was deleted successfully",
         "NOK": "An error has occurred. The Announcement was not deleted."
       }
     },
     "EDIT": {
       "LABEL": "Edit",
-      "ANNOUNCEMENT": "Edit Announcement",
-      "ANNOUNCEMENT.TOOLTIP": "Edit the Announcement properties",
+      "TOOLTIP": "Edit Announcement",
       "MESSAGE": {
         "OK": "The Announcement was saved successfully",
         "NOK": "An error has occurred. The Announcement was not saved."
       }
     },
+    "EXPORT": {
+      "LABEL": "Export",
+      "TOOLTIP": "Export definition in JSON format",
+      "MESSAGE": {
+        "NOK": "An error has occurred. The Parameters could not be exported."
+      }
+    },
+    "IMPORT": {
+      "LABEL": "Import",
+      "TOOLTIP": "Upload definition in JSON format",
+      "MESSAGE": {
+        "OK": "Die Parameter wurden erfolgreich importiert.",
+        "NOK": "An error has occurred. The Parameters could not be exported."
+      }
+    },
+    "NAVIGATION": {
+      "CLOSE": "Close",
+      "CLOSE.TOOLTIP": "Close dialog",
+      "CLOSE_WITHOUT_SAVE": "Close dialog without changes",
+      "BACK": "Back",
+      "NEXT": "Next",
+      "NEXT.TOOLTIP": "Next page",
+      "BACK.TOOLTIP": "Previous page"
+    },
     "SEARCH": {
-      "ACTIONS": "Actions",
-      "LABEL": "Search",
-      "LABEL.TOOLTIP": "Start Searching",
-      "RESET": "Reset",
-      "RESET_TOOLTIP": "Clear given criteria",
       "NO_DATA": "No data",
-      "NO_RESULTS": "Search returned no results",
       "IN_PROGRESS": "Searching...",
-      "SEARCH_FAILED": "Search failed",
-      "NOT_FOUND": "No data found",
-      "OF": "of"
+      "OF": "of",
+      "MESSAGE": {
+        "NO_RESULTS": "Search returned no results",
+        "SEARCH_FAILED": "Search failed"
+      }
     },
     "VIEW": {
-      "LABEL": "Show Details",
-      "ANNOUNCEMENT": "Announcement Details",
-      "ANNOUNCEMENT.TOOLTIP": "Show the details of the Announcement"
+      "LABEL": "Details",
+      "TOOLTIP": "Announcement Details"
     },
     "CANCEL": "Cancel",
     "CHOOSE": "Choose",
@@ -77,11 +94,49 @@
       "SAVE_AS": "Save as new {{TYPE}}"
     }
   },
+  "INTERNAL": {
+    "CREATION_DATE": "Created on",
+    "CREATION_USER": "Created by",
+    "MODIFICATION_DATE": "Changed on",
+    "MODIFICATION_USER": "Changed by",
+    "OPERATOR": "Created by automation",
+    "TOOLTIPS": {
+      "CREATION_DATE": "Timestamp of the creation",
+      "CREATION_USER": "Name of the user of the creation",
+      "MODIFICATION_DATE": "Timestamp of the last change",
+      "MODIFICATION_USER": "Name of the user of the last change"
+    }
+  },
   "DIALOG": {
-    "DETAIL.ANNOUNCEMENT.PROPERTIES": "Properties",
-    "DETAIL.ANNOUNCEMENT.PROPERTIES.TOOLTIP": "Properties of the Announcement",
-    "SEARCH.HEADER": "Announcements",
-    "SEARCH.SUBHEADER": "Searching and managing of Announcements"
+    "SEARCH": {
+      "HEADER": "Announcements",
+      "SUBHEADER": "Search and manage Announcements"
+    },
+    "DETAIL": {
+      "COPY.HEADER": "Create Announcement",
+      "CREATE.HEADER": "Create Announcement",
+      "DELETE.HEADER": "Delete Announcement",
+      "EDIT.HEADER": "Edit Announcement",
+      "VIEW.HEADER": "Announcement Details",
+      "TAB": {
+        "PROPS": "Properties",
+        "CONTENT": "Content",
+        "INTERN": "Internal",
+        "TOOLTIPS": {
+          "PROPS": "Base properties of the Parameter",
+          "CONTENT": "Titel and Content of the Parameter",
+          "INTERN": "Internal Properties"
+        }
+      },
+      "CHARACTERS": "Still remaining characters"
+    },
+    "DATAVIEW": {
+      "FILTER": "Filter",
+      "FILTER_TOOLTIP": "Filter Applications",
+      "FILTER_BY": "Filter by ",
+      "FILTER_CLEAR": "Clear Filter",
+      "FILTER_PLACEHOLDER": "Filter"
+    }
   },
   "ANNOUNCEMENT": {
     "ID": "Id",
@@ -100,7 +155,7 @@
     "ALL": "All",
     "EVERY_WORKSPACE": "All",
     "EVERY_PRODUCT": "All",
-    "WORKSPACE_NOT_FOUND": "-- not found --",
+    "WORKSPACE_NOT_FOUND": "- unknown -",
     "BANNER": {
       "CLOSE": "Close",
       "WORKSPACE": "Workspace",
@@ -163,6 +218,13 @@
       "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
       "WORKSPACES": "Unknown problem retrieving Workspace data - please try again.",
       "PRODUCTS": "Unknown problem retrieving Application data - please try again."
+    },
+    "HTTP_STATUS_400": {
+      "ANNOUNCEMENT": "Your request could not be processed.",
+      "ANNOUNCEMENTS": "Your request could not be processed.",
+      "ASSIGNMENTS": "Your request could not be processed.",
+      "WORKSPACES": "Your request could not be processed.",
+      "PRODUCTS": "Your request could not be processed."
     },
     "HTTP_STATUS_401": {
       "ANNOUNCEMENT": "You are not authorized to see Announcements.",
