@@ -12,8 +12,7 @@ import {
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria,
   SearchAnnouncementsRequestParams,
-  WorkspaceAbstract,
-  Product
+  WorkspaceAbstract
 } from 'src/app/shared/generated'
 import { limitText, dropDownSortItemsByLabel } from 'src/app/shared/utils'
 

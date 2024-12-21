@@ -8,7 +8,7 @@ import { of, throwError } from 'rxjs'
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { Column, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
 
-import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
 
 const itemData: any = [
