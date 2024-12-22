@@ -175,8 +175,9 @@ describe('AnnouncementDetailComponent', () => {
         expect(console.error).toHaveBeenCalledWith('getAnnouncementById', errorResponse)
       })
     })
+
     describe('EDIT', () => {
-      it('should prepare editing/viewing an announcement - successful', () => {
+      it('should prepare editing an announcement - successful', () => {
         apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
         component.changeMode = 'EDIT'
         component.announcement = announcement
@@ -190,7 +191,7 @@ describe('AnnouncementDetailComponent', () => {
         expect(component.formGroup.controls['startDate'].value).not.toBeNull()
       })
 
-      it('should prepare editing/viewing an announcement - failed: id missed', () => {
+      it('should prepare editing an announcement - failed: id missed', () => {
         component.changeMode = 'EDIT'
         component.announcement = { ...announcement, id: undefined }
 
@@ -198,6 +199,7 @@ describe('AnnouncementDetailComponent', () => {
 
         expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
       })
+
       it('should display error if getting the announcement fails', () => {
         const errorResponse = { status: 404, statusText: 'Not Found' }
         apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => errorResponse))
@@ -389,12 +391,15 @@ describe('AnnouncementDetailComponent', () => {
   /*
    * UI ACTIONS
    */
-  it('should close the dialog', () => {
-    spyOn(component.hideDialogAndChanged, 'emit')
-    component.onDialogHide()
+  describe('Extra UI actions', () => {
+    describe('Closing dialog', () => {
+      it('should close the dialog if user triggers hiding', () => {
+        spyOn(component.hideDialogAndChanged, 'emit')
+        component.onDialogHide()
 
-    expect(component.displayDialog).toBeFalse()
-    expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+      })
+    })
   })
 
   /**

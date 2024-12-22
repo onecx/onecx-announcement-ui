@@ -61,7 +61,6 @@ export class AnnouncementDetailComponent implements OnChanges {
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'mm/dd/yy'
     this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'
-    this.prepareDropDownOptions()
     this.formGroup = fb.nonNullable.group({
       modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),
@@ -77,6 +76,8 @@ export class AnnouncementDetailComponent implements OnChanges {
     })
     this.formGroup.controls['startDate'].addValidators([Validators.required, dateRangeValidator(this.formGroup)])
     this.formGroup.controls['endDate'].addValidators([dateRangeValidator(this.formGroup)])
+    // prepare dropdown lists
+    this.prepareDropDownOptions()
   }
 
   public ngOnChanges() {
@@ -138,7 +139,6 @@ export class AnnouncementDetailComponent implements OnChanges {
    *  UI Events
    */
   public onDialogHide() {
-    this.displayDialog = false
     this.hideDialogAndChanged.emit(false)
     this.formGroup.reset()
     this.formGroup.disable()
