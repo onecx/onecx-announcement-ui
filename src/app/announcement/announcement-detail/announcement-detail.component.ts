@@ -138,10 +138,9 @@ export class AnnouncementDetailComponent implements OnChanges {
   /****************************************************************************
    *  UI Events
    */
-  public onDialogHide() {
-    this.hideDialogAndChanged.emit(false)
+  public onDialogHide(changed?: boolean) {
+    this.hideDialogAndChanged.emit(changed ?? false)
     this.formGroup.reset()
-    this.formGroup.disable()
   }
 
   /**
@@ -165,7 +164,7 @@ export class AnnouncementDetailComponent implements OnChanges {
         .subscribe({
           next: () => {
             this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
-            this.hideDialogAndChanged.emit(true)
+            this.onDialogHide(true)
           },
           error: (err) => {
             this.msgService.error({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
@@ -181,7 +180,7 @@ export class AnnouncementDetailComponent implements OnChanges {
         .subscribe({
           next: () => {
             this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
-            this.hideDialogAndChanged.emit(true)
+            this.onDialogHide(true)
           },
           error: (err) => {
             this.msgService.error({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
