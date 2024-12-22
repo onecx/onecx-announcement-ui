@@ -6,8 +6,6 @@ import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import {
-  CreateAnnouncementRequest,
-  UpdateAnnouncementRequest,
   Announcement,
   AnnouncementPriorityType,
   AnnouncementStatus,
@@ -160,7 +158,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       this.announcementApi
         .updateAnnouncementById({
           id: this.announcement?.id,
-          updateAnnouncementRequest: this.submitFormValues() as UpdateAnnouncementRequest
+          updateAnnouncementRequest: this.formGroup.value
         })
         .subscribe({
           next: () => {
@@ -176,7 +174,7 @@ export class AnnouncementDetailComponent implements OnChanges {
     if (['COPY', 'CREATE'].includes(this.changeMode)) {
       this.announcementApi
         .createAnnouncement({
-          createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest
+          createAnnouncementRequest: this.formGroup.value
         })
         .subscribe({
           next: () => {
@@ -189,10 +187,6 @@ export class AnnouncementDetailComponent implements OnChanges {
           }
         })
     }
-  }
-
-  private submitFormValues(): Announcement {
-    return { ...this.formGroup.value } as Announcement
   }
 
   /****************************************************************************
