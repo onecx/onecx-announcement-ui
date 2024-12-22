@@ -6,12 +6,8 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 import { FormControl, FormGroup } from '@angular/forms'
 
-import {
-  AppStateService,
-  createTranslateLoader,
-  PortalMessageService,
-  UserService
-} from '@onecx/portal-integration-angular'
+import { AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
 
 import {
   Announcement,
@@ -54,16 +50,11 @@ describe('AnnouncementDetailComponent', () => {
     searchProductsByCriteria: jasmine.createSpy('searchProductsByCriteria').and.returnValue(of([]))
   }
   const formGroup = new FormGroup({
-    id: new FormControl('id'),
     title: new FormControl('title'),
     workspaceName: new FormControl('workspace name'),
     productName: new FormControl('prod name')
   })
-  const mockUserService = {
-    lang$: {
-      getValue: jasmine.createSpy('getValue')
-    }
-  }
+  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -102,7 +93,7 @@ describe('AnnouncementDetailComponent', () => {
     fixture = TestBed.createComponent(AnnouncementDetailComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    component.displayDetailDialog = true
+    component.displayDialog = true
   })
 
   afterEach(() => {
@@ -115,154 +106,230 @@ describe('AnnouncementDetailComponent', () => {
 
   it('should create but not initialize if dialog is not open', () => {
     expect(component).toBeTruthy()
-    component.displayDetailDialog = false
+    component.displayDialog = false
     component.ngOnChanges()
   })
 
-  describe('ngOnChange, i.e. opening detail dialog', () => {
-    it('should prepare editing/viewing an announcement - successful', () => {
-      apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
-      component.changeMode = 'EDIT'
-      component.announcement = announcement
+  describe('ngOnChange - init form', () => {
+    describe('VIEW', () => {
+      it('should reject initializing if dialog is not open', () => {
+        apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
+        component.announcement = announcement
+        component.changeMode = 'VIEW'
+        component.displayDialog = false
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
-      expect(component.formGroup.enabled).toBeTrue()
-      expect(component.formGroup.controls['id'].value).toEqual(announcement.id)
-      expect(component.formGroup.controls['content'].value).toEqual(announcement.content)
-      expect(component.formGroup.controls['startDate'].value).not.toBeNull()
+        expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
+      })
 
-      component.changeMode = 'VIEW'
-      component.announcement = announcement
+      it('should reject initializing if data is missed', () => {
+        apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
+        component.announcement = undefined
+        component.changeMode = 'VIEW'
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
-      expect(component.formGroup.disabled).toBeTrue()
-      expect(component.formGroup.controls['id'].value).toEqual(announcement.id)
-      expect(component.formGroup.controls['title'].value).toEqual(announcement.title)
+        expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
+      })
+
+      it('should prepare viewing an announcement - successful', () => {
+        apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
+        component.announcement = announcement
+        component.changeMode = 'VIEW'
+
+        component.ngOnChanges()
+
+        expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
+        expect(component.formGroup.disabled).toBeTrue()
+        expect(component.formGroup.controls['title'].value).toBe(announcement.title)
+        expect(component.loading).toBeFalse()
+        //expect(component.productOptions).toEqual(allProductsSI)
+      })
+
+      it('should prepare viewing an announcement - failed: missing id', () => {
+        apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
+        component.announcement = { ...announcement, id: undefined }
+        component.changeMode = 'VIEW'
+
+        component.ngOnChanges()
+
+        expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
+      })
+
+      it('should prepare viewing an announcement - failed: missing permissions', () => {
+        const errorResponse = { status: 403, statusText: 'No permissions' }
+        apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => errorResponse))
+        component.announcement = announcement
+        component.changeMode = 'VIEW'
+        spyOn(component.formGroup, 'reset')
+        spyOn(console, 'error')
+
+        component.ngOnChanges()
+
+        expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
+        expect(component.formGroup.reset).toHaveBeenCalled()
+        expect(component.formGroup.disabled).toBeTrue()
+        expect(component.exceptionKey).toBe('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENT')
+        expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: component.exceptionKey })
+        expect(console.error).toHaveBeenCalledWith('getAnnouncementById', errorResponse)
+      })
     })
 
-    it('should prepare editing/viewing an announcement - failed: id missed', () => {
-      component.changeMode = 'EDIT'
-      component.announcement = { ...announcement, id: undefined }
+    describe('EDIT', () => {
+      it('should prepare editing an announcement - successful', () => {
+        apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
+        component.changeMode = 'EDIT'
+        component.announcement = announcement
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
-      expect(component.formGroup.disabled).toBeTrue()
-      expect(component.formGroup.controls['id'].value).toBeNull()
+        expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
+        expect(component.formGroup.enabled).toBeTrue()
+        expect(component.formGroup.controls['title'].value).toEqual(announcement.title)
+        expect(component.formGroup.controls['content'].value).toEqual(announcement.content)
+        expect(component.formGroup.controls['startDate'].value).not.toBeNull()
+      })
+
+      it('should prepare editing an announcement - failed: id missed', () => {
+        component.changeMode = 'EDIT'
+        component.announcement = { ...announcement, id: undefined }
+
+        component.ngOnChanges()
+
+        expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
+      })
+
+      it('should display error if getting the announcement fails', () => {
+        const errorResponse = { status: 404, statusText: 'Not Found' }
+        apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => errorResponse))
+        component.changeMode = 'EDIT'
+        component.announcement = announcement
+        spyOn(console, 'error')
+
+        component.ngOnChanges()
+
+        expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENT')
+        expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: component.exceptionKey })
+        expect(console.error).toHaveBeenCalledWith('getAnnouncementById', errorResponse)
+      })
     })
 
-    it('should prepare copying an announcement - start with data from other announcement', () => {
-      component.changeMode = 'CREATE'
-      component.announcement = announcement // stopped, id is filled
+    describe('CREATE', () => {
+      it('should prepare copying an announcement - start with data from other announcement', () => {
+        component.changeMode = 'CREATE'
+        component.announcement = announcement // will be rejected due to filled
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(component.formGroup.disabled).toBeTrue()
-      expect(component.formGroup.controls['id'].value).toBeNull() // after reset
+        expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
 
-      component.announcement = { ...announcement, id: undefined } // correct
+        component.announcement = undefined // correct
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(component.formGroup.enabled).toBeTrue()
-      expect(component.formGroup.controls['id'].value).toBeUndefined()
-      expect(component.formGroup.controls['title'].value).toEqual(announcement.title)
+        expect(component.formGroup.enabled).toBeTrue()
+        expect(component.formGroup.controls['title'].value).toEqual(null)
+      })
+
+      it('should prepare creating an announcement - start with empty form', () => {
+        component.changeMode = 'CREATE'
+        spyOn(component.formGroup, 'reset')
+
+        component.ngOnChanges()
+
+        expect(component.formGroup.reset).toHaveBeenCalled()
+        // check default values
+        expect(component.formGroup.controls['priority'].value).toEqual(AnnouncementPriorityType.Normal)
+        expect(component.formGroup.controls['status'].value).toEqual(AnnouncementStatus.Inactive)
+        expect(component.formGroup.controls['type'].value).toEqual(AnnouncementType.Info)
+      })
     })
 
-    it('should prepare copying an announcement - without date values', () => {
-      component.changeMode = 'CREATE'
-      component.announcement = { ...announcement, id: undefined, startDate: undefined, endDate: undefined }
+    describe('COPY', () => {
+      it('should prepare copying an announcement - start with data from other announcement', () => {
+        component.changeMode = 'COPY'
+        component.announcement = announcement
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(component.formGroup.enabled).toBeTrue()
-      expect(component.formGroup.controls['title'].value).toEqual(announcement.title)
-      expect(component.formGroup.controls['startDate'].value).toBeNull()
-    })
+        expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
+      })
 
-    it('should prepare creating an announcement - start with empty form', () => {
-      component.changeMode = 'CREATE'
-      spyOn(component.formGroup, 'reset')
+      it('should prepare copying an announcement - without date values', () => {
+        component.changeMode = 'COPY'
+        component.announcement = { ...announcement, id: undefined, startDate: undefined, endDate: undefined }
 
-      component.ngOnChanges()
+        component.ngOnChanges()
 
-      expect(component.formGroup.reset).toHaveBeenCalled()
-      // check default values
-      expect(component.formGroup.controls['priority'].value).toEqual(AnnouncementPriorityType.Normal)
-      expect(component.formGroup.controls['status'].value).toEqual(AnnouncementStatus.Inactive)
-      expect(component.formGroup.controls['type'].value).toEqual(AnnouncementType.Info)
-    })
-
-    it('should display error if getting the announcement fails', () => {
-      const errorResponse = { status: 404, statusText: 'Not Found' }
-      apiServiceSpy.getAnnouncementById.and.returnValue(throwError(() => errorResponse))
-      component.changeMode = 'EDIT'
-      component.announcement = announcement
-      spyOn(console, 'error')
-
-      component.ngOnChanges()
-
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.SEARCH.SEARCH_FAILED' })
-      expect(console.error).toHaveBeenCalledWith('getAnnouncementById', errorResponse)
+        expect(component.formGroup.enabled).toBeTrue()
+        expect(component.formGroup.controls['title'].value).toEqual(announcement.title)
+        expect(component.formGroup.controls['startDate'].value).toBeNull()
+      })
     })
   })
 
-  describe('onSave - creating and updating an announcement', () => {
-    it('should create an announcement', () => {
-      apiServiceSpy.createAnnouncement.and.returnValue(of({}))
-      component.changeMode = 'CREATE'
-      spyOn(component.hideDialogAndChanged, 'emit')
-      component.formGroup = formGroup
+  describe('saving', () => {
+    describe('CREATE', () => {
+      it('should create an announcement', () => {
+        apiServiceSpy.createAnnouncement.and.returnValue(of({}))
+        component.changeMode = 'CREATE'
+        spyOn(component.hideDialogAndChanged, 'emit')
+        component.formGroup = formGroup
 
-      component.onSave()
+        component.onSave()
 
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
-      expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+        expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
+        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+      })
+
+      it('should display error if creation fails', () => {
+        const errorResponse = { status: 400, statusText: 'Could not create ...' }
+        apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => errorResponse))
+        spyOn(console, 'error')
+        component.changeMode = 'CREATE'
+        component.formGroup = formGroup
+
+        component.onSave()
+
+        expect(component.formGroup.valid).toBeTrue()
+        expect(console.error).toHaveBeenCalledWith('createAnnouncement', errorResponse)
+        expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
+      })
     })
 
-    it('should display error if creation fails', () => {
-      const errorResponse = { status: 400, statusText: 'Could not create ...' }
-      apiServiceSpy.createAnnouncement.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-      component.changeMode = 'CREATE'
-      component.formGroup = formGroup
+    describe('EDIT', () => {
+      it('should update an announcement', () => {
+        apiServiceSpy.updateAnnouncementById.and.returnValue(of({}))
+        component.changeMode = 'EDIT'
+        component.announcement = announcement
+        component.formGroup = formGroup
 
-      component.onSave()
+        spyOn(component.hideDialogAndChanged, 'emit')
 
-      expect(component.formGroup.valid).toBeTrue()
-      expect(console.error).toHaveBeenCalledWith('createAnnouncement', errorResponse)
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
+        component.onSave()
+
+        expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
+        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+      })
+
+      it('should display error if update fails', () => {
+        const errorResponse = { status: 400, statusText: 'Could not update ...' }
+        apiServiceSpy.updateAnnouncementById.and.returnValue(throwError(() => errorResponse))
+        spyOn(console, 'error')
+        component.changeMode = 'EDIT'
+        component.announcement = announcement
+        component.formGroup = formGroup
+
+        component.onSave()
+
+        expect(console.error).toHaveBeenCalledWith('updateAnnouncementById', errorResponse)
+        expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
+      })
     })
+  })
 
-    it('should update an announcement', () => {
-      apiServiceSpy.updateAnnouncementById.and.returnValue(of({}))
-      component.changeMode = 'EDIT'
-      spyOn(component.hideDialogAndChanged, 'emit')
-      component.formGroup = formGroup
-
-      component.onSave()
-
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
-      expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
-    })
-
-    it('should display error if update fails', () => {
-      const errorResponse = { status: 400, statusText: 'Could not update ...' }
-      apiServiceSpy.updateAnnouncementById.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-      component.changeMode = 'EDIT'
-      component.formGroup = formGroup
-
-      component.onSave()
-
-      expect(console.error).toHaveBeenCalledWith('updateAnnouncementById', errorResponse)
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
-    })
-
+  describe('form invalid', () => {
     it('should display warning when trying to save an invalid announcement', () => {
       component.formGroup = formGroup
       component.formGroup.setErrors({ title: true })
@@ -324,12 +391,15 @@ describe('AnnouncementDetailComponent', () => {
   /*
    * UI ACTIONS
    */
-  it('should close the dialog', () => {
-    spyOn(component.hideDialogAndChanged, 'emit')
-    component.onDialogHide()
+  describe('Extra UI actions', () => {
+    describe('Closing dialog', () => {
+      it('should close the dialog if user triggers hiding', () => {
+        spyOn(component.hideDialogAndChanged, 'emit')
+        component.onDialogHide()
 
-    expect(component.displayDetailDialog).toBeFalse()
-    expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+      })
+    })
   })
 
   /**

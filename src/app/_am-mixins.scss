@@ -48,6 +48,7 @@
     }
   }
 }
+
 @mixin displaying-text-ellipsis($lines: 1) {
   text-overflow: ellipsis;
   overflow: hidden;

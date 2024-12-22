@@ -14,6 +14,6 @@
     "src/app/remotes/announcement-banner/announcement-banner.component.main.ts",
     "src/app/remotes/announcement-list-active/announcement-list-active.component.main.ts"
   ],
-  "include": ["src/**/*.d.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["src/test.ts", "src/**/*.spec.ts"]
 }

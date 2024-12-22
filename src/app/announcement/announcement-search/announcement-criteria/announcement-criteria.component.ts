@@ -31,12 +31,12 @@ export interface AnnouncementCriteriaForm {
 export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []
   @Input() public workspaces: SelectItem[] = []
-  @Input() public products: SelectItem[] = []
-  @Output() public criteriaEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
+  @Input() public usedProducts: SelectItem[] = []
+  @Output() public searchEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
   @Output() public resetSearchEmitter = new EventEmitter<boolean>()
 
   public displayCreateDialog = false
-  public announcementCriteria!: FormGroup<AnnouncementCriteriaForm>
+  public criteriaForm!: FormGroup<AnnouncementCriteriaForm>
   public dateFormatForRange: string
   public filteredTitles = []
   public type$: Observable<SelectItem[]> = of([])
@@ -51,7 +51,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.announcementCriteria = new FormGroup<AnnouncementCriteriaForm>({
+    this.criteriaForm = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
       productName: new FormControl<string | null>(null),
@@ -123,35 +123,28 @@ export class AnnouncementCriteriaComponent implements OnInit {
       )
   }
 
-  public onSubmitCriteria(): void {
+  public onSearch(): void {
     const criteriaRequest: SearchAnnouncementsRequestParams = {
       announcementSearchCriteria: {
-        title: this.announcementCriteria.value.title === null ? undefined : this.announcementCriteria.value.title,
+        title: this.criteriaForm.value.title === null ? undefined : this.criteriaForm.value.title,
         workspaceName:
-          this.announcementCriteria.value.workspaceName === null
-            ? undefined
-            : this.announcementCriteria.value.workspaceName,
-        productName:
-          this.announcementCriteria.value.productName === null
-            ? undefined
-            : this.announcementCriteria.value.productName,
-        priority:
-          this.announcementCriteria.value.priority === null ? undefined : this.announcementCriteria.value.priority?.[0],
-        status:
-          this.announcementCriteria.value.status === null ? undefined : this.announcementCriteria.value.status?.[0],
-        type: this.announcementCriteria.value.type === null ? undefined : this.announcementCriteria.value.type?.[0]
+          this.criteriaForm.value.workspaceName === null ? undefined : this.criteriaForm.value.workspaceName,
+        productName: this.criteriaForm.value.productName === null ? undefined : this.criteriaForm.value.productName,
+        priority: this.criteriaForm.value.priority === null ? undefined : this.criteriaForm.value.priority?.[0],
+        status: this.criteriaForm.value.status === null ? undefined : this.criteriaForm.value.status?.[0],
+        type: this.criteriaForm.value.type === null ? undefined : this.criteriaForm.value.type?.[0]
       }
     }
-    if (this.announcementCriteria.value.startDateRange) {
-      const dates = this.mapDateRangeToDateStrings(this.announcementCriteria.value.startDateRange)
+    if (this.criteriaForm.value.startDateRange) {
+      const dates = this.mapDateRangeToDateStrings(this.criteriaForm.value.startDateRange)
       criteriaRequest.announcementSearchCriteria.startDateFrom = dates[0]
       criteriaRequest.announcementSearchCriteria.startDateTo = dates[1]
     }
-    this.criteriaEmitter.emit(criteriaRequest)
+    this.searchEmitter.emit(criteriaRequest)
   }
 
   public onResetCriteria(): void {
-    this.announcementCriteria.reset()
+    this.criteriaForm.reset()
     this.resetSearchEmitter.emit(true)
   }
 

@@ -1,5 +1,7 @@
 {
   "ACTIONS": {
+    "LABEL": "Aktionen",
+    "TOOLTIP": "Aktionen für die Daten der Taellenzeile",
     "CONFIRMATION": {
       "NO": "Nein",
       "YES": "Ja",
@@ -8,56 +10,71 @@
     },
     "COPY": {
       "LABEL": "Kopieren",
-      "ANNOUNCEMENT.TOOLTIP": "Mit den Daten eine neue Neuigkeit anlegen",
+      "TOOLTIP": "Mit den Daten eine neue Neuigkeit anlegen",
       "CLIPBOARD": "In die Zwischenablage kopieren"
     },
     "CREATE": {
       "LABEL": "Erstellen",
-      "ANNOUNCEMENT": "Neuigkeit erstellen",
-      "ANNOUNCEMENT.TOOLTIP": "Eine neue Neuigkeit erstellen",
+      "TOOLTIP": "Eine neue Neuigkeit erstellen",
       "MESSAGE": {
-        "ANNOUNCEMENT_ALREADY_EXIST": "Eine Neuigkeit mit diesem Titel existert schon",
         "OK": "Die Neuigkeit wurde erfolgreich erstellt",
         "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeit wurde nicht erstellt."
       }
     },
     "DELETE": {
       "LABEL": "Löschen",
-      "ANNOUNCEMENT": "Neuigkeit löschen",
-      "ANNOUNCEMENT.TOOLTIP": "Diese Neuigkeit löschen",
-      "MESSAGE_TEXT": "Möchten Sie diese Neuigkeit löschen?",
-      "MESSAGE_INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
+      "TOOLTIP": "Neuigkeit löschen",
       "MESSAGE": {
+        "TEXT": "Möchten Sie diese Neuigkeit löschen?",
+        "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
         "OK": "Die Neuigkeit wurde erfolgreich gelöscht",
         "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeit wurde nicht gelöscht."
       }
     },
     "EDIT": {
       "LABEL": "Bearbeiten",
-      "ANNOUNCEMENT": "Neuigkeit bearbeiten",
-      "ANNOUNCEMENT.TOOLTIP": "Die Neuigkeit bearbeiten",
+      "TOOLTIP": "Neuigkeit bearbeiten",
       "MESSAGE": {
         "OK": "Die Neuigkeit wurde erfolgreich gespeichert",
         "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeit wurde nicht gespeichert."
       }
     },
+    "EXPORT": {
+      "LABEL": "Export",
+      "TOOLTIP": "Definition als JSON herunterladen",
+      "MESSAGE": {
+        "NOK": "Ein Fehler ist aufgetreten. Die Parameter konnten nicht exportiert werden."
+      }
+    },
+    "IMPORT": {
+      "LABEL": "Import",
+      "TOOLTIP": "Definition als JSON hochladen",
+      "MESSAGE": {
+        "OK": "Die Parameter wurden erfolgreich importiert.",
+        "NOK": "Ein Fehler ist aufgetreten. Die Parameter wurden nicht importiert."
+      }
+    },
+    "NAVIGATION": {
+      "CLOSE": "Schließen",
+      "CLOSE.TOOLTIP": "Dialog schließen",
+      "CLOSE_WITHOUT_SAVE": "Dialog ohne Änderungen schließen",
+      "BACK": "Zurück",
+      "NEXT": "Weiter",
+      "NEXT.TOOLTIP": "Nächste Seite",
+      "BACK.TOOLTIP": "Vorherige Seite"
+    },
     "SEARCH": {
-      "ACTIONS": "Aktionen",
-      "LABEL": "Suchen",
-      "LABEL.TOOLTIP": "Suche starten",
-      "RESET": "Zurücksetzen",
-      "RESET_TOOLTIP": "Suchkriterien löschen",
       "NO_DATA": "Keine Ergebnisse",
-      "NO_RESULTS": "Die Suche ergab keine Ergebnisse",
       "IN_PROGRESS": "Suche...",
-      "SEARCH_FAILED": "Die Suche ist fehlgeschlagen",
-      "NOT_FOUND": "Keine Daten gefunden",
-      "OF": "von"
+      "OF": "von",
+      "MESSAGE": {
+        "NO_RESULTS": "Die Suche ergab keine Treffer",
+        "SEARCH_FAILED": "Suche ist fehlgeschlagen"
+      }
     },
     "VIEW": {
       "LABEL": "Details",
-      "ANNOUNCEMENT": "Neuigkeit Details",
-      "ANNOUNCEMENT.TOOLTIP": "Die Details der Neuigkeit anzeigen"
+      "TOOLTIP": "Neuigkeitdetails"
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
@@ -77,11 +94,49 @@
       "SAVE_AS": "Speichern als neues {{TYPE}}"
     }
   },
+  "INTERNAL": {
+    "CREATION_DATE": "Erstellt am",
+    "CREATION_USER": "Erstellt von",
+    "MODIFICATION_DATE": "Geändert am",
+    "MODIFICATION_USER": "Geändert von",
+    "OPERATOR": "Automatisiert erstellt",
+    "TOOLTIPS": {
+      "CREATION_DATE": "Zeitpunkt der Erstellung",
+      "CREATION_USER": "Name des Benutzers der Erstellung",
+      "MODIFICATION_DATE": "Zeitpunkt der letzten Änderung",
+      "MODIFICATION_USER": "Name des Benutzers der letzten Änderung"
+    }
+  },
   "DIALOG": {
-    "DETAIL.ANNOUNCEMENT.PROPERTIES": "Eigenschaften",
-    "DETAIL.ANNOUNCEMENT.PROPERTIES.TOOLTIP": "Eigenschaften der Neuigkeit",
-    "SEARCH.HEADER": "Neuigkeiten",
-    "SEARCH.SUBHEADER": "Suchen und Verwalten von Neuigkeiten"
+    "SEARCH": {
+      "HEADER": "Neuigkeiten",
+      "SUBHEADER": "Suchen und Verwalten von Neuigkeiten"
+    },
+    "DETAIL": {
+      "COPY.HEADER": "Neuigkeit erstellen",
+      "CREATE.HEADER": "Neuigkeit erstellen",
+      "DELETE.HEADER": "Neuigkeit löschen",
+      "EDIT.HEADER": "Neuigkeit ändern",
+      "VIEW.HEADER": "Neuigkeit Details",
+      "TAB": {
+        "PROPS": "Eigenschaften",
+        "CONTENT": "Inhalt",
+        "INTERN": "Intern",
+        "TOOLTIPS": {
+          "PROPS": "Basiseigenschaften des Parameters",
+          "CONTENT": "Titel und Inhalt der Neuigkeit",
+          "INTERN": "Interne Eigenschaften"
+        }
+      },
+      "CHARACTERS": "Noch mögliche Zeichen"
+    },
+    "DATAVIEW": {
+      "FILTER": "Filter",
+      "FILTER_TOOLTIP": "...filtern",
+      "FILTER_BY": "Filter für ",
+      "FILTER_CLEAR": "Filter entfernen",
+      "FILTER_PLACEHOLDER": "Filter"
+    }
   },
   "ANNOUNCEMENT": {
     "ID": "Id",
@@ -100,7 +155,7 @@
     "ALL": "Alle",
     "EVERY_WORKSPACE": "Alle",
     "EVERY_PRODUCT": "Alle",
-    "WORKSPACE_NOT_FOUND": "-- nicht gefunden --",
+    "WORKSPACE_NOT_FOUND": "- unbekannt -",
     "BANNER": {
       "CLOSE": "Schließen",
       "WORKSPACE": "Workspace",
@@ -163,6 +218,13 @@
       "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal.",
       "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - bitte versuchen Sie es noch einmal.",
       "PRODUCTS": "Unbekanntes Problem beim Abrufen von Applikationen - bitte versuchen Sie es noch einmal."
+    },
+    "HTTP_STATUS_400": {
+      "ANNOUNCEMENT": "Ihre Anfrage konnte nicht bearbeitet werden.",
+      "ANNOUNCEMENTS": "Ihre Anfrage konnte nicht bearbeitet werden.",
+      "ASSIGNMENTS": "Ihre Anfrage konnte nicht bearbeitet werden.",
+      "WORKSPACES": "Ihre Anfrage konnte nicht bearbeitet werden.",
+      "PRODUCTS": "Ihre Anfrage konnte nicht bearbeitet werden."
     },
     "HTTP_STATUS_401": {
       "ANNOUNCEMENT": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",

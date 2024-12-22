@@ -1,6 +1,6 @@
 <p-dialog
-  [header]="'ACTIONS.' + this.changeMode + '.ANNOUNCEMENT' | translate"
-  [(visible)]="displayDetailDialog"
+  [header]="'DIALOG.DETAIL.' + this.changeMode + '.HEADER' | translate"
+  [(visible)]="displayDialog"
   (onHide)="onDialogHide()"
   [showHeader]="true"
   [baseZIndex]="10000"
@@ -67,6 +67,7 @@
             </label>
           </span>
         </div>
+
         <div class="w-full relative">
           <p-badge
             *ngIf="changeMode !== 'VIEW'"
@@ -99,12 +100,8 @@
       </div>
       <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
         <ng-template pTemplate="header">
-          <span
-            [pTooltip]="'DIALOG.DETAIL.ANNOUNCEMENT.PROPERTIES.TOOLTIP' | translate"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          >
-            {{ 'DIALOG.DETAIL.ANNOUNCEMENT.PROPERTIES' | translate }}
+          <span [pTooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.PROPS' | translate" tooltipPosition="top" tooltipEvent="hover">
+            {{ 'DIALOG.DETAIL.TAB.PROPS' | translate }}
           </span>
         </ng-template>
         <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
@@ -128,7 +125,7 @@
                   tooltipEvent="hover"
                 >
                 </p-dropdown>
-                <label for="am_detail_form_workspace_name"> {{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
+                <label for="am_detail_form_workspace_name">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
               </span>
             </div>
 
@@ -150,7 +147,7 @@
                   tooltipEvent="hover"
                 >
                 </p-dropdown>
-                <label for="am_detail_form_application_name"> {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
+                <label for="am_detail_form_application_name">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
               </span>
             </div>
           </div>
@@ -205,7 +202,7 @@
                     tooltipPosition="top"
                     tooltipEvent="hover"
                   ></p-calendar>
-                  <label for="am_detail_form_end_date"> {{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
+                  <label for="am_detail_form_end_date">{{ 'ANNOUNCEMENT.END_DATE' | translate }}</label>
                 </span>
               </div>
             </div>
