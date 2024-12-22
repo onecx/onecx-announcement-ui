@@ -82,6 +82,7 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   public ngOnChanges() {
     if (!this.displayDialog) return
+    this.exceptionKey = undefined
     // matching mode and given data?
     if ('CREATE' === this.changeMode && this.announcement) return
     if (['EDIT', 'VIEW'].includes(this.changeMode))
@@ -172,7 +173,7 @@ export class AnnouncementDetailComponent implements OnChanges {
           }
         })
     }
-    if (this.changeMode === 'CREATE') {
+    if (['COPY', 'CREATE'].includes(this.changeMode)) {
       this.announcementApi
         .createAnnouncement({
           createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest

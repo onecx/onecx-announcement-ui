@@ -78,8 +78,6 @@
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
-    "CLOSE": "Schließen",
-    "CONFIRM": "Bestätigen",
     "LOADING": "...wird geladen",
     "RELOAD": "Neuladen",
     "SAVE": "Speichern",
@@ -89,9 +87,8 @@
       "CANCEL": "Die Aktion abbrechen",
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
-      "CLOSE": "Dialog schließen",
       "SAVE": "Die Änderungen speichern",
-      "SAVE_AS": "Speichern als neues {{TYPE}}"
+      "SAVE_AS": "Speichern als neuen Parameter"
     }
   },
   "INTERNAL": {
