@@ -1,9 +1,7 @@
 <p-dialog
-  [header]="'DIALOG.DETAIL.' + this.changeMode + '.HEADER' | translate"
+  [header]="'DIALOG.DETAIL.' + changeMode + '.HEADER' | translate"
   [(visible)]="displayDialog"
   (onHide)="onDialogHide()"
-  [showHeader]="true"
-  [baseZIndex]="10000"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -285,18 +283,18 @@
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">
       <p-button
-        *ngIf="changeMode === 'VIEW'"
+        *ngIf="exceptionKey || changeMode === 'VIEW'"
         id="am_detail_action_close"
         icon="pi pi-times"
         (onClick)="onDialogHide()"
-        [label]="'ACTIONS.CLOSE' | translate"
-        [ariaLabel]="'ACTIONS.CLOSE' | translate"
-        [pTooltip]="'ACTIONS.TOOLTIPS.CLOSE' | translate"
+        [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
+        [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        *ngIf="changeMode !== 'VIEW'"
+        *ngIf="!(exceptionKey || changeMode === 'VIEW')"
         id="am_detail_action_cancel"
         icon="pi pi-times"
         (onClick)="onDialogHide()"
@@ -307,7 +305,7 @@
         tooltipEvent="hover"
       ></p-button>
       <p-button
-        *ngIf="changeMode !== 'VIEW'"
+        *ngIf="!(exceptionKey || changeMode === 'VIEW')"
         id="am_detail_action_save"
         icon="pi pi-save"
         (onClick)="onSave()"

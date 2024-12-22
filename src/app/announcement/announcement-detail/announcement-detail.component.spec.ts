@@ -2,9 +2,9 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient, HttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
-import { FormControl, FormGroup } from '@angular/forms'
 
 import { AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
@@ -19,8 +19,8 @@ import {
 import { AnnouncementDetailComponent, dateRangeValidator } from './announcement-detail.component'
 
 const announcement: Announcement = {
-  id: 'id',
   modificationCount: 0,
+  id: 'id',
   title: 'title',
   content: 'content',
   productName: 'productName',
@@ -72,15 +72,16 @@ describe('AnnouncementDetailComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        { provide: UserService, useValue: mockUserService },
         { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
-        { provide: UserService, useValue: mockUserService }
+        { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
       ]
     }).compileComponents()
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     msgServiceSpy.info.calls.reset()
     msgServiceSpy.warning.calls.reset()
+    // to spy data: reset
     apiServiceSpy.getAnnouncementById.calls.reset()
     apiServiceSpy.createAnnouncement.calls.reset()
     apiServiceSpy.updateAnnouncementById.calls.reset()
@@ -100,17 +101,19 @@ describe('AnnouncementDetailComponent', () => {
     component.formGroup.reset()
   })
 
-  it('should create', () => {
-    expect(component).toBeTruthy()
-  })
-
-  it('should create but not initialize if dialog is not open', () => {
-    expect(component).toBeTruthy()
-    component.displayDialog = false
-    component.ngOnChanges()
+  describe('construction', () => {
+    it('should create', () => {
+      expect(component).toBeTruthy()
+    })
   })
 
   describe('ngOnChange - init form', () => {
+    it('should create but not initialize if dialog is not open', () => {
+      expect(component).toBeTruthy()
+      component.displayDialog = false
+      component.ngOnChanges()
+    })
+
     describe('VIEW', () => {
       it('should reject initializing if dialog is not open', () => {
         apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
@@ -141,10 +144,9 @@ describe('AnnouncementDetailComponent', () => {
         component.ngOnChanges()
 
         expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
+        expect(component.loading).toBeFalse()
         expect(component.formGroup.disabled).toBeTrue()
         expect(component.formGroup.controls['title'].value).toBe(announcement.title)
-        expect(component.loading).toBeFalse()
-        //expect(component.productOptions).toEqual(allProductsSI)
       })
 
       it('should prepare viewing an announcement - failed: missing id', () => {
@@ -185,6 +187,7 @@ describe('AnnouncementDetailComponent', () => {
         component.ngOnChanges()
 
         expect(apiServiceSpy.getAnnouncementById).toHaveBeenCalled()
+        expect(component.loading).toBeFalse()
         expect(component.formGroup.enabled).toBeTrue()
         expect(component.formGroup.controls['title'].value).toEqual(announcement.title)
         expect(component.formGroup.controls['content'].value).toEqual(announcement.content)
@@ -239,6 +242,8 @@ describe('AnnouncementDetailComponent', () => {
         component.ngOnChanges()
 
         expect(component.formGroup.reset).toHaveBeenCalled()
+        expect(component.formGroup.enabled).toBeTrue()
+        expect(component.formGroup.controls['title'].value).toBe(null)
         // check default values
         expect(component.formGroup.controls['priority'].value).toEqual(AnnouncementPriorityType.Normal)
         expect(component.formGroup.controls['status'].value).toEqual(AnnouncementStatus.Inactive)
@@ -247,18 +252,20 @@ describe('AnnouncementDetailComponent', () => {
     })
 
     describe('COPY', () => {
-      it('should prepare copying an announcement - start with data from other announcement', () => {
+      it('should prepare copying an announcement - use data from other announcement', () => {
         component.changeMode = 'COPY'
         component.announcement = announcement
 
         component.ngOnChanges()
 
         expect(apiServiceSpy.getAnnouncementById).not.toHaveBeenCalled()
+        expect(component.formGroup.enabled).toBeTrue()
+        expect(component.formGroup.controls['title'].value).toBe(announcement.title)
       })
 
       it('should prepare copying an announcement - without date values', () => {
         component.changeMode = 'COPY'
-        component.announcement = { ...announcement, id: undefined, startDate: undefined, endDate: undefined }
+        component.announcement = { ...announcement, startDate: undefined, endDate: undefined }
 
         component.ngOnChanges()
 
@@ -269,7 +276,7 @@ describe('AnnouncementDetailComponent', () => {
     })
   })
 
-  describe('saving', () => {
+  describe('onSave - creating and updating a parameter', () => {
     describe('CREATE', () => {
       it('should create an announcement', () => {
         apiServiceSpy.createAnnouncement.and.returnValue(of({}))
@@ -293,13 +300,26 @@ describe('AnnouncementDetailComponent', () => {
         component.onSave()
 
         expect(component.formGroup.valid).toBeTrue()
-        expect(console.error).toHaveBeenCalledWith('createAnnouncement', errorResponse)
         expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.NOK' })
+        expect(console.error).toHaveBeenCalledWith('createAnnouncement', errorResponse)
       })
     })
 
+    describe('COPY', () => {
+      it('should create a parameter based on another', () => {
+        apiServiceSpy.createAnnouncement.and.returnValue(of({}))
+        component.changeMode = 'COPY'
+        spyOn(component.hideDialogAndChanged, 'emit')
+        component.formGroup = formGroup
+
+        component.onSave()
+
+        expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
+        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+      })
+    })
     describe('EDIT', () => {
-      it('should update an announcement', () => {
+      it('should update an announcement - successful', () => {
         apiServiceSpy.updateAnnouncementById.and.returnValue(of({}))
         component.changeMode = 'EDIT'
         component.announcement = announcement
@@ -323,12 +343,44 @@ describe('AnnouncementDetailComponent', () => {
 
         component.onSave()
 
-        expect(console.error).toHaveBeenCalledWith('updateAnnouncementById', errorResponse)
         expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.NOK' })
+        expect(console.error).toHaveBeenCalledWith('updateAnnouncementById', errorResponse)
       })
     })
   })
 
+  /*
+   * UI ACTIONS
+   */
+  describe('Extra UI actions', () => {
+    describe('Closing dialog', () => {
+      it('should close the dialog if user triggers hiding', () => {
+        spyOn(component.hideDialogAndChanged, 'emit')
+        component.onDialogHide()
+
+        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+      })
+    })
+  })
+
+  /**
+   * Language tests
+   */
+  it('should set a German date format', () => {
+    expect(component.dateFormat).toEqual('dd.mm.yy')
+  })
+
+  it('should set default date format', () => {
+    mockUserService.lang$.getValue.and.returnValue('en')
+    fixture = TestBed.createComponent(AnnouncementDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+    expect(component.dateFormat).toEqual('mm/dd/yy')
+  })
+
+  /**
+   * Extras
+   */
   describe('form invalid', () => {
     it('should display warning when trying to save an invalid announcement', () => {
       component.formGroup = formGroup
@@ -386,34 +438,5 @@ describe('AnnouncementDetailComponent', () => {
 
       expect(dateFormGroup.errors).toEqual(null)
     })
-  })
-
-  /*
-   * UI ACTIONS
-   */
-  describe('Extra UI actions', () => {
-    describe('Closing dialog', () => {
-      it('should close the dialog if user triggers hiding', () => {
-        spyOn(component.hideDialogAndChanged, 'emit')
-        component.onDialogHide()
-
-        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
-      })
-    })
-  })
-
-  /**
-   * Language tests
-   */
-  it('should set a German date format', () => {
-    expect(component.dateFormat).toEqual('dd.mm.yy')
-  })
-
-  it('should set default date format', () => {
-    mockUserService.lang$.getValue.and.returnValue('en')
-    fixture = TestBed.createComponent(AnnouncementDetailComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(component.dateFormat).toEqual('mm/dd/yy')
   })
 })

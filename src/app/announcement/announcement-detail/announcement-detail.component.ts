@@ -6,8 +6,6 @@ import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/portal-integration-angular'
 import {
-  CreateAnnouncementRequest,
-  UpdateAnnouncementRequest,
   Announcement,
   AnnouncementPriorityType,
   AnnouncementStatus,
@@ -82,6 +80,7 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   public ngOnChanges() {
     if (!this.displayDialog) return
+    this.exceptionKey = undefined
     // matching mode and given data?
     if ('CREATE' === this.changeMode && this.announcement) return
     if (['EDIT', 'VIEW'].includes(this.changeMode))
@@ -159,7 +158,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       this.announcementApi
         .updateAnnouncementById({
           id: this.announcement?.id,
-          updateAnnouncementRequest: this.submitFormValues() as UpdateAnnouncementRequest
+          updateAnnouncementRequest: this.formGroup.value
         })
         .subscribe({
           next: () => {
@@ -172,10 +171,10 @@ export class AnnouncementDetailComponent implements OnChanges {
           }
         })
     }
-    if (this.changeMode === 'CREATE') {
+    if (['COPY', 'CREATE'].includes(this.changeMode)) {
       this.announcementApi
         .createAnnouncement({
-          createAnnouncementRequest: this.submitFormValues() as CreateAnnouncementRequest
+          createAnnouncementRequest: this.formGroup.value
         })
         .subscribe({
           next: () => {
@@ -188,10 +187,6 @@ export class AnnouncementDetailComponent implements OnChanges {
           }
         })
     }
-  }
-
-  private submitFormValues(): Announcement {
-    return { ...this.formGroup.value } as Announcement
   }
 
   /****************************************************************************
