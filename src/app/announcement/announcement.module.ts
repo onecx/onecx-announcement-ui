@@ -2,10 +2,11 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 
-import { InitializeModuleGuard, addInitializeModuleGuard } from '@onecx/angular-integration-interface'
 import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { addInitializeModuleGuard, InitializeModuleGuard } from '@onecx/angular-integration-interface'
 
 import { SharedModule } from 'src/app/shared/shared.module'
+import { LabelResolver } from 'src/app/shared/label.resolver'
 
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
 import { AnnouncementCriteriaComponent } from './announcement-search/announcement-criteria/announcement-criteria.component'
@@ -15,13 +16,20 @@ import { OneCXAnnouncementListActiveComponent } from '../remotes/announcement-li
 const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
     component: AnnouncementSearchComponent,
-    pathMatch: 'full'
+    data: {
+      breadcrumb: 'BREADCRUMBS.SEARCH',
+      breadcrumbFn: (data: any) => `${data.labeli18n}`
+    },
+    resolve: {
+      labeli18n: LabelResolver
+    }
   },
   {
     path: 'list',
-    component: OneCXAnnouncementListActiveComponent,
-    pathMatch: 'full'
+    pathMatch: 'full',
+    component: OneCXAnnouncementListActiveComponent
   }
 ]
 @NgModule({

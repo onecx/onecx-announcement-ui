@@ -103,7 +103,7 @@
                 <a
                   *ocxIfPermission="'ANNOUNCEMENT#VIEW'"
                   tabindex="0"
-                  class="p-2 text-primary font-medium"
+                  class="p-2 text-primary font-medium cursor-pointer border-circle"
                   [id]="'am_search_table_row_' + i + '_action_view'"
                   (click)="onDetail('VIEW', rowData, $event)"
                   (keydown.enter)="onDetail('VIEW', rowData, $event)"
@@ -119,7 +119,7 @@
               <a
                 *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
                 tabindex="0"
-                class="p-2 text-primary font-medium"
+                class="p-2 text-primary font-medium cursor-pointer border-circle"
                 [id]="'am_search_table_row_' + i + '_action_edit'"
                 (click)="onDetail('EDIT', rowData, $event)"
                 (keydown.enter)="onDetail('EDIT', rowData, $event)"
@@ -134,7 +134,7 @@
               <a
                 *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
                 tabindex="0"
-                class="p-2 text-primary font-medium"
+                class="p-2 text-primary font-medium cursor-pointer border-circle"
                 [id]="'am_search_table_row_' + i + '_action_copy'"
                 (click)="onDetail('COPY', rowData, $event)"
                 (keydown.enter)="onDetail('COPY', rowData, $event)"
@@ -149,7 +149,7 @@
               <a
                 *ocxIfPermission="'ANNOUNCEMENT#DELETE'"
                 tabindex="0"
-                class="p-2 danger-action-text font-medium"
+                class="p-2 danger-action-text font-medium cursor-pointer border-circle"
                 [id]="'am_search_table_row_' + i + '_action_delete'"
                 (click)="onDelete($event, rowData)"
                 (keydown.enter)="onDelete($event, rowData)"

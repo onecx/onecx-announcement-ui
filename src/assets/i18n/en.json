@@ -91,6 +91,9 @@
       "SAVE_AS": "Save as new Announcement"
     }
   },
+  "BREADCRUMBS": {
+    "SEARCH": "Announcements"
+  },
   "INTERNAL": {
     "CREATION_DATE": "Created on",
     "CREATION_USER": "Created by",

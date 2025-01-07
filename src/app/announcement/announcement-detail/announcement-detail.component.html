@@ -20,8 +20,13 @@
     [text]="exceptionKey | translate"
   ></p-message>
 
-  <form *ngIf="!exceptionKey" [formGroup]="formGroup" errorTailor>
-    <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
+  <p-tabView *ngIf="!exceptionKey" [formGroup]="formGroup" errorTailor>
+    <p-tabPanel
+      [header]="'DIALOG.DETAIL.TAB.CONTENT' | translate"
+      [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.CONTENT' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    >
       <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
         <div class="w-full relative">
           <p-badge
@@ -52,8 +57,7 @@
                 formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'LOW'
               "
               formControlName="title"
-              rows="1"
-              [autoResize]="true"
+              rows="2"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.TITLE' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
@@ -84,8 +88,7 @@
               id="am_detail_form_content"
               class="w-full textarea-md"
               formControlName="content"
-              rows="5"
-              [autoResize]="true"
+              rows="6"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
@@ -96,12 +99,15 @@
           </span>
         </div>
       </div>
-      <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
-        <ng-template pTemplate="header">
-          <span [pTooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.PROPS' | translate" tooltipPosition="top" tooltipEvent="hover">
-            {{ 'DIALOG.DETAIL.TAB.PROPS' | translate }}
-          </span>
-        </ng-template>
+    </p-tabPanel>
+
+    <p-tabPanel
+      [header]="'DIALOG.DETAIL.TAB.PROPS' | translate"
+      [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.PROPS' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    >
+      <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
         <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
           <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
             <div class="flex-grow-1">
@@ -276,9 +282,88 @@
             </div>
           </div>
         </div>
-      </p-fieldset>
-    </div>
-  </form>
+      </div>
+    </p-tabPanel>
+
+    <!-- The internals - in case of an existing item only -->
+    <p-tabPanel
+      *ngIf="!['COPY', 'CREATE'].includes(changeMode)"
+      [header]="'DIALOG.DETAIL.TAB.INTERN' | translate"
+      [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.INTERN' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    >
+      <div class="mt-1 flex flex-column row-gap-4">
+        <!-- row 1 -->
+        <div class="flex flex-row flex-wrap gap-4">
+          <span class="flex-grow-1 sm:flex-grow-0 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_creation_date"
+              class="w-full sm:w-15rem pt-3 pb-2 text-responsive"
+              [value]="announcement?.creationDate ? (announcement?.creationDate | date: datetimeFormat) : ''"
+              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_creation_date">{{ 'INTERNAL.CREATION_DATE' | translate }}</label>
+          </span>
+          <span class="flex-grow-1 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_creation_user"
+              class="w-full pt-3 pb-2 text-responsive"
+              [value]="announcement?.creationUser"
+              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_creation_user"> {{ 'INTERNAL.CREATION_USER' | translate }} </label>
+          </span>
+        </div>
+
+        <!-- row 2 -->
+        <div class="flex flex-row flex-wrap gap-4">
+          <span class="flex-grow-1 sm:flex-grow-0 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_modification_date"
+              class="w-full sm:w-15rem pt-3 pb-2"
+              [value]="announcement?.modificationDate ? (announcement?.modificationDate | date: datetimeFormat) : ''"
+              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_modification_date">
+              {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
+            </label>
+          </span>
+          <span class="flex-grow-1 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_modification_user"
+              class="w-full pt-3 pb-2 text-responsive"
+              [value]="announcement?.modificationUser"
+              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_modification_user">
+              {{ 'INTERNAL.MODIFICATION_USER' | translate }}
+            </label>
+          </span>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
 
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">

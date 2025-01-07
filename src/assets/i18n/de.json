@@ -1,7 +1,7 @@
 {
   "ACTIONS": {
     "LABEL": "Aktionen",
-    "TOOLTIP": "Aktionen für die Daten der Taellenzeile",
+    "TOOLTIP": "Aktionen für die Daten der Tabellenzeile",
     "CONFIRMATION": {
       "NO": "Nein",
       "YES": "Ja",
@@ -90,6 +90,9 @@
       "SAVE": "Die Änderungen speichern",
       "SAVE_AS": "Speichern als neuen Parameter"
     }
+  },
+  "BREADCRUMBS": {
+    "SEARCH": "Neuigkeiten"
   },
   "INTERNAL": {
     "CREATION_DATE": "Erstellt am",

@@ -41,6 +41,7 @@ export class AnnouncementDetailComponent implements OnChanges {
 
   public loading = false
   public exceptionKey: string | undefined = undefined
+  public datetimeFormat: string
   public dateFormat: string
   public timeFormat: string
   public displayDateRangeError = false
@@ -57,6 +58,7 @@ export class AnnouncementDetailComponent implements OnChanges {
     private readonly translate: TranslateService,
     private readonly msgService: PortalMessageService
   ) {
+    this.datetimeFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'M/d/yy, hh:mm:ss a'
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'mm/dd/yy'
     this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'
     this.formGroup = fb.nonNullable.group({
