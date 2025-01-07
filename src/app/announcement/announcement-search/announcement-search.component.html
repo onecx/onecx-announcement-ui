@@ -245,6 +245,41 @@
             <div id="am_announcement_delete_announcement_title" class="px-5 text-center font-bold danger-action-text">
               {{ limitText(item4Delete?.title, 50) }}
             </div>
+            <div class="px-2 flex flex-column row-gap-1">
+              <div *ngIf="item4Delete?.status === 'ACTIVE'" class="flex flex-row column-gap-2">
+                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.STATUS' | translate }}:</div>
+                <div class="w-8 text-left font-bold danger-action-text" id="am_delete_active">
+                  {{ 'ACTIONS.CONFIRMATION.YES' | translate }}
+                </div>
+              </div>
+              <div class="flex flex-row column-gap-2">
+                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.TYPE' | translate }}:</div>
+                <div class="w-8 text-left" id="am_delete_type">
+                  {{ 'ENUMS.ANNOUNCEMENT_TYPE.' + item4Delete?.type | translate }}
+                </div>
+              </div>
+              <div class="flex flex-row column-gap-2">
+                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}:</div>
+                <div class="w-8 text-left white-space-nowrap" id="am_delete_workspace">
+                  <ng-container *ngIf="item4Delete?.workspaceName">
+                    {{ getDisplayNameWorkspace(item4Delete?.workspaceName, metaData.allWorkspaces) }}
+                  </ng-container>
+                  <ng-container *ngIf="!item4Delete?.workspaceName">
+                    {{ 'ANNOUNCEMENT.ALL' | translate }}
+                  </ng-container>
+                </div>
+              </div>
+              <div class="flex flex-row column-gap-2">
+                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}:</div>
+                <div class="w-8 text-left white-space-nowrap" id="am_delete_product_name">
+                  <ng-container *ngIf="item4Delete?.productName">
+                    {{ getDisplayNameProduct(item4Delete?.productName, metaData.allProducts) }}
+                  </ng-container>
+                  <ng-container *ngIf="!item4Delete?.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
+                </div>
+              </div>
+            </div>
+
             <div>{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
           </div>
         </div>
