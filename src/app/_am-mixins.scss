@@ -120,8 +120,8 @@
     .text-badge-right {
       display: inline-block;
       position: absolute;
-      right: -12px;
-      top: -7px;
+      right: 20px;
+      top: -10px;
     }
   }
 }
@@ -466,6 +466,22 @@
   :host ::ng-deep {
     .p-dialog .p-dialog-footer button {
       margin: 0;
+    }
+  }
+}
+
+@mixin tabview-reduce-padding {
+  :host ::ng-deep {
+    .p-tabview .p-tabview-panels {
+      padding: 1.4rem 0 0 0;
+    }
+  }
+}
+@mixin tabview-fix-color-selected-tab {
+  :host ::ng-deep {
+    // correct the background color on inital selected tab
+    .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link[aria-selected='true'] {
+      background-color: rgba(var(--primary-color-rgb), 0.12);
     }
   }
 }

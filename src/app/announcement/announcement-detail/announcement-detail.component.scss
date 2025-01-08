@@ -4,6 +4,8 @@
 @include correct-select-button;
 @include dialog-footer-buttons;
 @include dialog-non-full-size-modal;
+@include tabview-reduce-padding;
+@include tabview-fix-color-selected-tab;
 
 :host ::ng-deep {
   --input-switch-handle-off-bg: red;

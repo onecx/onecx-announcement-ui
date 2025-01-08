@@ -20,8 +20,13 @@
     [text]="exceptionKey | translate"
   ></p-message>
 
-  <form *ngIf="!exceptionKey" [formGroup]="formGroup" errorTailor>
-    <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
+  <p-tabView *ngIf="!exceptionKey" [formGroup]="formGroup" errorTailor>
+    <p-tabPanel
+      [header]="'DIALOG.DETAIL.TAB.CONTENT' | translate"
+      [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.CONTENT' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    >
       <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
         <div class="w-full relative">
           <p-badge
@@ -52,8 +57,7 @@
                 formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'LOW'
               "
               formControlName="title"
-              rows="1"
-              [autoResize]="true"
+              rows="3"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.TITLE' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
@@ -84,8 +88,7 @@
               id="am_detail_form_content"
               class="w-full textarea-md"
               formControlName="content"
-              rows="5"
-              [autoResize]="true"
+              rows="8"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
@@ -96,61 +99,23 @@
           </span>
         </div>
       </div>
-      <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
-        <ng-template pTemplate="header">
-          <span [pTooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.PROPS' | translate" tooltipPosition="top" tooltipEvent="hover">
-            {{ 'DIALOG.DETAIL.TAB.PROPS' | translate }}
-          </span>
-        </ng-template>
-        <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
-          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
-            <div class="flex-grow-1">
-              <span class="p-float-label">
-                <p-dropdown
-                  #workspaceName
-                  id="am_detail_form_workspace_name"
-                  class="input-field"
-                  styleClass="w-full"
-                  formControlName="workspaceName"
-                  [options]="allWorkspaces"
-                  [autoDisplayFirst]="true"
-                  [appendTo]="'body'"
-                  [showClear]="true"
-                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-                  ariaLabelledBy="am_detail_form_workspace_name"
-                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                >
-                </p-dropdown>
-                <label for="am_detail_form_workspace_name">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
-              </span>
-            </div>
+    </p-tabPanel>
 
-            <div class="flex-grow-1">
-              <span class="p-float-label">
-                <p-dropdown
-                  id="am_detail_form_application_name"
-                  class="input-field"
-                  styleClass="w-full"
-                  formControlName="productName"
-                  [options]="allProducts"
-                  [autoDisplayFirst]="true"
-                  [appendTo]="'body'"
-                  [showClear]="true"
-                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-                  ariaLabelledBy="am_detail_form_application_name"
-                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRODUCT_NAME' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                >
-                </p-dropdown>
-                <label for="am_detail_form_application_name">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
-              </span>
-            </div>
-          </div>
-
-          <div class="w-full flex flex-column row-gap-3 sm:row-gap-4 sm:flex-row sm:justify-content-between">
+    <p-tabPanel
+      [header]="'DIALOG.DETAIL.TAB.PROPS' | translate"
+      [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.PROPS' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    >
+      <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
+        <p-fieldset
+          [toggleable]="false"
+          [collapsed]="false"
+          styleClass="surface-100 pb-3 px-2"
+          [style]="{ 'margin-top': '-0.5rem' }"
+        >
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.ACTIVATION' | translate }} </ng-template>
+          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 sm:justify-content-between">
             <div class="py-0 px-0">
               <div>
                 <span class="p-float-label" controlErrorAnchor>
@@ -230,8 +195,64 @@
               {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
             </label>
           </div>
+        </p-fieldset>
 
-          <div class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end">
+        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.VISIBILITY' | translate }} </ng-template>
+          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
+            <div class="flex-grow-1">
+              <span class="p-float-label">
+                <p-dropdown
+                  #workspaceName
+                  id="am_detail_form_workspace_name"
+                  class="input-field"
+                  styleClass="w-full"
+                  formControlName="workspaceName"
+                  [options]="allWorkspaces"
+                  [autoDisplayFirst]="true"
+                  [appendTo]="'body'"
+                  [showClear]="true"
+                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  ariaLabelledBy="am_detail_form_workspace_name"
+                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                </p-dropdown>
+                <label for="am_detail_form_workspace_name">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
+              </span>
+            </div>
+
+            <div class="flex-grow-1">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="am_detail_form_application_name"
+                  class="input-field"
+                  styleClass="w-full"
+                  formControlName="productName"
+                  [options]="allProducts"
+                  [autoDisplayFirst]="true"
+                  [appendTo]="'body'"
+                  [showClear]="true"
+                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  ariaLabelledBy="am_detail_form_application_name"
+                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRODUCT_NAME' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                </p-dropdown>
+                <label for="am_detail_form_application_name">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
+              </span>
+            </div>
+          </div>
+        </p-fieldset>
+
+        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate }} </ng-template>
+          <div
+            class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end"
+            style="margin-top: -1rem"
+          >
             <div class="p-0 md:text-right flex flex-column md:justify-content-end">
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority"
                 >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
@@ -275,10 +296,89 @@
               ></p-selectButton>
             </div>
           </div>
+        </p-fieldset>
+      </div>
+    </p-tabPanel>
+
+    <!-- The internals - in case of an existing item only -->
+    <p-tabPanel
+      *ngIf="!['COPY', 'CREATE'].includes(changeMode)"
+      [header]="'DIALOG.DETAIL.TAB.INTERN' | translate"
+      [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.INTERN' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    >
+      <div class="mt-1 flex flex-column row-gap-4">
+        <!-- row 1 -->
+        <div class="flex flex-row flex-wrap gap-4">
+          <span class="flex-grow-1 sm:flex-grow-0 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_creation_date"
+              class="w-full sm:w-15rem pt-3 pb-2 text-responsive"
+              [value]="announcement?.creationDate ? (announcement?.creationDate | date: datetimeFormat) : ''"
+              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_creation_date">{{ 'INTERNAL.CREATION_DATE' | translate }}</label>
+          </span>
+          <span class="flex-grow-1 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_creation_user"
+              class="w-full pt-3 pb-2 text-responsive"
+              [value]="announcement?.creationUser"
+              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_creation_user"> {{ 'INTERNAL.CREATION_USER' | translate }} </label>
+          </span>
         </div>
-      </p-fieldset>
-    </div>
-  </form>
+
+        <!-- row 2 -->
+        <div class="flex flex-row flex-wrap gap-4">
+          <span class="flex-grow-1 sm:flex-grow-0 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_modification_date"
+              class="w-full sm:w-15rem pt-3 pb-2"
+              [value]="announcement?.modificationDate ? (announcement?.modificationDate | date: datetimeFormat) : ''"
+              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_modification_date">
+              {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
+            </label>
+          </span>
+          <span class="flex-grow-1 p-float-label">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="ps_app_detail_form_field_modification_user"
+              class="w-full pt-3 pb-2 text-responsive"
+              [value]="announcement?.modificationUser"
+              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="ps_app_detail_form_field_modification_user">
+              {{ 'INTERNAL.MODIFICATION_USER' | translate }}
+            </label>
+          </span>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
 
   <ng-template pTemplate="footer">
     <div class="flex flex-wrap justify-content-end gap-2 mb-1">

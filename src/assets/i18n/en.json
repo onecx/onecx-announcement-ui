@@ -91,6 +91,9 @@
       "SAVE_AS": "Save as new Announcement"
     }
   },
+  "BREADCRUMBS": {
+    "SEARCH": "Announcements"
+  },
   "INTERNAL": {
     "CREATION_DATE": "Created on",
     "CREATION_USER": "Created by",
@@ -123,7 +126,10 @@
           "PROPS": "Base properties of the Parameter",
           "CONTENT": "Titel and Content of the Parameter",
           "INTERN": "Internal Properties"
-        }
+        },
+        "VISIBILITY": "Visible to",
+        "ACTIVATION": "Activation",
+        "CLASSIFICATION": "Classification"
       },
       "CHARACTERS": "Still remaining characters"
     },
@@ -150,9 +156,7 @@
     "CONTENT": "Content",
     "DATE_RANGES_ERROR": "Invalid date ranges: The end date range should be after/equal the start date range.",
     "ALL": "All",
-    "EVERY_WORKSPACE": "All",
-    "EVERY_PRODUCT": "All",
-    "WORKSPACE_NOT_FOUND": "- unknown -",
+    "NOT_FOUND": "- unknown -",
     "BANNER": {
       "CLOSE": "Close",
       "WORKSPACE": "Workspace",

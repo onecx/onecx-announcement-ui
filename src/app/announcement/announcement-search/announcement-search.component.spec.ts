@@ -303,23 +303,13 @@ describe('AnnouncementSearchComponent', () => {
     it('should verify a workspace to be one of all workspaces', () => {
       const workspaces = [{ label: 'w1', value: 'w1' }]
 
-      let result = component.isWorkspace(workspaces[0].value, workspaces)
+      let result = component.doesItemExist(workspaces[0].value, workspaces)
 
       expect(result).toEqual(true)
 
-      result = component.isWorkspace('unknown value', workspaces)
+      result = component.doesItemExist('unknown value', workspaces)
 
       expect(result).toEqual(false)
-    })
-
-    it('should provide a translation if unknown workspace is listed', () => {
-      let key = component.getTranslationKeyForNonExistingWorkspaces('unknown workspace')
-
-      expect(key).toEqual('ANNOUNCEMENT.WORKSPACE_NOT_FOUND')
-
-      key = component.getTranslationKeyForNonExistingWorkspaces()
-
-      expect(key).toEqual('ANNOUNCEMENT.ALL')
     })
   })
 
