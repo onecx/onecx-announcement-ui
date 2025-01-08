@@ -88,7 +88,7 @@
               id="am_detail_form_content"
               class="w-full textarea-md"
               formControlName="content"
-              rows="7"
+              rows="8"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
@@ -114,56 +114,6 @@
           styleClass="surface-100 pb-3 px-2"
           [style]="{ 'margin-top': '-0.5rem' }"
         >
-          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.VISIBILITY' | translate }} </ng-template>
-          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
-            <div class="flex-grow-1">
-              <span class="p-float-label">
-                <p-dropdown
-                  #workspaceName
-                  id="am_detail_form_workspace_name"
-                  class="input-field"
-                  styleClass="w-full"
-                  formControlName="workspaceName"
-                  [options]="allWorkspaces"
-                  [autoDisplayFirst]="true"
-                  [appendTo]="'body'"
-                  [showClear]="true"
-                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-                  ariaLabelledBy="am_detail_form_workspace_name"
-                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                >
-                </p-dropdown>
-                <label for="am_detail_form_workspace_name">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
-              </span>
-            </div>
-
-            <div class="flex-grow-1">
-              <span class="p-float-label">
-                <p-dropdown
-                  id="am_detail_form_application_name"
-                  class="input-field"
-                  styleClass="w-full"
-                  formControlName="productName"
-                  [options]="allProducts"
-                  [autoDisplayFirst]="true"
-                  [appendTo]="'body'"
-                  [showClear]="true"
-                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-                  ariaLabelledBy="am_detail_form_application_name"
-                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRODUCT_NAME' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                >
-                </p-dropdown>
-                <label for="am_detail_form_application_name">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
-              </span>
-            </div>
-          </div>
-        </p-fieldset>
-
-        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
           <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.ACTIVATION' | translate }} </ng-template>
           <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 sm:justify-content-between">
             <div class="py-0 px-0">
@@ -244,6 +194,56 @@
             >
               {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
             </label>
+          </div>
+        </p-fieldset>
+
+        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.VISIBILITY' | translate }} </ng-template>
+          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
+            <div class="flex-grow-1">
+              <span class="p-float-label">
+                <p-dropdown
+                  #workspaceName
+                  id="am_detail_form_workspace_name"
+                  class="input-field"
+                  styleClass="w-full"
+                  formControlName="workspaceName"
+                  [options]="allWorkspaces"
+                  [autoDisplayFirst]="true"
+                  [appendTo]="'body'"
+                  [showClear]="true"
+                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  ariaLabelledBy="am_detail_form_workspace_name"
+                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                </p-dropdown>
+                <label for="am_detail_form_workspace_name">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }} </label>
+              </span>
+            </div>
+
+            <div class="flex-grow-1">
+              <span class="p-float-label">
+                <p-dropdown
+                  id="am_detail_form_application_name"
+                  class="input-field"
+                  styleClass="w-full"
+                  formControlName="productName"
+                  [options]="allProducts"
+                  [autoDisplayFirst]="true"
+                  [appendTo]="'body'"
+                  [showClear]="true"
+                  [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+                  ariaLabelledBy="am_detail_form_application_name"
+                  [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRODUCT_NAME' | translate"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                </p-dropdown>
+                <label for="am_detail_form_application_name">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }} </label>
+              </span>
+            </div>
           </div>
         </p-fieldset>
 
