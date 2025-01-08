@@ -205,21 +205,26 @@
                 ></span>
               </ng-container>
 
-              <ng-container
-                *ngIf="col.field === 'workspaceName' && isWorkspace(rowData.workspaceName, metaData.allWorkspaces)"
-              >
-                {{ getDisplayNameWorkspace(rowData[col.field], metaData.allWorkspaces) }}
+              <ng-container *ngIf="col.field === 'workspaceName'">
+                <ng-container *ngIf="!rowData.workspaceName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
+                <ng-container *ngIf="rowData.workspaceName">
+                  <ng-container
+                    *ngIf="doesItemExist(rowData.workspaceName, metaData.allWorkspaces); else unknown_workspace"
+                  >
+                    {{ getDisplayName(rowData[col.field], metaData.allWorkspaces) }}
+                  </ng-container>
+                  <ng-template #unknown_workspace>{{ 'ANNOUNCEMENT.NOT_FOUND' | translate }}</ng-template>
+                </ng-container>
               </ng-container>
-              <ng-container
-                *ngIf="col.field === 'workspaceName' && !isWorkspace(rowData.workspaceName, metaData.allWorkspaces)"
-              >
-                {{ getTranslationKeyForNonExistingWorkspaces(rowData.workspaceName) | translate }}
-              </ng-container>
-              <ng-container *ngIf="col.field === 'productName' && !rowData.productName">
-                {{ 'ANNOUNCEMENT.EVERY_PRODUCT' | translate }}
-              </ng-container>
+
               <ng-container *ngIf="col.field === 'productName'">
-                {{ getDisplayNameProduct(rowData[col.field], metaData.allProducts) }}
+                <ng-container *ngIf="!rowData.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
+                <ng-container *ngIf="rowData.productName">
+                  <ng-container *ngIf="doesItemExist(rowData.productName, metaData.allProducts); else unknown_product">
+                    {{ getDisplayName(rowData.productName, metaData.allProducts) }}
+                  </ng-container>
+                  <ng-template #unknown_product>{{ 'ANNOUNCEMENT.NOT_FOUND' | translate }}</ng-template>
+                </ng-container>
               </ng-container>
             </td>
           </tr>
@@ -262,7 +267,7 @@
                 <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}:</div>
                 <div class="w-8 text-left white-space-nowrap" id="am_delete_workspace">
                   <ng-container *ngIf="item4Delete?.workspaceName">
-                    {{ getDisplayNameWorkspace(item4Delete?.workspaceName, metaData.allWorkspaces) }}
+                    {{ getDisplayName(item4Delete?.workspaceName, metaData.allWorkspaces) }}
                   </ng-container>
                   <ng-container *ngIf="!item4Delete?.workspaceName">
                     {{ 'ANNOUNCEMENT.ALL' | translate }}
@@ -273,7 +278,7 @@
                 <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}:</div>
                 <div class="w-8 text-left white-space-nowrap" id="am_delete_product_name">
                   <ng-container *ngIf="item4Delete?.productName">
-                    {{ getDisplayNameProduct(item4Delete?.productName, metaData.allProducts) }}
+                    {{ getDisplayName(item4Delete?.productName, metaData.allProducts) }}
                   </ng-container>
                   <ng-container *ngIf="!item4Delete?.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
                 </div>

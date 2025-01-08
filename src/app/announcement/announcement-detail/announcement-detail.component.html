@@ -57,7 +57,7 @@
                 formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'LOW'
               "
               formControlName="title"
-              rows="2"
+              rows="3"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.TITLE' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE' | translate"
@@ -88,7 +88,7 @@
               id="am_detail_form_content"
               class="w-full textarea-md"
               formControlName="content"
-              rows="6"
+              rows="7"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
               [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CONTENT' | translate"
@@ -108,7 +108,13 @@
       tooltipEvent="hover"
     >
       <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
-        <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
+        <p-fieldset
+          [toggleable]="false"
+          [collapsed]="false"
+          styleClass="surface-100 pb-3 px-2"
+          [style]="{ 'margin-top': '-0.5rem' }"
+        >
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.VISIBILITY' | translate }} </ng-template>
           <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 column-gap-5">
             <div class="flex-grow-1">
               <span class="p-float-label">
@@ -155,8 +161,11 @@
               </span>
             </div>
           </div>
+        </p-fieldset>
 
-          <div class="w-full flex flex-column row-gap-3 sm:row-gap-4 sm:flex-row sm:justify-content-between">
+        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.ACTIVATION' | translate }} </ng-template>
+          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 sm:justify-content-between">
             <div class="py-0 px-0">
               <div>
                 <span class="p-float-label" controlErrorAnchor>
@@ -236,8 +245,14 @@
               {{ 'VALIDATION.ERRORS.INVALID_DATE_RANGE' | translate }}
             </label>
           </div>
+        </p-fieldset>
 
-          <div class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end">
+        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
+          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate }} </ng-template>
+          <div
+            class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end"
+            style="margin-top: -1rem"
+          >
             <div class="p-0 md:text-right flex flex-column md:justify-content-end">
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority"
                 >{{ 'ANNOUNCEMENT.PRIORITY' | translate }}
@@ -281,7 +296,7 @@
               ></p-selectButton>
             </div>
           </div>
-        </div>
+        </p-fieldset>
       </div>
     </p-tabPanel>
 

@@ -245,22 +245,13 @@ export class AnnouncementSearchComponent implements OnInit {
     })
   }
 
-  // workspace in list of all workspaces?
-  public isWorkspace(workspaceName: string | undefined, allWorkspaces: SelectItem[]): boolean {
-    return allWorkspaces.find((item) => item.value === workspaceName) !== undefined
+  // item in list?
+  public doesItemExist(name: string | undefined, list: SelectItem[]): boolean {
+    return list.find((item) => item.value === name) !== undefined
   }
 
-  public getDisplayNameWorkspace(name: string | undefined, allWorkspaces: SelectItem[]): string | undefined {
-    return allWorkspaces.find((item) => item.value === name)?.label ?? name
-  }
-
-  public getDisplayNameProduct(name: string | undefined, allProducts: SelectItem[]): string | undefined {
-    return allProducts.find((item) => item.value === name)?.label ?? name
-  }
-
-  // if not in list of all workspaces then get the suitable translation key
-  public getTranslationKeyForNonExistingWorkspaces(workspaceName?: string): string {
-    return workspaceName && workspaceName?.length > 0 ? 'ANNOUNCEMENT.WORKSPACE_NOT_FOUND' : 'ANNOUNCEMENT.ALL'
+  public getDisplayName(name: string | undefined, list: SelectItem[]): string | undefined {
+    return list.find((item) => item.value === name)?.label ?? name
   }
 
   /****************************************************************************
@@ -328,10 +319,10 @@ export class AnnouncementSearchComponent implements OnInit {
       map(([[aW, aP], aul]: [[SelectItem[], SelectItem[]], AllUsedLists]) => {
         // enrich the temporary prepared lists with display names contained in allLists
         aul.products.forEach((p) => {
-          p.label = this.getDisplayNameProduct(p.value, aP)
+          p.label = this.getDisplayName(p.value, aP)
         })
         aul.workspaces.forEach((w) => {
-          w.label = this.getDisplayNameWorkspace(w.value, aW)
+          w.label = this.getDisplayName(w.value, aW)
         })
         if (!this.exceptionKey) this.onSearch({ announcementSearchCriteria: {} })
         return { allProducts: aP, allWorkspaces: aW, usedProducts: aul.products, usedWorkspaces: aul.workspaces }

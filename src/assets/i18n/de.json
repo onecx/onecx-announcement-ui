@@ -126,7 +126,10 @@
           "PROPS": "Basiseigenschaften des Parameters",
           "CONTENT": "Titel und Inhalt der Neuigkeit",
           "INTERN": "Interne Eigenschaften"
-        }
+        },
+        "VISIBILITY": "Sichtbar für",
+        "ACTIVATION": "Aktivierung",
+        "CLASSIFICATION": "Klassifizierung"
       },
       "CHARACTERS": "Noch mögliche Zeichen"
     },
@@ -153,9 +156,7 @@
     "CONTENT": "Inhalt",
     "DATE_RANGES_ERROR": "Falsche Datumsbereiche: Der Bereich des Enddatums sollte nach/gleich dem Bereich des Startdatums liegen.",
     "ALL": "Alle",
-    "EVERY_WORKSPACE": "Alle",
-    "EVERY_PRODUCT": "Alle",
-    "WORKSPACE_NOT_FOUND": "- unbekannt -",
+    "NOT_FOUND": "- unbekannt -",
     "BANNER": {
       "CLOSE": "Schließen",
       "WORKSPACE": "Workspace",
