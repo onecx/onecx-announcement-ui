@@ -1,10 +1,7 @@
 <ng-container *ngIf="announcements$ | async as announcements">
-  <div
-    *ngIf="announcements.length > 0"
-    [ocxContent]="'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate"
-    class="min-height-10rem surface-200"
-  >
-    <div class="pr-2 flex flex-column row-gap-2 max-h-20rem overflow-x-hidden overflow-y-auto">
+  <div *ngIf="announcements.length > 0" class="card surface-200">
+    <div class="mb-3 sm:mb-4 font-medium text-lg">{{ 'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate }}</div>
+    <div class="px-1 flex flex-column row-gap-2 max-h-20rem overflow-x-hidden overflow-y-auto">
       <a
         *ngFor="let announcement of announcements; let i = index"
         class="announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 border-none border-bottom-1 border-solid border-gray-400 cursor-pointer"
