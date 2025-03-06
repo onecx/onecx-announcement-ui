@@ -6,10 +6,11 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 
-import { AppStateService, UserService, createTranslateLoader } from '@onecx/portal-integration-angular'
+import { UserService } from '@onecx/portal-integration-angular'
 
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
+import { createTranslateLoader } from '@onecx/angular-utils'
 
 const filledCriteria = new FormGroup<AnnouncementCriteriaForm>({
   title: new FormControl<string | null>('title'),
@@ -45,11 +46,7 @@ describe('AnnouncementCriteriaComponent', () => {
       declarations: [AnnouncementCriteriaComponent],
       imports: [
         TranslateModule.forRoot({
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-            deps: [HttpClient, AppStateService]
-          }
+          loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
         })
       ],
       schemas: [NO_ERRORS_SCHEMA],
