@@ -25,8 +25,13 @@
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/@onecx/portal-integration-angular/assets/",
+                "input": "./node_modules/@onecx/portal-integration-angular/assets/",
                 "output": "/onecx-portal-lib/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@onecx/angular-accelerator/assets/",
+                "output": "/onecx-angular-accelerator/assets/"
               }
             ],
             "styles": ["src/styles.scss"],

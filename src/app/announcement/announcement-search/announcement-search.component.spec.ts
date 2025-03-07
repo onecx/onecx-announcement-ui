@@ -5,9 +5,9 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 
-import { AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { Column, createTranslateLoader, PortalMessageService } from '@onecx/portal-integration-angular'
-
+import { UserService } from '@onecx/angular-integration-interface'
+import { Column, PortalMessageService } from '@onecx/portal-integration-angular'
+import { createTranslateLoader } from '@onecx/angular-utils'
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
 
@@ -74,11 +74,7 @@ describe('AnnouncementSearchComponent', () => {
       imports: [
         TranslateModule.forRoot({
           isolate: true,
-          loader: {
-            provide: TranslateLoader,
-            useFactory: createTranslateLoader,
-            deps: [HttpClient, AppStateService]
-          }
+          loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
         })
       ],
       schemas: [NO_ERRORS_SCHEMA],
