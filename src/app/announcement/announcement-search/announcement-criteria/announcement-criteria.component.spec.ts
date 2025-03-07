@@ -7,10 +7,10 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 
 import { UserService } from '@onecx/portal-integration-angular'
+import { createTranslateLoader } from '@onecx/angular-utils'
 
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
-import { createTranslateLoader } from '@onecx/angular-utils'
 
 const filledCriteria = new FormGroup<AnnouncementCriteriaForm>({
   title: new FormControl<string | null>('title'),
