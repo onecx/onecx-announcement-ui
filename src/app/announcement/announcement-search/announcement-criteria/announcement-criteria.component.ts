@@ -4,7 +4,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 import { Observable, map, of } from 'rxjs'
 
-import { Action, UserService } from '@onecx/portal-integration-angular'
+import { UserService } from '@onecx/angular-integration-interface'
+import { Action } from '@onecx/angular-accelerator'
 
 import {
   AnnouncementPriorityType,

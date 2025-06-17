@@ -5,7 +5,6 @@ import { TranslateLoader, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { CarouselModule } from 'primeng/carousel'
 
-import { AppStateService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
   BASE_URL,
@@ -14,12 +13,10 @@ import {
   provideTranslateServiceForRoot,
   RemoteComponentConfig
 } from '@onecx/angular-remote-components'
-import {
-  AppConfigService,
-  PortalCoreModule,
-  UserService,
-  createRemoteComponentTranslateLoader
-} from '@onecx/portal-integration-angular'
+import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
+import { createRemoteComponentTranslateLoader } from '@onecx/angular-accelerator'
+import { PortalCoreModule } from '@onecx/portal-integration-angular'
+
 import {
   Announcement,
   AnnouncementAbstract,
