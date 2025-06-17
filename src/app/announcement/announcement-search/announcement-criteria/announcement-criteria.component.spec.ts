@@ -6,7 +6,7 @@ import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
 
-import { UserService } from '@onecx/portal-integration-angular'
+import { UserService } from '@onecx/angular-integration-interface'
 import { createTranslateLoader } from '@onecx/angular-utils'
 
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'

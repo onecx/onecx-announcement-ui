@@ -4,8 +4,10 @@ import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
-import { UserService } from '@onecx/angular-integration-interface'
-import { Action, Column, DataViewControlTranslations, PortalMessageService } from '@onecx/portal-integration-angular'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { Action } from '@onecx/angular-accelerator'
+import { Column, DataViewControlTranslations } from '@onecx/portal-integration-angular'
+
 import {
   Announcement,
   AnnouncementAssignments,

@@ -8,7 +8,7 @@ import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 
 import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
-import { AppConfigService, AppStateService } from '@onecx/portal-integration-angular'
+import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
 import {
   Announcement,
   AnnouncementInternalAPIService,
