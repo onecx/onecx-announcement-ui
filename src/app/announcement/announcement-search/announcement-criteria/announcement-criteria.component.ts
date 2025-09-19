@@ -31,7 +31,7 @@ export interface AnnouncementCriteriaForm {
 })
 export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []
-  @Input() public workspaces: SelectItem[] = []
+  @Input() public usedWorkspaces: SelectItem[] = []
   @Input() public usedProducts: SelectItem[] = []
   @Output() public searchEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
   @Output() public resetSearchEmitter = new EventEmitter<boolean>()

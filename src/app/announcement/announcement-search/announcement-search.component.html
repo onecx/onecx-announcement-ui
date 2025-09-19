@@ -3,17 +3,33 @@
   permission="ANNOUNCEMENT#SEARCH"
   helpArticleId="PAGE_ANNOUNCEMENT_SEARCH"
 >
+  <!-- declare slot to get data from product store -->
+  <ocx-slot
+    *ngIf="pdIsComponentDefined$ | async"
+    [name]="pdSlotName"
+    [inputs]="{ dataType: 'products', logEnabled: false, logPrefix: 'announcement' }"
+    [outputs]="{ products: pdSlotEmitter }"
+  >
+  </ocx-slot>
+  <!-- declare slot to get data from workspace -->
+  <ocx-slot
+    *ngIf="wdIsComponentDefined$ | async"
+    [name]="wdSlotName"
+    [inputs]="{ dataType: 'workspaces', logEnabled: false, logPrefix: 'announcement' }"
+    [outputs]="{ workspaces: wdSlotEmitter }"
+  >
+  </ocx-slot>
   <app-announcement-criteria
     [actions]="(actions$ | async) ?? []"
     [usedProducts]="metaData.usedProducts ?? []"
-    [workspaces]="metaData.usedWorkspaces ?? []"
+    [usedWorkspaces]="metaData.usedWorkspaces ?? []"
     (searchEmitter)="onSearch($event)"
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
   <ocx-page-content>
     <p-message
-      *ngIf="loading"
+      *ngIf="loadingMetaData"
       id="am_search_message_loading"
       severity="info"
       styleClass="m-3 p-2"
@@ -36,7 +52,7 @@
         [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
       ></p-message>
       <p-table
-        *ngIf="!(loading || searching || exceptionKey)"
+        *ngIf="!(searching || exceptionKey)"
         #dataTable
         id="am_search_table"
         styleClass="mx-3 mb-2"

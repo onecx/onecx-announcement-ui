@@ -1,22 +1,22 @@
-import { Component, OnInit, ViewChild } from '@angular/core'
+import { Component, EventEmitter, OnInit, ViewChild } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { catchError, combineLatest, finalize, map, Observable, of } from 'rxjs'
+import { BehaviorSubject, catchError, combineLatest, finalize, map, Observable, of, switchMap } from 'rxjs'
 import { Table } from 'primeng/table'
 import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { Action } from '@onecx/angular-accelerator'
 import { Column, DataViewControlTranslations } from '@onecx/portal-integration-angular'
+import { SlotService } from '@onecx/angular-remote-components'
 
 import {
   Announcement,
   AnnouncementAssignments,
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria,
-  SearchAnnouncementsRequestParams,
-  WorkspaceAbstract
+  SearchAnnouncementsRequestParams
 } from 'src/app/shared/generated'
-import { limitText, dropDownSortItemsByLabel } from 'src/app/shared/utils'
+import { limitText } from 'src/app/shared/utils'
 
 export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
 type ExtendedColumn = Column & {
@@ -34,6 +34,35 @@ type AllMetaData = {
 }
 type AllUsedLists = { products: SelectItem[]; workspaces: SelectItem[] }
 
+export type Product = {
+  id?: string
+  name: string
+  version?: string
+  description?: string
+  imageUrl?: string
+  displayName?: string
+  classifications?: Array<string>
+  undeployed?: boolean
+  provider?: string
+  applications?: Array<any>
+}
+export type Workspace = {
+  name: string
+  displayName: string
+  description?: string
+  theme?: string
+  homePage?: string
+  baseUrl?: string
+  companyName?: string
+  phoneNumber?: string
+  rssFeedUrl?: string
+  footerLabel?: string
+  logoUrl?: string
+  mandatory?: boolean
+  operator?: boolean
+  disabled?: boolean
+}
+
 @Component({
   selector: 'app-announcement-search',
   templateUrl: './announcement-search.component.html',
@@ -41,7 +70,7 @@ type AllUsedLists = { products: SelectItem[]; workspaces: SelectItem[] }
 })
 export class AnnouncementSearchComponent implements OnInit {
   // dialog
-  public loading = false
+  public loadingMetaData = false
   public searching = false
   public exceptionKey: string | undefined = undefined
   public changeMode: ChangeMode = 'VIEW'
@@ -59,11 +88,19 @@ export class AnnouncementSearchComponent implements OnInit {
   // data
   public data$: Observable<Announcement[]> | undefined
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
-  public allWorkspaces$!: Observable<SelectItem[]> // getting data from bff endpoint
-  public allProducts$!: Observable<SelectItem[]> // getting data from bff endpoint
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
+  public usedListsTrigger$ = new BehaviorSubject<AllUsedLists | undefined>(undefined) // trigger for refresh data
   public item4Detail: Announcement | undefined // used on detail
   public item4Delete: Announcement | undefined // used on deletion
+  // slot configurations
+  public pdSlotName = 'onecx-product-data'
+  public pdSlotEmitter = new EventEmitter<Product[]>()
+  public pdIsComponentDefined$: Observable<boolean> | undefined // check
+  public productData$ = new BehaviorSubject<Product[] | undefined>(undefined) // product data
+  public wdSlotName = 'onecx-workspace-data'
+  public wdSlotEmitter = new EventEmitter<Workspace[]>()
+  public wdIsComponentDefined$: Observable<boolean> | undefined // check
+  public workspaceData$ = new BehaviorSubject<Workspace[] | undefined>(undefined) // product data
 
   public columns: ExtendedColumn[] = [
     {
@@ -131,17 +168,22 @@ export class AnnouncementSearchComponent implements OnInit {
 
   constructor(
     private readonly user: UserService,
+    private readonly slotService: SlotService,
     private readonly msgService: PortalMessageService,
     private readonly translate: TranslateService,
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
     this.filteredColumns = this.columns.filter((a) => a.active === true)
+    this.pdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.pdSlotName)
+    this.wdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.wdSlotName)
   }
 
   public ngOnInit(): void {
-    this.prepareDataLoad()
-    this.loadData()
+    this.pdSlotEmitter.subscribe(this.productData$)
+    this.wdSlotEmitter.subscribe(this.workspaceData$)
+    this.loadMetaData()
+    this.onSearch({ announcementSearchCriteria: {} })
     this.prepareDialogTranslations()
     this.prepareActionButtons()
   }
@@ -215,7 +257,8 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDetailDialog = false
     this.item4Detail = undefined
     if (refresh) {
-      this.loadData()
+      this.usedListsTrigger$.next(undefined)
+      this.onSearch({ announcementSearchCriteria: {} }, true)
     }
   }
 
@@ -228,17 +271,18 @@ export class AnnouncementSearchComponent implements OnInit {
   // user confirmed deletion
   public onDeleteConfirmation(data: Announcement[]): void {
     if (!this.item4Delete?.id) return
-    this.announcementApi.deleteAnnouncementById({ id: this.item4Delete?.id }).subscribe({
+    this.announcementApi.deleteAnnouncementById({ id: this.item4Delete.id }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
         // remove item from data
         data = data?.filter((d) => d.id !== this.item4Delete?.id)
-        // check remaing data if product still exists - if not then reload
-        const d = data?.filter((d) => d.productName === this.item4Delete?.productName)
-        this.item4Delete = undefined
+        this.data$ = of(data)
+        // check remaining data: if product still exists - if not then trigger reload
+        if (!data?.find((d) => d.productName === this.item4Delete?.productName)) {
+          this.usedListsTrigger$.next(undefined)
+        }
         this.displayDeleteDialog = false
-        if (d?.length === 0) this.loadData()
-        else this.onSearch({ announcementSearchCriteria: {} }, true)
+        this.item4Delete = undefined
       },
       error: (err) => {
         this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
@@ -247,91 +291,73 @@ export class AnnouncementSearchComponent implements OnInit {
     })
   }
 
-  // item in list?
+  // Is item in list? ... used in HTML to display 'unknown item' if item is not longer in list
   public doesItemExist(name: string | undefined, list: SelectItem[]): boolean {
     return list.find((item) => item.value === name) !== undefined
   }
 
-  public getDisplayName(name: string | undefined, list: SelectItem[]): string | undefined {
-    return list.find((item) => item.value === name)?.label ?? name
+  public getDisplayName(name: string | undefined, list: SelectItem[] | undefined): string | undefined {
+    return list?.find((item) => item.value === name)?.label ?? name
   }
 
   /****************************************************************************
    *  SEARCHING
-   *   1. Loading META DATA used to display drop down lists => products, workspaces
-   *   2. Trigger searching data
+   *   loadMetaData declares the requests to getting data ...
+   *    ...to fill drop down lists => products, workspaces
    */
-  private prepareDataLoad(): void {
-    // declare search for ALL products provided by bff
-    this.allProducts$ = this.announcementApi.getAllProductNames({ productsSearchCriteria: {} }).pipe(
-      map((data) => {
-        const si: SelectItem[] = []
-        if (data.stream) {
-          for (const product of data.stream) {
-            si.push({ label: product.displayName, value: product.name })
-          }
-          si.sort(dropDownSortItemsByLabel)
-        }
-        return si
-      }),
-      catchError((err) => {
-        console.error('getAllProductNames', err)
-        return of([] as SelectItem[])
-      })
-    )
-    // declare search for ALL workspaces provided by bff
-    this.allWorkspaces$ = this.announcementApi.getAllWorkspaceNames().pipe(
-      map((workspaces: WorkspaceAbstract[]) => {
-        const si: SelectItem[] = []
-        for (const workspace of workspaces) {
-          if (workspace.displayName) si.push({ label: workspace.displayName, value: workspace.name })
-        }
-        si.sort(dropDownSortItemsByLabel)
-        return si
-      }),
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.WORKSPACES'
-        console.error('getAllWorkspaceNames', err)
-        return of([] as SelectItem[])
-      })
-    )
+  private loadMetaData(): void {
     // declare search for used products/workspaces (used === assigned to announcement)
-    // hereby SelectItem[] are prepared but with a temporary label (=> displayName)
-    this.usedLists$ = this.announcementApi.getAllAnnouncementAssignments().pipe(
-      map((data: AnnouncementAssignments) => {
-        const ul: AllUsedLists = { products: [], workspaces: [] }
-        if (data.productNames)
-          ul.products = data.productNames.map((name) => ({ label: name, value: name }) as SelectItem)
-        if (data.workspaceNames)
-          ul.workspaces = data.workspaceNames.map((name) => ({ label: name, value: name }) as SelectItem)
-        return ul
-      }),
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
-        console.error('getAllAnnouncementAssignments', err)
-        return of({ products: [], workspaces: [] } as AllUsedLists)
+    // hereby SelectItem[] are prepared without displayName (updated later by combineLatest)
+    this.usedLists$ = this.usedListsTrigger$.pipe(
+      switchMap(() =>
+        this.announcementApi.getAllAnnouncementAssignments().pipe(
+          map((data: AnnouncementAssignments) => {
+            const ul: AllUsedLists = { products: [], workspaces: [] }
+            if (data.productNames)
+              ul.products = data.productNames.map((name) => ({ label: name, value: name }) as SelectItem)
+            if (data.workspaceNames)
+              ul.workspaces = data.workspaceNames.map((name) => ({ label: name, value: name }) as SelectItem)
+            return ul
+          }),
+          catchError((err) => {
+            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+            console.error('getAllAnnouncementAssignments', err)
+            return of({ products: [], workspaces: [] })
+          })
+        )
+      )
+    )
+
+    this.loadingMetaData = true
+    // master data from slots:
+    const allMasterData$ = combineLatest([this.workspaceData$, this.productData$])
+    // combine master data with used data (enrich them with correct display names)
+    this.metaData$ = combineLatest([allMasterData$, this.usedLists$]).pipe(
+      map(([[aW, aP], aul]: [[Workspace[] | undefined, Product[] | undefined], AllUsedLists]) => {
+        // enrich the used lists with display names taken from master data (allLists)
+        let allP: SelectItem[] | undefined = undefined
+        if (aP) {
+          allP = []
+          aP.forEach((p) => allP?.push({ label: p.displayName, value: p.name }))
+          aul.products.forEach((p) => (p.label = this.getDisplayName(p.value, allP)))
+        }
+        let allW: SelectItem[] | undefined = undefined
+        if (aW) {
+          allW = []
+          aW.forEach((w) => allW?.push({ label: w.displayName, value: w.name }))
+          aul.workspaces.forEach((w) => (w.label = this.getDisplayName(w.value, allW)))
+        }
+        this.loadingMetaData = false
+        return {
+          allProducts: allP ?? aul.products,
+          allWorkspaces: allW ?? aul.workspaces,
+          usedProducts: aul.products,
+          usedWorkspaces: aul.workspaces
+        }
       })
     )
   }
 
-  private loadData(): void {
-    this.loading = true
-    const allDataLists$ = combineLatest([this.allWorkspaces$, this.allProducts$])
-    this.metaData$ = combineLatest([allDataLists$, this.usedLists$]).pipe(
-      map(([[aW, aP], aul]: [[SelectItem[], SelectItem[]], AllUsedLists]) => {
-        // enrich the temporary prepared lists with display names contained in allLists
-        aul.products.forEach((p) => {
-          p.label = this.getDisplayName(p.value, aP)
-        })
-        aul.workspaces.forEach((w) => {
-          w.label = this.getDisplayName(w.value, aW)
-        })
-        if (!this.exceptionKey) this.onSearch({ announcementSearchCriteria: {} })
-        return { allProducts: aP, allWorkspaces: aW, usedProducts: aul.products, usedWorkspaces: aul.workspaces }
-      }),
-      finalize(() => (this.loading = false))
-    )
-  }
   /****************************************************************************
    *  SEARCH announcements
    */
@@ -351,7 +377,7 @@ export class AnnouncementSearchComponent implements OnInit {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
         console.error('searchAnnouncements', err)
-        return of([] as Announcement[])
+        return of([])
       }),
       finalize(() => (this.searching = false))
     )
