@@ -329,26 +329,26 @@ export class AnnouncementSearchComponent implements OnInit {
     this.loadingMetaData = true
     // combine master data with used data (enrich them with correct display names)
     this.metaData$ = combineLatest([this.workspaceData$, this.productData$, this.usedLists$]).pipe(
-      map(([aW, aP, aul]: [Workspace[] | undefined, Product[] | undefined, AllUsedLists]) => {
+      map(([workspaces, products, usedLists]: [Workspace[] | undefined, Product[] | undefined, AllUsedLists]) => {
         // enrich the used lists with display names taken from master data (allLists)
-        let allP: SelectItem[] | undefined = undefined
-        if (aP) {
-          allP = []
-          aP.forEach((p) => allP?.push({ label: p.displayName, value: p.name }))
-          aul.products.forEach((p) => (p.label = this.getDisplayName(p.value, allP)))
+        let allProducts: SelectItem[] | undefined = undefined
+        if (products) {
+          allProducts = []
+          products.forEach((p) => allProducts?.push({ label: p.displayName, value: p.name }))
+          usedLists.products.forEach((p) => (p.label = this.getDisplayName(p.value, allProducts)))
         }
-        let allW: SelectItem[] | undefined = undefined
-        if (aW) {
-          allW = []
-          aW.forEach((w) => allW?.push({ label: w.displayName, value: w.name }))
-          aul.workspaces.forEach((w) => (w.label = this.getDisplayName(w.value, allW)))
+        let allWorkspaces: SelectItem[] | undefined = undefined
+        if (workspaces) {
+          allWorkspaces = []
+          workspaces.forEach((w) => allWorkspaces?.push({ label: w.displayName, value: w.name }))
+          usedLists.workspaces.forEach((w) => (w.label = this.getDisplayName(w.value, allWorkspaces)))
         }
         this.loadingMetaData = false
         return {
-          allProducts: allP ?? aul.products,
-          allWorkspaces: allW ?? aul.workspaces,
-          usedProducts: aul.products,
-          usedWorkspaces: aul.workspaces
+          allProducts: allProducts ?? usedLists.products,
+          allWorkspaces: allWorkspaces ?? usedLists.workspaces,
+          usedProducts: usedLists.products,
+          usedWorkspaces: usedLists.workspaces
         }
       })
     )
