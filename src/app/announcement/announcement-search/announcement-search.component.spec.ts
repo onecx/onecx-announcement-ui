@@ -59,13 +59,11 @@ describe('AnnouncementSearchComponent', () => {
 
   const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
-  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
     deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
-    getAllAnnouncementAssignments: jasmine.createSpy('getAllAnnouncementAssignments').and.returnValue(of({})),
-    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([])),
-    getAllProductNames: jasmine.createSpy('getAllProductNames').and.returnValue(of([]))
+    getAllAnnouncementAssignments: jasmine.createSpy('getAllAnnouncementAssignments').and.returnValue(of({}))
   }
 
   beforeEach(waitForAsync(() => {
@@ -88,21 +86,16 @@ describe('AnnouncementSearchComponent', () => {
     }).compileComponents()
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
-    msgServiceSpy.info.calls.reset()
     translateServiceSpy.get.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
     // to spy data: reset
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
     apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
-    apiServiceSpy.getAllProductNames.calls.reset()
-    apiServiceSpy.getAllWorkspaceNames.calls.reset()
     // to spy data: refill with neutral data
     apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of({}))
-    apiServiceSpy.getAllProductNames.and.returnValue(of([]))
-    apiServiceSpy.getAllWorkspaceNames.and.returnValue(of([]))
   }))
 
   beforeEach(() => {
@@ -127,7 +120,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should search announcements without search criteria', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: itemData }))
 
-      component.onSearch({ announcementSearchCriteria: {} })
+      component.onSearch({})
 
       component.data$!.subscribe({
         next: (data) => {
@@ -142,7 +135,7 @@ describe('AnnouncementSearchComponent', () => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [itemData[1]] }))
       component.criteria = { workspaceName: 'ADMIN' }
 
-      component.onSearch({ announcementSearchCriteria: component.criteria }, false)
+      component.onSearch(component.criteria, false)
 
       component.data$!.subscribe({
         next: (data) => {
@@ -158,7 +151,7 @@ describe('AnnouncementSearchComponent', () => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [itemData[1]] }))
       component.criteria = { workspaceName: 'ADMIN' }
 
-      component.onSearch({ announcementSearchCriteria: component.criteria }, true)
+      component.onSearch(component.criteria, true)
 
       component.data$!.subscribe({
         next: (data) => {
@@ -178,7 +171,7 @@ describe('AnnouncementSearchComponent', () => {
       const errorResponse = { status: '403', statusText: 'Not authorized' }
       apiServiceSpy.searchAnnouncements.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
-      component.onSearch({ announcementSearchCriteria: {} })
+      component.onSearch({})
 
       component.data$!.subscribe({
         next: (data) => {
@@ -203,7 +196,7 @@ describe('AnnouncementSearchComponent', () => {
       const newCriteria = { workspaceName: '', productName: '', title: 'new title' }
       const reuseCriteria = false
 
-      component.onSearch({ announcementSearchCriteria: newCriteria }, reuseCriteria)
+      component.onSearch(newCriteria, reuseCriteria)
 
       expect(component.criteria).toEqual(newCriteria)
     })
@@ -213,7 +206,7 @@ describe('AnnouncementSearchComponent', () => {
       component.criteria = { title: 'A*' }
       const reuseCriteria = false
 
-      component.onSearch({ announcementSearchCriteria: component.criteria }, reuseCriteria)
+      component.onSearch(component.criteria, reuseCriteria)
 
       component.data$!.subscribe({
         next: (data) => {
@@ -222,6 +215,18 @@ describe('AnnouncementSearchComponent', () => {
         },
         error: done.fail
       })
+    })
+
+    it('should item exists in list', () => {
+      const die = component.doesItemExist('name', [{ label: 'Name', value: 'name' }])
+
+      expect(die).toBeTrue()
+    })
+
+    it('should item not exists in list', () => {
+      const die = component.doesItemExist('name', [{ label: 'NoName', value: 'noname' }])
+
+      expect(die).toBeFalse()
     })
   })
 
@@ -265,96 +270,12 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  describe('META data: load all workspaces', () => {
-    it('should get all existing workspaces', (done) => {
-      const workspaces = [{ name: 'ws', displayName: 'Workspace' }]
-      apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
-
-      component.ngOnInit()
-
-      component.allWorkspaces$.subscribe({
-        next: (workspaces) => {
-          expect(workspaces.length).toBe(1)
-          expect(workspaces[0].label).toEqual('Workspace')
-          done()
-        }
-      })
-    })
-
-    it('should log error getting all existing workspaces fails', (done) => {
-      const errorResponse = { status: '404', statusText: 'Not Found' }
-      apiServiceSpy.getAllWorkspaceNames.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-
-      component.ngOnInit()
-
-      component.allWorkspaces$.subscribe({
-        next: () => {
-          expect(console.error).toHaveBeenCalledWith('getAllWorkspaceNames', errorResponse)
-          done()
-        }
-      })
-    })
-
-    it('should verify a workspace to be one of all workspaces', () => {
-      const workspaces = [{ label: 'w1', value: 'w1' }]
-
-      let result = component.doesItemExist(workspaces[0].value, workspaces)
-
-      expect(result).toEqual(true)
-
-      result = component.doesItemExist('unknown value', workspaces)
-
-      expect(result).toEqual(false)
-    })
-  })
-
-  describe('META data: load all products', () => {
-    it('should get all existing products - successful', (done) => {
-      const products = {
-        stream: [
-          { name: 'prod1', displayName: 'prod1_display' },
-          { name: 'prod2', displayName: 'prod2_display' }
-        ]
-      }
-      apiServiceSpy.getAllProductNames.and.returnValue(of(products))
-
-      component.ngOnInit()
-
-      component.allProducts$.subscribe({
-        next: (products) => {
-          if (products) {
-            expect(products.length).toBe(2)
-            expect(products[0].label).toEqual('prod1_display')
-            done()
-          }
-        }
-      })
-    })
-
-    it('should display error if that call fails', () => {
-      const errorResponse = { status: '404', statusText: 'Not found' }
-      apiServiceSpy.getAllProductNames.and.returnValue(throwError(() => errorResponse))
-      spyOn(console, 'error')
-
-      component.ngOnInit()
-
-      component.allProducts$.subscribe({
-        next: () => {
-          expect(console.error).toHaveBeenCalledWith('getAllProductNames', errorResponse)
-        }
-      })
-    })
-  })
-
   describe('META data: load all meta data together and check enrichments', () => {
-    it('should get all existing products - successful', (done) => {
-      const products = {
-        stream: [{ name: 'product', displayName: 'Product' }]
-      }
-      apiServiceSpy.getAllProductNames.and.returnValue(of(products))
+    it('should get all existing products and workspaces - successful enrichments', (done) => {
       const workspaces = [{ name: 'ws', displayName: 'Workspace' }]
-      apiServiceSpy.getAllWorkspaceNames.and.returnValue(of(workspaces))
+      component.wdSlotEmitter.emit(workspaces)
+      const products = [{ name: 'product', displayName: 'Product' }]
+      component.pdSlotEmitter.emit(products)
       // product and workspace are used...
       const assignments: AnnouncementAssignments = {
         productNames: ['product', 'unknown'],
@@ -377,6 +298,37 @@ describe('AnnouncementSearchComponent', () => {
             ])
             expect(meta.usedWorkspaces).toEqual([
               { label: 'Workspace', value: 'ws' },
+              { label: 'unknown', value: 'unknown' }
+            ])
+            done()
+          }
+        }
+      })
+    })
+
+    it('should get no existing products and workspaces - successful but without enrichments', (done) => {
+      // product and workspace are used...
+      const assignments: AnnouncementAssignments = {
+        productNames: ['product', 'unknown'],
+        workspaceNames: ['ws', 'unknown']
+      }
+      apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
+
+      component.ngOnInit()
+
+      component.metaData$.subscribe({
+        next: (meta) => {
+          if (meta) {
+            expect(meta.allProducts.length).toBe(2) // take over the used products
+            expect(meta.allWorkspaces.length).toBe(2) // take over the used workspaces
+            expect(meta.usedProducts?.length).toBe(2)
+            expect(meta.usedWorkspaces?.length).toBe(2)
+            expect(meta.usedProducts).toEqual([
+              { label: 'product', value: 'product' },
+              { label: 'unknown', value: 'unknown' }
+            ])
+            expect(meta.usedWorkspaces).toEqual([
+              { label: 'ws', value: 'ws' },
               { label: 'unknown', value: 'unknown' }
             ])
             done()
@@ -504,11 +456,11 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should apply a filter to the result table', () => {
-      component.dataTable = jasmine.createSpyObj('dataTable', ['filterGlobal'])
+      const dataTable = jasmine.createSpyObj('dataTable', ['filterGlobal'])
 
-      component.onFilterChange('test')
+      component.onFilterChange('test', dataTable)
 
-      expect(component.dataTable?.filterGlobal).toHaveBeenCalledWith('test', 'contains')
+      expect(dataTable?.filterGlobal).toHaveBeenCalledWith('test', 'contains')
     })
   })
 
