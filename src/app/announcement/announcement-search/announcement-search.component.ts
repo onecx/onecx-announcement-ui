@@ -13,8 +13,7 @@ import {
   Announcement,
   AnnouncementAssignments,
   AnnouncementInternalAPIService,
-  AnnouncementSearchCriteria,
-  SearchAnnouncementsRequestParams
+  AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
 import { limitText } from 'src/app/shared/utils'
 
@@ -80,18 +79,17 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDetailDialog = false
   public displayDeleteDialog = false
   public filteredColumns: Column[] = []
-  public limitText = limitText
-
-  @ViewChild('dataTable', { static: false }) dataTable: Table | undefined
   public dataViewControlsTranslations: DataViewControlTranslations = {}
+  public limitText = limitText
 
   // data
   public data$: Observable<Announcement[]> | undefined
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
-  public usedListsTrigger$ = new BehaviorSubject<AllUsedLists | undefined>(undefined) // trigger for refresh data
+  public usedListsTrigger$ = new BehaviorSubject<void>(undefined) // trigger for refresh data
   public item4Detail: Announcement | undefined // used on detail
   public item4Delete: Announcement | undefined // used on deletion
+
   // slot configurations
   public pdSlotName = 'onecx-product-data'
   public pdSlotEmitter = new EventEmitter<Product[]>()
@@ -100,7 +98,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public wdSlotName = 'onecx-workspace-data'
   public wdSlotEmitter = new EventEmitter<Workspace[]>()
   public wdIsComponentDefined$: Observable<boolean> | undefined // check
-  public workspaceData$ = new BehaviorSubject<Workspace[] | undefined>(undefined) // product data
+  public workspaceData$ = new BehaviorSubject<Workspace[] | undefined>(undefined) // workspace data
 
   public columns: ExtendedColumn[] = [
     {
@@ -183,7 +181,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.pdSlotEmitter.subscribe(this.productData$)
     this.wdSlotEmitter.subscribe(this.workspaceData$)
     this.loadMetaData()
-    this.onSearch({ announcementSearchCriteria: {} })
+    this.onSearch({})
     this.prepareDialogTranslations()
     this.prepareActionButtons()
   }
@@ -242,8 +240,8 @@ export class AnnouncementSearchComponent implements OnInit {
   public onColumnsChange(activeIds: string[]) {
     this.filteredColumns = activeIds.map((id) => this.columns.find((col) => col.field === id)) as Column[]
   }
-  public onFilterChange(event: string): void {
-    this.dataTable?.filterGlobal(event, 'contains')
+  public onFilterChange(event: string, dataTable: Table): void {
+    dataTable?.filterGlobal(event, 'contains')
   }
 
   // Detail => CREATE, COPY, EDIT, VIEW
@@ -257,8 +255,8 @@ export class AnnouncementSearchComponent implements OnInit {
     this.displayDetailDialog = false
     this.item4Detail = undefined
     if (refresh) {
-      this.usedListsTrigger$.next(undefined)
-      this.onSearch({ announcementSearchCriteria: {} }, true)
+      this.usedListsTrigger$.next() // trigger getting data
+      this.onSearch({}, true)
     }
   }
 
@@ -279,7 +277,7 @@ export class AnnouncementSearchComponent implements OnInit {
         this.data$ = of(data)
         // check remaining data: if product still exists - if not then trigger reload
         if (!data?.find((d) => d.productName === this.item4Delete?.productName)) {
-          this.usedListsTrigger$.next(undefined)
+          this.usedListsTrigger$.next() // trigger getting data
         }
         this.displayDeleteDialog = false
         this.item4Delete = undefined
@@ -301,8 +299,8 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   /****************************************************************************
-   *  SEARCHING
-   *   loadMetaData declares the requests to getting data ...
+   *  SEARCH meta data
+   *    declare the requests to getting meta data...
    *    ...to fill drop down lists => products, workspaces
    */
   private loadMetaData(): void {
@@ -329,11 +327,9 @@ export class AnnouncementSearchComponent implements OnInit {
     )
 
     this.loadingMetaData = true
-    // master data from slots:
-    const allMasterData$ = combineLatest([this.workspaceData$, this.productData$])
     // combine master data with used data (enrich them with correct display names)
-    this.metaData$ = combineLatest([allMasterData$, this.usedLists$]).pipe(
-      map(([[aW, aP], aul]: [[Workspace[] | undefined, Product[] | undefined], AllUsedLists]) => {
+    this.metaData$ = combineLatest([this.workspaceData$, this.productData$, this.usedLists$]).pipe(
+      map(([aW, aP, aul]: [Workspace[] | undefined, Product[] | undefined, AllUsedLists]) => {
         // enrich the used lists with display names taken from master data (allLists)
         let allP: SelectItem[] | undefined = undefined
         if (aP) {
@@ -361,17 +357,11 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  SEARCH announcements
    */
-  public onSearch(criteria: SearchAnnouncementsRequestParams, reuseCriteria = false): void {
-    if (!reuseCriteria) {
-      if (criteria.announcementSearchCriteria.workspaceName === '')
-        criteria.announcementSearchCriteria.workspaceName = undefined
-      if (criteria.announcementSearchCriteria.productName === '')
-        criteria.announcementSearchCriteria.productName = undefined
-      this.criteria = criteria.announcementSearchCriteria
-    }
+  public onSearch(criteria: AnnouncementSearchCriteria, reuseCriteria = false): void {
+    if (!reuseCriteria) this.criteria = criteria
     this.searching = true
     this.exceptionKey = undefined
-    this.data$ = this.announcementApi.searchAnnouncements(criteria).pipe(
+    this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
       map((data) => data.stream ?? []),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'

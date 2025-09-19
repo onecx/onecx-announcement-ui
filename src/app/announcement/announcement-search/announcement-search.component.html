@@ -23,7 +23,7 @@
     [actions]="(actions$ | async) ?? []"
     [usedProducts]="metaData.usedProducts ?? []"
     [usedWorkspaces]="metaData.usedWorkspaces ?? []"
-    (searchEmitter)="onSearch($event)"
+    (searchEmitter)="onSearch($event.announcementSearchCriteria)"
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
@@ -78,7 +78,7 @@
             [enableSorting]="false"
             [columnDefinitions]="columns"
             (columnsChange)="onColumnsChange($event)"
-            (filterChange)="onFilterChange($event)"
+            (filterChange)="onFilterChange($event, dataTable)"
             [translations]="dataViewControlsTranslations"
           ></ocx-data-view-controls>
         </ng-template>
