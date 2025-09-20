@@ -294,8 +294,13 @@ export class AnnouncementSearchComponent implements OnInit {
     return list.find((item) => item.value === name) !== undefined
   }
 
-  public getDisplayName(name: string | undefined, list: SelectItem[] | undefined): string | undefined {
-    return list?.find((item) => item.value === name)?.label ?? name
+  public getDisplayName(
+    name: string | undefined,
+    list: SelectItem[] | undefined,
+    defValue?: string
+  ): string | undefined {
+    if (name) return list?.find((item) => item.value === name)?.label ?? defValue
+    return undefined
   }
 
   /****************************************************************************
@@ -335,13 +340,13 @@ export class AnnouncementSearchComponent implements OnInit {
         if (products) {
           allProducts = []
           products.forEach((p) => allProducts?.push({ label: p.displayName, value: p.name }))
-          usedLists.products.forEach((p) => (p.label = this.getDisplayName(p.value, allProducts)))
+          usedLists.products.forEach((p) => (p.label = this.getDisplayName(p.value, allProducts, p.value)))
         }
         let allWorkspaces: SelectItem[] | undefined = undefined
         if (workspaces) {
           allWorkspaces = []
           workspaces.forEach((w) => allWorkspaces?.push({ label: w.displayName, value: w.name }))
-          usedLists.workspaces.forEach((w) => (w.label = this.getDisplayName(w.value, allWorkspaces)))
+          usedLists.workspaces.forEach((w) => (w.label = this.getDisplayName(w.value, allWorkspaces, w.value)))
         }
         this.loadingMetaData = false
         return {

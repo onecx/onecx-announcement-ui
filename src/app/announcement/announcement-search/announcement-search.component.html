@@ -179,12 +179,10 @@
               </a>
             </td>
             <td *ngFor="let col of columns" [id]="'am_search_table_row_' + i + '_' + col.field" [class]="col.css">
-              <div *ngIf="col.limit" class="text-ellipsis-2-lines" style="min-width: 130px">
-                {{ rowData[col.field] }}
-              </div>
-              <ng-container *ngIf="col.isDate" class="max-height-for-2-lines">
+              <div *ngIf="col.limit" class="text-ellipsis-2-lines max-w-30rem">{{ rowData[col.field] }}</div>
+              <div *ngIf="col.isDate && rowData[col.field]" class="max-height-for-2-lines">
                 {{ rowData[col.field] | date: dateFormat }}
-              </ng-container>
+              </div>
               <ng-container *ngIf="col.isDropdown">
                 {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
               </ng-container>
@@ -219,27 +217,46 @@
                 tooltipEvent="hover"
               ></span>
 
-              <ng-container *ngIf="col.field === 'workspaceName'">
-                <ng-container *ngIf="!rowData.workspaceName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-                <ng-container *ngIf="rowData.workspaceName">
-                  <ng-container
-                    *ngIf="doesItemExist(rowData.workspaceName, metaData.allWorkspaces); else unknown_workspace"
-                  >
-                    {{ getDisplayName(rowData[col.field], metaData.allWorkspaces) }}
-                  </ng-container>
-                  <ng-template #unknown_workspace>{{ 'ANNOUNCEMENT.NOT_FOUND' | translate }}</ng-template>
-                </ng-container>
-              </ng-container>
+              <ng-template #displayNameTemplate let-data="data">
+                <ng-container *ngIf="!data.name"> {{ data.nameAll }} </ng-container>
+                <div
+                  *ngIf="data.name"
+                  class="text-ellipsis-2-lines max-w-15rem"
+                  [pTooltip]="data.displayName ? '' : data.name"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                  {{ data.displayName ?? data.nameNotFound }}
+                </div>
+              </ng-template>
 
-              <ng-container *ngIf="col.field === 'productName'">
-                <ng-container *ngIf="!rowData.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-                <ng-container *ngIf="rowData.productName">
-                  <ng-container *ngIf="doesItemExist(rowData.productName, metaData.allProducts); else unknown_product">
-                    {{ getDisplayName(rowData.productName, metaData.allProducts) }}
-                  </ng-container>
-                  <ng-template #unknown_product>{{ 'ANNOUNCEMENT.NOT_FOUND' | translate }}</ng-template>
-                </ng-container>
-              </ng-container>
+              <ng-container
+                *ngIf="col.field === 'workspaceName'"
+                [ngTemplateOutlet]="displayNameTemplate"
+                [ngTemplateOutletContext]="{
+                  $implicit: rowData,
+                  data: {
+                    name: rowData.workspaceName,
+                    displayName: getDisplayName(rowData.workspaceName, metaData.allWorkspaces),
+                    nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
+                  }
+                }"
+              />
+              <ng-container
+                *ngIf="col.field === 'productName'"
+                [ngTemplateOutlet]="displayNameTemplate"
+                [ngTemplateOutletContext]="{
+                  $implicit: rowData,
+                  data: {
+                    name: rowData.productName,
+                    displayName: getDisplayName(rowData.productName, metaData.allProducts),
+                    nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                    notFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
+                    tooltipNotFound: 'ANNOUNCEMENT.ALL' | translate
+                  }
+                }"
+              />
             </td>
           </tr>
         </ng-template>
