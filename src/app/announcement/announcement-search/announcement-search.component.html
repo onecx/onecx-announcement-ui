@@ -179,7 +179,6 @@
               </a>
             </td>
             <td *ngFor="let col of columns" [id]="'am_search_table_row_' + i + '_' + col.field" [class]="col.css">
-              <div *ngIf="col.limit" class="text-ellipsis-2-lines max-w-30rem">{{ rowData[col.field] }}</div>
               <div *ngIf="col.isDate && rowData[col.field]" class="max-height-for-2-lines">
                 {{ rowData[col.field] | date: dateFormat }}
               </div>
@@ -217,11 +216,13 @@
                 tooltipEvent="hover"
               ></span>
 
+              <div *ngIf="col.field === 'title'" class="text-ellipsis-2-lines">{{ rowData[col.field] }}</div>
+
               <ng-template #displayNameTemplate let-data="data">
                 <ng-container *ngIf="!data.name"> {{ data.nameAll }} </ng-container>
                 <div
                   *ngIf="data.name"
-                  class="text-ellipsis-2-lines max-w-15rem"
+                  class="text-ellipsis-2-lines"
                   [pTooltip]="data.displayName ? '' : data.name"
                   tooltipPosition="top"
                   tooltipEvent="hover"
