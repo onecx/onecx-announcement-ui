@@ -289,11 +289,6 @@ export class AnnouncementSearchComponent implements OnInit {
     })
   }
 
-  // Is item in list? ... used in HTML to display 'unknown item' if item is not longer in list
-  public doesItemExist(name: string | undefined, list: SelectItem[]): boolean {
-    return list.find((item) => item.value === name) !== undefined
-  }
-
   public getDisplayName(
     name: string | undefined,
     list: SelectItem[] | undefined,

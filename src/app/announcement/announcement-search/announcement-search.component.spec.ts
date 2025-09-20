@@ -217,16 +217,10 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should item exists in list', () => {
-      const die = component.doesItemExist('name', [{ label: 'Name', value: 'name' }])
+    it('should no display name if no name', () => {
+      const dn = component.getDisplayName(undefined, undefined)
 
-      expect(die).toBeTrue()
-    })
-
-    it('should item not exists in list', () => {
-      const die = component.doesItemExist('name', [{ label: 'NoName', value: 'noname' }])
-
-      expect(die).toBeFalse()
+      expect(dn).toBeUndefined()
     })
   })
 
