@@ -54,7 +54,7 @@ export class AnnouncementDetailComponent implements OnChanges {
   public priorityOptions$: Observable<SelectItem[]> = of([])
   public AnnouncementPriorityType = AnnouncementPriorityType
   public AnnouncementType = AnnouncementType
-  private previewDefault: Preview = {
+  private readonly previewDefault: Preview = {
     status: AnnouncementStatus.Inactive,
     type: AnnouncementType.Info,
     priority: AnnouncementPriorityType.Normal
