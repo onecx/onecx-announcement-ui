@@ -14,7 +14,7 @@ app:
         main:
           exposedModule: "./OneCXAnnouncementModule"
           description: "OneCX Announcement UI"
-          note: "OneCX Announcement UI auto import via MF operator"
+          note: "OneCX Announcement UI auto import via operator"
           type: MODULE
           technology: WEBCOMPONENTMODULE
           remoteName: onecx-announcement
@@ -33,6 +33,16 @@ app:
           technology: WEBCOMPONENTMODULE
           remoteName: onecx-announcement
           tagName: ocx-announcement-list-active-component
+    # Slot
+    slot:
+      enabled: true
+      specs:
+        onecx-product-data:
+          name: 'onecx-product-data'
+          description: 'Getting base data of all products provided by product store'
+        onecx-workspace-data:
+          name: 'onecx-workspace-data'
+          description: 'Getting base data of all workspaces provided by workspace'
     # Permission
     permission:
       enabled: true
@@ -44,5 +54,3 @@ app:
             EDIT: Edit announcement
             SEARCH: Search announcement
             VIEW: View announcement
-            
-# PIPE Config

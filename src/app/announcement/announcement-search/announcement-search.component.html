@@ -3,17 +3,33 @@
   permission="ANNOUNCEMENT#SEARCH"
   helpArticleId="PAGE_ANNOUNCEMENT_SEARCH"
 >
+  <!-- declare slot to get data from product store -->
+  <ocx-slot
+    *ngIf="pdIsComponentDefined$ | async"
+    [name]="pdSlotName"
+    [inputs]="{ dataType: 'products', logEnabled: false, logPrefix: 'announcement' }"
+    [outputs]="{ products: pdSlotEmitter }"
+  >
+  </ocx-slot>
+  <!-- declare slot to get data from workspace -->
+  <ocx-slot
+    *ngIf="wdIsComponentDefined$ | async"
+    [name]="wdSlotName"
+    [inputs]="{ dataType: 'workspaces', logEnabled: false, logPrefix: 'announcement' }"
+    [outputs]="{ workspaces: wdSlotEmitter }"
+  >
+  </ocx-slot>
   <app-announcement-criteria
     [actions]="(actions$ | async) ?? []"
     [usedProducts]="metaData.usedProducts ?? []"
-    [workspaces]="metaData.usedWorkspaces ?? []"
+    [usedWorkspaces]="metaData.usedWorkspaces ?? []"
     (searchEmitter)="onSearch($event)"
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
   <ocx-page-content>
     <p-message
-      *ngIf="loading"
+      *ngIf="loadingMetaData"
       id="am_search_message_loading"
       severity="info"
       styleClass="m-3 p-2"
@@ -36,7 +52,7 @@
         [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
       ></p-message>
       <p-table
-        *ngIf="!(loading || searching || exceptionKey)"
+        *ngIf="!(searching || exceptionKey)"
         #dataTable
         id="am_search_table"
         styleClass="mx-3 mb-2"
@@ -62,7 +78,7 @@
             [enableSorting]="false"
             [columnDefinitions]="columns"
             (columnsChange)="onColumnsChange($event)"
-            (filterChange)="onFilterChange($event)"
+            (filterChange)="onFilterChange($event, dataTable)"
             [translations]="dataViewControlsTranslations"
           ></ocx-data-view-controls>
         </ng-template>
@@ -163,67 +179,91 @@
               </a>
             </td>
             <td *ngFor="let col of columns" [id]="'am_search_table_row_' + i + '_' + col.field" [class]="col.css">
-              <div *ngIf="col.limit" class="text-ellipsis-2-lines" style="min-width: 130px">
-                {{ rowData[col.field] }}
-              </div>
-              <ng-container *ngIf="col.isDate" class="max-height-for-2-lines">
-                {{ rowData[col.field] | date: dateFormat }}
-              </ng-container>
-              <ng-container *ngIf="col.isDropdown">
-                {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
-              </ng-container>
-
-              <span
-                *ngIf="col.field === 'status'"
-                class="pi"
-                [class.pi-circle-on]="rowData[col.field] === 'ACTIVE'"
-                [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
-                [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
-                [class.text-red-600]="rowData['priority'] === 'IMPORTANT'"
-                [class.text-yellow-600]="rowData['priority'] === 'NORMAL'"
-                [class.text-blue-600]="rowData['priority'] === 'LOW'"
-                [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate"
-                [pTooltip]="
-                  ('ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate) +
-                  ' - ' +
-                  ('ENUMS.ANNOUNCEMENT_PRIORITY.' + rowData['priority'] | translate)
-                "
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              ></span>
-              <span
-                *ngIf="col.field === 'type'"
-                class="pi text-xl"
-                [class.pi-info-circle]="rowData[col.field] === 'INFO'"
-                [class.pi-calendar]="rowData[col.field] === 'EVENT'"
-                [class.pi-wrench]="rowData[col.field] === 'SYSTEM_MAINTENANCE'"
-                [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
-                [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              ></span>
-
-              <ng-container *ngIf="col.field === 'workspaceName'">
-                <ng-container *ngIf="!rowData.workspaceName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-                <ng-container *ngIf="rowData.workspaceName">
+              @switch (col.field) {
+                @case ('type') {
+                  <span
+                    class="pi text-xl"
+                    [class.pi-info-circle]="rowData[col.field] === 'INFO'"
+                    [class.pi-calendar]="rowData[col.field] === 'EVENT'"
+                    [class.pi-wrench]="rowData[col.field] === 'SYSTEM_MAINTENANCE'"
+                    [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
+                    [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></span>
+                }
+                @case ('status') {
+                  <span
+                    class="pi"
+                    [class.pi-circle-on]="rowData[col.field] === 'ACTIVE'"
+                    [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
+                    [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
+                    [class.text-red-600]="rowData['priority'] === 'IMPORTANT'"
+                    [class.text-yellow-600]="rowData['priority'] === 'NORMAL'"
+                    [class.text-blue-600]="rowData['priority'] === 'LOW'"
+                    [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate"
+                    [pTooltip]="
+                      ('ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate) +
+                      ' - ' +
+                      ('ENUMS.ANNOUNCEMENT_PRIORITY.' + rowData['priority'] | translate)
+                    "
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></span>
+                }
+                @case ('title') {
+                  <div class="text-ellipsis-2-lines">{{ rowData[col.field] }}</div>
+                }
+                @case ('workspaceName') {
                   <ng-container
-                    *ngIf="doesItemExist(rowData.workspaceName, metaData.allWorkspaces); else unknown_workspace"
-                  >
-                    {{ getDisplayName(rowData[col.field], metaData.allWorkspaces) }}
+                    [ngTemplateOutlet]="displayNameTemplate"
+                    [ngTemplateOutletContext]="{
+                      $implicit: rowData,
+                      data: {
+                        name: rowData.workspaceName,
+                        displayName: getDisplayName(rowData.workspaceName, metaData.allWorkspaces),
+                        nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                        nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
+                      }
+                    }"
+                  />
+                }
+                @case ('productName') {
+                  <ng-container
+                    [ngTemplateOutlet]="displayNameTemplate"
+                    [ngTemplateOutletContext]="{
+                      $implicit: rowData,
+                      data: {
+                        name: rowData.productName,
+                        displayName: getDisplayName(rowData.productName, metaData.allProducts),
+                        nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                        nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
+                      }
+                    }"
+                  />
+                }
+                @default {
+                  <div *ngIf="col.isDate && rowData[col.field]" class="max-height-for-2-lines">
+                    {{ rowData[col.field] | date: dateFormat }}
+                  </div>
+                  <ng-container *ngIf="col.isDropdown">
+                    {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
                   </ng-container>
-                  <ng-template #unknown_workspace>{{ 'ANNOUNCEMENT.NOT_FOUND' | translate }}</ng-template>
-                </ng-container>
-              </ng-container>
+                }
+              }
 
-              <ng-container *ngIf="col.field === 'productName'">
-                <ng-container *ngIf="!rowData.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-                <ng-container *ngIf="rowData.productName">
-                  <ng-container *ngIf="doesItemExist(rowData.productName, metaData.allProducts); else unknown_product">
-                    {{ getDisplayName(rowData.productName, metaData.allProducts) }}
-                  </ng-container>
-                  <ng-template #unknown_product>{{ 'ANNOUNCEMENT.NOT_FOUND' | translate }}</ng-template>
-                </ng-container>
-              </ng-container>
+              <ng-template #displayNameTemplate let-data="data">
+                <ng-container *ngIf="!data.name"> {{ data.nameAll }} </ng-container>
+                <div
+                  *ngIf="data.name"
+                  class="text-ellipsis-2-lines"
+                  [pTooltip]="data.displayName ? '' : data.name"
+                  tooltipPosition="top"
+                  tooltipEvent="hover"
+                >
+                  {{ data.displayName ?? data.nameNotFound }}
+                </div>
+              </ng-template>
             </td>
           </tr>
         </ng-template>
