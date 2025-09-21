@@ -11,8 +11,7 @@ import {
   AnnouncementPriorityType,
   AnnouncementSearchCriteria,
   AnnouncementStatus,
-  AnnouncementType,
-  SearchAnnouncementsRequestParams
+  AnnouncementType
 } from 'src/app/shared/generated'
 
 export interface AnnouncementCriteriaForm {
