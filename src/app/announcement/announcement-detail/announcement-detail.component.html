@@ -275,10 +275,9 @@
             class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end"
             style="margin-top: -1rem"
           >
-            <div
+            <section
               class="p-0 md:text-right flex flex-column md:justify-content-end"
               [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
-              role="region"
             >
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.PRIORITY' | translate }}
@@ -293,7 +292,7 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-selectButton>
-            </div>
+            </section>
             <span
               id="am_detail_preview_icon"
               class="p-2 pi text-xl border-round hidden sm:block"
@@ -308,11 +307,7 @@
               tooltipEvent="hover"
               aria-hidden="true"
             ></span>
-            <div
-              class="p-0 flex flex-column"
-              [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
-              role="region"
-            >
+            <section class="p-0 flex flex-column" [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate">
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_type" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.TYPE' | translate }}
               </label>
@@ -326,7 +321,7 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               ></p-selectButton>
-            </div>
+            </section>
           </div>
         </p-fieldset>
       </div>
