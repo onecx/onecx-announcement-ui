@@ -23,7 +23,7 @@
     [actions]="(actions$ | async) ?? []"
     [usedProducts]="metaData.usedProducts ?? []"
     [usedWorkspaces]="metaData.usedWorkspaces ?? []"
-    (searchEmitter)="onSearch($event.announcementSearchCriteria)"
+    (searchEmitter)="onSearch($event)"
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 

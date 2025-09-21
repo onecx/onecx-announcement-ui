@@ -26,6 +26,7 @@ export function dateRangeValidator(fg: FormGroup): ValidatorFn {
     } else return null
   }
 }
+type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: AnnouncementPriorityType }
 
 @Component({
   selector: 'app-announcement-detail',
@@ -51,6 +52,14 @@ export class AnnouncementDetailComponent implements OnChanges {
   public typeOptions$: Observable<SelectItem[]> = of([])
   public statusOptions$: Observable<SelectItem[]> = of([])
   public priorityOptions$: Observable<SelectItem[]> = of([])
+  public AnnouncementPriorityType = AnnouncementPriorityType
+  public AnnouncementType = AnnouncementType
+  private previewDefault: Preview = {
+    status: AnnouncementStatus.Inactive,
+    type: AnnouncementType.Info,
+    priority: AnnouncementPriorityType.Normal
+  }
+  public preview = this.previewDefault
 
   constructor(
     private readonly user: UserService,
@@ -97,7 +106,9 @@ export class AnnouncementDetailComponent implements OnChanges {
       this.formGroup.patchValue(data)
       this.formGroup.controls['startDate'].patchValue(data?.startDate ? new Date(data.startDate) : null)
       this.formGroup.controls['endDate'].patchValue(data?.endDate ? new Date(data.endDate) : null)
-    }
+      this.preview = { status: data.status!, type: data.type!, priority: data.priority! }
+    } else this.preview = this.previewDefault
+
     switch (this.changeMode) {
       case 'COPY':
         this.formGroup.enable()
@@ -143,6 +154,15 @@ export class AnnouncementDetailComponent implements OnChanges {
   public onDialogHide(changed?: boolean) {
     this.hideDialogAndChanged.emit(changed ?? false)
     this.formGroup.reset()
+  }
+  public onChangeAnnouncementStatus(ev: any) {
+    this.preview.status = ev.checked
+  }
+  public onChangeAnnouncementType(ev: any) {
+    this.preview.type = ev.value
+  }
+  public onChangeAnnouncementPriority(ev: any) {
+    this.preview.priority = ev.value
   }
 
   /**

@@ -186,8 +186,8 @@ export class AnnouncementSearchComponent implements OnInit {
     this.prepareActionButtons()
   }
 
-  /**
-   * Dialog preparation
+  /****************************************************************************
+   * DIALOG
    */
   private prepareDialogTranslations(): void {
     this.translate
@@ -244,7 +244,9 @@ export class AnnouncementSearchComponent implements OnInit {
     dataTable?.filterGlobal(event, 'contains')
   }
 
-  // Detail => CREATE, COPY, EDIT, VIEW
+  /****************************************************************************
+   *  DETAIL => CREATE, COPY, EDIT, VIEW
+   */
   public onDetail(mode: ChangeMode, item: Announcement | undefined, ev?: Event): void {
     ev?.stopPropagation()
     this.changeMode = mode
@@ -260,7 +262,9 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  // DELETE => Ask for confirmation
+  /****************************************************************************
+   *  DELETE => Ask for confirmation
+   */
   public onDelete(ev: Event, item: Announcement): void {
     ev.stopPropagation()
     this.item4Delete = item
@@ -299,7 +303,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   /****************************************************************************
-   *  SEARCH meta data
+   *  LOAD meta data
    *    declare the requests to getting meta data...
    *    ...to fill drop down lists => products, workspaces
    */
@@ -326,8 +330,8 @@ export class AnnouncementSearchComponent implements OnInit {
       )
     )
 
+    // combine master data (slots) with used data (enrich them with correct display names)
     this.loadingMetaData = true
-    // combine master data with used data (enrich them with correct display names)
     this.metaData$ = combineLatest([this.workspaceData$, this.productData$, this.usedLists$]).pipe(
       map(([workspaces, products, usedLists]: [Workspace[] | undefined, Product[] | undefined, AllUsedLists]) => {
         // enrich the used lists with display names taken from master data (allLists)

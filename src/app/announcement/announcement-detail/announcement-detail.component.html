@@ -13,6 +13,37 @@
     '630px': '100vw'
   }"
 >
+  <!-- display type/priority on dialog header -->
+  <div id="am_detail_header_preview" class="absolute sm:dialog-header-right-slot flex flex-row">
+    <div
+      id="am_detail_header_preview_priority"
+      class="p-2 pi text-xl border-round hidden sm:block"
+      [class.pi-circle-on]="preview.status === 'ACTIVE'"
+      [class.pi-circle-off]="preview.status === 'INACTIVE'"
+      [class.pi-circle-off]="preview.status === 'INACTIVE'"
+      [class.text-red-600]="preview.priority === 'IMPORTANT'"
+      [class.text-yellow-600]="preview.priority === 'NORMAL'"
+      [class.text-blue-600]="preview.priority === 'LOW'"
+      [pTooltip]="
+        ('ENUMS.ANNOUNCEMENT_STATUS.' + preview.status | translate) +
+        ' - ' +
+        ('ENUMS.ANNOUNCEMENT_PRIORITY.' + preview.priority | translate)
+      "
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    ></div>
+    <div
+      id="am_detail_header_preview_type"
+      class="p-2 pi text-xl border-round hidden sm:block"
+      [class.pi-info-circle]="preview.type === 'INFO'"
+      [class.pi-calendar]="preview.type === 'EVENT'"
+      [class.pi-wrench]="preview.type === 'SYSTEM_MAINTENANCE'"
+      [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
+      tooltipPosition="top"
+      tooltipEvent="hover"
+    ></div>
+  </div>
+
   <p-message
     *ngIf="exceptionKey"
     id="am_detail_message_error"
@@ -47,15 +78,6 @@
               type="text"
               style="min-height: 3rem"
               class="w-full textarea-sm"
-              [class.bg-red-100]="
-                formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'IMPORTANT'
-              "
-              [class.bg-yellow-100]="
-                formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'NORMAL'
-              "
-              [class.bg-blue-100]="
-                formGroup.controls['status'].value === 'ACTIVE' && announcmentPriority.value === 'LOW'
-              "
               formControlName="title"
               rows="3"
               appendTo="body"
@@ -176,6 +198,7 @@
                 formControlName="status"
                 trueValue="ACTIVE"
                 falseValue="INACTIVE"
+                (onChange)="onChangeAnnouncementStatus($event)"
                 [ariaLabel]="'ANNOUNCEMENT.STATUS' | translate"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
                 tooltipPosition="top"
@@ -263,6 +286,7 @@
                 id="am_detail_form_priority"
                 formControlName="priority"
                 [options]="(priorityOptions$ | async) ?? []"
+                (onChange)="onChangeAnnouncementPriority($event)"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
@@ -290,6 +314,7 @@
                 id="am_detail_form_type"
                 formControlName="type"
                 [options]="(typeOptions$ | async) ?? []"
+                (onChange)="onChangeAnnouncementType($event)"
                 [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
                 tooltipPosition="top"

@@ -9,6 +9,7 @@ import { Action } from '@onecx/angular-accelerator'
 
 import {
   AnnouncementPriorityType,
+  AnnouncementSearchCriteria,
   AnnouncementStatus,
   AnnouncementType,
   SearchAnnouncementsRequestParams
@@ -33,7 +34,7 @@ export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []
   @Input() public usedWorkspaces: SelectItem[] = []
   @Input() public usedProducts: SelectItem[] = []
-  @Output() public searchEmitter = new EventEmitter<SearchAnnouncementsRequestParams>()
+  @Output() public searchEmitter = new EventEmitter<AnnouncementSearchCriteria>()
   @Output() public resetSearchEmitter = new EventEmitter<boolean>()
 
   public displayCreateDialog = false
@@ -61,6 +62,47 @@ export class AnnouncementCriteriaComponent implements OnInit {
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
       startDateRange: new FormControl<Date[] | null>(null)
     })
+    this.prepareDialogTranslations()
+  }
+
+  public onSearch(): void {
+    const criteria: AnnouncementSearchCriteria = {
+      title: this.criteriaForm.value.title === null ? undefined : this.criteriaForm.value.title,
+      workspaceName: this.criteriaForm.value.workspaceName === null ? undefined : this.criteriaForm.value.workspaceName,
+      productName: this.criteriaForm.value.productName === null ? undefined : this.criteriaForm.value.productName,
+      priority: this.criteriaForm.value.priority === null ? undefined : this.criteriaForm.value.priority?.[0],
+      status: this.criteriaForm.value.status === null ? undefined : this.criteriaForm.value.status?.[0],
+      type: this.criteriaForm.value.type === null ? undefined : this.criteriaForm.value.type?.[0]
+    }
+    if (this.criteriaForm.value.startDateRange) {
+      const dates = this.mapDateRangeToDateStrings(this.criteriaForm.value.startDateRange)
+      criteria.startDateFrom = dates[0]
+      criteria.startDateTo = dates[1]
+    }
+    this.searchEmitter.emit(criteria)
+  }
+
+  public onResetCriteria(): void {
+    this.criteriaForm.reset()
+    this.resetSearchEmitter.emit(true)
+  }
+
+  private mapDateRangeToDateStrings(dateRange: Date[]) {
+    let dateFrom!: Date
+    let dateTo!: Date
+
+    if (dateRange[1] == null || dateRange[0].toDateString() === dateRange[1].toDateString()) {
+      dateFrom = dateRange[0]
+      dateTo = new Date(dateFrom)
+      dateTo.setFullYear(3000)
+    } else {
+      dateFrom = dateRange[0]
+      dateTo = dateRange[1]
+    }
+    return [dateFrom.toISOString(), dateTo.toISOString()]
+  }
+
+  private prepareDialogTranslations() {
     this.type$ = this.translate
       .get([
         'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event,
@@ -122,45 +164,5 @@ export class AnnouncementCriteriaComponent implements OnInit {
           ]
         })
       )
-  }
-
-  public onSearch(): void {
-    const criteriaRequest: SearchAnnouncementsRequestParams = {
-      announcementSearchCriteria: {
-        title: this.criteriaForm.value.title === null ? undefined : this.criteriaForm.value.title,
-        workspaceName:
-          this.criteriaForm.value.workspaceName === null ? undefined : this.criteriaForm.value.workspaceName,
-        productName: this.criteriaForm.value.productName === null ? undefined : this.criteriaForm.value.productName,
-        priority: this.criteriaForm.value.priority === null ? undefined : this.criteriaForm.value.priority?.[0],
-        status: this.criteriaForm.value.status === null ? undefined : this.criteriaForm.value.status?.[0],
-        type: this.criteriaForm.value.type === null ? undefined : this.criteriaForm.value.type?.[0]
-      }
-    }
-    if (this.criteriaForm.value.startDateRange) {
-      const dates = this.mapDateRangeToDateStrings(this.criteriaForm.value.startDateRange)
-      criteriaRequest.announcementSearchCriteria.startDateFrom = dates[0]
-      criteriaRequest.announcementSearchCriteria.startDateTo = dates[1]
-    }
-    this.searchEmitter.emit(criteriaRequest)
-  }
-
-  public onResetCriteria(): void {
-    this.criteriaForm.reset()
-    this.resetSearchEmitter.emit(true)
-  }
-
-  private mapDateRangeToDateStrings(dateRange: Date[]) {
-    let dateFrom!: Date
-    let dateTo!: Date
-
-    if (dateRange[1] == null || dateRange[0].toDateString() === dateRange[1].toDateString()) {
-      dateFrom = dateRange[0]
-      dateTo = new Date(dateFrom)
-      dateTo.setFullYear(3000)
-    } else {
-      dateFrom = dateRange[0]
-      dateTo = dateRange[1]
-    }
-    return [dateFrom.toISOString(), dateTo.toISOString()]
   }
 }

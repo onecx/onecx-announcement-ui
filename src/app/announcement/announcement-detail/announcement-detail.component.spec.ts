@@ -39,14 +39,12 @@ describe('AnnouncementDetailComponent', () => {
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
     'error',
-    'info',
     'warning'
   ])
   const apiServiceSpy = {
     getAnnouncementById: jasmine.createSpy('getAnnouncementById').and.returnValue(of({})),
     createAnnouncement: jasmine.createSpy('createAnnouncement').and.returnValue(of({})),
     updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({})),
-    getAllWorkspaceNames: jasmine.createSpy('getAllWorkspaceNames').and.returnValue(of([])),
     searchProductsByCriteria: jasmine.createSpy('searchProductsByCriteria').and.returnValue(of([]))
   }
   const formGroup = new FormGroup({
@@ -75,13 +73,11 @@ describe('AnnouncementDetailComponent', () => {
     }).compileComponents()
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
-    msgServiceSpy.info.calls.reset()
     msgServiceSpy.warning.calls.reset()
     // to spy data: reset
     apiServiceSpy.getAnnouncementById.calls.reset()
     apiServiceSpy.createAnnouncement.calls.reset()
     apiServiceSpy.updateAnnouncementById.calls.reset()
-    apiServiceSpy.getAllWorkspaceNames.calls.reset()
     apiServiceSpy.searchProductsByCriteria.calls.reset()
     mockUserService.lang$.getValue.and.returnValue('de')
   }))
@@ -355,6 +351,24 @@ describe('AnnouncementDetailComponent', () => {
         component.onDialogHide()
 
         expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+      })
+    })
+
+    describe('Preview', () => {
+      it('should change preview status', () => {
+        component.onChangeAnnouncementStatus({ checked: 'ACTIVE' })
+
+        expect(component.preview.status).toBe('ACTIVE')
+      })
+      it('should change preview type', () => {
+        component.onChangeAnnouncementType({ value: 'INFO' })
+
+        expect(component.preview.type).toBe('INFO')
+      })
+      it('should change preview priority', () => {
+        component.onChangeAnnouncementPriority({ value: 'IMPORTANT' })
+
+        expect(component.preview.priority).toBe('IMPORTANT')
       })
     })
   })
