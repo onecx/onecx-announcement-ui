@@ -41,11 +41,12 @@
       <p-dropdown
         id="am_search_criteria_workspace_name"
         styleClass="w-11rem sm:w-13rem"
+        panelStyleClass="w-13rem"
         formControlName="workspaceName"
         [options]="usedWorkspaces"
         [showClear]="true"
         [autoDisplayFirst]="true"
-        [appendTo]="'self'"
+        [appendTo]="'body'"
         [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
         [ariaLabel]="'ANNOUNCEMENT.WORKSPACE' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.WORKSPACE' | translate"
@@ -59,6 +60,7 @@
       <p-dropdown
         id="am_search_criteria_product_name"
         styleClass="w-11rem sm:w-13rem"
+        panelStyleClass="w-13rem"
         formControlName="productName"
         [options]="usedProducts"
         [showClear]="true"

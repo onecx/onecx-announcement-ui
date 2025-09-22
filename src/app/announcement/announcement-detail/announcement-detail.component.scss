@@ -1,6 +1,7 @@
 @import '/src/app/_am-mixins.scss';
 
 @include text-badges;
+@include displaying-text-responsive;
 @include correct-select-button;
 @include dialog-footer-buttons;
 @include dialog-non-full-size-modal;
