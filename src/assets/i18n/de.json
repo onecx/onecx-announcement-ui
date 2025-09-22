@@ -3,10 +3,11 @@
     "LABEL": "Aktionen",
     "TOOLTIP": "Aktionen für die Daten der Tabellenzeile",
     "CONFIRMATION": {
+      "QUESTION": "Frage",
       "NO": "Nein",
       "YES": "Ja",
-      "NO.TOOLTIP": "Abbruch der Aktion",
-      "YES.TOOLTIP": "Fortfahren mit der Aktion"
+      "NO.TOOLTIP": "Nein - Abbruch der Aktion",
+      "YES.TOOLTIP": "Ja - Fortfahren mit der Aktion"
     },
     "COPY": {
       "LABEL": "Kopieren",

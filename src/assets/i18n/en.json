@@ -3,10 +3,11 @@
     "LABEL": "Actions",
     "TOOLTIP": "Actions for the data of the table row",
     "CONFIRMATION": {
+      "QUESTION": "Question",
       "NO": "No",
       "YES": "Yes",
-      "NO.TOOLTIP": "Cancel the action",
-      "YES.TOOLTIP": "Proceed with the action"
+      "NO.TOOLTIP": "No - Cancel the action",
+      "YES.TOOLTIP": "Yes - Proceed with the action"
     },
     "COPY": {
       "LABEL": "Copy",
