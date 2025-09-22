@@ -291,22 +291,24 @@
       >
         <div *ngIf="item4Delete" class="flex column-gap-3 justify-content-start align-items-center">
           <div class="pi pi-question-circle text-3xl danger-action-text" aria-hidden="true"></div>
-          <section class="w-11 flex flex-column row-gap-2 justify-content-start">
+          <section class="w-11 flex flex-column row-gap-3 justify-content-start">
             <div
-              id="am_announcement_delete_message_text"
+              id="am_delete_message_text"
+              class="mr-3 font-bold"
               [attr.aria-label]="'ACTIONS.CONFIRMATION.QUESTION' | translate"
               role="note"
             >
               {{ 'ACTIONS.DELETE.MESSAGE.TEXT' | translate }}
             </div>
             <div
-              id="am_announcement_delete_announcement_title"
+              id="am_delete_announcement_title"
               class="px-5 text-center danger-action-text text-responsive"
               [attr.aria-label]="'ANNOUNCEMENT.TITLE' | translate"
               role="note"
             >
               {{ item4Delete.title }}
             </div>
+
             <div class="px-2 flex flex-column row-gap-1 justify-content-center" aria-hidden="true">
               <div *ngIf="item4Delete.status === 'ACTIVE'" class="flex flex-row column-gap-3">
                 <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.STATUS' | translate }}</div>
@@ -322,7 +324,7 @@
               </div>
               <div class="flex flex-row column-gap-3">
                 <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</div>
-                <div class="w-7 text-left white-space-nowrap text-responsive" id="am_delete_workspace">
+                <div class="w-7 text-left text-responsive" id="am_delete_workspace">
                   <ng-container *ngIf="item4Delete.workspaceName">
                     {{ getDisplayName(item4Delete.workspaceName, metaData.allWorkspaces) }}
                   </ng-container>
@@ -331,7 +333,7 @@
               </div>
               <div class="flex flex-row column-gap-3">
                 <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}</div>
-                <div class="w-7 text-left white-space-nowrap text-responsive" id="am_delete_product_name">
+                <div class="w-7 text-left text-responsive" id="am_delete_product_name">
                   <ng-container *ngIf="item4Delete.productName">
                     {{ getDisplayName(item4Delete.productName, metaData.allProducts) }}
                   </ng-container>
