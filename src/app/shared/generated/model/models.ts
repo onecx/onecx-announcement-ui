@@ -14,8 +14,4 @@ export * from './createAnnouncementRequest';
 export * from './problemDetailInvalidParam';
 export * from './problemDetailParam';
 export * from './problemDetailResponse';
-export * from './product';
-export * from './productsPageResult';
-export * from './productsSearchCriteria';
 export * from './updateAnnouncementRequest';
-export * from './workspaceAbstract';

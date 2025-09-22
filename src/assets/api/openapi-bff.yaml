@@ -195,7 +195,7 @@ paths:
           announcement:
             - write
       tags:
-        - AnnouncementInternal
+        - announcementInternal
       description: Update an announcement by its id
       operationId: updateAnnouncementById
       parameters:
@@ -223,99 +223,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /announcements/workspaces/available:
-    get:
-      x-onecx:
-        permissions:
-          workspace:
-            - read
-      tags:
-        - AnnouncementInternal
-      description: Get a list of all existing workspace names
-      operationId: getAllWorkspaceNames
-      responses:
-        "200":
-          description: Workspace names retrieved successfully
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                 $ref: "#/components/schemas/WorkspaceAbstract"
-  /announcements/products/available:
-    post:
-      x-onecx:
-        permissions:
-          product:
-            - read
-      tags:
-        - AnnouncementInternal
-      description: Get all available products
-      operationId: getAllProductNames
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ProductsSearchCriteria'
-      responses:
-        "200":
-          description: Product names retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProductsPageResult'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
-    ProductsPageResult:
-      type: object
-      properties:
-        totalElements:
-          format: int64
-          description: The total elements in the resource.
-          type: integer
-        number:
-          format: int32
-          type: integer
-        size:
-          format: int32
-          type: integer
-        totalPages:
-          format: int64
-          type: integer
-        stream:
-          type: array
-          items:
-            $ref: '#/components/schemas/Product'
-    ProductsSearchCriteria:
-      type: object
-      properties:
-        pageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        pageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          maximum: 1000
-          type: integer
-    Product:
-      type: object
-      required:
-        - name
-        - displayName
-      properties:
-        name:
-          type: string
-        displayName:
-          type: string
     AnnouncementAssignments:
       type: object
       properties:
@@ -593,13 +502,6 @@ components:
         - WELCOME
         - ALL
       type: string
-    WorkspaceAbstract:
-      type: object
-      properties:
-        name:
-          type: string
-        displayName:
-          type: string
     OffsetDateTime:
       format: date-time
       type: string
