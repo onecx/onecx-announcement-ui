@@ -1,12 +1,13 @@
 openapi: "3.0.3"
 info:
   title: onecx-announcement-bff
+  description: Backend-For-Frontend (BFF) service for onecx-announcement. This API provides endpoints to manage Announcements
   version: "1.0"
 servers:
   - url: https://onecx-announcement-bff:8080
 tags:
-  - name: AnnouncementInternal
-    description: Execute Announcement CRUD operations
+  - name: announcementInternal
+    description: Managing Announcements
 paths:
   /announcements/search:
     post:
@@ -15,8 +16,8 @@ paths:
           announcement:
             - read
       tags:
-        - AnnouncementInternal
-      summary: Find announcements by criteria
+        - announcementInternal
+      description: Search for announcements by search criteria
       operationId: searchAnnouncements
       requestBody:
         required: true
@@ -26,7 +27,7 @@ paths:
               $ref: '#/components/schemas/AnnouncementSearchCriteria'
       responses:
         "200":
-          description: OK
+          description: Announcement search results retrieved successfully
           content:
             application/json:
               schema:
@@ -44,8 +45,8 @@ paths:
           announcement:
             - read
       tags:
-        - AnnouncementInternal
-      summary: Find announcements by criteria
+        - announcementInternal
+      description: Search for announcement banners by criteria
       operationId: searchAnnouncementBanners
       requestBody:
         required: true
@@ -55,7 +56,7 @@ paths:
               $ref: '#/components/schemas/AnnouncementBannerSearchCriteria'
       responses:
         "200":
-          description: OK
+          description: Announcements retrieved successfully
           content:
             application/json:
               schema:
@@ -73,8 +74,8 @@ paths:
           announcement:
             - read
       tags:
-        - AnnouncementInternal
-      summary: Find active announcements by criteria
+        - announcementInternal
+      description: Search for active announcements by criteria
       operationId: searchActiveAnnouncements
       requestBody:
         required: true
@@ -84,7 +85,7 @@ paths:
               $ref: '#/components/schemas/ActiveAnnouncementsSearchCriteria'
       responses:
         "200":
-          description: OK
+          description: Active announcements retrieved successfully
           content:
             application/json:
               schema:
@@ -102,8 +103,8 @@ paths:
           announcement:
             - write
       tags:
-        - AnnouncementInternal
-      summary: Create announcement
+        - announcementInternal
+      description: Create a new announcement
       operationId: createAnnouncement
       requestBody:
         required: true
@@ -113,7 +114,7 @@ paths:
               $ref: '#/components/schemas/CreateAnnouncementRequest'
       responses:
         "201":
-          description: OK
+          description: Announcement created successfully
           headers:
             Location:
               required: true
@@ -137,12 +138,12 @@ paths:
           announcement:
             - read
       tags:
-        - AnnouncementInternal
-      summary: Get all product and workspace names to which announcements are assigned
+        - announcementInternal
+      description: Get all product and workspace names to which announcements are assigned
       operationId: getAllAnnouncementAssignments
       responses:
         "200":
-          description: OK
+          description: Announcement assignments retrieved successfully
           content:
             application/json:
               schema:
@@ -154,8 +155,8 @@ paths:
           announcement:
             - read
       tags:
-        - AnnouncementInternal
-      summary: Retrieve announcement by id
+        - announcementInternal
+      description: Get an announcement by its id
       operationId: getAnnouncementById
       parameters:
         - name: id
@@ -165,7 +166,7 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
+          description: Announcement retrieved successfully
           content:
             application/json:
               schema:
@@ -176,8 +177,8 @@ paths:
           announcement:
             - delete
       tags:
-        - AnnouncementInternal
-      summary: Delete announcement
+        - announcementInternal
+      description: Delete an announcement by its id
       operationId: deleteAnnouncementById
       parameters:
         - name: id
@@ -187,7 +188,7 @@ paths:
             type: string
       responses:
         "204":
-          description: No content
+          description: Announcement deleted successfully
     put:
       x-onecx:
         permissions:
@@ -195,7 +196,7 @@ paths:
             - write
       tags:
         - AnnouncementInternal
-      summary: Patch/update announcement
+      description: Update an announcement by its id
       operationId: updateAnnouncementById
       parameters:
         - name: id
@@ -211,7 +212,7 @@ paths:
               $ref: '#/components/schemas/UpdateAnnouncementRequest'
       responses:
         "200":
-          description: OK
+          description: Announcement updated successfully
           content:
             application/json:
               schema:
@@ -230,11 +231,11 @@ paths:
             - read
       tags:
         - AnnouncementInternal
-      summary: retrieve list of all existing workspace names
+      description: Get a list of all existing workspace names
       operationId: getAllWorkspaceNames
       responses:
         "200":
-          description: OK
+          description: Workspace names retrieved successfully
           content:
             application/json:
               schema:
@@ -249,7 +250,7 @@ paths:
             - read
       tags:
         - AnnouncementInternal
-      summary: Get all available products
+      description: Get all available products
       operationId: getAllProductNames
       requestBody:
         content:
@@ -258,7 +259,7 @@ paths:
               $ref: '#/components/schemas/ProductsSearchCriteria'
       responses:
         "200":
-          description: OK
+          description: Product names retrieved successfully
           content:
             application/json:
               schema:

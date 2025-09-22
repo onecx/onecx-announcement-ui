@@ -243,7 +243,7 @@
                   />
                 }
                 @default {
-                  <div *ngIf="col.isDate && rowData[col.field]" class="max-height-for-2-lines">
+                  <div *ngIf="col.isDate && rowData[col.field]" class="text-ellipsis-2-lines">
                     {{ rowData[col.field] | date: dateFormat }}
                   </div>
                   <ng-container *ngIf="col.isDropdown">
