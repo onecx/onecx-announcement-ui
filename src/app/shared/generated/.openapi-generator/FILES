@@ -25,10 +25,6 @@ model/models.ts
 model/problemDetailInvalidParam.ts
 model/problemDetailParam.ts
 model/problemDetailResponse.ts
-model/product.ts
-model/productsPageResult.ts
-model/productsSearchCriteria.ts
 model/updateAnnouncementRequest.ts
-model/workspaceAbstract.ts
 param.ts
 variables.ts

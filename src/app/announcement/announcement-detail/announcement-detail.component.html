@@ -8,9 +8,11 @@
   [resizable]="true"
   [style]="{ width: '650px' }"
   [breakpoints]="{
-    '992px': '75vw',
-    '768px': '90vw',
-    '630px': '100vw'
+    '992px': '72vw',
+    '848px': '80vw',
+    '768px': '88vw',
+    '730px': '95vw',
+    '650px': '100vw'
   }"
 >
   <!-- display status/type/priority on dialog header -->
@@ -222,12 +224,13 @@
           <div
             class="w-full flex flex-column sm:flex-row sm:justify-content-between row-gap-3 sm:row-gap-4 column-gap-5"
           >
-            <span class="p-float-label w-full sm:max-w-20rem">
+            <span class="p-float-label">
               <p-dropdown
                 #workspaceName
                 id="am_detail_form_workspace_name"
                 class="input-field"
-                styleClass="w-full sm:max-w-20rem text-responsive"
+                styleClass="w-20rem text-responsive"
+                panelStyleClass="w-20rem"
                 formControlName="workspaceName"
                 [options]="allWorkspaces"
                 [autoDisplayFirst]="true"
@@ -245,11 +248,12 @@
               </label>
             </span>
 
-            <span class="p-float-label w-full sm:max-w-20rem">
+            <span class="p-float-label">
               <p-dropdown
                 id="am_detail_form_application_name"
                 class="input-field"
-                styleClass="w-full sm:max-w-20rem text-responsive"
+                styleClass="w-20rem text-responsive"
+                panelStyleClass="w-20rem"
                 formControlName="productName"
                 [options]="allProducts"
                 [autoDisplayFirst]="true"
@@ -272,11 +276,11 @@
         <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
           <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate }} </ng-template>
           <div
-            class="w-full flex flex-column row-gap-2 sm:flex-row sm:justify-content-evenly sm:align-items-end"
+            class="w-full flex flex-row flex-wrap gap-2 sm:justify-content-evenly align-items-end"
             style="margin-top: -1rem"
           >
             <section
-              class="p-0 md:text-right flex flex-column md:justify-content-end"
+              class="p-0 pt-2 md:pt-0 md:text-right flex flex-column md:justify-content-end"
               [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
             >
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority" aria-hidden="true">
@@ -293,9 +297,10 @@
                 tooltipEvent="hover"
               ></p-selectButton>
             </section>
-            <span
+            <div
               id="am_detail_preview_icon"
-              class="p-2 pi text-xl border-round hidden sm:block"
+              class="m-1 ml-6 sm:ml-1 p-2 pi text-xl border-round"
+              style="height: fit-content"
               [class.pi-info-circle]="announcmentType.value === 'INFO'"
               [class.pi-calendar]="announcmentType.value === 'EVENT'"
               [class.pi-wrench]="announcmentType.value === 'SYSTEM_MAINTENANCE'"
@@ -306,7 +311,7 @@
               tooltipPosition="top"
               tooltipEvent="hover"
               aria-hidden="true"
-            ></span>
+            ></div>
             <section class="p-0 flex flex-column" [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate">
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_type" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.TYPE' | translate }}

@@ -61,6 +61,16 @@
   }
 }
 
+@mixin dropdown-limit-itemsize {
+  :host ::ng-deep {
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+      max-width: 12rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
 // disable preset of opacity in form: not readable
 @mixin readable-disabled-form-controls {
   :host ::ng-deep {
