@@ -42,15 +42,15 @@
       styleClass="m-3 p-2"
       [text]="exceptionKey | translate"
     ></p-message>
+    <p-message
+      *ngIf="searching"
+      id="am_search_message_searching"
+      severity="info"
+      styleClass="m-3 p-2"
+      [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
+    ></p-message>
 
     <ng-container *ngIf="data$ | async as data">
-      <p-message
-        *ngIf="searching"
-        id="am_search_message_searching"
-        severity="info"
-        styleClass="m-3 p-2"
-        [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
-      ></p-message>
       <p-table
         *ngIf="!(searching || exceptionKey)"
         #dataTable
@@ -125,9 +125,9 @@
                   [plain]="true"
                   [rounded]="true"
                   [icon]="'pi pi-eye'"
-                  (onClick)="onDetail('VIEW', rowData, $event)"
-                  (keydown.enter)="onDetail('VIEW', rowData, $event)"
-                  (keydown.space)="onDetail('VIEW', rowData, $event)"
+                  (onClick)="onDetail($event, rowData, 'VIEW')"
+                  (keydown.enter)="onDetail($event, rowData, 'VIEW')"
+                  (keydown.space)="onDetail($event, rowData, 'VIEW')"
                   [attr.aria-label]="'ACTIONS.VIEW.LABEL' | translate"
                   [pTooltip]="'ACTIONS.VIEW.LABEL' | translate"
                   tooltipPosition="top"
@@ -143,9 +143,9 @@
                 [plain]="true"
                 [rounded]="true"
                 [icon]="'pi pi-pencil'"
-                (onClick)="onDetail('EDIT', rowData, $event)"
-                (keydown.enter)="onDetail('EDIT', rowData, $event)"
-                (keydown.space)="onDetail('EDIT', rowData, $event)"
+                (onClick)="onDetail($event, rowData, 'EDIT')"
+                (keydown.enter)="onDetail($event, rowData, 'EDIT')"
+                (keydown.space)="onDetail($event, rowData, 'EDIT')"
                 [attr.aria-label]="'ACTIONS.EDIT.LABEL' | translate"
                 [pTooltip]="'ACTIONS.EDIT.LABEL' | translate"
                 tooltipPosition="top"
@@ -160,9 +160,9 @@
                 [plain]="true"
                 [rounded]="true"
                 [icon]="'pi pi-copy'"
-                (click)="onDetail('COPY', rowData, $event)"
-                (keydown.enter)="onDetail('COPY', rowData, $event)"
-                (keydown.space)="onDetail('COPY', rowData, $event)"
+                (click)="onDetail($event, rowData, 'COPY')"
+                (keydown.enter)="onDetail($event, rowData, 'COPY')"
+                (keydown.space)="onDetail($event, rowData, 'COPY')"
                 [attr.aria-label]="'ACTIONS.COPY.LABEL' | translate"
                 [pTooltip]="'ACTIONS.COPY.LABEL' | translate"
                 tooltipPosition="top"
@@ -380,8 +380,8 @@
     [displayDialog]="displayDetailDialog"
     (hideDialogAndChanged)="onCloseDetail($event)"
     [announcement]="item4Detail"
+    [changeMode]="changeMode"
     [allWorkspaces]="metaData.allWorkspaces"
     [allProducts]="metaData.allProducts"
-    [changeMode]="changeMode"
   ></app-announcement-detail>
 </ocx-portal-page>

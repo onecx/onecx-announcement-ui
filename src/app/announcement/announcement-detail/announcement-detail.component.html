@@ -53,7 +53,7 @@
     [text]="exceptionKey | translate"
   ></p-message>
 
-  <p-tabView *ngIf="!exceptionKey" [formGroup]="formGroup" errorTailor>
+  <p-tabView *ngIf="!exceptionKey" [formGroup]="announcementForm" errorTailor>
     <p-tabPanel
       [header]="'DIALOG.DETAIL.TAB.CONTENT' | translate"
       [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.CONTENT' | translate"
@@ -202,13 +202,13 @@
                 tooltipEvent="hover"
               ></p-inputSwitch>
               <label class="text-sm float-label" for="am_detail_form_status" aria-hidden="true">
-                {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + formGroup.controls['status'].value | translate }}
+                {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + announcementForm.controls['status'].value | translate }}
               </label>
             </div>
             <label
               *ngIf="
-                formGroup.controls['startDate'].errors?.hasOwnProperty('invalidDateRange') ||
-                formGroup.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
+                announcementForm.controls['startDate'].errors?.hasOwnProperty('invalidDateRange') ||
+                announcementForm.controls['endDate'].errors?.hasOwnProperty('invalidDateRange')
               "
               class="col-12 py-0 ml-1 sm:pl-3 control-error"
               for="am_detail_form_start_date"
@@ -449,7 +449,7 @@
         id="am_detail_action_save"
         icon="pi pi-save"
         (onClick)="onSave()"
-        [disabled]="!formGroup.valid"
+        [disabled]="!announcementForm.valid"
         [label]="'ACTIONS.SAVE' | translate"
         [ariaLabel]="'ACTIONS.SAVE' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.SAVE' | translate"
