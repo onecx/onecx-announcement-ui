@@ -42,15 +42,16 @@
       styleClass="m-3 p-2"
       [text]="exceptionKey | translate"
     ></p-message>
-    <p-message
-      *ngIf="searching"
-      id="am_search_message_searching"
-      severity="info"
-      styleClass="m-3 p-2"
-      [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
-    ></p-message>
 
     <ng-container *ngIf="data$ | async as data">
+      <!-- placed here to avoid https://angular.dev/errors/NG0100 -->
+      <p-message
+        *ngIf="searching"
+        id="am_search_message_searching"
+        severity="info"
+        styleClass="m-3 p-2"
+        [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
+      ></p-message>
       <p-table
         *ngIf="!(searching || exceptionKey)"
         #dataTable

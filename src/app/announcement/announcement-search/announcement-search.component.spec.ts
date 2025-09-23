@@ -337,11 +337,11 @@ describe('AnnouncementSearchComponent', () => {
    */
   describe('detail actions', () => {
     it('should prepare the creation of a new parameter', () => {
-      const ev: MouseEvent = new MouseEvent('type')
+      const ev: Event = new Event('type')
       spyOn(ev, 'stopPropagation')
       const mode = 'CREATE'
 
-      component.onDetail(mode, undefined, ev)
+      component.onDetail(ev, undefined, mode)
 
       expect(ev.stopPropagation).toHaveBeenCalled()
       expect(component.changeMode).toEqual(mode)
@@ -356,7 +356,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should show details of a parameter', () => {
       const mode = 'EDIT'
 
-      component.onDetail(mode, itemData[0])
+      component.onDetail(undefined, itemData[0], mode)
 
       expect(component.changeMode).toEqual(mode)
       expect(component.item4Detail).toBe(itemData[0])
@@ -366,7 +366,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should prepare the copy of a parameter', () => {
       const mode = 'COPY'
 
-      component.onDetail(mode, itemData[0])
+      component.onDetail(undefined, itemData[0], mode)
 
       expect(component.changeMode).toEqual(mode)
       expect(component.item4Detail).toBe(itemData[0])
@@ -390,7 +390,7 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should prepare the deletion of a parameter - ok', () => {
-      const ev: MouseEvent = new MouseEvent('type')
+      const ev: Event = new Event('type')
       spyOn(ev, 'stopPropagation')
 
       component.onDelete(ev, items4Deletion[0])
@@ -402,7 +402,7 @@ describe('AnnouncementSearchComponent', () => {
 
     it('should delete a parameter with confirmation', () => {
       apiServiceSpy.deleteAnnouncementById.and.returnValue(of(null))
-      const ev: MouseEvent = new MouseEvent('type')
+      const ev: Event = new Event('type')
 
       component.onDelete(ev, items4Deletion[1])
       component.onDeleteConfirmation(items4Deletion) // remove but not the last of the product
@@ -417,7 +417,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should display error if deleting a parameter fails', () => {
       const errorResponse = { status: '400', statusText: 'Error on deletion' }
       apiServiceSpy.deleteAnnouncementById.and.returnValue(throwError(() => errorResponse))
-      const ev: MouseEvent = new MouseEvent('type')
+      const ev: Event = new Event('type')
       spyOn(console, 'error')
 
       component.onDelete(ev, items4Deletion[0])

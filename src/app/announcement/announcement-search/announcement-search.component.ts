@@ -15,7 +15,6 @@ import {
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
-import { limitText } from 'src/app/shared/utils'
 
 export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
 type ExtendedColumn = Column & {
@@ -80,7 +79,6 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDeleteDialog = false
   public filteredColumns: Column[] = []
   public dataViewControlsTranslations: DataViewControlTranslations = {}
-  public limitText = limitText
 
   // data
   public data$: Observable<Announcement[]> | undefined
@@ -251,7 +249,7 @@ export class AnnouncementSearchComponent implements OnInit {
     ev?.stopPropagation()
     this.changeMode = mode
     this.item4Detail = item // do not manipulate the item here
-    if (item) this.displayDetailDialog = true
+    this.displayDetailDialog = true
   }
   public onCloseDetail(refresh: boolean): void {
     this.displayDetailDialog = false
@@ -366,7 +364,9 @@ export class AnnouncementSearchComponent implements OnInit {
     this.searching = true
     this.exceptionKey = undefined
     this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
-      map((data) => data.stream ?? []),
+      map((data) => {
+        return data.stream ?? []
+      }),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })

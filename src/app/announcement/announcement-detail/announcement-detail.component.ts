@@ -184,7 +184,7 @@ export class AnnouncementDetailComponent implements OnChanges {
     }
     const item = { ...this.announcementForm.value } as Announcement
     if (['COPY', 'CREATE'].includes(this.changeMode)) this.createItem(item as CreateAnnouncementRequest)
-    else this.updateItem(item?.id, item as UpdateAnnouncementRequest)
+    else this.updateItem(this.announcement?.id, item as UpdateAnnouncementRequest)
   }
 
   private createItem(item: CreateAnnouncementRequest) {

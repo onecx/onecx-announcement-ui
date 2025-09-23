@@ -49,9 +49,6 @@ export class AnnouncementCriteriaComponent implements OnInit {
     public readonly translate: TranslateService
   ) {
     this.dateFormatForRange = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'm/d/yy'
-  }
-
-  ngOnInit(): void {
     this.criteriaForm = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
@@ -61,6 +58,9 @@ export class AnnouncementCriteriaComponent implements OnInit {
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
       startDateRange: new FormControl<Date[] | null>(null)
     })
+  }
+
+  ngOnInit(): void {
     this.prepareDialogTranslations()
   }
 
