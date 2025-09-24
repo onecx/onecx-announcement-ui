@@ -97,11 +97,11 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   afterEach(() => {
+    mockUserService.lang$.getValue.and.returnValue(defaultLang)
+    // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     translateServiceSpy.get.calls.reset()
-    mockUserService.lang$.getValue.and.returnValue(defaultLang)
-    // to spy data: reset
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
     apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
@@ -169,7 +169,7 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should reset search criteria and empty announcements for the next search', (done) => {
+    it('should reset search criteria and empty items for the next search', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [itemData[1]] }))
       component.criteria = { workspaceName: 'ADMIN' }
 
@@ -200,16 +200,11 @@ describe('AnnouncementSearchComponent', () => {
           expect(data.length).toBe(0)
           done()
         },
-        error: () => {
-          expect(console.error).toHaveBeenCalledWith('searchAnnouncements', errorResponse)
-          expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENTS')
-          expect(msgServiceSpy.error).toHaveBeenCalledWith({
-            summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED',
-            detailKey: 'EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENTS'
-          })
-          done.fail
-        }
+        error: done.fail
       })
+      expect(console.error).toHaveBeenCalledWith('searchAnnouncements', errorResponse)
+      expect(component.exceptionKey).toEqual('EXCEPTIONS.HTTP_STATUS_' + errorResponse.status + '.ANNOUNCEMENTS')
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
     })
 
     it('should search with newly defined criteria', () => {
@@ -275,11 +270,9 @@ describe('AnnouncementSearchComponent', () => {
           expect(data.products).toEqual([])
           done()
         },
-        error: (err) => {
-          expect(console.error).toHaveBeenCalledOnceWith('getAllAnnouncementAssignments', errorResponse)
-          done.fail
-        }
+        error: done.fail
       })
+      expect(console.error).toHaveBeenCalledOnceWith('getAllAnnouncementAssignments', errorResponse)
     })
   })
 

@@ -14,8 +14,12 @@
         type="text"
         formControlName="title"
         class="w-9rem sm:w-13rem"
-        [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate"
-        [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate"
+        [ariaLabel]="
+          ('ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate) + ('ACTIONS.SEARCH.WILDCARD_SUPPORT' | translate)
+        "
+        [pTooltip]="
+          ('ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate) + ('ACTIONS.SEARCH.WILDCARD_SUPPORT' | translate)
+        "
         tooltipPosition="top"
         tooltipEvent="hover"
       />

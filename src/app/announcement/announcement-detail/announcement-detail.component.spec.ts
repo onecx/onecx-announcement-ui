@@ -1,13 +1,11 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { createTranslateLoader } from '@onecx/angular-utils'
 
 import {
   Announcement,
@@ -17,6 +15,7 @@ import {
   AnnouncementType
 } from 'src/app/shared/generated'
 import { AnnouncementDetailComponent, dateRangeValidator } from './announcement-detail.component'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 
 const announcement: Announcement = {
   modificationCount: 0,
@@ -32,15 +31,19 @@ const announcement: Announcement = {
   endDate: '2023-01-03'
 }
 const announcementForm = new FormGroup({
-  title: new FormControl('title'),
-  workspaceName: new FormControl('workspace name'),
-  productName: new FormControl('product name')
+  title: new FormControl(announcement.title),
+  workspaceName: new FormControl(announcement.workspaceName),
+  productName: new FormControl(announcement.productName),
+  startDate: new FormControl(announcement.startDate),
+  endDate: new FormControl(announcement.endDate)
 })
 
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
   let fixture: ComponentFixture<AnnouncementDetailComponent>
 
+  const defaultLang = 'en'
+  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
     'error',
@@ -52,15 +55,21 @@ describe('AnnouncementDetailComponent', () => {
     updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({})),
     searchProductsByCriteria: jasmine.createSpy('searchProductsByCriteria').and.returnValue(of([]))
   }
-  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
+
+  function initTestComponent() {
+    fixture = TestBed.createComponent(AnnouncementDetailComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementDetailComponent],
       imports: [
-        TranslateModule.forRoot({
-          loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
-        })
+        TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }).withDefaultLanguage(defaultLang)
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
@@ -71,26 +80,24 @@ describe('AnnouncementDetailComponent', () => {
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
       ]
     }).compileComponents()
-    msgServiceSpy.success.calls.reset()
-    msgServiceSpy.error.calls.reset()
-    msgServiceSpy.warning.calls.reset()
-    // to spy data: reset
-    apiServiceSpy.getAnnouncementById.calls.reset()
-    apiServiceSpy.createAnnouncement.calls.reset()
-    apiServiceSpy.updateAnnouncementById.calls.reset()
-    apiServiceSpy.searchProductsByCriteria.calls.reset()
-    mockUserService.lang$.getValue.and.returnValue('de')
   }))
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AnnouncementDetailComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
+    initTestComponent()
     component.displayDialog = true
   })
 
   afterEach(() => {
     component.announcementForm.reset()
+    mockUserService.lang$.getValue.and.returnValue(defaultLang)
+    // to spy data: reset
+    msgServiceSpy.success.calls.reset()
+    msgServiceSpy.error.calls.reset()
+    msgServiceSpy.warning.calls.reset()
+    apiServiceSpy.getAnnouncementById.calls.reset()
+    apiServiceSpy.createAnnouncement.calls.reset()
+    apiServiceSpy.updateAnnouncementById.calls.reset()
+    apiServiceSpy.searchProductsByCriteria.calls.reset()
   })
 
   describe('construction', () => {
@@ -342,10 +349,7 @@ describe('AnnouncementDetailComponent', () => {
     })
   })
 
-  /*
-   * UI ACTIONS
-   */
-  describe('Extra UI actions', () => {
+  describe('UI actions', () => {
     describe('Closing dialog', () => {
       it('should close the dialog if user triggers hiding', () => {
         spyOn(component.hideDialogAndChanged, 'emit')
@@ -374,45 +378,7 @@ describe('AnnouncementDetailComponent', () => {
     })
   })
 
-  /**
-   * Language tests
-   */
-  it('should set a German date format', () => {
-    expect(component.dateFormat).toEqual('dd.mm.yy')
-  })
-
-  it('should set default date format', () => {
-    mockUserService.lang$.getValue.and.returnValue('en')
-    fixture = TestBed.createComponent(AnnouncementDetailComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(component.dateFormat).toEqual('mm/dd/yy')
-  })
-
-  /**
-   * Extras
-   */
-  describe('form invalid', () => {
-    it('should display warning when trying to save an invalid announcement', () => {
-      component.announcementForm = announcementForm
-      component.announcementForm.setErrors({ title: true })
-
-      component.onSave()
-
-      expect(msgServiceSpy.warning).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.INVALID_FORM' })
-    })
-
-    it('should display warning when trying to save an announcement with invalid dateRange', () => {
-      component.announcementForm = announcementForm
-      component.announcementForm.setErrors({ dateRange: true })
-
-      component.onSave()
-
-      expect(msgServiceSpy.warning).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE' })
-    })
-  })
-
-  describe('dateFormGroup', () => {
+  describe('date range validation', () => {
     it('should correct dateRange using validator fn', () => {
       const dateFormGroup = new FormGroup({
         startDate: new FormControl('2023-01-01'),
@@ -448,6 +414,38 @@ describe('AnnouncementDetailComponent', () => {
       dateFormGroup.updateValueAndValidity()
 
       expect(dateFormGroup.errors).toEqual(null)
+    })
+  })
+
+  describe('form invalid', () => {
+    it('should display warning when trying to save an invalid announcement', () => {
+      component.announcementForm = announcementForm
+      component.announcementForm.setErrors({ title: true })
+
+      component.onSave()
+
+      expect(msgServiceSpy.warning).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.INVALID_FORM' })
+    })
+
+    it('should display warning when trying to save an announcement with invalid dateRange', () => {
+      component.announcementForm = announcementForm
+      component.announcementForm.setErrors({ dateRange: true })
+
+      component.onSave()
+
+      expect(msgServiceSpy.warning).toHaveBeenCalledWith({ summaryKey: 'VALIDATION.ERRORS.INVALID_DATE_RANGE' })
+    })
+  })
+
+  describe('Language tests', () => {
+    it('should use default format: English', () => {
+      expect(component.datetimeFormat).toEqual('M/d/yy, hh:mm:ss a')
+    })
+
+    it('should set German date format', () => {
+      mockUserService.lang$.getValue.and.returnValue('de')
+      initTestComponent()
+      expect(component.datetimeFormat).toEqual('dd.MM.yyyy HH:mm:ss')
     })
   })
 })
