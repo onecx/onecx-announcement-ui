@@ -31,6 +31,11 @@ const announcement: Announcement = {
   startDate: '2023-01-02',
   endDate: '2023-01-03'
 }
+const announcementForm = new FormGroup({
+  title: new FormControl('title'),
+  workspaceName: new FormControl('workspace name'),
+  productName: new FormControl('product name')
+})
 
 describe('AnnouncementDetailComponent', () => {
   let component: AnnouncementDetailComponent
@@ -47,11 +52,6 @@ describe('AnnouncementDetailComponent', () => {
     updateAnnouncementById: jasmine.createSpy('updateAnnouncementById').and.returnValue(of({})),
     searchProductsByCriteria: jasmine.createSpy('searchProductsByCriteria').and.returnValue(of([]))
   }
-  const announcementForm = new FormGroup({
-    title: new FormControl('title'),
-    workspaceName: new FormControl('workspace name'),
-    productName: new FormControl('product name')
-  })
   const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
 
   beforeEach(waitForAsync(() => {

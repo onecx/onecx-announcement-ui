@@ -1,15 +1,14 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { Column } from '@onecx/portal-integration-angular'
-import { createTranslateLoader } from '@onecx/angular-utils'
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 
 const itemData: any = [
   {
@@ -57,6 +56,7 @@ describe('AnnouncementSearchComponent', () => {
   let component: AnnouncementSearchComponent
   let fixture: ComponentFixture<AnnouncementSearchComponent>
 
+  const defaultLang = 'en'
   const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
@@ -66,14 +66,20 @@ describe('AnnouncementSearchComponent', () => {
     getAllAnnouncementAssignments: jasmine.createSpy('getAllAnnouncementAssignments').and.returnValue(of({}))
   }
 
+  function initTestComponent() {
+    fixture = TestBed.createComponent(AnnouncementSearchComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AnnouncementSearchComponent],
       imports: [
-        TranslateModule.forRoot({
-          isolate: true,
-          loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
-        })
+        TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }).withDefaultLanguage(defaultLang)
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
@@ -84,10 +90,17 @@ describe('AnnouncementSearchComponent', () => {
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
       ]
     }).compileComponents()
+  }))
+
+  beforeEach(() => {
+    initTestComponent()
+  })
+
+  afterEach(() => {
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
     translateServiceSpy.get.calls.reset()
-    mockUserService.lang$.getValue.and.returnValue('de')
+    mockUserService.lang$.getValue.and.returnValue(defaultLang)
     // to spy data: reset
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.deleteAnnouncementById.calls.reset()
@@ -96,12 +109,6 @@ describe('AnnouncementSearchComponent', () => {
     apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
     apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of({}))
-  }))
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(AnnouncementSearchComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
   })
 
   describe('construction', () => {
@@ -117,7 +124,7 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   describe('search', () => {
-    it('should search announcements without search criteria', (done) => {
+    it('should search without search criteria', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: itemData }))
 
       component.onSearch({})
@@ -131,7 +138,7 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should search announcements assigned to one workspace', (done) => {
+    it('should search assigned to one workspace', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [itemData[1]] }))
       component.criteria = { workspaceName: 'ADMIN' }
 
@@ -228,7 +235,7 @@ describe('AnnouncementSearchComponent', () => {
    * META data: which were assigned to announcements
    */
   describe('META data: load used products/workspaces', () => {
-    it('should get all announcements assigned to workspaces', (done) => {
+    it('should get all items assigned to products/workspaces - successful', (done) => {
       const assignments: AnnouncementAssignments = { productNames: ['prod1'], workspaceNames: ['w1'] }
       apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of(assignments))
 
@@ -243,7 +250,7 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should get all announcements assigned to workspaces', (done) => {
+    it('should get all items assigned to products/workspaces - failed', (done) => {
       const errorResponse = { status: '404', statusText: 'An error occur' }
       apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(throwError(() => errorResponse))
       spyOn(console, 'error')
@@ -336,7 +343,7 @@ describe('AnnouncementSearchComponent', () => {
    * UI ACTIONS
    */
   describe('detail actions', () => {
-    it('should prepare the creation of a new parameter', () => {
+    it('should prepare the creation of a new item', () => {
       const ev: Event = new Event('type')
       spyOn(ev, 'stopPropagation')
       const mode = 'CREATE'
@@ -353,7 +360,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.displayDetailDialog).toBeFalse()
     })
 
-    it('should show details of a parameter', () => {
+    it('should show details of a item', () => {
       const mode = 'EDIT'
 
       component.onDetail(undefined, itemData[0], mode)
@@ -363,7 +370,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.displayDetailDialog).toBeTrue()
     })
 
-    it('should prepare the copy of a parameter', () => {
+    it('should prepare the copy of a item', () => {
       const mode = 'COPY'
 
       component.onDetail(undefined, itemData[0], mode)
@@ -389,7 +396,7 @@ describe('AnnouncementSearchComponent', () => {
       ]
     })
 
-    it('should prepare the deletion of a parameter - ok', () => {
+    it('should prepare the deletion of a item - ok', () => {
       const ev: Event = new Event('type')
       spyOn(ev, 'stopPropagation')
 
@@ -400,7 +407,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.displayDeleteDialog).toBeTrue()
     })
 
-    it('should delete a parameter with confirmation', () => {
+    it('should delete a item with confirmation', () => {
       apiServiceSpy.deleteAnnouncementById.and.returnValue(of(null))
       const ev: Event = new Event('type')
 
@@ -414,7 +421,7 @@ describe('AnnouncementSearchComponent', () => {
       component.onDeleteConfirmation(items4Deletion) // remove and this was the last of the product
     })
 
-    it('should display error if deleting a parameter fails', () => {
+    it('should display error if deleting a item fails', () => {
       const errorResponse = { status: '400', statusText: 'Error on deletion' }
       apiServiceSpy.deleteAnnouncementById.and.returnValue(throwError(() => errorResponse))
       const ev: Event = new Event('type')
@@ -458,7 +465,7 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  describe('action buttons', () => {
+  describe('page actions', () => {
     it('should open create dialog', () => {
       translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
       spyOn(component, 'onDetail')
@@ -477,16 +484,14 @@ describe('AnnouncementSearchComponent', () => {
    * Language tests
    */
   describe('Language tests', () => {
-    it('should set a German date format', () => {
-      expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+    it('should use default format: English', () => {
+      expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
     })
 
-    it('should set default date format', () => {
-      mockUserService.lang$.getValue.and.returnValue('en')
-      fixture = TestBed.createComponent(AnnouncementSearchComponent)
-      component = fixture.componentInstance
-      fixture.detectChanges()
-      expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
+    it('should set German date format', () => {
+      mockUserService.lang$.getValue.and.returnValue('de')
+      initTestComponent()
+      expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
     })
   })
 })
