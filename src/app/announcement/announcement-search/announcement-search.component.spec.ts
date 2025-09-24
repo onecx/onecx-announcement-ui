@@ -123,6 +123,21 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
+  describe('page actions', () => {
+    it('should open create dialog', () => {
+      translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
+      spyOn(component, 'onDetail')
+
+      component.ngOnInit()
+
+      component.actions$?.subscribe((action) => {
+        action[0].actionCallback()
+      })
+
+      expect(component.onDetail).toHaveBeenCalled()
+    })
+  })
+
   describe('search', () => {
     it('should search without search criteria', (done) => {
       apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: itemData }))
@@ -231,9 +246,6 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  /**
-   * META data: which were assigned to announcements
-   */
   describe('META data: load used products/workspaces', () => {
     it('should get all items assigned to products/workspaces - successful', (done) => {
       const assignments: AnnouncementAssignments = { productNames: ['prod1'], workspaceNames: ['w1'] }
@@ -339,9 +351,6 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  /*
-   * UI ACTIONS
-   */
   describe('detail actions', () => {
     it('should prepare the creation of a new item', () => {
       const ev: Event = new Event('type')
@@ -465,24 +474,6 @@ describe('AnnouncementSearchComponent', () => {
     })
   })
 
-  describe('page actions', () => {
-    it('should open create dialog', () => {
-      translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
-      spyOn(component, 'onDetail')
-
-      component.ngOnInit()
-
-      component.actions$?.subscribe((action) => {
-        action[0].actionCallback()
-      })
-
-      expect(component.onDetail).toHaveBeenCalled()
-    })
-  })
-
-  /**
-   * Language tests
-   */
   describe('Language tests', () => {
     it('should use default format: English', () => {
       expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
