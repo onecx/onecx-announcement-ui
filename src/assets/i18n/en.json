@@ -215,6 +215,11 @@
     }
   },
   "EXCEPTIONS": {
+    "HTTP_STATUS_undefined": {
+      "ANNOUNCEMENT": "Unknown problem retrieving Announcement data - please try again.",
+      "ANNOUNCEMENTS": "Unknown problem retrieving Announcement data - please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again."
+    },
     "HTTP_STATUS_0": {
       "ANNOUNCEMENT": "Unknown problem retrieving Announcement data - please try again.",
       "ANNOUNCEMENTS": "Unknown problem retrieving Announcement data - please try again.",

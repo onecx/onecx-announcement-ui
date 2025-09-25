@@ -275,7 +275,7 @@ describe('AnnouncementDetailComponent', () => {
     })
   })
 
-  describe('onSave - creating and updating a parameter', () => {
+  describe('onSave', () => {
     describe('CREATE', () => {
       it('should create an announcement', () => {
         apiServiceSpy.createAnnouncement.and.returnValue(of({}))
@@ -305,7 +305,7 @@ describe('AnnouncementDetailComponent', () => {
     })
 
     describe('COPY', () => {
-      it('should create a parameter based on another', () => {
+      it('should create an item based on another', () => {
         apiServiceSpy.createAnnouncement.and.returnValue(of({}))
         component.changeMode = 'COPY'
         spyOn(component.hideDialogAndChanged, 'emit')

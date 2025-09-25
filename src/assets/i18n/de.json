@@ -215,6 +215,11 @@
     }
   },
   "EXCEPTIONS": {
+    "HTTP_STATUS_undefined": {
+      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
+      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal."
+    },
     "HTTP_STATUS_0": {
       "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
       "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
