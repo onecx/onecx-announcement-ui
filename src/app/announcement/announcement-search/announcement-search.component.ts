@@ -15,7 +15,6 @@ import {
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
-import { limitText } from 'src/app/shared/utils'
 
 export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
 type ExtendedColumn = Column & {
@@ -80,7 +79,6 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDeleteDialog = false
   public filteredColumns: Column[] = []
   public dataViewControlsTranslations: DataViewControlTranslations = {}
-  public limitText = limitText
 
   // data
   public data$: Observable<Announcement[]> | undefined
@@ -167,8 +165,8 @@ export class AnnouncementSearchComponent implements OnInit {
   constructor(
     private readonly user: UserService,
     private readonly slotService: SlotService,
-    private readonly msgService: PortalMessageService,
     private readonly translate: TranslateService,
+    private readonly msgService: PortalMessageService,
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
@@ -178,12 +176,12 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    this.prepareActionButtons()
+    this.prepareDialogTranslations()
     this.pdSlotEmitter.subscribe(this.productData$)
     this.wdSlotEmitter.subscribe(this.workspaceData$)
     this.loadMetaData()
     this.onSearch({})
-    this.prepareDialogTranslations()
-    this.prepareActionButtons()
   }
 
   /****************************************************************************
@@ -221,7 +219,7 @@ export class AnnouncementSearchComponent implements OnInit {
           {
             label: data['ACTIONS.CREATE.LABEL'],
             title: data['ACTIONS.CREATE.TOOLTIP'],
-            actionCallback: () => this.onDetail('CREATE', undefined),
+            actionCallback: () => this.onDetail(undefined, undefined, 'CREATE'),
             icon: 'pi pi-plus',
             show: 'always',
             permission: 'ANNOUNCEMENT#EDIT'
@@ -247,7 +245,7 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  DETAIL => CREATE, COPY, EDIT, VIEW
    */
-  public onDetail(mode: ChangeMode, item: Announcement | undefined, ev?: Event): void {
+  public onDetail(ev: Event | undefined, item: Announcement | undefined, mode: ChangeMode): void {
     ev?.stopPropagation()
     this.changeMode = mode
     this.item4Detail = item // do not manipulate the item here
@@ -366,7 +364,9 @@ export class AnnouncementSearchComponent implements OnInit {
     this.searching = true
     this.exceptionKey = undefined
     this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
-      map((data) => data.stream ?? []),
+      map((data) => {
+        return data.stream ?? []
+      }),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })

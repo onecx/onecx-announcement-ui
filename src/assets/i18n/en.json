@@ -44,15 +44,15 @@
       "LABEL": "Export",
       "TOOLTIP": "Export definition in JSON format",
       "MESSAGE": {
-        "NOK": "An error has occurred. The Parameters could not be exported."
+        "NOK": "An error has occurred. The Announcements could not be exported."
       }
     },
     "IMPORT": {
       "LABEL": "Import",
       "TOOLTIP": "Upload definition in JSON format",
       "MESSAGE": {
-        "OK": "Die Parameter wurden erfolgreich importiert.",
-        "NOK": "An error has occurred. The Parameters could not be exported."
+        "OK": "Die Announcement wurden erfolgreich importiert.",
+        "NOK": "An error has occurred. The Announcements could not be imported."
       }
     },
     "NAVIGATION": {
@@ -68,6 +68,7 @@
       "NO_DATA": "No data",
       "IN_PROGRESS": "Searching...",
       "OF": "of",
+      "WILDCARD_SUPPORT": " (Wildcards: ?, *)",
       "MESSAGE": {
         "NO_RESULTS": "Search returned no results",
         "SEARCH_FAILED": "Search failed"
@@ -124,8 +125,8 @@
         "CONTENT": "Content",
         "INTERN": "Internal",
         "TOOLTIPS": {
-          "PROPS": "Base properties of the Parameter",
-          "CONTENT": "Titel and Content of the Parameter",
+          "PROPS": "Base properties of the Announcement",
+          "CONTENT": "Titel and Content of the Announcement",
           "INTERN": "Internal Properties"
         },
         "VISIBILITY": "Visible to",
@@ -214,47 +215,40 @@
     }
   },
   "EXCEPTIONS": {
+    "HTTP_STATUS_undefined": {
+      "ANNOUNCEMENT": "Unknown problem retrieving Announcement data - please try again.",
+      "ANNOUNCEMENTS": "Unknown problem retrieving Announcement data - please try again.",
+      "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again."
+    },
     "HTTP_STATUS_0": {
       "ANNOUNCEMENT": "Unknown problem retrieving Announcement data - please try again.",
       "ANNOUNCEMENTS": "Unknown problem retrieving Announcement data - please try again.",
-      "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
-      "WORKSPACES": "Unknown problem retrieving Workspace data - please try again.",
-      "PRODUCTS": "Unknown problem retrieving Application data - please try again."
+      "ASSIGNMENTS": "Unknown problem retrieving Workspaces and Applications with assigned Announcements - please try again."
     },
     "HTTP_STATUS_400": {
       "ANNOUNCEMENT": "Your request could not be processed.",
       "ANNOUNCEMENTS": "Your request could not be processed.",
-      "ASSIGNMENTS": "Your request could not be processed.",
-      "WORKSPACES": "Your request could not be processed.",
-      "PRODUCTS": "Your request could not be processed."
+      "ASSIGNMENTS": "Your request could not be processed."
     },
     "HTTP_STATUS_401": {
       "ANNOUNCEMENT": "You are not authorized to see Announcements.",
       "ANNOUNCEMENTS": "You are not authorized to see Announcements.",
-      "ASSIGNMENTS": "You are not authorized to see Workspaces and Applications with assigned Announcements.",
-      "WORKSPACES": "You are not authorized to see Workspaces.",
-      "PRODUCTS": "You are not authorized to see Applications."
+      "ASSIGNMENTS": "You are not authorized to see Workspaces and Applications with assigned Announcements."
     },
     "HTTP_STATUS_403": {
       "ANNOUNCEMENT": "You have no permissions to see Announcements.",
       "ANNOUNCEMENTS": "You have no permissions to see Announcements.",
-      "ASSIGNMENTS": "You have no permissions to see Workspaces and Applications with assigned Announcements.",
-      "WORKSPACES": "You have no permissions to see Workspaces.",
-      "PRODUCTS": "You have no permissions to see Applications."
+      "ASSIGNMENTS": "You have no permissions to see Workspaces and Applications with assigned Announcements."
     },
     "HTTP_STATUS_404": {
       "ANNOUNCEMENT": "Announcements could not be found.",
       "ANNOUNCEMENTS": "Announcements could not be found.",
-      "ASSIGNMENTS": "No Workspaces and Applications with assigned Announcements could be loaded.",
-      "WORKSPACES": "No Workspaces could be loaded.",
-      "PRODUCTS": "No Applications could be loaded."
+      "ASSIGNMENTS": "No Workspaces and Applications with assigned Announcements could be loaded."
     },
     "HTTP_STATUS_500": {
       "ANNOUNCEMENT": "Unknown server problem retrieving Announcement data - please try again.",
       "ANNOUNCEMENTS": "Unknown server problem retrieving Announcement data - please try again.",
-      "ASSIGNMENTS": "Unknown server problem retrieving Workspaces and Applications with assigned Announcements - please try again.",
-      "WORKSPACES": "Unknown server problem retrieving Workspace data - please try again.",
-      "PRODUCTS": "Unknown server problem retrieving Application data - please try again."
+      "ASSIGNMENTS": "Unknown server problem retrieving Workspaces and Applications with assigned Announcements - please try again."
     }
   }
 }

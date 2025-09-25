@@ -44,15 +44,15 @@
       "LABEL": "Export",
       "TOOLTIP": "Definition als JSON herunterladen",
       "MESSAGE": {
-        "NOK": "Ein Fehler ist aufgetreten. Die Parameter konnten nicht exportiert werden."
+        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeiten konnten nicht exportiert werden."
       }
     },
     "IMPORT": {
       "LABEL": "Import",
       "TOOLTIP": "Definition als JSON hochladen",
       "MESSAGE": {
-        "OK": "Die Parameter wurden erfolgreich importiert.",
-        "NOK": "Ein Fehler ist aufgetreten. Die Parameter wurden nicht importiert."
+        "OK": "Die Neuigkeiten wurden erfolgreich importiert.",
+        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeiten wurden nicht importiert."
       }
     },
     "NAVIGATION": {
@@ -68,6 +68,7 @@
       "NO_DATA": "Keine Ergebnisse",
       "IN_PROGRESS": "Suche...",
       "OF": "von",
+      "WILDCARD_SUPPORT": " (Wildcards: ?, *)",
       "MESSAGE": {
         "NO_RESULTS": "Die Suche ergab keine Treffer",
         "SEARCH_FAILED": "Suche ist fehlgeschlagen"
@@ -89,7 +90,7 @@
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
       "SAVE": "Die Änderungen speichern",
-      "SAVE_AS": "Speichern als neuen Parameter"
+      "SAVE_AS": "Speichern als neue Neuigkeit"
     }
   },
   "BREADCRUMBS": {
@@ -124,7 +125,7 @@
         "CONTENT": "Inhalt",
         "INTERN": "Intern",
         "TOOLTIPS": {
-          "PROPS": "Basiseigenschaften des Parameters",
+          "PROPS": "Basiseigenschaften des Neuigkeit",
           "CONTENT": "Titel und Inhalt der Neuigkeit",
           "INTERN": "Interne Eigenschaften"
         },
@@ -214,47 +215,40 @@
     }
   },
   "EXCEPTIONS": {
+    "HTTP_STATUS_undefined": {
+      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
+      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal."
+    },
     "HTTP_STATUS_0": {
       "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
       "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
-      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal.",
-      "WORKSPACES": "Unbekanntes Problem beim Abrufen von Workspaces - bitte versuchen Sie es noch einmal.",
-      "PRODUCTS": "Unbekanntes Problem beim Abrufen von Applikationen - bitte versuchen Sie es noch einmal."
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal."
     },
     "HTTP_STATUS_400": {
       "ANNOUNCEMENT": "Ihre Anfrage konnte nicht bearbeitet werden.",
       "ANNOUNCEMENTS": "Ihre Anfrage konnte nicht bearbeitet werden.",
-      "ASSIGNMENTS": "Ihre Anfrage konnte nicht bearbeitet werden.",
-      "WORKSPACES": "Ihre Anfrage konnte nicht bearbeitet werden.",
-      "PRODUCTS": "Ihre Anfrage konnte nicht bearbeitet werden."
+      "ASSIGNMENTS": "Ihre Anfrage konnte nicht bearbeitet werden."
     },
     "HTTP_STATUS_401": {
       "ANNOUNCEMENT": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
       "ANNOUNCEMENTS": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
-      "ASSIGNMENTS": "Sie sind nicht autorisiert, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind.",
-      "WORKSPACES": "Sie sind nicht autorisiert, um Workspaces zu sehen.",
-      "PRODUCTS": "Sie sind nicht autorisiert, um Applikationen zu sehen."
+      "ASSIGNMENTS": "Sie sind nicht autorisiert, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind."
     },
     "HTTP_STATUS_403": {
       "ANNOUNCEMENT": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
       "ANNOUNCEMENTS": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
-      "ASSIGNMENTS": "Sie haben keine Rechte, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind.",
-      "WORKSPACES": "Sie haben keine Rechte, um Workspaces zu sehen.",
-      "PRODUCTS": "Sie haben keine Rechte, um Applikationen zu sehen."
+      "ASSIGNMENTS": "Sie haben keine Rechte, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind."
     },
     "HTTP_STATUS_404": {
       "ANNOUNCEMENT": "Neuigkeit nicht gefunden.",
       "ANNOUNCEMENTS": "Es konnten keine Neuigkeiten gefunden werden.",
-      "ASSIGNMENTS": "Es konnten keine Workspaces und Applikationen gefunden werden, die Neuigkeiten zugeordnet sind.",
-      "WORKSPACES": "Es konnten keine Workspaces gefunden werden.",
-      "PRODUCTS": "Es konnten keine Applikationen geladen werden."
+      "ASSIGNMENTS": "Es konnten keine Workspaces und Applikationen gefunden werden, die Neuigkeiten zugeordnet sind."
     },
     "HTTP_STATUS_500": {
       "ANNOUNCEMENT": "Unbekanntes Server-Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
       "ANNOUNCEMENTS": "Unbekanntes Server-Problem beim Abrufen von Neuigkeitsdaten - bitte versuchen Sie es noch einmal.",
-      "ASSIGNMENTS": "Unbekanntes Server-Problem beim Abrufen von Workspaces und Applikationen - bitte versuchen Sie es noch einmal.",
-      "WORKSPACES": "Unbekanntes Server-Problem beim Abrufen von Workspace-Daten - bitte versuchen Sie es noch einmal.",
-      "PRODUCTS": "Unbekanntes Server-Problem beim Abrufen von Applikationdaten - bitte versuchen Sie es noch einmal."
+      "ASSIGNMENTS": "Unbekanntes Server-Problem beim Abrufen von Workspaces und Applikationen - bitte versuchen Sie es noch einmal."
     }
   }
 }
