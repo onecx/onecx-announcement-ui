@@ -36,9 +36,7 @@ export function forceFormValidation(form: AbstractControl): void {
 export type DropDownChangeEvent = MouseEvent & { value: any }
 
 export function dropDownSortItemsByLabel(a: SelectItem, b: SelectItem): number {
-  return (a.label ? (a.label as string).toUpperCase() : '').localeCompare(
-    b.label ? (b.label as string).toUpperCase() : ''
-  )
+  return (a.label ? a.label.toUpperCase() : '').localeCompare(b.label ? b.label.toUpperCase() : '')
 }
 export function dropDownGetLabelByValue(ddArray: SelectItem[], val: string): string | undefined {
   const a = ddArray.find((item: SelectItem) => {
@@ -52,5 +50,5 @@ export function sortByLocale(a: string, b: string): number {
 
 // display simple formatted text
 export function convertLineBreaks(text?: string) {
-  return text?.replace(/(?:\r\n|\r|\n)/g, '<br/>') ?? ''
+  return text?.replaceAll(/(?:\r\n|\r|\n)/g, '<br/>') ?? ''
 }

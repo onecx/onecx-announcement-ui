@@ -101,8 +101,8 @@ export class AnnouncementDetailComponent implements OnChanges {
     // matching mode and given data?
     if ('CREATE' === this.changeMode && this.announcement) return
     if (['EDIT', 'VIEW'].includes(this.changeMode))
-      if (!this.announcement) return
-      else this.getData(this.announcement?.id)
+      if (this.announcement) this.getData(this.announcement?.id)
+      else return
     else this.prepareForm(this.announcement)
   }
 
