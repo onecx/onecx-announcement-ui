@@ -17,11 +17,11 @@
   .error-tailor-has-error ~ control-error {
     text-align: left;
   }
-  .p-calendar {
+  .p-datepicker {
     .calender-today {
       border-color: var(--primary-color);
     }
-    .p-calendar-clear-icon {
+    .p-datepicker-clear-icon {
       right: 40px;
     }
   }

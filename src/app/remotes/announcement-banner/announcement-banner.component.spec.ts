@@ -1,4 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -7,7 +8,7 @@ import { TranslateTestingModule } from 'ngx-translate-testing'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 
-import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
 import {
   Announcement,
@@ -68,12 +69,12 @@ describe('AnnouncementBannerComponent - common case', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AppStateService, useValue: mockAppStateService },
-        { provide: BASE_URL, useValue: baseUrlSubject }
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject }
       ]
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [TranslateTestingModule, CarouselModule, TagModule],
+          imports: [CommonModule, TranslateTestingModule, CarouselModule, TagModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
@@ -125,6 +126,8 @@ describe('AnnouncementBannerComponent - common case', () => {
 
   describe('RemoteComponent initialization', () => {
     it('should call ocxInitRemoteComponent with the correct config', () => {
+      initializeComponent()
+
       const mockConfig: RemoteComponentConfig = {
         appId: 'appId',
         productName: 'prodName',
@@ -146,7 +149,7 @@ describe('AnnouncementBannerComponent - common case', () => {
       } as RemoteComponentConfig)
 
       baseUrlSubject.asObservable().subscribe((item) => {
-        expect(item).toEqual('base_url')
+        expect(item).toEqual(jasmine.objectContaining({ baseUrl: 'base_url' }))
         done()
       })
     })
@@ -154,6 +157,8 @@ describe('AnnouncementBannerComponent - common case', () => {
 
   describe('hide - ignored announcements are not displayed', () => {
     it('should hide the announcement', () => {
+      initializeComponent()
+
       const mockAnnouncementsSubject = {
         value: [{ id: 'announcement1' }, { id: 'announcement2' }],
         next: jasmine.createSpy('next')
@@ -170,6 +175,8 @@ describe('AnnouncementBannerComponent - common case', () => {
     })
 
     it('should log an error if an anncmt could not be hidden (an exception is thrown in the try block)', () => {
+      initializeComponent()
+
       const error = new Error('test error')
       spyOn(localStorage, 'setItem').and.throwError(error.message)
       spyOn(console, 'error')
@@ -181,6 +188,8 @@ describe('AnnouncementBannerComponent - common case', () => {
 
     describe('getIgnoredAnnouncementIds', () => {
       it('should return ignored anncmt id', () => {
+        initializeComponent()
+
         const ignoredIds = ['id1', 'id2', 'id3']
         spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(ignoredIds))
 
@@ -190,6 +199,8 @@ describe('AnnouncementBannerComponent - common case', () => {
       })
 
       it('should return an empty array on error', () => {
+        initializeComponent()
+
         const error = new Error('test error')
         spyOn(localStorage, 'getItem').and.throwError(error.message)
 
@@ -229,14 +240,14 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         {
-          provide: BASE_URL,
+          provide: REMOTE_COMPONENT_CONFIG,
           useValue: baseUrlSubject
         }
       ]
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [TranslateTestingModule, CarouselModule, TagModule],
+          imports: [CommonModule, TranslateTestingModule, CarouselModule, TagModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
