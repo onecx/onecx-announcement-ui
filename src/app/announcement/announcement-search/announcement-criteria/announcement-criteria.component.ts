@@ -27,7 +27,8 @@ export interface AnnouncementCriteriaForm {
 @Component({
   selector: 'app-announcement-criteria',
   templateUrl: './announcement-criteria.component.html',
-  styleUrls: ['./announcement-criteria.component.scss']
+  styleUrls: ['./announcement-criteria.component.scss'],
+  standalone: false
 })
 export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []

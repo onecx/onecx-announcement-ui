@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
-import { addInitializeModuleGuard, InitializeModuleGuard } from '@onecx/angular-integration-interface'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { SharedModule } from 'src/app/shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
+import { PortalPageComponent, providePermissionService } from '@onecx/angular-utils'
 
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
 import { AnnouncementCriteriaComponent } from './announcement-search/announcement-criteria/announcement-criteria.component'
@@ -34,13 +34,8 @@ const routes: Routes = [
 ]
 @NgModule({
   declarations: [AnnouncementSearchComponent, AnnouncementDetailComponent, AnnouncementCriteriaComponent],
-  imports: [
-    CommonModule,
-    PortalCoreModule.forMicroFrontend(),
-    [RouterModule.forChild(addInitializeModuleGuard(routes))],
-    SharedModule
-  ],
-  providers: [InitializeModuleGuard]
+  imports: [CommonModule, AngularAcceleratorModule, PortalPageComponent, RouterModule.forChild(routes), SharedModule],
+  providers: [...providePermissionService()]
 })
 export class AnnouncementModule {
   constructor() {

@@ -6,6 +6,7 @@ import { provideRouter } from '@angular/router'
 
 import { AngularAuthModule } from '@onecx/angular-auth'
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
+import { provideThemeConfig } from '@onecx/angular-utils'
 
 import { environment } from 'src/environments/environment'
 import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
@@ -19,6 +20,7 @@ bootstrapRemoteComponent(
     importProvidersFrom(AngularAuthModule),
     importProvidersFrom(BrowserModule),
     importProvidersFrom(BrowserAnimationsModule),
-    provideRouter([{ path: '**', children: [] }])
+    provideRouter([{ path: '**', children: [] }]),
+    provideThemeConfig()
   ]
 )

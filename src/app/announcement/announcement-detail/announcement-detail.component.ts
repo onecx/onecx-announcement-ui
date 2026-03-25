@@ -33,7 +33,8 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
 @Component({
   selector: 'app-announcement-detail',
   templateUrl: './announcement-detail.component.html',
-  styleUrls: ['./announcement-detail.component.scss']
+  styleUrls: ['./announcement-detail.component.scss'],
+  standalone: false
 })
 export class AnnouncementDetailComponent implements OnChanges {
   @Input() public displayDialog = false
