@@ -36,6 +36,34 @@
   .p-inputtextarea-resizable {
     resize: vertical;
   }
+
+  .am-label-top {
+    display: flex;
+    flex-direction: column-reverse;
+    row-gap: 0.35rem;
+
+    > label {
+      display: block;
+      position: static;
+      transform: none;
+      margin-left: 0;
+      line-height: 1.2;
+      color: var(--emphasis-medium);
+      font-size: 0.875rem;
+      max-width: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+  }
+
+  .am-label-top > .p-inputwrapper-filled ~ label,
+  .am-label-top > .p-inputwrapper-focus ~ label,
+  .am-label-top > .p-filled ~ label,
+  .am-label-top > .p-focus ~ label {
+    transform: none;
+  }
+
   .input-switch-xl {
     .p-inputswitch {
       height: 1rem;
@@ -54,13 +82,65 @@
   }
 
   .p-fieldset {
+    .p-fieldset-legend {
+      display: none;
+    }
+
     &.p-fieldset-toggleable .p-fieldset-legend a,
     .p-fieldset-legend {
       background-color: transparent;
       padding: 0.3rem 0.4rem;
+      max-width: calc(100% - 0.8rem);
+      white-space: normal;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .p-fieldset-legend span,
+    .p-fieldset-legend .p-fieldset-legend-label,
+    .p-fieldset-legend .p-fieldset-legend-text {
+      white-space: normal;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .p-fieldset-content {
       padding: 0.5rem 0.2rem 0rem;
+    }
+
+    &.surface-100 .p-fieldset-legend,
+    &.surface-100.p-fieldset-toggleable .p-fieldset-legend a {
+      background-color: var(--surface-100);
+    }
+  }
+
+  .am-properties-title {
+    display: block;
+    margin: 0 0 0.5rem;
+    color: var(--emphasis-high);
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .am-internal-inline-field {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+
+    > label {
+      flex: 0 0 auto;
+      margin: 0;
+      white-space: nowrap;
+      color: var(--emphasis-medium);
+      font-size: 0.875rem;
+      line-height: 1.2;
+    }
+
+    > input {
+      min-width: 0;
     }
   }
 
