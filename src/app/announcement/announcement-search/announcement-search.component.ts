@@ -350,11 +350,13 @@ export class AnnouncementSearchComponent implements OnInit {
   private createInteractiveColumns(): DataTableColumn[] {
     return this.columns.map((col) => {
       const columnLabelKey = `${col.translationPrefix}.${col.header}`
+      const columnTooltipKey = `${col.translationPrefix}.TOOLTIPS.${col.header}`
       const translatedColumnLabel = this.translate.instant(columnLabelKey)
 
       return {
         id: col.field,
         nameKey: translatedColumnLabel !== columnLabelKey ? translatedColumnLabel : columnLabelKey,
+        tooltipKey: columnTooltipKey,
         columnType: this.getInteractiveColumnType(col),
         sortable: this.isInteractiveSortable(col),
         filterable: true,
