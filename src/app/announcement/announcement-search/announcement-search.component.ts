@@ -4,14 +4,7 @@ import { BehaviorSubject, catchError, combineLatest, finalize, map, Observable, 
 import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import {
-  Action,
-  ColumnType,
-  DataAction,
-  DataSortDirection,
-  DataTableColumn,
-  RowListGridData
-} from '@onecx/angular-accelerator'
+import { Action, ColumnType, DataSortDirection, DataTableColumn, RowListGridData } from '@onecx/angular-accelerator'
 import { SlotService } from '@onecx/angular-remote-components'
 
 import {
@@ -91,7 +84,6 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayDeleteDialog = false
   public interactiveColumns: DataTableColumn[] = []
   public displayedColumnKeys: string[] = []
-  public additionalDataActions: DataAction[] = []
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
 
@@ -221,16 +213,6 @@ export class AnnouncementSearchComponent implements OnInit {
         ]
       })
     )
-
-    this.additionalDataActions = [
-      {
-        id: 'copyAnnouncement',
-        icon: 'pi pi-copy',
-        labelKey: 'ACTIONS.COPY.LABEL',
-        permission: 'ANNOUNCEMENT#EDIT',
-        callback: (item: RowListGridData) => this.onDetail(undefined, item as Announcement, 'COPY')
-      }
-    ]
   }
 
   /****************************************************************************
