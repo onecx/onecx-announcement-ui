@@ -18,12 +18,16 @@
     }
   }
   // hide unusable stuff
-  ocx-column-group-selection,
-  ocx-data-view-controls div div button {
+  ocx-column-group-selection {
     display: none;
   }
-  ocx-data-view-controls div {
-    justify-content: center !important;
+
+  // keep row actions visible in table/list/grid views
+  ocx-interactive-data-view button[name='data-table-action-button'],
+  ocx-interactive-data-view button[name='data-table-overflow-action-button'],
+  ocx-interactive-data-view button[name='data-list-action-button'],
+  ocx-interactive-data-view button[name='data-list-overflow-item-menu-button'] {
+    display: inline-flex;
   }
 
   .max-height-for-2-lines {

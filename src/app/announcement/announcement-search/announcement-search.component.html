@@ -27,7 +27,7 @@
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
-  <ocx-page-content>
+  <ocx-content>
     <p-message
       *ngIf="loadingMetaData"
       id="am_search_message_loading"
@@ -52,232 +52,122 @@
         styleClass="m-3 p-2"
         [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
       ></p-message>
-      <p-table
+      <ocx-interactive-data-view
         *ngIf="!(searching || exceptionKey)"
-        #dataTable
         id="am_search_table"
         styleClass="mx-3 mb-2"
-        [value]="data"
-        [columns]="filteredColumns"
-        dataKey="id"
-        [globalFilterFields]="['title', 'workspaceName', 'productName']"
-        [reorderableColumns]="false"
-        [scrollable]="true"
-        scrollHeight="590px"
-        [rows]="10"
-        [rowsPerPageOptions]="[10, 30, 100]"
-        [paginator]="true"
-        [alwaysShowPaginator]="true"
-        paginatorPosition="bottom"
-        [showCurrentPageReport]="true"
-        currentPageReportTemplate="{first} - {last} {{ 'ACTIONS.SEARCH.OF' | translate }} {totalRecords}"
+        [data]="toInteractiveData(data)"
+        [supportedViewLayouts]="['table']"
+        [layout]="'table'"
+        [columns]="interactiveColumns"
+        [displayedColumnKeys]="displayedColumnKeys"
+        [clientSideFiltering]="true"
+        [clientSideSorting]="true"
+        [sortField]="sortField"
+        [sortDirection]="sortDirection"
+        [tablePaginator]="true"
+        [pageSize]="10"
+        [pageSizes]="[10, 30, 100]"
+        [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+        [viewPermission]="'ANNOUNCEMENT#VIEW'"
+        [editPermission]="'ANNOUNCEMENT#EDIT'"
+        [deletePermission]="'ANNOUNCEMENT#DELETE'"
+        [actionColumnPosition]="'left'"
+        (displayedColumnKeysChange)="onColumnsChange($event)"
+        (filtered)="onInteractiveFilterChange($event)"
+        (sorted)="onSortChange($event)"
+        (viewItem)="onViewFromInteractive($event)"
+        (editItem)="onEditFromInteractive($event)"
+        (deleteItem)="onDeleteFromInteractive($event)"
       >
-        <ng-template pTemplate="caption">
-          <ocx-data-view-controls
-            [supportedViews]="['table']"
-            [enableFiltering]="true"
-            [enableSorting]="false"
-            [columnDefinitions]="columns"
-            (columnsChange)="onColumnsChange($event)"
-            (filterChange)="onFilterChange($event, dataTable)"
-            [translations]="dataViewControlsTranslations"
-          ></ocx-data-view-controls>
-        </ng-template>
-
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td id="am_search_table_emptymessage" colspan="16">{{ 'ACTIONS.SEARCH.NO_DATA' | translate }}</td>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th pFrozenColumn id="am_search_table_header_actions" class="border-right-1 text-center white-space-nowrap">
-              {{ 'ACTIONS.LABEL' | translate }}
-            </th>
-            <th
-              *ngFor="let col of columns"
-              [id]="'am_search_table_header_col_' + col.field"
-              [class]="col.css + ' white-space-nowrap'"
-              [pSortableColumn]="col.field"
-              [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.' + col.header | translate"
-              [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.' + col.header | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            >
-              <span>{{ col.translationPrefix + '.' + col.header | translate }}</span>
-              <p-sortIcon [field]="col.field"></p-sortIcon>
-              <p-columnFilter *ngIf="col.hasFilter" type="text" [field]="col.field" display="menu"></p-columnFilter>
-            </th>
-          </tr>
-        </ng-template>
-
-        <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-          <tr [pSelectableRow]="data">
-            <!-- actions -->
-            <td pFrozenColumn class="py-0 align-items-center border-right-1 text-center white-space-nowrap">
-              <ng-container *ocxIfNotPermission="'ANNOUNCEMENT#EDIT'">
-                <p-button
-                  *ocxIfPermission="'ANNOUNCEMENT#VIEW'"
-                  [id]="'am_search_table_row_' + i + '_action_view'"
-                  type="button"
-                  pRipple
-                  [text]="true"
-                  [plain]="true"
-                  [rounded]="true"
-                  [icon]="'pi pi-eye'"
-                  (onClick)="onDetail($event, rowData, 'VIEW')"
-                  (keydown.enter)="onDetail($event, rowData, 'VIEW')"
-                  (keydown.space)="onDetail($event, rowData, 'VIEW')"
-                  [attr.aria-label]="'ACTIONS.VIEW.LABEL' | translate"
-                  [pTooltip]="'ACTIONS.VIEW.LABEL' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                />
-              </ng-container>
-              <p-button
-                *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
-                [id]="'am_search_table_row_' + i + '_action_edit'"
-                type="button"
-                pRipple
-                [text]="true"
-                [plain]="true"
-                [rounded]="true"
-                [icon]="'pi pi-pencil'"
-                (onClick)="onDetail($event, rowData, 'EDIT')"
-                (keydown.enter)="onDetail($event, rowData, 'EDIT')"
-                (keydown.space)="onDetail($event, rowData, 'EDIT')"
-                [attr.aria-label]="'ACTIONS.EDIT.LABEL' | translate"
-                [pTooltip]="'ACTIONS.EDIT.LABEL' | translate"
+        <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
+          @switch (column.id) {
+            @case ('type') {
+              <span
+                class="pi text-xl"
+                [class.pi-info-circle]="rowObject[column.id] === 'INFO'"
+                [class.pi-calendar]="rowObject[column.id] === 'EVENT'"
+                [class.pi-wrench]="rowObject[column.id] === 'SYSTEM_MAINTENANCE'"
+                [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowObject[column.id] | translate"
+                [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowObject[column.id] | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              />
-              <p-button
-                *ocxIfPermission="'ANNOUNCEMENT#EDIT'"
-                [id]="'am_search_table_row_' + i + '_action_copy'"
-                type="button"
-                pRipple
-                [text]="true"
-                [plain]="true"
-                [rounded]="true"
-                [icon]="'pi pi-copy'"
-                (click)="onDetail($event, rowData, 'COPY')"
-                (keydown.enter)="onDetail($event, rowData, 'COPY')"
-                (keydown.space)="onDetail($event, rowData, 'COPY')"
-                [attr.aria-label]="'ACTIONS.COPY.LABEL' | translate"
-                [pTooltip]="'ACTIONS.COPY.LABEL' | translate"
+              ></span>
+            }
+            @case ('status') {
+              <span
+                class="pi"
+                [class.pi-circle-on]="rowObject[column.id] === 'ACTIVE'"
+                [class.pi-circle-off]="rowObject[column.id] === 'INACTIVE'"
+                [class.text-red-600]="rowObject['priority'] === 'IMPORTANT'"
+                [class.text-yellow-600]="rowObject['priority'] === 'NORMAL'"
+                [class.text-blue-600]="rowObject['priority'] === 'LOW'"
+                [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowObject[column.id] | translate"
+                [pTooltip]="
+                  ('ENUMS.ANNOUNCEMENT_STATUS.' + rowObject[column.id] | translate) +
+                  ' - ' +
+                  ('ENUMS.ANNOUNCEMENT_PRIORITY.' + rowObject['priority'] | translate)
+                "
                 tooltipPosition="top"
                 tooltipEvent="hover"
+              ></span>
+            }
+            @case ('title') {
+              <div class="text-ellipsis-2-lines">{{ rowObject[column.id] }}</div>
+            }
+            @case ('workspaceName') {
+              <ng-container
+                [ngTemplateOutlet]="displayNameTemplate"
+                [ngTemplateOutletContext]="{
+                  data: {
+                    name: rowObject.workspaceName,
+                    displayName: getDisplayName(rowObject.workspaceName, metaData.allWorkspaces),
+                    nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
+                  }
+                }"
               />
-              <p-button
-                *ocxIfPermission="'ANNOUNCEMENT#DELETE'"
-                [id]="'am_search_table_row_' + i + '_action_delete'"
-                type="button"
-                pRipple
-                [text]="true"
-                [plain]="true"
-                [rounded]="true"
-                [icon]="'pi pi-trash'"
-                severity="danger"
-                (click)="onDelete($event, rowData)"
-                (keydown.enter)="onDelete($event, rowData)"
-                (keydown.space)="onDelete($event, rowData)"
-                [attr.aria-label]="'ACTIONS.DELETE.LABEL' | translate"
-                [pTooltip]="'ACTIONS.DELETE.LABEL' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
+            }
+            @case ('productName') {
+              <ng-container
+                [ngTemplateOutlet]="displayNameTemplate"
+                [ngTemplateOutletContext]="{
+                  data: {
+                    name: rowObject.productName,
+                    displayName: getDisplayName(rowObject.productName, metaData.allProducts),
+                    nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
+                  }
+                }"
               />
-            </td>
-            <td *ngFor="let col of columns" [id]="'am_search_table_row_' + i + '_' + col.field" [class]="col.css">
-              @switch (col.field) {
-                @case ('type') {
-                  <span
-                    class="pi text-xl"
-                    [class.pi-info-circle]="rowData[col.field] === 'INFO'"
-                    [class.pi-calendar]="rowData[col.field] === 'EVENT'"
-                    [class.pi-wrench]="rowData[col.field] === 'SYSTEM_MAINTENANCE'"
-                    [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
-                    [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowData[col.field] | translate"
-                    tooltipPosition="top"
-                    tooltipEvent="hover"
-                  ></span>
-                }
-                @case ('status') {
-                  <span
-                    class="pi"
-                    [class.pi-circle-on]="rowData[col.field] === 'ACTIVE'"
-                    [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
-                    [class.pi-circle-off]="rowData[col.field] === 'INACTIVE'"
-                    [class.text-red-600]="rowData['priority'] === 'IMPORTANT'"
-                    [class.text-yellow-600]="rowData['priority'] === 'NORMAL'"
-                    [class.text-blue-600]="rowData['priority'] === 'LOW'"
-                    [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate"
-                    [pTooltip]="
-                      ('ENUMS.ANNOUNCEMENT_STATUS.' + rowData[col.field] | translate) +
-                      ' - ' +
-                      ('ENUMS.ANNOUNCEMENT_PRIORITY.' + rowData['priority'] | translate)
-                    "
-                    tooltipPosition="top"
-                    tooltipEvent="hover"
-                  ></span>
-                }
-                @case ('title') {
-                  <div class="text-ellipsis-2-lines">{{ rowData[col.field] }}</div>
-                }
-                @case ('workspaceName') {
-                  <ng-container
-                    [ngTemplateOutlet]="displayNameTemplate"
-                    [ngTemplateOutletContext]="{
-                      $implicit: rowData,
-                      data: {
-                        name: rowData.workspaceName,
-                        displayName: getDisplayName(rowData.workspaceName, metaData.allWorkspaces),
-                        nameAll: 'ANNOUNCEMENT.ALL' | translate,
-                        nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
-                      }
-                    }"
-                  />
-                }
-                @case ('productName') {
-                  <ng-container
-                    [ngTemplateOutlet]="displayNameTemplate"
-                    [ngTemplateOutletContext]="{
-                      $implicit: rowData,
-                      data: {
-                        name: rowData.productName,
-                        displayName: getDisplayName(rowData.productName, metaData.allProducts),
-                        nameAll: 'ANNOUNCEMENT.ALL' | translate,
-                        nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
-                      }
-                    }"
-                  />
-                }
-                @default {
-                  <div *ngIf="col.isDate && rowData[col.field]" class="text-ellipsis-2-lines">
-                    {{ rowData[col.field] | date: dateFormat }}
-                  </div>
-                  <ng-container *ngIf="col.isDropdown">
-                    {{ 'ENUMS.ANNOUNCEMENT_' + col.header + '.' + rowData[col.field] | translate }}
-                  </ng-container>
-                }
-              }
-
-              <ng-template #displayNameTemplate let-data="data">
-                <ng-container *ngIf="!data.name"> {{ data.nameAll }} </ng-container>
-                <div
-                  *ngIf="data.name"
-                  class="text-ellipsis-2-lines"
-                  [pTooltip]="data.displayName ? '' : data.name"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                >
-                  {{ data.displayName ?? data.nameNotFound }}
-                </div>
-              </ng-template>
-            </td>
-          </tr>
+            }
+            @default {
+              <ng-container>{{ rowObject[column.id] }}</ng-container>
+            }
+          }
         </ng-template>
-      </p-table>
+
+        <ng-template pTemplate="translationKeyTableCell" let-rowObject="rowObject" let-column="column">
+          @if (column.id === 'priority') {
+            {{ 'ENUMS.ANNOUNCEMENT_PRIORITY.' + rowObject[column.id] | translate }}
+          } @else {
+            {{ rowObject[column.id] | translate }}
+          }
+        </ng-template>
+
+        <ng-template #displayNameTemplate let-data="data">
+          <ng-container *ngIf="!data.name"> {{ data.nameAll }} </ng-container>
+          <div
+            *ngIf="data.name"
+            class="text-ellipsis-2-lines"
+            [pTooltip]="data.displayName ? '' : data.name"
+            tooltipPosition="top"
+            tooltipEvent="hover"
+          >
+            {{ data.displayName ?? data.nameNotFound }}
+          </div>
+        </ng-template>
+      </ocx-interactive-data-view>
 
       <!-- DELETE -->
       <p-dialog
@@ -374,7 +264,7 @@
         </ng-template>
       </p-dialog>
     </ng-container>
-  </ocx-page-content>
+  </ocx-content>
 
   <!-- DETAIL -->
   <app-announcement-detail

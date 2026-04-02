@@ -7,15 +7,14 @@ import { CarouselModule } from 'primeng/carousel'
 
 import {
   AngularRemoteComponentsModule,
-  BASE_URL,
   ocxRemoteComponent,
   ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot,
-  RemoteComponentConfig
+  provideTranslateServiceForRoot
 } from '@onecx/angular-remote-components'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { createRemoteComponentTranslateLoader } from '@onecx/angular-accelerator'
-import { PortalCoreModule } from '@onecx/portal-integration-angular'
+import { createTranslateLoader } from '@onecx/angular-utils'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import {
   Announcement,
@@ -32,19 +31,19 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-banner.component.html',
   styleUrls: ['./announcement-banner.component.scss'],
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CarouselModule, PortalCoreModule, SharedModule],
+  imports: [AngularRemoteComponentsModule, CarouselModule, AngularAcceleratorModule, SharedModule],
   schemas: [NO_ERRORS_SCHEMA],
   providers: [
     {
-      provide: BASE_URL,
-      useValue: new ReplaySubject<string>(1)
+      provide: REMOTE_COMPONENT_CONFIG,
+      useValue: new ReplaySubject<RemoteComponentConfig>(1)
     },
     provideTranslateServiceForRoot({
       isolate: true,
       loader: {
         provide: TranslateLoader,
-        useFactory: createRemoteComponentTranslateLoader,
-        deps: [HttpClient, BASE_URL]
+        useFactory: createTranslateLoader,
+        deps: [HttpClient, REMOTE_COMPONENT_CONFIG]
       }
     })
   ]
@@ -60,7 +59,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   public convertLineBreaks = convertLineBreaks
 
   constructor(
-    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
+    @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
     private readonly appConfigService: AppConfigService,
     private readonly appStateService: AppStateService,
     private readonly translateService: TranslateService,
@@ -69,7 +68,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
     combineLatest([
-      this.baseUrl.asObservable(),
+      this.remoteComponentConfig.asObservable(),
       this.appStateService.currentWorkspace$.asObservable(),
       this.appStateService.currentMfe$.asObservable()
     ])
@@ -115,7 +114,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
-    this.baseUrl.next(config.baseUrl)
+    this.remoteComponentConfig.next(config)
     this.appConfigService.init(config['baseUrl'])
   }
 
