@@ -7,14 +7,9 @@ import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-br
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 
 import { AngularAuthModule } from '@onecx/angular-auth'
-import {
-  createTranslateLoader,
-  provideThemeConfig,
-  provideTranslationConnectionService,
-  provideTranslationPathFromMeta
-} from '@onecx/angular-utils'
+import { createTranslateLoader, provideThemeConfig, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 import { APP_CONFIG } from '@onecx/angular-integration-interface'
-import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { environment } from 'src/environments/environment'
 import { AppComponent } from './app.component'
