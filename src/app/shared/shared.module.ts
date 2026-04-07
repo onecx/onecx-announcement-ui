@@ -19,6 +19,7 @@ import { Select } from 'primeng/select'
 import { FieldsetModule } from 'primeng/fieldset'
 import { FloatLabel } from 'primeng/floatlabel'
 import { InputTextModule } from 'primeng/inputtext'
+import { InputSwitchModule } from 'primeng/inputswitch'
 import { TextareaModule } from 'primeng/textarea'
 import { BadgeModule } from 'primeng/badge'
 import { KeyFilterModule } from 'primeng/keyfilter'
@@ -54,6 +55,7 @@ import { LabelResolver } from './label.resolver'
     FloatLabel,
     FormsModule,
     InputTextModule,
+    InputSwitchModule,
     TextareaModule,
     MessageModule,
     BadgeModule,
@@ -86,6 +88,7 @@ import { LabelResolver } from './label.resolver'
     FloatLabel,
     FormsModule,
     InputTextModule,
+    InputSwitchModule,
     TextareaModule,
     MessageModule,
     BadgeModule,

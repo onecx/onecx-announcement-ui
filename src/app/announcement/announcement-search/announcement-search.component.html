@@ -56,7 +56,7 @@
         *ngIf="!(searching || exceptionKey)"
         id="am_search_table"
         styleClass="mx-3 mb-2"
-        [data]="toInteractiveData(data)"
+        [data]="interactiveData"
         [supportedViewLayouts]="['table']"
         [layout]="'table'"
         [columns]="interactiveColumns"

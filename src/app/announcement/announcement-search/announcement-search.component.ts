@@ -89,6 +89,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   // data
   public data$: Observable<Announcement[]> | undefined
+  public interactiveData: RowListGridData[] = []
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
   public usedListsTrigger$ = new BehaviorSubject<void>(undefined) // trigger for refresh data
@@ -222,6 +223,12 @@ export class AnnouncementSearchComponent implements OnInit {
     this.criteria = {}
   }
   public onColumnsChange(activeIds: string[]) {
+    if (
+      activeIds.length === this.displayedColumnKeys.length &&
+      activeIds.every((value, index) => value === this.displayedColumnKeys[index])
+    ) {
+      return
+    }
     this.displayedColumnKeys = activeIds
   }
   public onInteractiveFilterChange(_: unknown): void {
@@ -412,12 +419,15 @@ export class AnnouncementSearchComponent implements OnInit {
     this.exceptionKey = undefined
     this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
       map((data) => {
-        return data.stream ?? []
+        const stream = data.stream ?? []
+        this.interactiveData = this.toInteractiveData(stream)
+        return stream
       }),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
         console.error('searchAnnouncements', err)
+        this.interactiveData = []
         return of([])
       }),
       finalize(() => (this.searching = false))
