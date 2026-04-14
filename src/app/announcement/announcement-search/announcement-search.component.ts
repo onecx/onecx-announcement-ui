@@ -185,9 +185,11 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.user.lang$.subscribe((lang) => {
-      this.dateFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
-      this.interactiveColumns = this.createInteractiveColumns()
+    this.user.lang$.subscribe({
+      next: (lang) => {
+        this.dateFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
+        this.interactiveColumns = this.createInteractiveColumns()
+      }
     })
     this.prepareActionButtons()
     this.pdSlotEmitter.subscribe(this.productData$)
