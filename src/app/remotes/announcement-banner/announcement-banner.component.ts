@@ -1,19 +1,16 @@
 import { Component, Inject, Input, NO_ERRORS_SCHEMA } from '@angular/core'
 import { Location } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
-import { TranslateLoader, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { CarouselModule } from 'primeng/carousel'
 
 import {
   AngularRemoteComponentsModule,
   ocxRemoteComponent,
-  ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot
+  ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
-import { createTranslateLoader } from '@onecx/angular-utils'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import {
@@ -37,15 +34,7 @@ import { environment } from 'src/environments/environment'
     {
       provide: REMOTE_COMPONENT_CONFIG,
       useValue: new ReplaySubject<RemoteComponentConfig>(1)
-    },
-    provideTranslateServiceForRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient, REMOTE_COMPONENT_CONFIG]
-      }
-    })
+    }
   ]
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
