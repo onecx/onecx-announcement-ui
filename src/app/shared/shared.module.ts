@@ -5,54 +5,64 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { provideErrorTailorConfig, errorTailorImports } from '@ngneat/error-tailor'
 
 import { AutoCompleteModule } from 'primeng/autocomplete'
+import { ButtonModule } from 'primeng/button'
+import { MessageModule } from 'primeng/message'
 
-import { CalendarModule } from 'primeng/calendar'
+import { DatePicker } from 'primeng/datepicker'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { ConfirmationService } from 'primeng/api'
 import { DataViewModule } from 'primeng/dataview'
 import { DialogModule } from 'primeng/dialog'
 import { DialogService, DynamicDialogModule } from 'primeng/dynamicdialog'
-import { DropdownModule } from 'primeng/dropdown'
+import { Select } from 'primeng/select'
 import { FieldsetModule } from 'primeng/fieldset'
+import { FloatLabel } from 'primeng/floatlabel'
 import { InputTextModule } from 'primeng/inputtext'
-import { InputTextareaModule } from 'primeng/inputtextarea'
+import { InputSwitchModule } from 'primeng/inputswitch'
+import { TextareaModule } from 'primeng/textarea'
+import { BadgeModule } from 'primeng/badge'
 import { KeyFilterModule } from 'primeng/keyfilter'
 import { ListboxModule } from 'primeng/listbox'
 import { MultiSelectModule } from 'primeng/multiselect'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { Popover } from 'primeng/popover'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { TableModule } from 'primeng/table'
 import { TabViewModule } from 'primeng/tabview'
 import { TagModule } from 'primeng/tag'
 import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
-
-import { PortalCoreModule, PortalDialogService } from '@onecx/portal-integration-angular'
+import { PortalDialogService } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { LabelResolver } from './label.resolver'
 
 @NgModule({
   declarations: [],
   imports: [
-    PortalCoreModule.forMicroFrontend(),
+    AngularAcceleratorModule,
     AutoCompleteModule,
-    CalendarModule,
+    ButtonModule,
+    DatePicker,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
-    DropdownModule,
+    Select,
     DynamicDialogModule,
     FieldsetModule,
+    FloatLabel,
     FormsModule,
     InputTextModule,
-    InputTextareaModule,
+    InputSwitchModule,
+    TextareaModule,
+    MessageModule,
+    BadgeModule,
     KeyFilterModule,
     ListboxModule,
     MultiSelectModule,
-    OverlayPanelModule,
+    Popover,
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
@@ -65,22 +75,27 @@ import { LabelResolver } from './label.resolver'
   ],
   exports: [
     AutoCompleteModule,
-    CalendarModule,
+    ButtonModule,
+    DatePicker,
     CommonModule,
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
     DialogModule,
-    DropdownModule,
+    Select,
     DynamicDialogModule,
     FieldsetModule,
+    FloatLabel,
     FormsModule,
     InputTextModule,
-    InputTextareaModule,
+    InputSwitchModule,
+    TextareaModule,
+    MessageModule,
+    BadgeModule,
     KeyFilterModule,
     ListboxModule,
     MultiSelectModule,
-    OverlayPanelModule,
+    Popover,
     ReactiveFormsModule,
     SelectButtonModule,
     TableModule,
@@ -113,7 +128,7 @@ import { LabelResolver } from './label.resolver'
       },
       //this is required because primeng calendar wraps things in an ugly way
       blurPredicate: (element: Element) => {
-        return ['INPUT', 'TEXTAREA', 'SELECT', 'CUSTOM-DATE', 'P-CALENDAR', 'P-DROPDOWN'].includes(element.tagName)
+        return ['INPUT', 'TEXTAREA', 'SELECT', 'CUSTOM-DATE', 'P-DATEPICKER', 'P-SELECT'].includes(element.tagName)
       }
     })
   ]

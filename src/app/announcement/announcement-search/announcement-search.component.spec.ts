@@ -2,13 +2,17 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { Column } from '@onecx/portal-integration-angular'
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+
+type Column = {
+  field: string
+  header: string
+}
 
 const itemData: any = [
   {
@@ -57,7 +61,14 @@ describe('AnnouncementSearchComponent', () => {
   let fixture: ComponentFixture<AnnouncementSearchComponent>
 
   const defaultLang = 'en'
-  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
+  const langSubject = new BehaviorSubject<string>(defaultLang)
+  const getValueSpy = jasmine.createSpy('getValue').and.callFake(() => langSubject.getValue())
+  const mockUserService = {
+    lang$: {
+      getValue: getValueSpy,
+      subscribe: (observer: { next?: (value: string) => void }) => langSubject.subscribe(observer)
+    }
+  }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
@@ -97,7 +108,8 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   afterEach(() => {
-    mockUserService.lang$.getValue.and.returnValue(defaultLang)
+    langSubject.next(defaultLang)
+    getValueSpy.calls.reset()
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -116,10 +128,10 @@ describe('AnnouncementSearchComponent', () => {
       expect(component).toBeTruthy()
     })
 
-    it('should call OnInit and populate filteredColumns/actions correctly', () => {
+    it('should call OnInit and populate displayed column keys and actions', () => {
       component.ngOnInit()
 
-      expect(component.filteredColumns[0]).toEqual(component.columns[0])
+      expect(component.displayedColumnKeys[0]).toEqual(component.columns[0].field)
     })
   })
 
@@ -449,21 +461,15 @@ describe('AnnouncementSearchComponent', () => {
         { field: 'workspaceName', header: 'WORKSPACE' },
         { field: 'context', header: 'CONTEXT' }
       ]
-      const expectedColumn = { field: 'workspaceName', header: 'WORKSPACE' }
       component.columns = columns
 
       component.onColumnsChange(['workspaceName'])
 
-      expect(component.filteredColumns).not.toContain(columns[1])
-      expect(component.filteredColumns).toEqual([jasmine.objectContaining(expectedColumn)])
+      expect(component.displayedColumnKeys).toEqual(['workspaceName'])
     })
 
-    it('should apply a filter to the result table', () => {
-      const dataTable = jasmine.createSpyObj('dataTable', ['filterGlobal'])
-
-      component.onFilterChange('test', dataTable)
-
-      expect(dataTable?.filterGlobal).toHaveBeenCalledWith('test', 'contains')
+    it('should allow interactive filter event handling', () => {
+      expect(() => component.onInteractiveFilterChange([])).not.toThrow()
     })
   })
 
@@ -473,7 +479,7 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should set German date format', () => {
-      mockUserService.lang$.getValue.and.returnValue('de')
+      langSubject.next('de')
       initTestComponent()
       expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
     })
