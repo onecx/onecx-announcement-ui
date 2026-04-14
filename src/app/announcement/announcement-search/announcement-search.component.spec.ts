@@ -2,7 +2,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
@@ -61,7 +61,14 @@ describe('AnnouncementSearchComponent', () => {
   let fixture: ComponentFixture<AnnouncementSearchComponent>
 
   const defaultLang = 'en'
-  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
+  const langSubject = new BehaviorSubject<string>(defaultLang)
+  const getValueSpy = jasmine.createSpy('getValue').and.callFake(() => langSubject.getValue())
+  const mockUserService = {
+    lang$: {
+      getValue: getValueSpy,
+      subscribe: (observer: { next?: (value: string) => void }) => langSubject.subscribe(observer)
+    }
+  }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
@@ -101,7 +108,8 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   afterEach(() => {
-    mockUserService.lang$.getValue.and.returnValue(defaultLang)
+    langSubject.next(defaultLang)
+    getValueSpy.calls.reset()
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -471,7 +479,7 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should set German date format', () => {
-      mockUserService.lang$.getValue.and.returnValue('de')
+      langSubject.next('de')
       initTestComponent()
       expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
     })
