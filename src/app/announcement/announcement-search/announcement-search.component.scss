@@ -17,6 +17,27 @@
       padding: 0.5rem;
     }
   }
+
+  // keep sortable header title and icon on one line
+  ocx-interactive-data-view .table-header-wrapper {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.35rem;
+    height: auto !important;
+  }
+
+  ocx-interactive-data-view .table-header-wrapper > span:first-child {
+    white-space: nowrap;
+  }
+
+  ocx-interactive-data-view .icon-button-header-wrapper,
+  ocx-interactive-data-view .sortButton {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+
   // hide unusable stuff
   ocx-column-group-selection {
     display: none;
@@ -35,5 +56,40 @@
   }
   .text-ellipsis-2-lines {
     @include displaying-text-ellipsis(2);
+  }
+
+  // filter input group
+  .hm-filter-group {
+    display: inline-flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+
+  .hm-filter-float {
+    display: inline-flex;
+    align-items: stretch;
+  }
+
+  .hm-filter-group .p-inputgroup-addon,
+  .hm-filter-input,
+  .hm-filter-group .hm-filter-clear {
+    height: 2.25rem;
+  }
+
+  .hm-filter-group .p-inputgroup-addon,
+  .hm-filter-group .hm-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hm-filter-input {
+    min-width: 14rem;
+  }
+
+  .hm-filter-clear {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 }
