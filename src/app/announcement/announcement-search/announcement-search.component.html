@@ -61,7 +61,7 @@
         [layout]="'table'"
         [columns]="interactiveColumns"
         [displayedColumnKeys]="displayedColumnKeys"
-        [clientSideFiltering]="true"
+        [clientSideFiltering]="false"
         [clientSideSorting]="true"
         [sortField]="sortField"
         [sortDirection]="sortDirection"
@@ -74,12 +74,46 @@
         [deletePermission]="'ANNOUNCEMENT#DELETE'"
         [actionColumnPosition]="'left'"
         (displayedColumnKeysChange)="onColumnsChange($event)"
-        (filtered)="onInteractiveFilterChange($event)"
         (sorted)="onSortChange($event)"
         (viewItem)="onViewFromInteractive($event)"
         (editItem)="onEditFromInteractive($event)"
         (deleteItem)="onDeleteFromInteractive($event)"
       >
+        <ng-template #topCenter>
+          <p-inputgroup class="w-auto hm-filter-group">
+            <p-inputgroup-addon>
+              <i class="pi pi-filter"></i>
+            </p-inputgroup-addon>
+            <p-floatlabel class="hm-filter-float" variant="on">
+              <input
+                #filterInput
+                id="hm_search_table_filter"
+                type="text"
+                class="hm-filter-input"
+                pInputText
+                [value]="tableFilter"
+                [pTooltip]="'DIALOG.DATAVIEW.FILTER_BY' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+                (input)="onGlobalFilter(filterInput.value)"
+              />
+              <label for="hm_search_table_filter" aria-hidden="true">
+                {{ 'DIALOG.DATAVIEW.FILTER_PLACEHOLDER' | translate }}
+              </label>
+            </p-floatlabel>
+            <p-button
+              id="hm_search_table_filter_clear"
+              icon="pi pi-filter-slash"
+              styleClass="hm-filter-clear"
+              [disabled]="!tableFilter"
+              [ariaLabel]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
+              [pTooltip]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+              (click)="onClearGlobalFilter(filterInput)"
+            />
+          </p-inputgroup>
+        </ng-template>
         <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
           @switch (column.id) {
             @case ('type') {

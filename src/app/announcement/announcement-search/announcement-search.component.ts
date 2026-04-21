@@ -86,10 +86,12 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayedColumnKeys: string[] = []
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
+  public tableFilter = ''
 
   // data
   public data$: Observable<Announcement[]> | undefined
   public interactiveData: RowListGridData[] = []
+  private fullInteractiveData: RowListGridData[] = []
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
   public usedListsTrigger$ = new BehaviorSubject<void>(undefined) // trigger for refresh data
@@ -208,10 +210,11 @@ export class AnnouncementSearchComponent implements OnInit {
           {
             label: data['ACTIONS.CREATE.LABEL'],
             title: data['ACTIONS.CREATE.TOOLTIP'],
-            actionCallback: () => this.onDetail(undefined, undefined, 'CREATE'),
+            actionCallback: () =>
+              this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, undefined, 'CREATE')),
             icon: 'pi pi-plus',
             show: 'always',
-            permission: 'ANNOUNCEMENT#EDIT'
+            permission: 'ANNOUNCEMENT#CREATE'
           }
         ]
       })
@@ -232,9 +235,21 @@ export class AnnouncementSearchComponent implements OnInit {
       return
     }
     this.displayedColumnKeys = activeIds
+    this.applyGlobalFilter()
   }
   public onInteractiveFilterChange(_: unknown): void {
     // filtering is handled by ocx-interactive-data-view when clientSideFiltering is enabled
+  }
+
+  public onGlobalFilter(value: string): void {
+    this.tableFilter = value ?? ''
+    this.applyGlobalFilter()
+  }
+
+  public onClearGlobalFilter(input?: HTMLInputElement): void {
+    this.tableFilter = ''
+    if (input) input.value = ''
+    this.applyGlobalFilter()
   }
 
   public onSortChange(event: { sortColumn: string; sortDirection: DataSortDirection }): void {
@@ -254,6 +269,24 @@ export class AnnouncementSearchComponent implements OnInit {
       id: item.id ?? `announcement-${index}`,
       imagePath: item.id ?? `announcement-${index}`
     })) as RowListGridData[]
+  }
+
+  private applyGlobalFilter(): void {
+    const searchTerm = this.tableFilter.trim().toLowerCase()
+    if (!searchTerm) {
+      this.interactiveData = [...this.fullInteractiveData]
+      return
+    }
+
+    const fields = this.displayedColumnKeys.length ? this.displayedColumnKeys : this.columns.map((col) => col.field)
+    this.interactiveData = this.fullInteractiveData.filter((row) =>
+      fields.some((field) => {
+        const value = (row as Record<string, unknown>)[field]
+        if (value == null) return false
+        if (Array.isArray(value)) return value.join(' ').toLowerCase().includes(searchTerm)
+        return String(value).toLowerCase().includes(searchTerm)
+      })
+    )
   }
 
   /****************************************************************************
@@ -284,16 +317,34 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   public onDeleteFromInteractive(item: RowListGridData): void {
-    this.item4Delete = item as Announcement
-    this.displayDeleteDialog = true
+    this.ensurePermission('ANNOUNCEMENT#DELETE', () => {
+      this.item4Delete = item as Announcement
+      this.displayDeleteDialog = true
+    })
   }
 
   public onViewFromInteractive(item: RowListGridData): void {
-    this.onDetail(undefined, item as Announcement, 'VIEW')
+    this.ensurePermission('ANNOUNCEMENT#VIEW', () => this.onDetail(undefined, item as Announcement, 'VIEW'))
   }
 
   public onEditFromInteractive(item: RowListGridData): void {
-    this.onDetail(undefined, item as Announcement, 'EDIT')
+    this.ensurePermission('ANNOUNCEMENT#EDIT', () => this.onDetail(undefined, item as Announcement, 'EDIT'))
+  }
+
+  private ensurePermission(permission: string, onGranted: () => void): void {
+    void this.user
+      .hasPermission(permission)
+      .then((granted) => {
+        if (!granted) {
+          this.msgService.error({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+          return
+        }
+        onGranted()
+      })
+      .catch((err) => {
+        console.error('hasPermission', err)
+        this.msgService.error({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+      })
   }
 
   // user confirmed deletion
@@ -304,6 +355,8 @@ export class AnnouncementSearchComponent implements OnInit {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
         // remove item from data
         data = data?.filter((d) => d.id !== this.item4Delete?.id)
+        this.fullInteractiveData = this.toInteractiveData(data)
+        this.applyGlobalFilter()
         this.data$ = of(data)
         // check remaining data: if product still exists - if not then trigger reload
         if (!data?.find((d) => d.productName === this.item4Delete?.productName)) {
@@ -350,7 +403,7 @@ export class AnnouncementSearchComponent implements OnInit {
         tooltipKey: columnTooltipKey,
         columnType: this.getInteractiveColumnType(col),
         sortable: this.isInteractiveSortable(col),
-        filterable: true,
+        filterable: col.hasFilter === true,
         ...(col.isDate ? { dateFormat: this.dateFormat } : {})
       }
     })
@@ -422,13 +475,15 @@ export class AnnouncementSearchComponent implements OnInit {
     this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
       map((data) => {
         const stream = data.stream ?? []
-        this.interactiveData = this.toInteractiveData(stream)
+        this.fullInteractiveData = this.toInteractiveData(stream)
+        this.applyGlobalFilter()
         return stream
       }),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
         console.error('searchAnnouncements', err)
+        this.fullInteractiveData = []
         this.interactiveData = []
         return of([])
       }),

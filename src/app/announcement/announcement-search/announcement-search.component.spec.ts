@@ -63,11 +63,13 @@ describe('AnnouncementSearchComponent', () => {
   const defaultLang = 'en'
   const langSubject = new BehaviorSubject<string>(defaultLang)
   const getValueSpy = jasmine.createSpy('getValue').and.callFake(() => langSubject.getValue())
+  const hasPermissionSpy = jasmine.createSpy('hasPermission').and.returnValue(Promise.resolve(true))
   const mockUserService = {
     lang$: {
       getValue: getValueSpy,
       subscribe: (observer: { next?: (value: string) => void }) => langSubject.subscribe(observer)
-    }
+    },
+    hasPermission: hasPermissionSpy
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
@@ -110,6 +112,8 @@ describe('AnnouncementSearchComponent', () => {
   afterEach(() => {
     langSubject.next(defaultLang)
     getValueSpy.calls.reset()
+    hasPermissionSpy.calls.reset()
+    hasPermissionSpy.and.returnValue(Promise.resolve(true))
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -136,7 +140,7 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   describe('page actions', () => {
-    it('should open create dialog', () => {
+    it('should open create dialog', async () => {
       translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
       spyOn(component, 'onDetail')
 
@@ -146,7 +150,26 @@ describe('AnnouncementSearchComponent', () => {
         action[0].actionCallback()
       })
 
+      await Promise.resolve()
+
       expect(component.onDetail).toHaveBeenCalled()
+    })
+
+    it('should deny create dialog if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+      translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
+      spyOn(component, 'onDetail')
+
+      component.ngOnInit()
+
+      component.actions$?.subscribe((action) => {
+        action[0].actionCallback()
+      })
+
+      await Promise.resolve()
+
+      expect(component.onDetail).not.toHaveBeenCalled()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
     })
   })
 
@@ -397,6 +420,48 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(component.displayDetailDialog).toBeFalse()
     })
+
+    it('should deny editing from interactive table if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+
+      component.onEditFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+    })
+
+    it('should allow editing from interactive table if permission is granted', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+
+      component.onEditFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeTrue()
+      expect(component.changeMode).toEqual('EDIT')
+      expect(component.item4Detail).toEqual(itemData[0])
+    })
+
+    it('should deny viewing from interactive table if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+
+      component.onViewFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+    })
+
+    it('should allow viewing from interactive table if permission is granted', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+
+      component.onViewFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeTrue()
+      expect(component.changeMode).toEqual('VIEW')
+      expect(component.item4Detail).toEqual(itemData[0])
+    })
   })
 
   describe('deletion', () => {
@@ -453,6 +518,16 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(apiServiceSpy.deleteAnnouncementById).not.toHaveBeenCalled()
     })
+
+    it('should deny deleting from interactive table if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+
+      component.onDeleteFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDeleteDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+    })
   })
 
   describe('filter columns', () => {
@@ -470,6 +545,33 @@ describe('AnnouncementSearchComponent', () => {
 
     it('should allow interactive filter event handling', () => {
       expect(() => component.onInteractiveFilterChange([])).not.toThrow()
+    })
+
+    it('should filter table rows globally by input value', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [...interactiveRows]
+
+      component.onGlobalFilter('ADMIN')
+
+      expect(component.tableFilter).toBe('ADMIN')
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).workspaceName).toBe('ADMIN')
+    })
+
+    it('should clear global filter and restore rows', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [interactiveRows[0]]
+      component.tableFilter = 'admin'
+      const input = document.createElement('input')
+      input.value = 'admin'
+
+      component.onClearGlobalFilter(input)
+
+      expect(component.tableFilter).toBe('')
+      expect(input.value).toBe('')
+      expect(component.interactiveData.length).toBe(itemData.length)
     })
   })
 
