@@ -5,6 +5,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { DataSortDirection } from '@onecx/angular-accelerator'
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
 import { TranslateTestingModule } from 'ngx-translate-testing'
@@ -528,6 +529,29 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.displayDeleteDialog).toBeFalse()
       expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
     })
+
+    it('should allow deleting from interactive table if permission is granted', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+
+      component.onDeleteFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDeleteDialog).toBeTrue()
+      expect(component.item4Delete).toEqual(itemData[0])
+    })
+
+    it('should handle permission check errors when deleting from interactive table', async () => {
+      const errorResponse = new Error('permission failed')
+      hasPermissionSpy.and.returnValue(Promise.reject(errorResponse))
+      spyOn(console, 'error')
+
+      component.onDeleteFromInteractive(itemData[0])
+      await fixture.whenStable()
+
+      expect(component.displayDeleteDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+      expect(console.error).toHaveBeenCalledWith('hasPermission', errorResponse)
+    })
   })
 
   describe('filter columns', () => {
@@ -541,6 +565,26 @@ describe('AnnouncementSearchComponent', () => {
       component.onColumnsChange(['workspaceName'])
 
       expect(component.displayedColumnKeys).toEqual(['workspaceName'])
+    })
+
+    it('should return early when selected columns are unchanged', () => {
+      const applyGlobalFilterSpy = spyOn<any>(component, 'applyGlobalFilter')
+      const sameColumns = [...component.displayedColumnKeys]
+
+      component.onColumnsChange(sameColumns)
+
+      expect(component.displayedColumnKeys).toEqual(sameColumns)
+      expect(applyGlobalFilterSpy).not.toHaveBeenCalled()
+    })
+
+    it('should update columns when same length but with different order', () => {
+      component.displayedColumnKeys = ['status', 'title']
+      const applyGlobalFilterSpy = spyOn<any>(component, 'applyGlobalFilter')
+
+      component.onColumnsChange(['title', 'status'])
+
+      expect(component.displayedColumnKeys).toEqual(['title', 'status'])
+      expect(applyGlobalFilterSpy).toHaveBeenCalled()
     })
 
     it('should allow interactive filter event handling', () => {
@@ -559,6 +603,17 @@ describe('AnnouncementSearchComponent', () => {
       expect((component.interactiveData[0] as any).workspaceName).toBe('ADMIN')
     })
 
+    it('should treat nullish global filter value as empty', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [interactiveRows[0]]
+
+      component.onGlobalFilter(undefined as any)
+
+      expect(component.tableFilter).toBe('')
+      expect(component.interactiveData.length).toBe(itemData.length)
+    })
+
     it('should clear global filter and restore rows', () => {
       const interactiveRows = component.toInteractiveData(itemData)
       ;(component as any).fullInteractiveData = interactiveRows
@@ -572,6 +627,89 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.tableFilter).toBe('')
       expect(input.value).toBe('')
       expect(component.interactiveData.length).toBe(itemData.length)
+    })
+
+    it('should clear global filter without input element', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [interactiveRows[0]]
+      component.tableFilter = 'admin'
+
+      component.onClearGlobalFilter()
+
+      expect(component.tableFilter).toBe('')
+      expect(component.interactiveData.length).toBe(itemData.length)
+    })
+
+    it('should use all columns when displayed columns are empty', () => {
+      const rows = component.toInteractiveData([
+        {
+          id: 'id-empty-columns',
+          title: 'Needle title',
+          productName: 'Product',
+          workspaceName: 'Workspace',
+          type: 'INFO',
+          priority: 'NORMAL',
+          status: 'ACTIVE',
+          startDate: '2024-01-01T00:00:00Z',
+          endDate: null
+        } as any
+      ])
+      ;(component as any).fullInteractiveData = rows
+      component.displayedColumnKeys = []
+
+      component.onGlobalFilter('needle')
+
+      expect(component.interactiveData.length).toBe(1)
+    })
+
+    it('should support global filtering for array values', () => {
+      ;(component as any).fullInteractiveData = [
+        {
+          id: 'array-row',
+          imagePath: 'array-row',
+          title: ['Alpha', 'Beta']
+        } as any
+      ]
+      component.displayedColumnKeys = ['title']
+
+      component.onGlobalFilter('beta')
+
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).id).toBe('array-row')
+    })
+
+    it('should update sort field and direction', () => {
+      component.onSortChange({ sortColumn: 'title', sortDirection: DataSortDirection.ASCENDING })
+
+      expect(component.sortField).toBe('title')
+      expect(component.sortDirection).toBe(DataSortDirection.ASCENDING)
+    })
+
+    it('should validate date values for all branches', () => {
+      expect(component.isValidDateValue(null)).toBeFalse()
+      expect(component.isValidDateValue('')).toBeFalse()
+      expect(component.isValidDateValue('not-a-date')).toBeFalse()
+      expect(component.isValidDateValue(new Date('2024-01-01T00:00:00Z'))).toBeTrue()
+      expect(component.isValidDateValue('2024-01-01T00:00:00Z')).toBeTrue()
+    })
+
+    it('should build fallback id and imagePath when item id is missing', () => {
+      const transformed = component.toInteractiveData([
+        {
+          id: undefined,
+          title: 'Without id'
+        } as any
+      ])
+
+      expect((transformed[0] as any).id).toBe('announcement-0')
+      expect((transformed[0] as any).imagePath).toBe('announcement-0')
+    })
+
+    it('should return empty interactive data for nullish input', () => {
+      const transformed = component.toInteractiveData(undefined as any)
+
+      expect(transformed).toEqual([])
     })
   })
 
