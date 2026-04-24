@@ -2,13 +2,18 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { Column } from '@onecx/portal-integration-angular'
+import { DataSortDirection } from '@onecx/angular-accelerator'
 import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+
+type Column = {
+  field: string
+  header: string
+}
 
 const itemData: any = [
   {
@@ -57,7 +62,16 @@ describe('AnnouncementSearchComponent', () => {
   let fixture: ComponentFixture<AnnouncementSearchComponent>
 
   const defaultLang = 'en'
-  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
+  const langSubject = new BehaviorSubject<string>(defaultLang)
+  const getValueSpy = jasmine.createSpy('getValue').and.callFake(() => langSubject.getValue())
+  const hasPermissionSpy = jasmine.createSpy('hasPermission').and.returnValue(Promise.resolve(true))
+  const mockUserService = {
+    lang$: {
+      getValue: getValueSpy,
+      subscribe: (observer: { next?: (value: string) => void }) => langSubject.subscribe(observer)
+    },
+    hasPermission: hasPermissionSpy
+  }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
@@ -97,7 +111,10 @@ describe('AnnouncementSearchComponent', () => {
   })
 
   afterEach(() => {
-    mockUserService.lang$.getValue.and.returnValue(defaultLang)
+    langSubject.next(defaultLang)
+    getValueSpy.calls.reset()
+    hasPermissionSpy.calls.reset()
+    hasPermissionSpy.and.returnValue(Promise.resolve(true))
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -116,15 +133,15 @@ describe('AnnouncementSearchComponent', () => {
       expect(component).toBeTruthy()
     })
 
-    it('should call OnInit and populate filteredColumns/actions correctly', () => {
+    it('should call OnInit and populate displayed column keys and actions', () => {
       component.ngOnInit()
 
-      expect(component.filteredColumns[0]).toEqual(component.columns[0])
+      expect(component.displayedColumnKeys[0]).toEqual(component.columns[0].field)
     })
   })
 
   describe('page actions', () => {
-    it('should open create dialog', () => {
+    it('should open create dialog', async () => {
       translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
       spyOn(component, 'onDetail')
 
@@ -134,7 +151,26 @@ describe('AnnouncementSearchComponent', () => {
         action[0].actionCallback()
       })
 
+      await Promise.resolve()
+
       expect(component.onDetail).toHaveBeenCalled()
+    })
+
+    it('should deny create dialog if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+      translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
+      spyOn(component, 'onDetail')
+
+      component.ngOnInit()
+
+      component.actions$?.subscribe((action) => {
+        action[0].actionCallback()
+      })
+
+      await Promise.resolve()
+
+      expect(component.onDetail).not.toHaveBeenCalled()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
     })
   })
 
@@ -385,6 +421,48 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(component.displayDetailDialog).toBeFalse()
     })
+
+    it('should deny editing from interactive table if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+
+      component.onEditFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+    })
+
+    it('should allow editing from interactive table if permission is granted', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+
+      component.onEditFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeTrue()
+      expect(component.changeMode).toEqual('EDIT')
+      expect(component.item4Detail).toEqual(itemData[0])
+    })
+
+    it('should deny viewing from interactive table if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+
+      component.onViewFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+    })
+
+    it('should allow viewing from interactive table if permission is granted', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+
+      component.onViewFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeTrue()
+      expect(component.changeMode).toEqual('VIEW')
+      expect(component.item4Detail).toEqual(itemData[0])
+    })
   })
 
   describe('deletion', () => {
@@ -441,6 +519,39 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(apiServiceSpy.deleteAnnouncementById).not.toHaveBeenCalled()
     })
+
+    it('should deny deleting from interactive table if permission is missing', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(false))
+
+      component.onDeleteFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDeleteDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+    })
+
+    it('should allow deleting from interactive table if permission is granted', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+
+      component.onDeleteFromInteractive(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDeleteDialog).toBeTrue()
+      expect(component.item4Delete).toEqual(itemData[0])
+    })
+
+    it('should handle permission check errors when deleting from interactive table', async () => {
+      const errorResponse = new Error('permission failed')
+      hasPermissionSpy.and.returnValue(Promise.reject(errorResponse))
+      spyOn(console, 'error')
+
+      component.onDeleteFromInteractive(itemData[0])
+      await fixture.whenStable()
+
+      expect(component.displayDeleteDialog).toBeFalse()
+      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'EXCEPTIONS.HTTP_STATUS_403.ANNOUNCEMENT' })
+      expect(console.error).toHaveBeenCalledWith('hasPermission', errorResponse)
+    })
   })
 
   describe('filter columns', () => {
@@ -449,21 +560,156 @@ describe('AnnouncementSearchComponent', () => {
         { field: 'workspaceName', header: 'WORKSPACE' },
         { field: 'context', header: 'CONTEXT' }
       ]
-      const expectedColumn = { field: 'workspaceName', header: 'WORKSPACE' }
       component.columns = columns
 
       component.onColumnsChange(['workspaceName'])
 
-      expect(component.filteredColumns).not.toContain(columns[1])
-      expect(component.filteredColumns).toEqual([jasmine.objectContaining(expectedColumn)])
+      expect(component.displayedColumnKeys).toEqual(['workspaceName'])
     })
 
-    it('should apply a filter to the result table', () => {
-      const dataTable = jasmine.createSpyObj('dataTable', ['filterGlobal'])
+    it('should return early when selected columns are unchanged', () => {
+      const applyGlobalFilterSpy = spyOn<any>(component, 'applyGlobalFilter')
+      const sameColumns = [...component.displayedColumnKeys]
 
-      component.onFilterChange('test', dataTable)
+      component.onColumnsChange(sameColumns)
 
-      expect(dataTable?.filterGlobal).toHaveBeenCalledWith('test', 'contains')
+      expect(component.displayedColumnKeys).toEqual(sameColumns)
+      expect(applyGlobalFilterSpy).not.toHaveBeenCalled()
+    })
+
+    it('should update columns when same length but with different order', () => {
+      component.displayedColumnKeys = ['status', 'title']
+      const applyGlobalFilterSpy = spyOn<any>(component, 'applyGlobalFilter')
+
+      component.onColumnsChange(['title', 'status'])
+
+      expect(component.displayedColumnKeys).toEqual(['title', 'status'])
+      expect(applyGlobalFilterSpy).toHaveBeenCalled()
+    })
+
+    it('should allow interactive filter event handling', () => {
+      expect(() => component.onInteractiveFilterChange([])).not.toThrow()
+    })
+
+    it('should filter table rows globally by input value', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [...interactiveRows]
+
+      component.onGlobalFilter('ADMIN')
+
+      expect(component.tableFilter).toBe('ADMIN')
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).workspaceName).toBe('ADMIN')
+    })
+
+    it('should treat nullish global filter value as empty', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [interactiveRows[0]]
+
+      component.onGlobalFilter(undefined as any)
+
+      expect(component.tableFilter).toBe('')
+      expect(component.interactiveData.length).toBe(itemData.length)
+    })
+
+    it('should clear global filter and restore rows', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [interactiveRows[0]]
+      component.tableFilter = 'admin'
+      const input = document.createElement('input')
+      input.value = 'admin'
+
+      component.onClearGlobalFilter(input)
+
+      expect(component.tableFilter).toBe('')
+      expect(input.value).toBe('')
+      expect(component.interactiveData.length).toBe(itemData.length)
+    })
+
+    it('should clear global filter without input element', () => {
+      const interactiveRows = component.toInteractiveData(itemData)
+      ;(component as any).fullInteractiveData = interactiveRows
+      component.interactiveData = [interactiveRows[0]]
+      component.tableFilter = 'admin'
+
+      component.onClearGlobalFilter()
+
+      expect(component.tableFilter).toBe('')
+      expect(component.interactiveData.length).toBe(itemData.length)
+    })
+
+    it('should use all columns when displayed columns are empty', () => {
+      const rows = component.toInteractiveData([
+        {
+          id: 'id-empty-columns',
+          title: 'Needle title',
+          productName: 'Product',
+          workspaceName: 'Workspace',
+          type: 'INFO',
+          priority: 'NORMAL',
+          status: 'ACTIVE',
+          startDate: '2024-01-01T00:00:00Z',
+          endDate: null
+        } as any
+      ])
+      ;(component as any).fullInteractiveData = rows
+      component.displayedColumnKeys = []
+
+      component.onGlobalFilter('needle')
+
+      expect(component.interactiveData.length).toBe(1)
+    })
+
+    it('should support global filtering for array values', () => {
+      ;(component as any).fullInteractiveData = [
+        {
+          id: 'array-row',
+          imagePath: 'array-row',
+          title: ['Alpha', 'Beta']
+        } as any
+      ]
+      component.displayedColumnKeys = ['title']
+
+      component.onGlobalFilter('beta')
+
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).id).toBe('array-row')
+    })
+
+    it('should update sort field and direction', () => {
+      component.onSortChange({ sortColumn: 'title', sortDirection: DataSortDirection.ASCENDING })
+
+      expect(component.sortField).toBe('title')
+      expect(component.sortDirection).toBe(DataSortDirection.ASCENDING)
+    })
+
+    it('should validate date values for all branches', () => {
+      expect(component.isValidDateValue(null)).toBeFalse()
+      expect(component.isValidDateValue('')).toBeFalse()
+      expect(component.isValidDateValue('not-a-date')).toBeFalse()
+      expect(component.isValidDateValue(new Date('2024-01-01T00:00:00Z'))).toBeTrue()
+      expect(component.isValidDateValue('2024-01-01T00:00:00Z')).toBeTrue()
+    })
+
+    it('should build fallback id and imagePath when item id is missing', () => {
+      const transformed = component.toInteractiveData([
+        {
+          id: undefined,
+          title: 'Without id'
+        } as any
+      ])
+
+      expect((transformed[0] as any).id).toBe('announcement-0')
+      expect((transformed[0] as any).imagePath).toBe('announcement-0')
+    })
+
+    it('should return empty interactive data for nullish input', () => {
+      const transformed = component.toInteractiveData(undefined as any)
+
+      expect(transformed).toEqual([])
     })
   })
 
@@ -473,7 +719,7 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should set German date format', () => {
-      mockUserService.lang$.getValue.and.returnValue('de')
+      langSubject.next('de')
       initTestComponent()
       expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
     })
