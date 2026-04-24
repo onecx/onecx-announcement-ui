@@ -9,12 +9,38 @@
 
 :host ::ng-deep {
   .p-datatable {
+    --table-zebra-first-column-even-bg: inherit;
+
     .p-datatable-thead > tr > th {
       border-bottom-width: 2px;
     }
     .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
       padding: 0.5rem;
+    }
+    .p-datatable-thead > tr > th:first-child,
+    .p-datatable-tbody > tr > td:first-child {
+      border-right: 1px solid var(--surface-border, #dee2e6);
+      width: 1%;
+      white-space: nowrap;
+      text-align: center;
+      padding-left: 1.3rem;
+      padding-right: 1.3rem;
+    }
+    .p-datatable-thead > tr > th:first-child .table-header-wrapper {
+      justify-content: center !important;
+    }
+    .p-datatable-tbody > tr > td:first-child button[name='data-table-action-button'],
+    .p-datatable-tbody > tr > td:first-child button[name='data-table-overflow-action-button'] {
+      margin-inline: 0.03rem;
+      padding: 0.25rem !important;
+      width: 1.7rem !important;
+      min-width: 1.7rem !important;
+      height: 1.7rem !important;
+    }
+    .p-datatable-thead > tr > th:nth-child(2),
+    .p-datatable-tbody > tr > td:nth-child(2) {
+      text-align: center;
     }
   }
 
@@ -73,7 +99,7 @@
   .hm-filter-group .p-inputgroup-addon,
   .hm-filter-input,
   .hm-filter-group .hm-filter-clear {
-    height: 2.25rem;
+    height: 3rem;
   }
 
   .hm-filter-group .p-inputgroup-addon,
