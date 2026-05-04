@@ -4,7 +4,15 @@ import { BehaviorSubject, catchError, combineLatest, finalize, map, Observable, 
 import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { Action, ColumnType, DataSortDirection, DataTableColumn, RowListGridData } from '@onecx/angular-accelerator'
+import {
+  Action,
+  AngularAcceleratorModule,
+  ColumnType,
+  DataSortDirection,
+  DataTableColumn,
+  RowListGridData
+} from '@onecx/angular-accelerator'
+import { PortalPageComponent } from '@onecx/angular-utils'
 import { SlotService } from '@onecx/angular-remote-components'
 
 import {
@@ -13,6 +21,9 @@ import {
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
+import { SharedModule } from 'src/app/shared/shared.module'
+import { AnnouncementDetailComponent } from '../announcement-detail/announcement-detail.component'
+import { AnnouncementCriteriaComponent } from './announcement-criteria/announcement-criteria.component'
 
 export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
 type Column = {
@@ -69,7 +80,14 @@ export type Workspace = {
   selector: 'app-announcement-search',
   templateUrl: './announcement-search.component.html',
   styleUrls: ['./announcement-search.component.scss'],
-  standalone: false
+  standalone: true,
+  imports: [
+    SharedModule,
+    AngularAcceleratorModule,
+    PortalPageComponent,
+    AnnouncementCriteriaComponent,
+    AnnouncementDetailComponent
+  ]
 })
 export class AnnouncementSearchComponent implements OnInit {
   // dialog
@@ -271,6 +289,22 @@ export class AnnouncementSearchComponent implements OnInit {
     })) as RowListGridData[]
   }
 
+  private toSearchableText(value: unknown): string | undefined {
+    if (value == null) return undefined
+    if (typeof value === 'string') return value
+    if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
+      return value.toString()
+    }
+    if (value instanceof Date) return value.toISOString()
+    if (Array.isArray(value)) {
+      const normalizedValues = value
+        .map((entry) => this.toSearchableText(entry))
+        .filter((entry): entry is string => entry != null && entry !== '')
+      return normalizedValues.length ? normalizedValues.join(' ') : undefined
+    }
+    return undefined
+  }
+
   private applyGlobalFilter(): void {
     const searchTerm = this.tableFilter.trim().toLowerCase()
     if (!searchTerm) {
@@ -281,10 +315,9 @@ export class AnnouncementSearchComponent implements OnInit {
     const fields = this.displayedColumnKeys.length ? this.displayedColumnKeys : this.columns.map((col) => col.field)
     this.interactiveData = this.fullInteractiveData.filter((row) =>
       fields.some((field) => {
-        const value = (row as Record<string, unknown>)[field]
-        if (value == null) return false
-        if (Array.isArray(value)) return value.join(' ').toLowerCase().includes(searchTerm)
-        return String(value).toLowerCase().includes(searchTerm)
+        const searchableText = this.toSearchableText((row as Record<string, unknown>)[field])
+        if (!searchableText) return false
+        return searchableText.toLowerCase().includes(searchTerm)
       })
     )
   }
@@ -399,7 +432,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
       return {
         id: col.field,
-        nameKey: translatedColumnLabel !== columnLabelKey ? translatedColumnLabel : columnLabelKey,
+        nameKey: translatedColumnLabel === columnLabelKey ? columnLabelKey : translatedColumnLabel,
         tooltipKey: columnTooltipKey,
         columnType: this.getInteractiveColumnType(col),
         sortable: this.isInteractiveSortable(col),

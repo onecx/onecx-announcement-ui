@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { TranslateLoader } from '@ngx-translate/core'
 import { ReplaySubject } from 'rxjs'
-import { provideThemeConfig } from '@onecx/angular-utils'
 
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { AngularAuthModule } from '@onecx/angular-auth'
@@ -13,6 +12,7 @@ import {
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,
   createTranslateLoader,
+  provideThemeConfig,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
 

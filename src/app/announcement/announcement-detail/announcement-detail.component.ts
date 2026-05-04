@@ -15,7 +15,8 @@ import {
   CreateAnnouncementRequest,
   UpdateAnnouncementRequest
 } from 'src/app/shared/generated'
-import { ChangeMode } from '../announcement-search/announcement-search.component'
+import { SharedModule } from 'src/app/shared/shared.module'
+import type { ChangeMode } from '../announcement-search/announcement-search.component'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -34,7 +35,8 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
   selector: 'app-announcement-detail',
   templateUrl: './announcement-detail.component.html',
   styleUrls: ['./announcement-detail.component.scss'],
-  standalone: false
+  standalone: true,
+  imports: [SharedModule]
 })
 export class AnnouncementDetailComponent implements OnChanges {
   @Input() public displayDialog = false

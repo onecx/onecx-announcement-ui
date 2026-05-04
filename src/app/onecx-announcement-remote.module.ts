@@ -9,12 +9,12 @@ import { AngularAuthModule } from '@onecx/angular-auth'
 import {
   createTranslateLoader,
   MultiLanguageMissingTranslationHandler,
+  PortalApiConfiguration,
   provideThemeConfig,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
 import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angular-webcomponents'
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
-import { PortalApiConfiguration } from '@onecx/angular-utils'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { Configuration } from './shared/generated'
@@ -33,8 +33,8 @@ const routes: Routes = [
 ]
 
 @NgModule({
-  declarations: [AppEntrypointComponent],
   imports: [
+    AppEntrypointComponent,
     AngularAuthModule,
     BrowserModule,
     BrowserAnimationsModule,

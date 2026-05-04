@@ -34,8 +34,7 @@ import { TabViewModule } from 'primeng/tabview'
 import { TagModule } from 'primeng/tag'
 import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
-import { PortalDialogService } from '@onecx/angular-accelerator'
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule, PortalDialogService } from '@onecx/angular-accelerator'
 
 import { LabelResolver } from './label.resolver'
 

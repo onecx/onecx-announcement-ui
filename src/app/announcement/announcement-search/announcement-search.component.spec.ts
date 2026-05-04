@@ -63,13 +63,9 @@ describe('AnnouncementSearchComponent', () => {
 
   const defaultLang = 'en'
   const langSubject = new BehaviorSubject<string>(defaultLang)
-  const getValueSpy = jasmine.createSpy('getValue').and.callFake(() => langSubject.getValue())
   const hasPermissionSpy = jasmine.createSpy('hasPermission').and.returnValue(Promise.resolve(true))
   const mockUserService = {
-    lang$: {
-      getValue: getValueSpy,
-      subscribe: (observer: { next?: (value: string) => void }) => langSubject.subscribe(observer)
-    },
+    lang$: langSubject,
     hasPermission: hasPermissionSpy
   }
   const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
@@ -88,8 +84,8 @@ describe('AnnouncementSearchComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AnnouncementSearchComponent],
       imports: [
+        AnnouncementSearchComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -103,7 +99,14 @@ describe('AnnouncementSearchComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
       ]
-    }).compileComponents()
+    })
+      .overrideComponent(AnnouncementSearchComponent, {
+        set: {
+          template: '',
+          imports: []
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {
@@ -112,7 +115,6 @@ describe('AnnouncementSearchComponent', () => {
 
   afterEach(() => {
     langSubject.next(defaultLang)
-    getValueSpy.calls.reset()
     hasPermissionSpy.calls.reset()
     hasPermissionSpy.and.returnValue(Promise.resolve(true))
     // to spy data: reset
@@ -183,6 +185,21 @@ describe('AnnouncementSearchComponent', () => {
       component.data$!.subscribe({
         next: (data) => {
           expect(data).toEqual(itemData)
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should fallback to empty stream when response has no stream property', (done) => {
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
+
+      component.onSearch({})
+
+      component.data$!.subscribe({
+        next: (data) => {
+          expect(data).toEqual([])
+          expect(component.interactiveData).toEqual([])
           done()
         },
         error: done.fail
@@ -677,6 +694,44 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(component.interactiveData.length).toBe(1)
       expect((component.interactiveData[0] as any).id).toBe('array-row')
+    })
+
+    it('should support global filtering for number, boolean, bigint and date values', () => {
+      ;(component as any).fullInteractiveData = [
+        { id: 'num-row', imagePath: 'num-row', title: 123 } as any,
+        { id: 'bool-row', imagePath: 'bool-row', title: true } as any,
+        { id: 'bigint-row', imagePath: 'bigint-row', title: BigInt(42) } as any,
+        { id: 'date-row', imagePath: 'date-row', title: new Date('2024-01-01T00:00:00.000Z') } as any
+      ]
+      component.displayedColumnKeys = ['title']
+
+      component.onGlobalFilter('123')
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).id).toBe('num-row')
+
+      component.onGlobalFilter('true')
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).id).toBe('bool-row')
+
+      component.onGlobalFilter('42')
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).id).toBe('bigint-row')
+
+      component.onGlobalFilter('2024-01-01')
+      expect(component.interactiveData.length).toBe(1)
+      expect((component.interactiveData[0] as any).id).toBe('date-row')
+    })
+
+    it('should ignore unsupported objects and empty normalized arrays in global filter', () => {
+      ;(component as any).fullInteractiveData = [
+        { id: 'obj-row', imagePath: 'obj-row', title: { nested: 'value' } } as any,
+        { id: 'array-empty-row', imagePath: 'array-empty-row', title: [{}] } as any
+      ]
+      component.displayedColumnKeys = ['title']
+
+      component.onGlobalFilter('value')
+
+      expect(component.interactiveData.length).toBe(0)
     })
 
     it('should update sort field and direction', () => {
