@@ -8,6 +8,7 @@ import {
   Action,
   AngularAcceleratorModule,
   ColumnType,
+  DataAction,
   DataSortDirection,
   DataTableColumn,
   RowListGridData
@@ -105,6 +106,16 @@ export class AnnouncementSearchComponent implements OnInit {
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
   public tableFilter = ''
+  public interactiveAdditionalActions: DataAction[] = [
+    {
+      id: 'copy',
+      labelKey: 'ACTIONS.COPY.LABEL',
+      icon: 'pi pi-copy',
+      permission: 'ANNOUNCEMENT#CREATE',
+      classes: ['copy-action-button'],
+      callback: (item) => this.onCopyFromInteractive(item as RowListGridData)
+    }
+  ]
 
   // data
   public data$: Observable<Announcement[]> | undefined
@@ -358,6 +369,10 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public onViewFromInteractive(item: RowListGridData): void {
     this.ensurePermission('ANNOUNCEMENT#VIEW', () => this.onDetail(undefined, item as Announcement, 'VIEW'))
+  }
+
+  public onCopyFromInteractive(item: RowListGridData): void {
+    this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, item as Announcement, 'COPY'))
   }
 
   public onEditFromInteractive(item: RowListGridData): void {

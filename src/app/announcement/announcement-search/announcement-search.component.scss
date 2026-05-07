@@ -38,6 +38,21 @@
       min-width: 1.7rem !important;
       height: 1.7rem !important;
     }
+    .p-datatable-tbody > tr > td:first-child .icon-button-row-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .p-datatable-tbody > tr > td:first-child button.editTableRowButton {
+      order: 1;
+    }
+    .p-datatable-tbody > tr > td:first-child button.copy-action-button {
+      order: 2;
+    }
+    .p-datatable-tbody > tr > td:first-child button.deleteTableRowButton {
+      order: 3;
+    }
     .p-datatable-thead > tr > th:nth-child(2),
     .p-datatable-tbody > tr > td:nth-child(2) {
       text-align: center;
@@ -99,7 +114,7 @@
   .hm-filter-group .p-inputgroup-addon,
   .hm-filter-input,
   .hm-filter-group .hm-filter-clear {
-    height: 3rem;
+    height: 2.5rem;
   }
 
   .hm-filter-group .p-inputgroup-addon,

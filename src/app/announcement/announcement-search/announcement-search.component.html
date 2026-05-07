@@ -72,10 +72,10 @@
         [viewPermission]="'ANNOUNCEMENT#VIEW'"
         [editPermission]="'ANNOUNCEMENT#EDIT'"
         [deletePermission]="'ANNOUNCEMENT#DELETE'"
+        [additionalActions]="interactiveAdditionalActions"
         [actionColumnPosition]="'left'"
         (displayedColumnKeysChange)="onColumnsChange($event)"
         (sorted)="onSortChange($event)"
-        (viewItem)="onViewFromInteractive($event)"
         (editItem)="onEditFromInteractive($event)"
         (deleteItem)="onDeleteFromInteractive($event)"
       >
