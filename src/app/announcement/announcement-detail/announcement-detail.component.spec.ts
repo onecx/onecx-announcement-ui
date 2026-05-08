@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
-import { of, throwError } from 'rxjs'
+import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
@@ -43,7 +43,8 @@ describe('AnnouncementDetailComponent', () => {
   let fixture: ComponentFixture<AnnouncementDetailComponent>
 
   const defaultLang = 'en'
-  const mockUserService = { lang$: { getValue: jasmine.createSpy('getValue') } }
+  const langSubject = new BehaviorSubject<string>(defaultLang)
+  const mockUserService = { lang$: langSubject }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
     'error',
@@ -64,8 +65,8 @@ describe('AnnouncementDetailComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AnnouncementDetailComponent],
       imports: [
+        AnnouncementDetailComponent,
         TranslateTestingModule.withTranslations({
           de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
@@ -79,7 +80,14 @@ describe('AnnouncementDetailComponent', () => {
         { provide: PortalMessageService, useValue: msgServiceSpy },
         { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
       ]
-    }).compileComponents()
+    })
+      .overrideComponent(AnnouncementDetailComponent, {
+        set: {
+          template: '',
+          imports: []
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {
@@ -89,7 +97,7 @@ describe('AnnouncementDetailComponent', () => {
 
   afterEach(() => {
     component.announcementForm.reset()
-    mockUserService.lang$.getValue.and.returnValue(defaultLang)
+    langSubject.next(defaultLang)
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
@@ -103,6 +111,16 @@ describe('AnnouncementDetailComponent', () => {
   describe('construction', () => {
     it('should create', () => {
       expect(component).toBeTruthy()
+    })
+
+    it('should build type and priority dropdown options', async () => {
+      const typeOptions = await firstValueFrom(component.typeOptions$!)
+      const priorityOptions = await firstValueFrom(component.priorityOptions$!)
+
+      expect(typeOptions.length).toBe(3)
+      expect(typeOptions[0].value).toBe(AnnouncementType.Event)
+      expect(priorityOptions.length).toBe(3)
+      expect(priorityOptions[0].value).toBe(AnnouncementPriorityType.Important)
     })
   })
 
@@ -443,7 +461,7 @@ describe('AnnouncementDetailComponent', () => {
     })
 
     it('should set German date format', () => {
-      mockUserService.lang$.getValue.and.returnValue('de')
+      langSubject.next('de')
       initTestComponent()
       expect(component.datetimeFormat).toEqual('dd.MM.yyyy HH:mm:ss')
     })

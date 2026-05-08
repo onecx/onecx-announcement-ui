@@ -5,6 +5,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
+import { BehaviorSubject } from 'rxjs'
 
 import { UserService } from '@onecx/angular-integration-interface'
 import { createTranslateLoader } from '@onecx/angular-utils'
@@ -34,31 +35,38 @@ const emptyCriteria = new FormGroup<AnnouncementCriteriaForm>({
 describe('AnnouncementCriteriaComponent', () => {
   let component: AnnouncementCriteriaComponent
   let fixture: ComponentFixture<AnnouncementCriteriaComponent>
+  const defaultLang = 'de'
+  const langSubject = new BehaviorSubject<string>(defaultLang)
 
   const mockUserService = {
-    lang$: {
-      getValue: jasmine.createSpy('getValue')
-    }
+    lang$: langSubject
   }
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [AnnouncementCriteriaComponent],
       imports: [
+        AnnouncementCriteriaComponent,
         TranslateModule.forRoot({
           loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
         })
       ],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
-    }).compileComponents()
+    })
+      .overrideComponent(AnnouncementCriteriaComponent, {
+        set: {
+          template: '',
+          imports: []
+        }
+      })
+      .compileComponents()
   }))
 
   beforeEach(() => {
+    langSubject.next(defaultLang)
     fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
-    mockUserService.lang$.getValue.and.returnValue('de')
   })
 
   it('should create', () => {
@@ -143,7 +151,7 @@ describe('AnnouncementCriteriaComponent', () => {
   })
 
   it('should set default date format', () => {
-    mockUserService.lang$.getValue.and.returnValue('en')
+    langSubject.next('en')
     fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
     component = fixture.componentInstance
     fixture.detectChanges()
