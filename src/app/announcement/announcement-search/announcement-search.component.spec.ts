@@ -480,6 +480,20 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.changeMode).toEqual('VIEW')
       expect(component.item4Detail).toEqual(itemData[0])
     })
+
+    it('should run copy additional action callback from interactive actions', async () => {
+      hasPermissionSpy.and.returnValue(Promise.resolve(true))
+      const copyAction = component.interactiveAdditionalActions.find((action) => action.id === 'copy')
+
+      expect(copyAction).toBeDefined()
+
+      copyAction?.callback(itemData[0])
+      await Promise.resolve()
+
+      expect(component.displayDetailDialog).toBeTrue()
+      expect(component.changeMode).toEqual('COPY')
+      expect(component.item4Detail).toEqual(itemData[0])
+    })
   })
 
   describe('deletion', () => {

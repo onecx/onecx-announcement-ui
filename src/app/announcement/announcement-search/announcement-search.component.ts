@@ -380,7 +380,7 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   private ensurePermission(permission: string, onGranted: () => void): void {
-    void this.user
+    this.user
       .hasPermission(permission)
       .then((granted) => {
         if (!granted) {
