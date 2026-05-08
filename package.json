@@ -122,5 +122,8 @@
     "url-loader": "^4.1.1",
     "webpack": "5.95.0",
     "webpack-merge": "^6.0.1"
+  },
+  "overrides": {
+    "koa": "2.16.4"
   }
 }
