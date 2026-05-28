@@ -17,11 +17,11 @@
   .error-tailor-has-error ~ control-error {
     text-align: left;
   }
-  .p-calendar {
+  .p-datepicker {
     .calender-today {
       border-color: var(--primary-color);
     }
-    .p-calendar-clear-icon {
+    .p-datepicker-clear-icon {
       right: 40px;
     }
   }
@@ -36,6 +36,22 @@
   .p-inputtextarea-resizable {
     resize: vertical;
   }
+
+  .text-badge-right {
+    top: 0;
+    right: 0.9rem;
+    transform: translateY(-50%);
+    z-index: 2;
+  }
+
+  // Keep a visible required marker even when external theme styles are missing.
+  .p-floatlabel > label.ocx-required-label::after,
+  .p-float-label > label.ocx-required-label::after {
+    content: ' *';
+    color: var(--red-500, #ef4444);
+    font-weight: 600;
+  }
+
   .input-switch-xl {
     .p-inputswitch {
       height: 1rem;
@@ -54,13 +70,51 @@
   }
 
   .p-fieldset {
-    &.p-fieldset-toggleable .p-fieldset-legend a,
-    .p-fieldset-legend {
-      background-color: transparent;
+    > .p-fieldset-legend {
+      color: var(--text-color, var(--text-color-default));
+      background: var(--panel-header-bg);
+      font-weight: var(--panel-header-font-weight);
+      border-radius: var(--border-radius);
       padding: 0.3rem 0.4rem;
+      max-width: calc(100% - 0.8rem);
+      white-space: normal;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    &.p-fieldset-toggleable > .p-fieldset-legend > .p-fieldset-toggle-button {
+      border-radius: inherit;
+    }
+
+    > .p-fieldset-legend span,
+    > .p-fieldset-legend .p-fieldset-legend-label,
+    .p-fieldset-legend .p-fieldset-legend-text {
+      white-space: normal;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .p-fieldset-content {
       padding: 0.5rem 0.2rem 0rem;
+    }
+
+    &.surface-100 .p-fieldset-legend,
+    &.surface-100.p-fieldset-toggleable > .p-fieldset-legend > .p-fieldset-toggle-button {
+      background-color: var(--surface-100);
+    }
+  }
+
+  .am-internal-inline-field {
+    min-width: 0;
+
+    .am-internal-floatlabel {
+      display: block;
+      width: 100%;
+    }
+
+    .am-internal-floatlabel > .p-inputtext {
+      width: 100%;
     }
   }
 

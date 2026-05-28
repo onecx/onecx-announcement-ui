@@ -1,4 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
+import { CommonModule } from '@angular/common'
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -7,7 +8,7 @@ import { ReplaySubject, of, throwError } from 'rxjs'
 import { CarouselModule } from 'primeng/carousel'
 import { TagModule } from 'primeng/tag'
 
-import { BASE_URL, RemoteComponentConfig } from '@onecx/angular-remote-components'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
 
 import {
@@ -66,12 +67,12 @@ describe('AnnouncementListActiveComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AppStateService, useValue: mockAppStateService },
-        { provide: BASE_URL, useValue: baseUrlSubject }
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject }
       ]
     })
       .overrideComponent(OneCXAnnouncementListActiveComponent, {
         set: {
-          imports: [TranslateTestingModule, CarouselModule, TagModule],
+          imports: [CommonModule, TranslateTestingModule, CarouselModule, TagModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
@@ -133,6 +134,8 @@ describe('AnnouncementListActiveComponent', () => {
 
   describe('RemoteComponent initialization', () => {
     it('should call ocxInitRemoteComponent with the correct config', () => {
+      initializeComponent()
+
       const mockConfig: RemoteComponentConfig = {
         appId: 'appId',
         productName: 'prodName',
@@ -154,7 +157,7 @@ describe('AnnouncementListActiveComponent', () => {
       } as RemoteComponentConfig)
 
       baseUrlSubject.asObservable().subscribe((item) => {
-        expect(item).toEqual('base_url')
+        expect(item).toEqual(jasmine.objectContaining({ baseUrl: 'base_url' }))
         done()
       })
     })

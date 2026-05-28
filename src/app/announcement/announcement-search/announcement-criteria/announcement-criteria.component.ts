@@ -5,7 +5,7 @@ import { SelectItem } from 'primeng/api'
 import { Observable, map, of } from 'rxjs'
 
 import { UserService } from '@onecx/angular-integration-interface'
-import { Action } from '@onecx/angular-accelerator'
+import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import {
   AnnouncementPriorityType,
@@ -13,6 +13,7 @@ import {
   AnnouncementStatus,
   AnnouncementType
 } from 'src/app/shared/generated'
+import { SharedModule } from 'src/app/shared/shared.module'
 
 export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
@@ -27,7 +28,9 @@ export interface AnnouncementCriteriaForm {
 @Component({
   selector: 'app-announcement-criteria',
   templateUrl: './announcement-criteria.component.html',
-  styleUrls: ['./announcement-criteria.component.scss']
+  styleUrls: ['./announcement-criteria.component.scss'],
+  standalone: true,
+  imports: [SharedModule, AngularAcceleratorModule]
 })
 export class AnnouncementCriteriaComponent implements OnInit {
   @Input() public actions: Action[] = []

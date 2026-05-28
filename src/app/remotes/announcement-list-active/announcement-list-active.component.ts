@@ -1,25 +1,17 @@
 import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
-import { HttpClient } from '@angular/common/http'
-import { TranslateLoader, TranslateService } from '@ngx-translate/core'
+import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
 import { OverlayPanelModule } from 'primeng/overlaypanel'
 
-import { AppStateService } from '@onecx/angular-integration-interface'
+import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
-  BASE_URL,
   ocxRemoteComponent,
-  ocxRemoteWebcomponent,
-  provideTranslateServiceForRoot,
-  RemoteComponentConfig
+  ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
-import {
-  AppConfigService,
-  createRemoteComponentTranslateLoader,
-  PortalCoreModule,
-  UserService
-} from '@onecx/portal-integration-angular'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { SharedModule } from 'src/app/shared/shared.module'
 import { convertLineBreaks } from 'src/app/shared/utils'
@@ -31,18 +23,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-list-active.component.html',
   styleUrls: ['./announcement-list-active.component.scss'],
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CommonModule, PortalCoreModule, SharedModule, OverlayPanelModule],
-  providers: [
-    { provide: BASE_URL, useValue: new ReplaySubject<string>(1) },
-    provideTranslateServiceForRoot({
-      isolate: true,
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createRemoteComponentTranslateLoader,
-        deps: [HttpClient, BASE_URL]
-      }
-    })
-  ]
+  imports: [AngularRemoteComponentsModule, CommonModule, AngularAcceleratorModule, SharedModule, OverlayPanelModule]
 })
 export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -55,14 +36,14 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   convertLineBreaks = convertLineBreaks
 
   constructor(
-    @Inject(BASE_URL) private readonly baseUrl: ReplaySubject<string>,
+    @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
     private readonly announcementApi: AnnouncementInternalAPIService,
     private readonly translateService: TranslateService,
     private readonly appStateService: AppStateService,
     private readonly userService: UserService,
     private readonly appConfigService: AppConfigService
   ) {
-    this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
+    this.userService.lang$.subscribe((lang: string) => this.translateService.use(lang))
   }
 
   private prioValue(prio: string | undefined): number {
@@ -76,7 +57,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
     this.appConfigService.init(config['baseUrl'])
-    this.baseUrl.next(config.baseUrl)
+    this.remoteComponentConfig.next(config)
     this.searchWorkspaceAnnouncements().subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 

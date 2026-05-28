@@ -53,7 +53,7 @@
     [text]="exceptionKey | translate"
   ></p-message>
 
-  <p-tabView *ngIf="!exceptionKey" [formGroup]="announcementForm" errorTailor>
+  <p-tabView *ngIf="!exceptionKey" [formGroup]="announcementForm" controlErrorsIgnore>
     <p-tabPanel
       [header]="'DIALOG.DETAIL.TAB.CONTENT' | translate"
       [tooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.CONTENT' | translate"
@@ -64,7 +64,7 @@
         <div class="w-full relative">
           <p-badge
             *ngIf="changeMode !== 'VIEW'"
-            severity="primary"
+            severity="secondary"
             [value]="255 - announcementTitle.value.length"
             class="z-1 text-badge-right"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
@@ -72,7 +72,7 @@
             tooltipEvent="hover"
             aria-hidden="true"
           />
-          <span class="p-float-label" controlErrorAnchor>
+          <span class="p-floatlabel p-floatlabel-on am-label-top">
             <textarea
               #announcementTitle
               pInputTextarea
@@ -81,6 +81,7 @@
               style="min-height: 3rem"
               class="w-full textarea-sm"
               formControlName="title"
+              controlErrorsIgnore
               rows="3"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.TITLE' | translate"
@@ -97,7 +98,7 @@
         <div class="w-full relative">
           <p-badge
             *ngIf="changeMode !== 'VIEW'"
-            severity="primary"
+            severity="secondary"
             [value]="1000 - announcementContent.value.length"
             class="z-1 text-badge-right"
             [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.CHARACTERS' | translate"
@@ -105,13 +106,14 @@
             tooltipEvent="hover"
             aria-hidden="true"
           />
-          <span class="p-float-label" controlErrorAnchor>
+          <span class="p-floatlabel p-floatlabel-on am-label-top">
             <textarea
               #announcementContent
               pInputTextarea
               id="am_detail_form_content"
               class="w-full textarea-md"
               formControlName="content"
+              controlErrorsIgnore
               rows="8"
               appendTo="body"
               [ariaLabel]="'ANNOUNCEMENT.CONTENT' | translate"
@@ -135,16 +137,18 @@
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="surface-100 pb-3 px-2"
-          [style]="{ 'margin-top': '-0.5rem' }"
+          styleClass="surface-100 pt-2 pb-3 px-2"
+          [legend]="'DIALOG.DETAIL.TAB.ACTIVATION' | translate"
         >
-          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.ACTIVATION' | translate }} </ng-template>
-          <div class="w-full flex flex-column sm:flex-row row-gap-3 sm:row-gap-4 sm:justify-content-between">
-            <span class="p-float-label" controlErrorAnchor>
-              <p-calendar
+          <div
+            class="w-full flex flex-column sm:flex-row sm:flex-wrap row-gap-3 sm:row-gap-4 sm:justify-content-between"
+          >
+            <span class="p-floatlabel p-floatlabel-on am-label-top">
+              <p-datepicker
                 inputId="am_detail_form_start_date"
                 type="text"
                 formControlName="startDate"
+                controlErrorsIgnore
                 styleClass="w-15rem"
                 todayButtonStyleClass="calender-today"
                 [dateFormat]="dateFormat"
@@ -159,16 +163,17 @@
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              ></p-calendar>
+              ></p-datepicker>
               <label class="ocx-required-label" for="am_detail_form_start_date" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
               </label>
             </span>
-            <span class="p-float-label" controlErrorAnchor>
-              <p-calendar
+            <span class="p-floatlabel p-floatlabel-on am-label-top">
+              <p-datepicker
                 inputId="am_detail_form_end_date"
                 type="text"
                 formControlName="endDate"
+                controlErrorsIgnore
                 styleClass="w-15rem"
                 todayButtonStyleClass="calender-today"
                 [dateFormat]="dateFormat"
@@ -183,7 +188,7 @@
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.END_DATE' | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              ></p-calendar>
+              ></p-datepicker>
               <label for="am_detail_form_end_date" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.END_DATE' | translate }}
               </label>
@@ -193,6 +198,7 @@
                 inputId="am_detail_form_status"
                 class="input-switch-xl"
                 formControlName="status"
+                controlErrorsIgnore
                 trueValue="ACTIVE"
                 falseValue="INACTIVE"
                 (onChange)="onChangeAnnouncementStatus($event)"
@@ -219,19 +225,22 @@
           </div>
         </p-fieldset>
 
-        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
-          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.VISIBILITY' | translate }} </ng-template>
-          <div
-            class="w-full flex flex-column sm:flex-row sm:justify-content-between row-gap-3 sm:row-gap-4 column-gap-5"
-          >
-            <span class="p-float-label">
-              <p-dropdown
+        <p-fieldset
+          [toggleable]="false"
+          [collapsed]="false"
+          styleClass="surface-100 pt-2 pb-3 px-2"
+          [legend]="'DIALOG.DETAIL.TAB.VISIBILITY' | translate"
+        >
+          <div class="w-full flex flex-column sm:flex-row sm:flex-nowrap row-gap-3 sm:row-gap-0 column-gap-5">
+            <span class="p-floatlabel p-floatlabel-on am-label-top flex-1 min-w-0">
+              <p-select
                 #workspaceName
                 id="am_detail_form_workspace_name"
                 class="input-field"
-                styleClass="w-20rem text-responsive"
+                styleClass="w-full text-responsive"
                 panelStyleClass="w-20rem"
                 formControlName="workspaceName"
+                controlErrorsIgnore
                 [options]="allWorkspaces"
                 [autoDisplayFirst]="true"
                 [appendTo]="'body'"
@@ -242,19 +251,20 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
-              </p-dropdown>
+              </p-select>
               <label for="am_detail_form_workspace_name" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}
               </label>
             </span>
 
-            <span class="p-float-label">
-              <p-dropdown
+            <span class="p-floatlabel p-floatlabel-on am-label-top flex-1 min-w-0">
+              <p-select
                 id="am_detail_form_application_name"
                 class="input-field"
-                styleClass="w-20rem text-responsive"
+                styleClass="w-full text-responsive"
                 panelStyleClass="w-20rem"
                 formControlName="productName"
+                controlErrorsIgnore
                 [options]="allProducts"
                 [autoDisplayFirst]="true"
                 [appendTo]="'body'"
@@ -265,7 +275,7 @@
                 tooltipPosition="top"
                 tooltipEvent="hover"
               >
-              </p-dropdown>
+              </p-select>
               <label for="am_detail_form_application_name" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}
               </label>
@@ -273,12 +283,13 @@
           </div>
         </p-fieldset>
 
-        <p-fieldset [toggleable]="false" [collapsed]="false" styleClass="surface-100 pb-3 px-2">
-          <ng-template pTemplate="header">{{ 'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate }} </ng-template>
-          <div
-            class="w-full flex flex-row flex-wrap gap-2 sm:justify-content-evenly align-items-end"
-            style="margin-top: -1rem"
-          >
+        <p-fieldset
+          [toggleable]="false"
+          [collapsed]="false"
+          styleClass="surface-100 pt-2 pb-3 px-2"
+          [legend]="'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate"
+        >
+          <div class="w-full flex flex-row flex-wrap gap-2 sm:justify-content-evenly align-items-end">
             <section
               class="p-0 pt-2 md:pt-0 md:text-right flex flex-column md:justify-content-end"
               [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
@@ -290,6 +301,7 @@
                 #announcmentPriority
                 id="am_detail_form_priority"
                 formControlName="priority"
+                controlErrorsIgnore
                 [options]="(priorityOptions$ | async) ?? []"
                 (onChange)="onChangeAnnouncementPriority($event)"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
@@ -320,6 +332,7 @@
                 #announcmentType
                 id="am_detail_form_type"
                 formControlName="type"
+                controlErrorsIgnore
                 [options]="(typeOptions$ | async) ?? []"
                 (onChange)="onChangeAnnouncementType($event)"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
@@ -340,81 +353,89 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <div class="mt-1 flex flex-column row-gap-4">
+      <div class="mt-1 flex flex-column row-gap-3">
         <!-- row 1 -->
-        <div class="flex flex-row flex-wrap gap-4">
-          <span class="flex-grow-1 sm:flex-grow-0 p-float-label">
-            <input
-              pInputText
-              type="text"
-              readonly
-              id="ps_app_detail_form_field_creation_date"
-              class="w-full sm:w-15rem pt-3 pb-2 text-responsive"
-              [value]="announcement?.creationDate ? (announcement?.creationDate | date: datetimeFormat) : ''"
-              [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
-              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            />
-            <label for="ps_app_detail_form_field_creation_date" aria-hidden="true">
-              {{ 'INTERNAL.CREATION_DATE' | translate }}
-            </label>
-          </span>
-          <span class="flex-grow-1 p-float-label">
-            <input
-              pInputText
-              type="text"
-              readonly
-              id="ps_app_detail_form_field_creation_user"
-              class="w-full pt-3 pb-2 text-responsive"
-              [value]="announcement?.creationUser"
-              [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
-              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            />
-            <label for="ps_app_detail_form_field_creation_user" aria-hidden="true">
-              {{ 'INTERNAL.CREATION_USER' | translate }}
-            </label>
-          </span>
+        <div class="flex flex-column sm:flex-row gap-3 sm:gap-4">
+          <div class="am-internal-inline-field flex-1 min-w-0">
+            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
+              <input
+                pInputText
+                type="text"
+                readonly
+                id="ps_app_detail_form_field_creation_date"
+                class="w-full sm:w-15rem text-responsive"
+                [value]="announcement?.creationDate ? (announcement?.creationDate | date: datetimeFormat) : ''"
+                [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
+                [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              />
+              <label for="ps_app_detail_form_field_creation_date" aria-hidden="true">
+                {{ 'INTERNAL.CREATION_DATE' | translate }}
+              </label>
+            </span>
+          </div>
+          <div class="am-internal-inline-field flex-1 min-w-0">
+            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
+              <input
+                pInputText
+                type="text"
+                readonly
+                id="ps_app_detail_form_field_creation_user"
+                class="w-full text-responsive"
+                [value]="announcement?.creationUser"
+                [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
+                [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              />
+              <label for="ps_app_detail_form_field_creation_user" aria-hidden="true">
+                {{ 'INTERNAL.CREATION_USER' | translate }}
+              </label>
+            </span>
+          </div>
         </div>
 
         <!-- row 2 -->
-        <div class="flex flex-row flex-wrap gap-4">
-          <span class="flex-grow-1 sm:flex-grow-0 p-float-label">
-            <input
-              pInputText
-              type="text"
-              readonly
-              id="ps_app_detail_form_field_modification_date"
-              class="w-full sm:w-15rem pt-3 pb-2"
-              [value]="announcement?.modificationDate ? (announcement?.modificationDate | date: datetimeFormat) : ''"
-              [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
-              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            />
-            <label for="ps_app_detail_form_field_modification_date" aria-hidden="true">
-              {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
-            </label>
-          </span>
-          <span class="flex-grow-1 p-float-label">
-            <input
-              pInputText
-              type="text"
-              readonly
-              id="ps_app_detail_form_field_modification_user"
-              class="w-full pt-3 pb-2 text-responsive"
-              [value]="announcement?.modificationUser"
-              [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
-              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            />
-            <label for="ps_app_detail_form_field_modification_user" aria-hidden="true">
-              {{ 'INTERNAL.MODIFICATION_USER' | translate }}
-            </label>
-          </span>
+        <div class="flex flex-column sm:flex-row gap-3 sm:gap-4">
+          <div class="am-internal-inline-field flex-1 min-w-0">
+            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
+              <input
+                pInputText
+                type="text"
+                readonly
+                id="ps_app_detail_form_field_modification_date"
+                class="w-full sm:w-15rem"
+                [value]="announcement?.modificationDate ? (announcement?.modificationDate | date: datetimeFormat) : ''"
+                [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
+                [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              />
+              <label for="ps_app_detail_form_field_modification_date" aria-hidden="true">
+                {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
+              </label>
+            </span>
+          </div>
+          <div class="am-internal-inline-field flex-1 min-w-0">
+            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
+              <input
+                pInputText
+                type="text"
+                readonly
+                id="ps_app_detail_form_field_modification_user"
+                class="w-full text-responsive"
+                [value]="announcement?.modificationUser"
+                [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
+                [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
+                tooltipPosition="top"
+                tooltipEvent="hover"
+              />
+              <label for="ps_app_detail_form_field_modification_user" aria-hidden="true">
+                {{ 'INTERNAL.MODIFICATION_USER' | translate }}
+              </label>
+            </span>
+          </div>
         </div>
       </div>
     </p-tabPanel>

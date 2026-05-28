@@ -9,6 +9,8 @@
 
 :host ::ng-deep {
   .p-datatable {
+    --table-zebra-first-column-even-bg: inherit;
+
     .p-datatable-thead > tr > th {
       border-bottom-width: 2px;
     }
@@ -16,14 +18,78 @@
     .p-datatable-tbody > tr > td {
       padding: 0.5rem;
     }
+    .p-datatable-thead > tr > th:first-child,
+    .p-datatable-tbody > tr > td:first-child {
+      border-right: 1px solid var(--surface-border, #dee2e6);
+      width: 1%;
+      white-space: nowrap;
+      text-align: center;
+      padding-left: 1.3rem;
+      padding-right: 1.3rem;
+    }
+    .p-datatable-thead > tr > th:first-child .table-header-wrapper {
+      justify-content: center !important;
+    }
+    .p-datatable-tbody > tr > td:first-child button[name='data-table-action-button'],
+    .p-datatable-tbody > tr > td:first-child button[name='data-table-overflow-action-button'] {
+      margin-inline: 0.03rem;
+      padding: 0.25rem !important;
+      width: 1.7rem !important;
+      min-width: 1.7rem !important;
+      height: 1.7rem !important;
+    }
+    .p-datatable-tbody > tr > td:first-child .icon-button-row-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+    .p-datatable-tbody > tr > td:first-child button.editTableRowButton {
+      order: 1;
+    }
+    .p-datatable-tbody > tr > td:first-child button.copy-action-button {
+      order: 2;
+    }
+    .p-datatable-tbody > tr > td:first-child button.deleteTableRowButton {
+      order: 3;
+    }
+    .p-datatable-thead > tr > th:nth-child(2),
+    .p-datatable-tbody > tr > td:nth-child(2) {
+      text-align: center;
+    }
   }
+
+  // keep sortable header title and icon on one line
+  ocx-interactive-data-view .table-header-wrapper {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.35rem;
+    height: auto !important;
+  }
+
+  ocx-interactive-data-view .table-header-wrapper > span:first-child {
+    white-space: nowrap;
+  }
+
+  ocx-interactive-data-view .icon-button-header-wrapper,
+  ocx-interactive-data-view .sortButton {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+
   // hide unusable stuff
-  ocx-column-group-selection,
-  ocx-data-view-controls div div button {
+  ocx-column-group-selection {
     display: none;
   }
-  ocx-data-view-controls div {
-    justify-content: center !important;
+
+  // keep row actions visible in table/list/grid views
+  ocx-interactive-data-view button[name='data-table-action-button'],
+  ocx-interactive-data-view button[name='data-table-overflow-action-button'],
+  ocx-interactive-data-view button[name='data-list-action-button'],
+  ocx-interactive-data-view button[name='data-list-overflow-item-menu-button'] {
+    display: inline-flex;
   }
 
   .max-height-for-2-lines {
@@ -31,5 +97,40 @@
   }
   .text-ellipsis-2-lines {
     @include displaying-text-ellipsis(2);
+  }
+
+  // filter input group
+  .hm-filter-group {
+    display: inline-flex;
+    align-items: stretch;
+    flex-wrap: nowrap;
+  }
+
+  .hm-filter-float {
+    display: inline-flex;
+    align-items: stretch;
+  }
+
+  .hm-filter-group .p-inputgroup-addon,
+  .hm-filter-input,
+  .hm-filter-group .hm-filter-clear {
+    height: 2.5rem;
+  }
+
+  .hm-filter-group .p-inputgroup-addon,
+  .hm-filter-group .hm-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hm-filter-input {
+    min-width: 14rem;
+  }
+
+  .hm-filter-clear {
+    border-left: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 }

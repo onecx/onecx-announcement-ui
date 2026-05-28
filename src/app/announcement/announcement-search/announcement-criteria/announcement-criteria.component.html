@@ -6,13 +6,14 @@
   [manualBreadcrumbs]="false"
   [actions]="actions"
 >
-  <form [formGroup]="criteriaForm" class="flex flex-wrap gap-3">
-    <span class="p-float-label">
+  <form [formGroup]="criteriaForm" class="flex flex-wrap gap-3" controlErrorsIgnore>
+    <p-floatlabel>
       <input
         id="am_search_criteria_title"
         pInputText
         type="text"
         formControlName="title"
+        controlErrorsIgnore
         class="w-9rem sm:w-13rem"
         [ariaLabel]="
           ('ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate) + ('ACTIONS.SEARCH.WILDCARD_SUPPORT' | translate)
@@ -24,14 +25,15 @@
         tooltipEvent="hover"
       />
       <label for="am_search_criteria_title" aria-hidden="true">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
-    </span>
-    <span class="p-float-label">
-      <p-calendar
+    </p-floatlabel>
+    <p-floatlabel>
+      <p-datepicker
         inputId="am_search_criteria_start_date_range"
         styleClass="w-13rem"
         selectionMode="range"
         [readonlyInput]="true"
         formControlName="startDateRange"
+        controlErrorsIgnore
         appendTo="body"
         [showButtonBar]="true"
         [showWeek]="true"
@@ -40,17 +42,18 @@
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.START_DATE_RANGE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      ></p-calendar>
+      ></p-datepicker>
       <label for="am_search_criteria_start_date_range" aria-hidden="true">
         {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}
       </label>
-    </span>
-    <span class="p-float-label">
-      <p-dropdown
+    </p-floatlabel>
+    <p-floatlabel>
+      <p-select
         id="am_search_criteria_workspace_name"
         styleClass="w-11rem sm:w-13rem"
         panelStyleClass="w-13rem"
         formControlName="workspaceName"
+        controlErrorsIgnore
         [options]="usedWorkspaces"
         [showClear]="true"
         [autoDisplayFirst]="true"
@@ -61,17 +64,18 @@
         tooltipPosition="top"
         tooltipEvent="hover"
       >
-      </p-dropdown>
+      </p-select>
       <label for="am_search_criteria_workspace_name" aria-hidden="true">
         {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}
       </label>
-    </span>
-    <span class="p-float-label">
-      <p-dropdown
+    </p-floatlabel>
+    <p-floatlabel>
+      <p-select
         id="am_search_criteria_product_name"
         styleClass="w-11rem sm:w-13rem"
         panelStyleClass="w-13rem"
         formControlName="productName"
+        controlErrorsIgnore
         [options]="usedProducts"
         [showClear]="true"
         [autoDisplayFirst]="true"
@@ -82,15 +86,16 @@
         tooltipPosition="top"
         tooltipEvent="hover"
       >
-      </p-dropdown>
+      </p-select>
       <label for="am_search_criteria_product_name" aria-hidden="true">
         {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}
       </label>
-    </span>
-    <span *ocxAdvanced class="p-float-label">
+    </p-floatlabel>
+    <p-floatlabel *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_status"
         formControlName="status"
+        controlErrorsIgnore
         appendTo="body"
         [options]="(statusOptions$ | async) ?? []"
         [filter]="false"
@@ -101,12 +106,13 @@
       >
       </p-multiSelect>
       <label for="am_search_criteria_status" aria-hidden="true">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
-    </span>
+    </p-floatlabel>
 
-    <span *ocxAdvanced class="p-float-label">
+    <p-floatlabel *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_type"
         formControlName="type"
+        controlErrorsIgnore
         appendTo="body"
         [options]="(type$ | async) ?? []"
         [filter]="false"
@@ -117,13 +123,14 @@
       >
       </p-multiSelect>
       <label for="am_search_criteria_type" aria-hidden="true">{{ 'ANNOUNCEMENT.TYPE' | translate }}</label>
-    </span>
+    </p-floatlabel>
 
-    <span *ocxAdvanced class="p-float-label">
+    <p-floatlabel *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_priority"
         [options]="(priorityType$ | async) ?? []"
         formControlName="priority"
+        controlErrorsIgnore
         appendTo="body"
         [filter]="false"
         [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
@@ -133,6 +140,6 @@
       >
       </p-multiSelect>
       <label for="am_search_criteria_priority" aria-hidden="true">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
-    </span>
+    </p-floatlabel>
   </form>
 </ocx-search-header>
