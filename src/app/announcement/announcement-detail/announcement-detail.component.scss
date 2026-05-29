@@ -1,15 +1,23 @@
 @import '/src/app/_am-mixins.scss';
 
 @include text-badges;
+/*
 @include displaying-text-responsive;
 @include correct-select-button;
 @include dialog-footer-buttons;
 @include dialog-non-full-size-modal;
-@include tabview-reduce-padding;
-@include tabview-fix-color-selected-tab;
+*/
+@include ocx-modal-dialog;
+@include tabview-header-fix;
+@include tabview-body-fix;
+@include ocx-float-label-textbox;
 
 :host ::ng-deep {
-  --input-switch-handle-off-bg: red;
+  .p-toggleswitch {
+    &.ap-toggleswitch-checked .p-toggleswitch-slider {
+      background-color: var(--p-onecx-warn-color);
+    }
+  }
 
   label.float-label {
     color: var(--emphasis-medium);
@@ -42,14 +50,6 @@
     right: 0.9rem;
     transform: translateY(-50%);
     z-index: 2;
-  }
-
-  // Keep a visible required marker even when external theme styles are missing.
-  .p-floatlabel > label.ocx-required-label::after,
-  .p-float-label > label.ocx-required-label::after {
-    content: ' *';
-    color: var(--red-500, #ef4444);
-    font-weight: 600;
   }
 
   .input-switch-xl {
@@ -105,23 +105,10 @@
     }
   }
 
-  .am-internal-inline-field {
-    min-width: 0;
-
-    .am-internal-floatlabel {
-      display: block;
-      width: 100%;
-    }
-
-    .am-internal-floatlabel > .p-inputtext {
-      width: 100%;
-    }
-  }
-
   @media screen and (min-width: 576px) {
     .sm\:dialog-header-right-slot {
-      top: 1.1rem;
-      right: 5rem;
+      top: 1.2rem;
+      right: 7rem;
       font-weight: var(--dialog-header-font-weight); // same as dialog-title
       font-size: var(--dialog-header-font-size);
     }

@@ -6,6 +6,7 @@
   [closable]="true"
   [draggable]="true"
   [resizable]="true"
+  [maximizable]="true"
   [style]="{ width: '650px' }"
   [breakpoints]="{
     '992px': '72vw',
@@ -50,6 +51,7 @@
     *ngIf="exceptionKey"
     id="am_detail_message_error"
     severity="error"
+    styleClass="p-2"
     [text]="exceptionKey | translate"
   ></p-message>
 
@@ -60,7 +62,7 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-4 mt-2">
+      <div class="flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-5 mt-2">
         <div class="w-full relative">
           <p-badge
             *ngIf="changeMode !== 'VIEW'"
@@ -72,7 +74,7 @@
             tooltipEvent="hover"
             aria-hidden="true"
           />
-          <span class="p-floatlabel p-floatlabel-on am-label-top">
+          <p-floatlabel class="flex-grow-1">
             <textarea
               #announcementTitle
               pInputTextarea
@@ -92,7 +94,7 @@
             <label class="ocx-required-label" for="am_detail_form_title" aria-hidden="true">
               {{ 'ANNOUNCEMENT.TITLE' | translate }}
             </label>
-          </span>
+          </p-floatlabel>
         </div>
 
         <div class="w-full relative">
@@ -106,7 +108,7 @@
             tooltipEvent="hover"
             aria-hidden="true"
           />
-          <span class="p-floatlabel p-floatlabel-on am-label-top">
+          <p-floatlabel class="flex-grow-1">
             <textarea
               #announcementContent
               pInputTextarea
@@ -122,7 +124,7 @@
               tooltipEvent="hover"
             ></textarea>
             <label for="am_detail_form_content" aria-hidden="true">{{ 'ANNOUNCEMENT.CONTENT' | translate }}</label>
-          </span>
+          </p-floatlabel>
         </div>
       </div>
     </p-tabPanel>
@@ -137,13 +139,13 @@
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="surface-100 pt-2 pb-3 px-2"
+          styleClass="pt-2 pb-3 px-2"
           [legend]="'DIALOG.DETAIL.TAB.ACTIVATION' | translate"
         >
           <div
             class="w-full flex flex-column sm:flex-row sm:flex-wrap row-gap-3 sm:row-gap-4 sm:justify-content-between"
           >
-            <span class="p-floatlabel p-floatlabel-on am-label-top">
+            <p-floatlabel class="flex-grow-1">
               <p-datepicker
                 inputId="am_detail_form_start_date"
                 type="text"
@@ -167,8 +169,8 @@
               <label class="ocx-required-label" for="am_detail_form_start_date" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.START_DATE' | translate }}
               </label>
-            </span>
-            <span class="p-floatlabel p-floatlabel-on am-label-top">
+            </p-floatlabel>
+            <p-floatlabel class="flex-grow-1">
               <p-datepicker
                 inputId="am_detail_form_end_date"
                 type="text"
@@ -192,7 +194,8 @@
               <label for="am_detail_form_end_date" aria-hidden="true">
                 {{ 'ANNOUNCEMENT.END_DATE' | translate }}
               </label>
-            </span>
+            </p-floatlabel>
+
             <div class="mr-4 flex flex-column justify-content-center sm:align-items-center row-gap-1">
               <p-inputSwitch
                 inputId="am_detail_form_status"
@@ -228,7 +231,7 @@
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="surface-100 pt-2 pb-3 px-2"
+          styleClass="pt-2 pb-3 px-2"
           [legend]="'DIALOG.DETAIL.TAB.VISIBILITY' | translate"
         >
           <div class="w-full flex flex-column sm:flex-row sm:flex-nowrap row-gap-3 sm:row-gap-0 column-gap-5">
@@ -286,7 +289,7 @@
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="surface-100 pt-2 pb-3 px-2"
+          styleClass="pt-2 pb-3 px-2"
           [legend]="'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate"
         >
           <div class="w-full flex flex-row flex-wrap gap-2 sm:justify-content-evenly align-items-end">
@@ -353,89 +356,81 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <div class="mt-1 flex flex-column row-gap-3">
+      <div class="mt-1 flex flex-column row-gap-4">
         <!-- row 1 -->
         <div class="flex flex-column sm:flex-row gap-3 sm:gap-4">
-          <div class="am-internal-inline-field flex-1 min-w-0">
-            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
-              <input
-                pInputText
-                type="text"
-                readonly
-                id="ps_app_detail_form_field_creation_date"
-                class="w-full sm:w-15rem text-responsive"
-                [value]="announcement?.creationDate ? (announcement?.creationDate | date: datetimeFormat) : ''"
-                [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
-                [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              />
-              <label for="ps_app_detail_form_field_creation_date" aria-hidden="true">
-                {{ 'INTERNAL.CREATION_DATE' | translate }}
-              </label>
-            </span>
-          </div>
-          <div class="am-internal-inline-field flex-1 min-w-0">
-            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
-              <input
-                pInputText
-                type="text"
-                readonly
-                id="ps_app_detail_form_field_creation_user"
-                class="w-full text-responsive"
-                [value]="announcement?.creationUser"
-                [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
-                [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              />
-              <label for="ps_app_detail_form_field_creation_user" aria-hidden="true">
-                {{ 'INTERNAL.CREATION_USER' | translate }}
-              </label>
-            </span>
-          </div>
+          <p-floatlabel class="flex-grow-1 sm:flex-grow-0">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="am_detail_form_field_creation_date"
+              class="w-full sm:w-15rem text-responsive"
+              [value]="announcement?.creationDate ? (announcement?.creationDate | date: datetimeFormat) : ''"
+              [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
+              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_DATE' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="am_detail_form_field_creation_date" aria-hidden="true">
+              {{ 'INTERNAL.CREATION_DATE' | translate }}
+            </label>
+          </p-floatlabel>
+          <p-floatlabel class="flex-grow-1">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="am_detail_form_field_creation_user"
+              class="w-full text-responsive"
+              [value]="announcement?.creationUser"
+              [ariaLabel]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
+              [pTooltip]="'INTERNAL.TOOLTIPS.CREATION_USER' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="am_detail_form_field_creation_user" aria-hidden="true">
+              {{ 'INTERNAL.CREATION_USER' | translate }}
+            </label>
+          </p-floatlabel>
         </div>
 
         <!-- row 2 -->
         <div class="flex flex-column sm:flex-row gap-3 sm:gap-4">
-          <div class="am-internal-inline-field flex-1 min-w-0">
-            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
-              <input
-                pInputText
-                type="text"
-                readonly
-                id="ps_app_detail_form_field_modification_date"
-                class="w-full sm:w-15rem"
-                [value]="announcement?.modificationDate ? (announcement?.modificationDate | date: datetimeFormat) : ''"
-                [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
-                [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              />
-              <label for="ps_app_detail_form_field_modification_date" aria-hidden="true">
-                {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
-              </label>
-            </span>
-          </div>
-          <div class="am-internal-inline-field flex-1 min-w-0">
-            <span class="p-floatlabel p-floatlabel-on am-internal-floatlabel">
-              <input
-                pInputText
-                type="text"
-                readonly
-                id="ps_app_detail_form_field_modification_user"
-                class="w-full text-responsive"
-                [value]="announcement?.modificationUser"
-                [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
-                [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              />
-              <label for="ps_app_detail_form_field_modification_user" aria-hidden="true">
-                {{ 'INTERNAL.MODIFICATION_USER' | translate }}
-              </label>
-            </span>
-          </div>
+          <p-floatlabel class="flex-grow-1 sm:flex-grow-0">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="am_detail_form_field_modification_date"
+              class="w-full sm:w-15rem"
+              [value]="announcement?.modificationDate ? (announcement?.modificationDate | date: datetimeFormat) : ''"
+              [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
+              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_DATE' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="am_detail_form_field_modification_date" aria-hidden="true" class="ocx-required-label">
+              {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
+            </label>
+          </p-floatlabel>
+          <p-floatlabel class="flex-grow-1">
+            <input
+              pInputText
+              type="text"
+              readonly
+              id="am_detail_form_field_modification_user"
+              class="w-full text-responsive"
+              [value]="announcement?.modificationUser"
+              [ariaLabel]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
+              [pTooltip]="'INTERNAL.TOOLTIPS.MODIFICATION_USER' | translate"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            />
+            <label for="am_detail_form_field_modification_user" aria-hidden="true">
+              {{ 'INTERNAL.MODIFICATION_USER' | translate }}
+            </label>
+          </p-floatlabel>
         </div>
       </div>
     </p-tabPanel>
