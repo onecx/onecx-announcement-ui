@@ -213,7 +213,7 @@
         [draggable]="true"
         [resizable]="false"
         [dismissableMask]="true"
-        [style]="{ width: '550px' }"
+        [style]="{ 'max-width': '550px' }"
       >
         <div *ngIf="item4Delete" class="flex column-gap-3 justify-content-start align-items-center">
           <div class="pi pi-question-circle text-3xl danger-action-text" aria-hidden="true"></div>
@@ -268,7 +268,7 @@
               </div>
             </div>
 
-            <div>{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
+            <div class="white-space-nowrap">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
           </section>
         </div>
         <ng-template pTemplate="footer">

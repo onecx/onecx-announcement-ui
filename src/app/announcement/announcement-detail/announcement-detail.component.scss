@@ -1,22 +1,15 @@
 @import '/src/app/_am-mixins.scss';
 
 @include text-badges;
-/*
-@include displaying-text-responsive;
-@include correct-select-button;
-@include dialog-footer-buttons;
-@include dialog-non-full-size-modal;
-*/
+@include ocx-text-responsive;
+@include ocx-float-label-textbox;
 @include ocx-modal-dialog;
 @include tabview-header-fix;
 @include tabview-body-fix;
-@include ocx-float-label-textbox;
 
 :host ::ng-deep {
-  .p-toggleswitch {
-    &.ap-toggleswitch-checked .p-toggleswitch-slider {
-      background-color: var(--p-onecx-warn-color);
-    }
+  .p-toggleswitch:not(&.p-toggleswitch-checked) .p-toggleswitch-slider {
+    background-color: var(--p-onecx-error-color);
   }
 
   label.float-label {
@@ -83,10 +76,6 @@
       word-break: break-word;
     }
 
-    &.p-fieldset-toggleable > .p-fieldset-legend > .p-fieldset-toggle-button {
-      border-radius: inherit;
-    }
-
     > .p-fieldset-legend span,
     > .p-fieldset-legend .p-fieldset-legend-label,
     .p-fieldset-legend .p-fieldset-legend-text {
@@ -96,15 +85,11 @@
       word-break: break-word;
     }
     .p-fieldset-content {
-      padding: 0.5rem 0.2rem 0rem;
-    }
-
-    &.surface-100 .p-fieldset-legend,
-    &.surface-100.p-fieldset-toggleable > .p-fieldset-legend > .p-fieldset-toggle-button {
-      background-color: var(--surface-100);
+      padding: 0.5rem 0.5rem 0rem 0.5rem;
     }
   }
 
+  /* Modal dialog header line: display status on the right side */
   @media screen and (min-width: 576px) {
     .sm\:dialog-header-right-slot {
       top: 1.2rem;
