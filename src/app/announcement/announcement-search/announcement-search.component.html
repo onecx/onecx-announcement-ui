@@ -27,19 +27,19 @@
     (resetSearchEmitter)="onCriteriaReset()"
   ></app-announcement-criteria>
 
-  <ocx-content>
+  <ocx-content class="ocx-content">
     <p-message
       *ngIf="loadingMetaData"
       id="am_search_message_loading"
       severity="info"
-      styleClass="m-3 p-2"
+      styleClass="p-2"
       [text]="'ACTIONS.LOADING' | translate"
     ></p-message>
     <p-message
       *ngIf="exceptionKey"
       id="am_search_message_error"
       severity="error"
-      styleClass="m-3 p-2"
+      styleClass="p-2"
       [text]="exceptionKey | translate"
     ></p-message>
 
@@ -49,13 +49,13 @@
         *ngIf="searching"
         id="am_search_message_searching"
         severity="info"
-        styleClass="m-3 p-2"
+        styleClass="p-2"
         [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
       ></p-message>
       <ocx-interactive-data-view
         *ngIf="!(searching || exceptionKey)"
         id="am_search_table"
-        styleClass="mx-3 mb-2"
+        styleClass="p-0"
         [data]="interactiveData"
         [supportedViewLayouts]="['table']"
         [layout]="'table'"
@@ -118,8 +118,8 @@
         <ng-template pTemplate="stringTableCell" let-rowObject="rowObject" let-column="column">
           @switch (column.id) {
             @case ('type') {
-              <span
-                class="pi text-xl"
+              <div
+                [class]="column.css + ' w-full pi'"
                 [class.pi-info-circle]="rowObject[column.id] === 'INFO'"
                 [class.pi-calendar]="rowObject[column.id] === 'EVENT'"
                 [class.pi-wrench]="rowObject[column.id] === 'SYSTEM_MAINTENANCE'"
@@ -127,11 +127,11 @@
                 [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + rowObject[column.id] | translate"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              ></span>
+              ></div>
             }
             @case ('status') {
-              <span
-                class="pi"
+              <div
+                [class]="column.css + ' w-full pi'"
                 [class.pi-circle-on]="rowObject[column.id] === 'ACTIVE'"
                 [class.pi-circle-off]="rowObject[column.id] === 'INACTIVE'"
                 [class.text-red-600]="rowObject['priority'] === 'IMPORTANT'"
@@ -145,7 +145,7 @@
                 "
                 tooltipPosition="top"
                 tooltipEvent="hover"
-              ></span>
+              ></div>
             }
             @case ('title') {
               <div class="text-ellipsis-2-lines">{{ rowObject[column.id] }}</div>
@@ -213,7 +213,7 @@
         [draggable]="true"
         [resizable]="false"
         [dismissableMask]="true"
-        [style]="{ width: '550px' }"
+        [style]="{ 'max-width': '550px' }"
       >
         <div *ngIf="item4Delete" class="flex column-gap-3 justify-content-start align-items-center">
           <div class="pi pi-question-circle text-3xl danger-action-text" aria-hidden="true"></div>
@@ -268,7 +268,7 @@
               </div>
             </div>
 
-            <div>{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
+            <div class="white-space-nowrap">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
           </section>
         </div>
         <ng-template pTemplate="footer">

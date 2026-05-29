@@ -143,7 +143,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'STATUS',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center'
+      css: 'text-center '
     },
     {
       field: 'title',
@@ -164,14 +164,14 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'PRODUCT_NAME',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center'
+      css: 'text-center hidden xl:table-cell'
     },
     {
       field: 'type',
       header: 'TYPE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden xl:table-cell'
+      css: 'text-center text-xl hidden xl:table-cell'
     },
     {
       field: 'priority',
@@ -452,6 +452,7 @@ export class AnnouncementSearchComponent implements OnInit {
         columnType: this.getInteractiveColumnType(col),
         sortable: this.isInteractiveSortable(col),
         filterable: col.hasFilter === true,
+        css: col.css,
         ...(col.isDate ? { dateFormat: this.dateFormat } : {})
       }
     })

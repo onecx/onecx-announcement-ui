@@ -9,12 +9,15 @@
   <form [formGroup]="criteriaForm" class="flex flex-wrap gap-3" controlErrorsIgnore>
     <p-floatlabel>
       <input
+        #criteriaAnnouncementTitle
         id="am_search_criteria_title"
         pInputText
         type="text"
         formControlName="title"
         controlErrorsIgnore
-        class="w-9rem sm:w-13rem"
+        class="w-9rem sm:w-13rem text-responsive"
+        (focus)="criteriaAnnouncementTitle.classList.add('p-focus')"
+        (blur)="criteriaAnnouncementTitle.classList.remove('p-focus')"
         [ariaLabel]="
           ('ANNOUNCEMENT.TOOLTIPS.TITLE.CRITERIA' | translate) + ('ACTIONS.SEARCH.WILDCARD_SUPPORT' | translate)
         "
