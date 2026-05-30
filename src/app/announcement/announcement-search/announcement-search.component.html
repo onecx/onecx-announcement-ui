@@ -56,7 +56,7 @@
         *ngIf="!(searching || exceptionKey)"
         id="am_search_table"
         styleClass="p-0"
-        [data]="interactiveData"
+        [data]="filteredData ?? data"
         [supportedViewLayouts]="['table']"
         [layout]="'table'"
         [columns]="interactiveColumns"
@@ -80,22 +80,23 @@
         (deleteItem)="onDeleteFromInteractive($event)"
       >
         <ng-template #topCenter>
-          <p-inputgroup class="w-auto hm-filter-group">
+          <p-inputgroup>
             <p-inputgroup-addon>
               <i class="pi pi-filter"></i>
             </p-inputgroup-addon>
-            <p-floatlabel class="hm-filter-float" variant="on">
+            <p-floatlabel>
               <input
                 #filterInput
-                id="hm_search_table_filter"
-                type="text"
-                class="hm-filter-input"
                 pInputText
-                [value]="tableFilter"
-                [pTooltip]="'DIALOG.DATAVIEW.FILTER_BY' | translate"
+                type="text"
+                id="hm_search_table_global_filter"
+                (input)="onGlobalFilter(filterInput.value, data)"
+                (focus)="filterInput.classList.add('p-focus')"
+                (blur)="filterInput.classList.remove('p-focus')"
+                [value]="tableFilterValue"
+                [pTooltip]="('DIALOG.DATAVIEW.FILTER_BY' | translate) + ' ' + ('ANNOUNCEMENT.TITLE' | translate)"
                 tooltipPosition="top"
                 tooltipEvent="hover"
-                (input)="onGlobalFilter(filterInput.value)"
               />
               <label for="hm_search_table_filter" aria-hidden="true">
                 {{ 'DIALOG.DATAVIEW.FILTER_PLACEHOLDER' | translate }}
@@ -104,14 +105,13 @@
             <p-button
               id="hm_search_table_filter_clear"
               icon="pi pi-filter-slash"
-              styleClass="hm-filter-clear"
-              [disabled]="!tableFilter"
+              (click)="onClearGlobalFilter(filterInput)"
+              (keydown)="onClearGlobalFilter(filterInput)"
+              [disabled]="!tableFilterValue"
               [ariaLabel]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
               [pTooltip]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
               tooltipPosition="top"
               tooltipEvent="hover"
-              (click)="onClearGlobalFilter(filterInput)"
-              (keydown)="onClearGlobalFilter(filterInput)"
             />
           </p-inputgroup>
         </ng-template>
@@ -205,99 +205,13 @@
       </ocx-interactive-data-view>
 
       <!-- DELETE -->
-      <p-dialog
-        [header]="'DIALOG.DETAIL.DELETE.HEADER' | translate"
-        [(visible)]="displayDeleteDialog"
-        [modal]="true"
-        [closable]="true"
-        [draggable]="true"
-        [resizable]="false"
-        [dismissableMask]="true"
-        [style]="{ 'max-width': '550px' }"
-      >
-        <div *ngIf="item4Delete" class="flex column-gap-3 justify-content-start align-items-center">
-          <div class="pi pi-question-circle text-3xl danger-action-text" aria-hidden="true"></div>
-          <section class="w-11 flex flex-column row-gap-3 justify-content-start">
-            <div
-              id="am_delete_message_text"
-              class="mr-3 font-bold"
-              [attr.aria-label]="'ACTIONS.CONFIRMATION.QUESTION' | translate"
-              role="note"
-            >
-              {{ 'ACTIONS.DELETE.MESSAGE.TEXT' | translate }}
-            </div>
-            <div
-              id="am_delete_announcement_title"
-              class="px-5 text-center danger-action-text text-responsive"
-              [attr.aria-label]="'ANNOUNCEMENT.TITLE' | translate"
-              role="note"
-            >
-              {{ item4Delete.title }}
-            </div>
-
-            <div class="px-2 flex flex-column row-gap-1 justify-content-center" aria-hidden="true">
-              <div *ngIf="item4Delete.status === 'ACTIVE'" class="flex flex-row column-gap-3">
-                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.STATUS' | translate }}</div>
-                <div class="w-7 text-left danger-action-text" id="am_delete_active">
-                  {{ 'ACTIONS.CONFIRMATION.YES' | translate }}
-                </div>
-              </div>
-              <div class="flex flex-row column-gap-3">
-                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.TYPE' | translate }}</div>
-                <div class="w-7 text-left" id="am_delete_type">
-                  {{ 'ENUMS.ANNOUNCEMENT_TYPE.' + item4Delete.type | translate }}
-                </div>
-              </div>
-              <div class="flex flex-row column-gap-3">
-                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</div>
-                <div class="w-7 text-left text-responsive" id="am_delete_workspace">
-                  <ng-container *ngIf="item4Delete.workspaceName">
-                    {{ getDisplayName(item4Delete.workspaceName, metaData.allWorkspaces) }}
-                  </ng-container>
-                  <ng-container *ngIf="!item4Delete.workspaceName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-                </div>
-              </div>
-              <div class="flex flex-row column-gap-3">
-                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}</div>
-                <div class="w-7 text-left text-responsive" id="am_delete_product_name">
-                  <ng-container *ngIf="item4Delete.productName">
-                    {{ getDisplayName(item4Delete.productName, metaData.allProducts) }}
-                  </ng-container>
-                  <ng-container *ngIf="!item4Delete.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-                </div>
-              </div>
-            </div>
-
-            <div class="white-space-nowrap">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
-          </section>
-        </div>
-        <ng-template pTemplate="footer">
-          <footer class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
-            <p-button
-              id="am_delete_action_no"
-              icon="pi pi-times"
-              pAutoFocus
-              [autofocus]="true"
-              (onClick)="displayDeleteDialog = false"
-              [label]="'ACTIONS.CONFIRMATION.NO' | translate"
-              [ariaLabel]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
-              [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            ></p-button>
-            <p-button
-              id="am_delete_action_yes"
-              icon="pi pi-check"
-              (onClick)="onDeleteConfirmation(data)"
-              [label]="'ACTIONS.CONFIRMATION.YES' | translate"
-              [ariaLabel]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
-              [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
-              tooltipPosition="top"
-              tooltipEvent="hover"
-            ></p-button>
-          </footer>
-        </ng-template>
-      </p-dialog>
+      <app-announcement-delete
+        [visible]="displayDeleteDialog"
+        (visibleChange)="onDeleteConfirmed($event, data)"
+        [announcement]="item4Delete"
+        [allWorkspaces]="metaData.allWorkspaces"
+        [allProducts]="metaData.allProducts"
+      ></app-announcement-delete>
     </ng-container>
   </ocx-content>
 

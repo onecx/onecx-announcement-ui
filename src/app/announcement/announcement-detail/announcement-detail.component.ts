@@ -115,7 +115,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       this.announcementForm.controls['startDate'].patchValue(data?.startDate ? new Date(data.startDate) : null)
       this.announcementForm.controls['endDate'].patchValue(data?.endDate ? new Date(data.endDate) : null)
       this.preview = { status: data.status!, type: data.type!, priority: data.priority! }
-    } else this.preview = this.previewDefault
+    } else this.preview = this.previewDefault // for create mode
 
     switch (this.changeMode) {
       case 'COPY':

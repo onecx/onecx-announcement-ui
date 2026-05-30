@@ -2,13 +2,14 @@ import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
-import { DataSortDirection } from '@onecx/angular-accelerator'
-import { AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
+
+import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent } from './announcement-search.component'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 
 type Column = {
   field: string
@@ -68,11 +69,9 @@ describe('AnnouncementSearchComponent', () => {
     lang$: langSubject,
     hasPermission: hasPermissionSpy
   }
-  const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['get'])
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
-    deleteAnnouncementById: jasmine.createSpy('deleteAnnouncementById').and.returnValue(of({})),
     getAllAnnouncementAssignments: jasmine.createSpy('getAllAnnouncementAssignments').and.returnValue(of({}))
   }
 
@@ -120,13 +119,10 @@ describe('AnnouncementSearchComponent', () => {
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
-    translateServiceSpy.get.calls.reset()
     apiServiceSpy.searchAnnouncements.calls.reset()
-    apiServiceSpy.deleteAnnouncementById.calls.reset()
     apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
     // to spy data: refill with neutral data
     apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
-    apiServiceSpy.deleteAnnouncementById.and.returnValue(of({}))
     apiServiceSpy.getAllAnnouncementAssignments.and.returnValue(of({}))
   })
 
@@ -144,7 +140,6 @@ describe('AnnouncementSearchComponent', () => {
 
   describe('page actions', () => {
     it('should open create dialog', async () => {
-      translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
       spyOn(component, 'onDetail')
 
       component.ngOnInit()
@@ -160,7 +155,6 @@ describe('AnnouncementSearchComponent', () => {
 
     it('should deny create dialog if permission is missing', async () => {
       hasPermissionSpy.and.returnValue(Promise.resolve(false))
-      translateServiceSpy.get.and.returnValue(of({ 'ACTIONS.CREATE.LABEL': 'Create' }))
       spyOn(component, 'onDetail')
 
       component.ngOnInit()
@@ -199,7 +193,6 @@ describe('AnnouncementSearchComponent', () => {
       component.data$!.subscribe({
         next: (data) => {
           expect(data).toEqual([])
-          expect(component.interactiveData).toEqual([])
           done()
         },
         error: done.fail
@@ -291,6 +284,33 @@ describe('AnnouncementSearchComponent', () => {
       const dn = component.getDisplayName(undefined, undefined)
 
       expect(dn).toBeUndefined()
+    })
+
+    it('should return display name if found in list', () => {
+      const list = [{ label: 'Product A', value: 'prodA' }]
+
+      expect(component.getDisplayName('prodA', list)).toBe('Product A')
+    })
+
+    it('should return defValue if name not found in list', () => {
+      const list = [{ label: 'Product A', value: 'prodA' }]
+
+      expect(component.getDisplayName('unknown', list, 'fallback')).toBe('fallback')
+    })
+
+    it('should return undefined if name not found and no defValue', () => {
+      const list = [{ label: 'Product A', value: 'prodA' }]
+
+      expect(component.getDisplayName('unknown', list)).toBeUndefined()
+    })
+  })
+
+  describe('sort', () => {
+    it('should update sort field and direction', () => {
+      component.onSortChange({ sortColumn: 'title', sortDirection: DataSortDirection.ASCENDING })
+
+      expect(component.sortField).toBe('title')
+      expect(component.sortDirection).toBe(DataSortDirection.ASCENDING)
     })
   })
 
@@ -507,48 +527,56 @@ describe('AnnouncementSearchComponent', () => {
       ]
     })
 
-    it('should prepare the deletion of a item - ok', () => {
-      const ev: Event = new Event('type')
-      spyOn(ev, 'stopPropagation')
+    it('should handle deletion confirmed - remove item from data and keep product', () => {
+      component.item4Delete = items4Deletion[1]
 
-      component.onDelete(ev, items4Deletion[0])
-
-      expect(ev.stopPropagation).toHaveBeenCalled()
-      expect(component.item4Delete).toBe(items4Deletion[0])
-      expect(component.displayDeleteDialog).toBeTrue()
-    })
-
-    it('should delete a item with confirmation', () => {
-      apiServiceSpy.deleteAnnouncementById.and.returnValue(of(null))
-      const ev: Event = new Event('type')
-
-      component.onDelete(ev, items4Deletion[1])
-      component.onDeleteConfirmation(items4Deletion) // remove but not the last of the product
+      component.onDeleteConfirmed(false, items4Deletion)
 
       expect(component.displayDeleteDialog).toBeFalse()
-      expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-
-      component.onDelete(ev, items4Deletion[2])
-      component.onDeleteConfirmation(items4Deletion) // remove and this was the last of the product
+      expect(component.item4Delete).toBeUndefined()
     })
 
-    it('should display error if deleting a item fails', () => {
-      const errorResponse = { status: '400', statusText: 'Error on deletion' }
-      apiServiceSpy.deleteAnnouncementById.and.returnValue(throwError(() => errorResponse))
-      const ev: Event = new Event('type')
-      spyOn(console, 'error')
+    it('should handle deletion confirmed - trigger usedLists reload when last of product removed', (done) => {
+      const itemsWithUniqueProduct: RowListGridData[] = [
+        { id: 'id1', title: 't1', productName: 'uniqueProduct', imagePath: '' }
+      ]
+      component.item4Delete = itemsWithUniqueProduct[0] as Announcement
+      spyOn(component.usedListsTrigger$, 'next')
 
-      component.onDelete(ev, items4Deletion[0])
-      component.onDeleteConfirmation(items4Deletion)
+      component.onDeleteConfirmed(true, itemsWithUniqueProduct)
 
-      expect(msgServiceSpy.error).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
-      expect(console.error).toHaveBeenCalledWith('deleteAnnouncementById', errorResponse)
+      expect(component.usedListsTrigger$.next).toHaveBeenCalled()
+      expect(component.displayDeleteDialog).toBeFalse()
+      expect(component.item4Delete).toBeUndefined()
+      component.data$!.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(0)
+          done()
+        },
+        error: done.fail
+      })
     })
 
-    it('should reject confirmation if param was not set', () => {
-      component.onDeleteConfirmation(items4Deletion)
+    it('should handle deletion confirmed - do not trigger usedLists if product still exists', (done) => {
+      const items: RowListGridData[] = [
+        { id: 'id1', title: 't1', productName: 'p1', imagePath: '' },
+        { id: 'id2', title: 't2', productName: 'p1', imagePath: '' }
+      ]
+      component.item4Delete = items[0] as Announcement
+      spyOn(component.usedListsTrigger$, 'next')
 
-      expect(apiServiceSpy.deleteAnnouncementById).not.toHaveBeenCalled()
+      component.onDeleteConfirmed(true, items)
+
+      expect(component.usedListsTrigger$.next).not.toHaveBeenCalled()
+      expect(component.displayDeleteDialog).toBeFalse()
+      expect(component.item4Delete).toBeUndefined()
+      component.data$!.subscribe({
+        next: (data) => {
+          expect(data.length).toBe(1)
+          done()
+        },
+        error: done.fail
+      })
     })
 
     it('should deny deleting from interactive table if permission is missing', async () => {
@@ -598,187 +626,81 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.displayedColumnKeys).toEqual(['workspaceName'])
     })
 
-    it('should return early when selected columns are unchanged', () => {
-      const applyGlobalFilterSpy = spyOn<any>(component, 'applyGlobalFilter')
-      const sameColumns = [...component.displayedColumnKeys]
-
-      component.onColumnsChange(sameColumns)
-
-      expect(component.displayedColumnKeys).toEqual(sameColumns)
-      expect(applyGlobalFilterSpy).not.toHaveBeenCalled()
-    })
-
-    it('should update columns when same length but with different order', () => {
+    it('should not update columns if activeIds are unchanged', () => {
       component.displayedColumnKeys = ['status', 'title']
-      const applyGlobalFilterSpy = spyOn<any>(component, 'applyGlobalFilter')
 
-      component.onColumnsChange(['title', 'status'])
+      component.onColumnsChange(['status', 'title'])
 
-      expect(component.displayedColumnKeys).toEqual(['title', 'status'])
-      expect(applyGlobalFilterSpy).toHaveBeenCalled()
+      expect(component.displayedColumnKeys).toEqual(['status', 'title'])
+    })
+  })
+
+  describe('filter data', () => {
+    it('should return early if data is not provided', () => {
+      component.onGlobalFilter('test', undefined)
+
+      expect(component.tableFilterValue).toBe('')
+      expect(component.filteredData).toBeUndefined()
     })
 
-    it('should allow interactive filter event handling', () => {
-      expect(() => component.onInteractiveFilterChange([])).not.toThrow()
+    it('should set filteredData to full data when value is empty', () => {
+      const data = itemData as RowListGridData[]
+
+      component.onGlobalFilter('', data)
+
+      expect(component.tableFilterValue).toBe('')
+      expect(component.filteredData).toEqual(data)
     })
 
-    it('should filter table rows globally by input value', () => {
-      const interactiveRows = component.toInteractiveData(itemData)
-      ;(component as any).fullInteractiveData = interactiveRows
-      component.interactiveData = [...interactiveRows]
+    it('should set filteredData to full data when value is undefined', () => {
+      const data = itemData as RowListGridData[]
 
-      component.onGlobalFilter('ADMIN')
+      component.onGlobalFilter(undefined, data)
 
-      expect(component.tableFilter).toBe('ADMIN')
-      expect(component.interactiveData.length).toBe(1)
-      expect((component.interactiveData[0] as any).workspaceName).toBe('ADMIN')
+      expect(component.tableFilterValue).toBe('')
+      expect(component.filteredData).toEqual(data)
     })
 
-    it('should treat nullish global filter value as empty', () => {
-      const interactiveRows = component.toInteractiveData(itemData)
-      ;(component as any).fullInteractiveData = interactiveRows
-      component.interactiveData = [interactiveRows[0]]
+    it('should filter data by title field (case-insensitive)', () => {
+      const data = itemData as RowListGridData[]
 
-      component.onGlobalFilter(undefined as any)
+      component.onGlobalFilter('admin', data)
 
-      expect(component.tableFilter).toBe('')
-      expect(component.interactiveData.length).toBe(itemData.length)
+      expect(component.tableFilterValue).toBe('admin')
+      expect(component.filteredData?.length).toBe(1)
+      expect((component.filteredData?.[0] as any).workspaceName).toBe('ADMIN')
     })
 
-    it('should clear global filter and restore rows', () => {
-      const interactiveRows = component.toInteractiveData(itemData)
-      ;(component as any).fullInteractiveData = interactiveRows
-      component.interactiveData = [interactiveRows[0]]
-      component.tableFilter = 'admin'
-      const input = document.createElement('input')
-      input.value = 'admin'
+    it('should return empty array when no title matches', () => {
+      const data = itemData as RowListGridData[]
 
-      component.onClearGlobalFilter(input)
+      component.onGlobalFilter('nonexistent', data)
 
-      expect(component.tableFilter).toBe('')
-      expect(input.value).toBe('')
-      expect(component.interactiveData.length).toBe(itemData.length)
+      expect(component.tableFilterValue).toBe('nonexistent')
+      expect(component.filteredData?.length).toBe(0)
     })
 
-    it('should clear global filter without input element', () => {
-      const interactiveRows = component.toInteractiveData(itemData)
-      ;(component as any).fullInteractiveData = interactiveRows
-      component.interactiveData = [interactiveRows[0]]
-      component.tableFilter = 'admin'
+    it('should clear global filter and reset filteredData', () => {
+      component.tableFilterValue = 'some filter'
+      component.filteredData = itemData as RowListGridData[]
 
       component.onClearGlobalFilter()
 
-      expect(component.tableFilter).toBe('')
-      expect(component.interactiveData.length).toBe(itemData.length)
+      expect(component.tableFilterValue).toBe('')
+      expect(component.filteredData).toBeUndefined()
     })
 
-    it('should use all columns when displayed columns are empty', () => {
-      const rows = component.toInteractiveData([
-        {
-          id: 'id-empty-columns',
-          title: 'Needle title',
-          productName: 'Product',
-          workspaceName: 'Workspace',
-          type: 'INFO',
-          priority: 'NORMAL',
-          status: 'ACTIVE',
-          startDate: '2024-01-01T00:00:00Z',
-          endDate: null
-        } as any
-      ])
-      ;(component as any).fullInteractiveData = rows
-      component.displayedColumnKeys = []
+    it('should clear global filter and reset input element value', () => {
+      component.tableFilterValue = 'some filter'
+      component.filteredData = itemData as RowListGridData[]
+      const input = document.createElement('input')
+      input.value = 'some filter'
 
-      component.onGlobalFilter('needle')
+      component.onClearGlobalFilter(input)
 
-      expect(component.interactiveData.length).toBe(1)
-    })
-
-    it('should support global filtering for array values', () => {
-      ;(component as any).fullInteractiveData = [
-        {
-          id: 'array-row',
-          imagePath: 'array-row',
-          title: ['Alpha', 'Beta']
-        } as any
-      ]
-      component.displayedColumnKeys = ['title']
-
-      component.onGlobalFilter('beta')
-
-      expect(component.interactiveData.length).toBe(1)
-      expect((component.interactiveData[0] as any).id).toBe('array-row')
-    })
-
-    it('should support global filtering for number, boolean, bigint and date values', () => {
-      ;(component as any).fullInteractiveData = [
-        { id: 'num-row', imagePath: 'num-row', title: 123 } as any,
-        { id: 'bool-row', imagePath: 'bool-row', title: true } as any,
-        { id: 'bigint-row', imagePath: 'bigint-row', title: BigInt(42) } as any,
-        { id: 'date-row', imagePath: 'date-row', title: new Date('2024-01-01T00:00:00.000Z') } as any
-      ]
-      component.displayedColumnKeys = ['title']
-
-      component.onGlobalFilter('123')
-      expect(component.interactiveData.length).toBe(1)
-      expect((component.interactiveData[0] as any).id).toBe('num-row')
-
-      component.onGlobalFilter('true')
-      expect(component.interactiveData.length).toBe(1)
-      expect((component.interactiveData[0] as any).id).toBe('bool-row')
-
-      component.onGlobalFilter('42')
-      expect(component.interactiveData.length).toBe(1)
-      expect((component.interactiveData[0] as any).id).toBe('bigint-row')
-
-      component.onGlobalFilter('2024-01-01')
-      expect(component.interactiveData.length).toBe(1)
-      expect((component.interactiveData[0] as any).id).toBe('date-row')
-    })
-
-    it('should ignore unsupported objects and empty normalized arrays in global filter', () => {
-      ;(component as any).fullInteractiveData = [
-        { id: 'obj-row', imagePath: 'obj-row', title: { nested: 'value' } } as any,
-        { id: 'array-empty-row', imagePath: 'array-empty-row', title: [{}] } as any
-      ]
-      component.displayedColumnKeys = ['title']
-
-      component.onGlobalFilter('value')
-
-      expect(component.interactiveData.length).toBe(0)
-    })
-
-    it('should update sort field and direction', () => {
-      component.onSortChange({ sortColumn: 'title', sortDirection: DataSortDirection.ASCENDING })
-
-      expect(component.sortField).toBe('title')
-      expect(component.sortDirection).toBe(DataSortDirection.ASCENDING)
-    })
-
-    it('should validate date values for all branches', () => {
-      expect(component.isValidDateValue(null)).toBeFalse()
-      expect(component.isValidDateValue('')).toBeFalse()
-      expect(component.isValidDateValue('not-a-date')).toBeFalse()
-      expect(component.isValidDateValue(new Date('2024-01-01T00:00:00Z'))).toBeTrue()
-      expect(component.isValidDateValue('2024-01-01T00:00:00Z')).toBeTrue()
-    })
-
-    it('should build fallback id and imagePath when item id is missing', () => {
-      const transformed = component.toInteractiveData([
-        {
-          id: undefined,
-          title: 'Without id'
-        } as any
-      ])
-
-      expect((transformed[0] as any).id).toBe('announcement-0')
-      expect((transformed[0] as any).imagePath).toBe('announcement-0')
-    })
-
-    it('should return empty interactive data for nullish input', () => {
-      const transformed = component.toInteractiveData(undefined as any)
-
-      expect(transformed).toEqual([])
+      expect(component.tableFilterValue).toBe('')
+      expect(component.filteredData).toBeUndefined()
+      expect(input.value).toBe('')
     })
   })
 

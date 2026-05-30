@@ -2,7 +2,7 @@
 
 @include text-badges;
 @include ocx-text-responsive;
-@include ocx-float-label-textbox;
+@include ocx-floatlabel;
 @include ocx-modal-dialog;
 @include tabview-header-fix;
 @include tabview-body-fix;
@@ -12,9 +12,6 @@
     background-color: var(--p-onecx-error-color);
   }
 
-  label.float-label {
-    color: var(--emphasis-medium);
-  }
   .error-tailor-has-error ~ control-error {
     text-align: left;
   }

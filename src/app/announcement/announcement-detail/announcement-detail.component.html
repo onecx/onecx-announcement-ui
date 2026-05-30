@@ -17,7 +17,12 @@
   }"
 >
   <!-- display status/type/priority on dialog header -->
-  <div id="am_detail_header_preview" class="absolute sm:dialog-header-right-slot flex flex-row" aria-hidden="true">
+  <div
+    *ngIf="!exceptionKey && preview"
+    id="am_detail_header_preview"
+    class="absolute sm:dialog-header-right-slot flex flex-row"
+    aria-hidden="true"
+  >
     <div
       id="am_detail_header_preview_priority"
       class="p-2 pi text-xl border-round hidden sm:block"

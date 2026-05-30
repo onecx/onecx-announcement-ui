@@ -24,6 +24,7 @@ import {
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import { AnnouncementDetailComponent } from '../announcement-detail/announcement-detail.component'
+import { AnnouncementDeleteComponent } from '../announcement-delete/announcement-delete.component'
 import { AnnouncementCriteriaComponent } from './announcement-criteria/announcement-criteria.component'
 
 export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
@@ -87,7 +88,8 @@ export type Workspace = {
     AngularAcceleratorModule,
     PortalPageComponent,
     AnnouncementCriteriaComponent,
-    AnnouncementDetailComponent
+    AnnouncementDetailComponent,
+    AnnouncementDeleteComponent
   ]
 })
 export class AnnouncementSearchComponent implements OnInit {
@@ -105,7 +107,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayedColumnKeys: string[] = []
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
-  public tableFilter = ''
+  public tableFilterValue = ''
   public interactiveAdditionalActions: DataAction[] = [
     {
       id: 'copy',
@@ -118,9 +120,8 @@ export class AnnouncementSearchComponent implements OnInit {
   ]
 
   // data
-  public data$: Observable<Announcement[]> | undefined
-  public interactiveData: RowListGridData[] = []
-  private fullInteractiveData: RowListGridData[] = []
+  public data$: Observable<RowListGridData[]> | undefined
+  public filteredData: RowListGridData[] | undefined = undefined
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
   public usedListsTrigger$ = new BehaviorSubject<void>(undefined) // trigger for refresh data
@@ -264,73 +265,27 @@ export class AnnouncementSearchComponent implements OnInit {
       return
     }
     this.displayedColumnKeys = activeIds
-    this.applyGlobalFilter()
-  }
-  public onInteractiveFilterChange(_: unknown): void {
-    // filtering is handled by ocx-interactive-data-view when clientSideFiltering is enabled
   }
 
-  public onGlobalFilter(value: string): void {
-    this.tableFilter = value ?? ''
-    this.applyGlobalFilter()
+  public onGlobalFilter(value?: string, data?: RowListGridData[]): void {
+    if (!data) return
+    this.tableFilterValue = value ?? ''
+    if (this.tableFilterValue === '') this.filteredData = data
+    else
+      this.filteredData = data?.filter((row) =>
+        row['title']?.toString().toLowerCase().includes(this.tableFilterValue.toLowerCase())
+      )
   }
 
   public onClearGlobalFilter(input?: HTMLInputElement): void {
-    this.tableFilter = ''
+    this.tableFilterValue = ''
+    this.filteredData = undefined
     if (input) input.value = ''
-    this.applyGlobalFilter()
   }
 
   public onSortChange(event: { sortColumn: string; sortDirection: DataSortDirection }): void {
     this.sortField = event.sortColumn
     this.sortDirection = event.sortDirection
-  }
-
-  public isValidDateValue(value: unknown): boolean {
-    if (value == null || value === '') return false
-    const date = value instanceof Date ? value : new Date(value as string)
-    return !Number.isNaN(date.getTime())
-  }
-
-  public toInteractiveData(data: Announcement[]): RowListGridData[] {
-    return (data ?? []).map((item, index) => ({
-      ...item,
-      id: item.id ?? `announcement-${index}`,
-      imagePath: item.id ?? `announcement-${index}`
-    })) as RowListGridData[]
-  }
-
-  private toSearchableText(value: unknown): string | undefined {
-    if (value == null) return undefined
-    if (typeof value === 'string') return value
-    if (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'bigint') {
-      return value.toString()
-    }
-    if (value instanceof Date) return value.toISOString()
-    if (Array.isArray(value)) {
-      const normalizedValues = value
-        .map((entry) => this.toSearchableText(entry))
-        .filter((entry): entry is string => entry != null && entry !== '')
-      return normalizedValues.length ? normalizedValues.join(' ') : undefined
-    }
-    return undefined
-  }
-
-  private applyGlobalFilter(): void {
-    const searchTerm = this.tableFilter.trim().toLowerCase()
-    if (!searchTerm) {
-      this.interactiveData = [...this.fullInteractiveData]
-      return
-    }
-
-    const fields = this.displayedColumnKeys.length ? this.displayedColumnKeys : this.columns.map((col) => col.field)
-    this.interactiveData = this.fullInteractiveData.filter((row) =>
-      fields.some((field) => {
-        const searchableText = this.toSearchableText((row as Record<string, unknown>)[field])
-        if (!searchableText) return false
-        return searchableText.toLowerCase().includes(searchTerm)
-      })
-    )
   }
 
   /****************************************************************************
@@ -354,12 +309,6 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  DELETE => Ask for confirmation
    */
-  public onDelete(ev: Event, item: Announcement): void {
-    ev.stopPropagation()
-    this.item4Delete = item
-    this.displayDeleteDialog = true
-  }
-
   public onDeleteFromInteractive(item: RowListGridData): void {
     this.ensurePermission('ANNOUNCEMENT#DELETE', () => {
       this.item4Delete = item as Announcement
@@ -395,29 +344,18 @@ export class AnnouncementSearchComponent implements OnInit {
       })
   }
 
-  // user confirmed deletion
-  public onDeleteConfirmation(data: Announcement[]): void {
-    if (!this.item4Delete?.id) return
-    this.announcementApi.deleteAnnouncementById({ id: this.item4Delete.id }).subscribe({
-      next: () => {
-        this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-        // remove item from data
-        data = data?.filter((d) => d.id !== this.item4Delete?.id)
-        this.fullInteractiveData = this.toInteractiveData(data)
-        this.applyGlobalFilter()
-        this.data$ = of(data)
-        // check remaining data: if product still exists - if not then trigger reload
-        if (!data?.find((d) => d.productName === this.item4Delete?.productName)) {
-          this.usedListsTrigger$.next() // trigger getting data
-        }
-        this.displayDeleteDialog = false
-        this.item4Delete = undefined
-      },
-      error: (err) => {
-        this.msgService.error({ summaryKey: 'ACTIONS.DELETE.MESSAGE.NOK' })
-        console.error('deleteAnnouncementById', err)
+  // called after successful deletion from AnnouncementDeleteComponent
+  public onDeleteConfirmed(deleted: boolean, data: RowListGridData[]): void {
+    if (deleted) {
+      data = data?.filter((d) => d.id !== this.item4Delete?.id)
+      //this.onGlobalFilter(this.tableFilterValue ?? undefined, data)
+      this.data$ = of(data)
+      if (!data?.find((d) => d?.['productName'] === this.item4Delete?.productName)) {
+        this.usedListsTrigger$.next()
       }
-    })
+    }
+    this.displayDeleteDialog = false
+    this.item4Delete = undefined
   }
 
   public getDisplayName(
@@ -522,18 +460,11 @@ export class AnnouncementSearchComponent implements OnInit {
     this.searching = true
     this.exceptionKey = undefined
     this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
-      map((data) => {
-        const stream = data.stream ?? []
-        this.fullInteractiveData = this.toInteractiveData(stream)
-        this.applyGlobalFilter()
-        return stream
-      }),
+      map((data) => (data.stream as RowListGridData[]) ?? []),
       catchError((err) => {
         this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
         this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
         console.error('searchAnnouncements', err)
-        this.fullInteractiveData = []
-        this.interactiveData = []
         return of([])
       }),
       finalize(() => (this.searching = false))
