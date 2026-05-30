@@ -247,14 +247,14 @@
         padding-top: 0 !important;
       }
       :not(:first-child) {
-        padding: 1rem 0 0 0 !important;
+        padding: 0.5rem 0 0 0 !important;
       }
     }
     /* correct header layouting by lib */
     .table-header-wrapper {
       flex-direction: row !important;
       justify-content: flex-start !important;
-      flex-wrap: wrap !important;
+      flex-wrap: nowrap !important;
     }
     .table-header-wrapper span:first-child {
       margin-right: 10px !important;

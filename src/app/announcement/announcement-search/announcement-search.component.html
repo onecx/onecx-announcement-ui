@@ -217,8 +217,8 @@
 
   <!-- DETAIL -->
   <app-announcement-detail
-    [displayDialog]="displayDetailDialog"
-    (hideDialogAndChanged)="onCloseDetail($event)"
+    [visible]="displayDetailDialog"
+    (visibleChange)="onCloseDetail($event)"
     [announcement]="item4Detail"
     [changeMode]="changeMode"
     [allWorkspaces]="metaData.allWorkspaces"

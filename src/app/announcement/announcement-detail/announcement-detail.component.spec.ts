@@ -92,7 +92,7 @@ describe('AnnouncementDetailComponent', () => {
 
   beforeEach(() => {
     initTestComponent()
-    component.displayDialog = true
+    component.visible = true
   })
 
   afterEach(() => {
@@ -127,7 +127,7 @@ describe('AnnouncementDetailComponent', () => {
   describe('ngOnChange - init form', () => {
     it('should create but not initialize if dialog is not open', () => {
       expect(component).toBeTruthy()
-      component.displayDialog = false
+      component.visible = false
       component.ngOnChanges()
     })
 
@@ -136,7 +136,7 @@ describe('AnnouncementDetailComponent', () => {
         apiServiceSpy.getAnnouncementById.and.returnValue(of(announcement))
         component.announcement = announcement
         component.changeMode = 'VIEW'
-        component.displayDialog = false
+        component.visible = false
 
         component.ngOnChanges()
 
@@ -298,13 +298,13 @@ describe('AnnouncementDetailComponent', () => {
       it('should create an announcement', () => {
         apiServiceSpy.createAnnouncement.and.returnValue(of({}))
         component.changeMode = 'CREATE'
-        spyOn(component.hideDialogAndChanged, 'emit')
+        spyOn(component.visibleChange, 'emit')
         component.announcementForm = announcementForm
 
         component.onSave()
 
         expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
-        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+        expect(component.visibleChange.emit).toHaveBeenCalledWith(true)
       })
 
       it('should display error if creation fails', () => {
@@ -326,13 +326,13 @@ describe('AnnouncementDetailComponent', () => {
       it('should create an item based on another', () => {
         apiServiceSpy.createAnnouncement.and.returnValue(of({}))
         component.changeMode = 'COPY'
-        spyOn(component.hideDialogAndChanged, 'emit')
+        spyOn(component.visibleChange, 'emit')
         component.announcementForm = announcementForm
 
         component.onSave()
 
         expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
-        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+        expect(component.visibleChange.emit).toHaveBeenCalledWith(true)
       })
     })
 
@@ -343,12 +343,12 @@ describe('AnnouncementDetailComponent', () => {
         component.announcement = announcement
         component.announcementForm = announcementForm
 
-        spyOn(component.hideDialogAndChanged, 'emit')
+        spyOn(component.visibleChange, 'emit')
 
         component.onSave()
 
         expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })
-        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(true)
+        expect(component.visibleChange.emit).toHaveBeenCalledWith(true)
       })
 
       it('should display error if update fails', () => {
@@ -370,10 +370,10 @@ describe('AnnouncementDetailComponent', () => {
   describe('UI actions', () => {
     describe('Closing dialog', () => {
       it('should close the dialog if user triggers hiding', () => {
-        spyOn(component.hideDialogAndChanged, 'emit')
+        spyOn(component.visibleChange, 'emit')
         component.onDialogHide()
 
-        expect(component.hideDialogAndChanged.emit).toHaveBeenCalledWith(false)
+        expect(component.visibleChange.emit).toHaveBeenCalledWith(false)
       })
     })
 

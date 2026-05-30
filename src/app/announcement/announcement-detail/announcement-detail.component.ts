@@ -39,12 +39,12 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
   imports: [SharedModule]
 })
 export class AnnouncementDetailComponent implements OnChanges {
-  @Input() public displayDialog = false
+  @Input() public visible = false
   @Input() public changeMode: ChangeMode = 'VIEW'
   @Input() public announcement: Announcement | undefined
   @Input() public allWorkspaces: SelectItem[] = []
   @Input() public allProducts: SelectItem[] = []
-  @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
+  @Output() public visibleChange = new EventEmitter<boolean>()
 
   public loading = false
   public exceptionKey: string | undefined = undefined
@@ -99,7 +99,7 @@ export class AnnouncementDetailComponent implements OnChanges {
   }
 
   public ngOnChanges() {
-    if (!this.displayDialog) return
+    if (!this.visible) return
     this.exceptionKey = undefined
     // matching mode and given data?
     if ('CREATE' === this.changeMode && this.announcement) return
@@ -160,7 +160,7 @@ export class AnnouncementDetailComponent implements OnChanges {
    *  UI Events
    */
   public onDialogHide(changed?: boolean) {
-    this.hideDialogAndChanged.emit(changed ?? false)
+    this.visibleChange.emit(changed ?? false)
     this.announcementForm.reset()
   }
   public onChangeAnnouncementStatus(ev: any) {
