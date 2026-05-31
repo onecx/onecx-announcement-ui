@@ -60,9 +60,9 @@ export class AnnouncementDetailComponent implements OnChanges {
   private readonly destroyRef = inject(DestroyRef)
   public loading = false
   public exceptionKey: string | undefined = undefined
-  public datetimeFormat: string
-  public dateFormat: string
-  public timeFormat: string
+  public datetimeFormat = 'M/d/yy, hh:mm:ss a'
+  public dateFormat = 'mm/dd/yy'
+  public timeFormat = '12'
   // form
   public announcementForm: FormGroup
   public typeOptions$: Observable<SelectItem[]> = of([])
@@ -84,9 +84,11 @@ export class AnnouncementDetailComponent implements OnChanges {
     private readonly translate: TranslateService,
     private readonly msgService: PortalMessageService
   ) {
-    this.datetimeFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'M/d/yy, hh:mm:ss a'
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'mm/dd/yy'
-    this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'
+    this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lang) => {
+      this.datetimeFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm:ss' : this.datetimeFormat
+      this.dateFormat = lang === 'de' ? 'dd.mm.yy' : this.dateFormat
+      this.timeFormat = lang === 'de' ? '24' : this.timeFormat
+    })
     this.announcementForm = fb.nonNullable.group({
       modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),

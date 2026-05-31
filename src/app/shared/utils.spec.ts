@@ -8,6 +8,7 @@ import {
   forceFormValidation,
   dropDownSortItemsByLabel,
   dropDownGetLabelByValue,
+  getDisplayName,
   sortByLocale
 } from './utils'
 
@@ -95,6 +96,34 @@ describe('util functions', () => {
       const result = dropDownGetLabelByValue(items, '1')
 
       expect(result).toEqual('label1')
+    })
+  })
+
+  describe('getDisplayName', () => {
+    it('should return label when name matches a value in the list', () => {
+      const list: SelectItem[] = [{ label: 'Product A', value: 'prodA' }]
+
+      expect(getDisplayName('prodA', list)).toBe('Product A')
+    })
+
+    it('should return defValue when name does not match any value', () => {
+      const list: SelectItem[] = [{ label: 'Product A', value: 'prodA' }]
+
+      expect(getDisplayName('unknown', list, 'fallback')).toBe('fallback')
+    })
+
+    it('should return undefined when name does not match and no defValue', () => {
+      const list: SelectItem[] = [{ label: 'Product A', value: 'prodA' }]
+
+      expect(getDisplayName('unknown', list)).toBeUndefined()
+    })
+
+    it('should return undefined when name is undefined', () => {
+      expect(getDisplayName(undefined, [])).toBeUndefined()
+    })
+
+    it('should return undefined when list is undefined', () => {
+      expect(getDisplayName('test', undefined)).toBeUndefined()
     })
   })
 

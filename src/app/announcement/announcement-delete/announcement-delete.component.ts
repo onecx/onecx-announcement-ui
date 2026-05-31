@@ -5,6 +5,7 @@ import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
+import { getDisplayName } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-announcement-delete',
@@ -25,17 +26,13 @@ export class AnnouncementDeleteComponent {
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {}
 
-  public getDisplayName(name: string | undefined, list: SelectItem[] | undefined): string | undefined {
-    if (name) return list?.find((item) => item.value === name)?.label
-    return undefined
-  }
+  public getDisplayName = getDisplayName
 
   public onDeleteConfirmation(): void {
     if (!this.announcement?.id) return
     this.announcementApi.deleteAnnouncementById({ id: this.announcement.id }).subscribe({
       next: () => {
         this.msgService.success({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
-        this.visible = false
         this.visibleChange.emit(true)
       },
       error: (err) => {

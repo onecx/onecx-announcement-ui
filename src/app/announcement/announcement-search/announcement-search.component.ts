@@ -34,6 +34,7 @@ import {
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
+import { getDisplayName } from 'src/app/shared/utils'
 import { AnnouncementDetailComponent } from '../announcement-detail/announcement-detail.component'
 import { AnnouncementDeleteComponent } from '../announcement-delete/announcement-delete.component'
 import { AnnouncementCriteriaComponent } from './announcement-criteria/announcement-criteria.component'
@@ -109,7 +110,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public exceptionKey: string | undefined = undefined
   public loadingMetaData = false
   public changeMode: ChangeMode = 'VIEW'
-  public dateFormat: string
+  public datetimeFormat: string = 'M/d/yy, h:mm a'
   public actions$: Observable<Action[]> | undefined
   public criteria: AnnouncementSearchCriteria = {}
   public displayDetailDialog = false
@@ -224,7 +225,6 @@ export class AnnouncementSearchComponent implements OnInit {
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.interactiveColumns = this.createInteractiveColumns()
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
     this.displayedColumnKeys = this.columns.filter((a) => a.active === true).map((col) => col.field)
     this.pdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.pdSlotName)
     this.wdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.wdSlotName)
@@ -233,7 +233,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public ngOnInit(): void {
     this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (lang) => {
-        this.dateFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
+        this.datetimeFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : this.datetimeFormat
         this.interactiveColumns = this.createInteractiveColumns()
       }
     })
@@ -372,14 +372,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.item4Delete = undefined
   }
 
-  public getDisplayName(
-    name: string | undefined,
-    list: SelectItem[] | undefined,
-    defValue?: string
-  ): string | undefined {
-    if (name) return list?.find((item) => item.value === name)?.label ?? defValue
-    return undefined
-  }
+  public getDisplayName = getDisplayName
 
   private getInteractiveColumnType(col: ExtendedColumn): ColumnType {
     if (col.isDate) return ColumnType.DATE
@@ -405,7 +398,7 @@ export class AnnouncementSearchComponent implements OnInit {
         sortable: this.isInteractiveSortable(col),
         filterable: col.hasFilter === true,
         css: col.css,
-        ...(col.isDate ? { dateFormat: this.dateFormat } : {})
+        ...(col.isDate ? { dateFormat: this.datetimeFormat } : {})
       }
     })
   }

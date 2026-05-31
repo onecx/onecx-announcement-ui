@@ -44,6 +44,16 @@ export function dropDownGetLabelByValue(ddArray: SelectItem[], val: string): str
   })
   return a?.label
 }
+
+export function getDisplayName(
+  name: string | undefined,
+  list: SelectItem[] | undefined,
+  defValue?: string
+): string | undefined {
+  if (name) return list?.find((item) => item.value === name)?.label ?? defValue
+  return undefined
+}
+
 export function sortByLocale(a: string, b: string): number {
   return a.toUpperCase().localeCompare(b.toUpperCase())
 }

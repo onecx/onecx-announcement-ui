@@ -126,7 +126,6 @@ describe('AnnouncementDeleteComponent', () => {
       expect(apiServiceSpy.deleteAnnouncementById).toHaveBeenCalledWith({ id: announcement.id })
       expect(msgServiceSpy.success).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.DELETE.MESSAGE.OK' })
       expect(dialogChangeSpy).toHaveBeenCalledWith(true)
-      expect(component.visible).toBeFalse()
     })
 
     it('should show error message and log on failure', () => {

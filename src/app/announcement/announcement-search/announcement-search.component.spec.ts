@@ -741,13 +741,13 @@ describe('AnnouncementSearchComponent', () => {
 
   describe('Language tests', () => {
     it('should use default format: English', () => {
-      expect(component.dateFormat).toEqual('M/d/yy, h:mm a')
+      expect(component.datetimeFormat).toEqual('M/d/yy, h:mm a')
     })
 
     it('should set German date format', () => {
       langSubject.next('de')
       initTestComponent()
-      expect(component.dateFormat).toEqual('dd.MM.yyyy HH:mm')
+      expect(component.datetimeFormat).toEqual('dd.MM.yyyy HH:mm')
     })
   })
 })
