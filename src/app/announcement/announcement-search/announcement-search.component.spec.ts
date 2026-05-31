@@ -207,8 +207,8 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data.length).toBe(1)
-          expect(data[0]).toEqual(itemData[1])
+          expect(data!.length).toBe(1)
+          expect(data![0]).toEqual(itemData[1])
           done()
         },
         error: done.fail
@@ -223,8 +223,8 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data.length).toBe(1)
-          expect(data[0]).toEqual(itemData[1])
+          expect(data!.length).toBe(1)
+          expect(data![0]).toEqual(itemData[1])
           done()
         },
         error: done.fail
@@ -243,7 +243,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data.length).toBe(0)
+          expect(data!.length).toBe(0)
           done()
         },
         error: done.fail
@@ -419,15 +419,12 @@ describe('AnnouncementSearchComponent', () => {
 
   describe('detail actions', () => {
     it('should prepare the creation of a new item', () => {
-      const ev: Event = new Event('type')
-      spyOn(ev, 'stopPropagation')
       const mode = 'CREATE'
 
-      component.onDetail(ev, undefined, mode)
+      component.onDetail(undefined, mode)
 
-      expect(ev.stopPropagation).toHaveBeenCalled()
       expect(component.changeMode).toEqual(mode)
-      expect(component.item4Detail).toBe(undefined)
+      expect(component.item4Detail).toEqual({})
       expect(component.displayDetailDialog).toBeTrue()
 
       component.onCloseDetail(false)
@@ -438,20 +435,20 @@ describe('AnnouncementSearchComponent', () => {
     it('should show details of a item', () => {
       const mode = 'EDIT'
 
-      component.onDetail(undefined, itemData[0], mode)
+      component.onDetail(itemData[0], mode)
 
       expect(component.changeMode).toEqual(mode)
-      expect(component.item4Detail).toBe(itemData[0])
+      expect(component.item4Detail).toEqual(itemData[0])
       expect(component.displayDetailDialog).toBeTrue()
     })
 
     it('should prepare the copy of a item', () => {
       const mode = 'COPY'
 
-      component.onDetail(undefined, itemData[0], mode)
+      component.onDetail(itemData[0], mode)
 
       expect(component.changeMode).toEqual(mode)
-      expect(component.item4Detail).toBe(itemData[0])
+      expect(component.item4Detail).toEqual(itemData[0])
       expect(component.displayDetailDialog).toBeTrue()
 
       component.onCloseDetail(true)
@@ -529,8 +526,9 @@ describe('AnnouncementSearchComponent', () => {
 
     it('should handle deletion confirmed - remove item from data and keep product', () => {
       component.item4Delete = items4Deletion[1]
+      component['dataSubject$'].next(items4Deletion)
 
-      component.onDeleteConfirmed(false, items4Deletion)
+      component.onDeleteConfirmed(false)
 
       expect(component.displayDeleteDialog).toBeFalse()
       expect(component.item4Delete).toBeUndefined()
@@ -541,16 +539,17 @@ describe('AnnouncementSearchComponent', () => {
         { id: 'id1', title: 't1', productName: 'uniqueProduct', imagePath: '' }
       ]
       component.item4Delete = itemsWithUniqueProduct[0] as Announcement
+      component['dataSubject$'].next(itemsWithUniqueProduct)
       spyOn(component.usedListsTrigger$, 'next')
 
-      component.onDeleteConfirmed(true, itemsWithUniqueProduct)
+      component.onDeleteConfirmed(true)
 
       expect(component.usedListsTrigger$.next).toHaveBeenCalled()
       expect(component.displayDeleteDialog).toBeFalse()
       expect(component.item4Delete).toBeUndefined()
       component.data$!.subscribe({
         next: (data) => {
-          expect(data.length).toBe(0)
+          expect(data!.length).toBe(0)
           done()
         },
         error: done.fail
@@ -563,20 +562,56 @@ describe('AnnouncementSearchComponent', () => {
         { id: 'id2', title: 't2', productName: 'p1', imagePath: '' }
       ]
       component.item4Delete = items[0] as Announcement
+      component['dataSubject$'].next(items)
       spyOn(component.usedListsTrigger$, 'next')
 
-      component.onDeleteConfirmed(true, items)
+      component.onDeleteConfirmed(true)
 
       expect(component.usedListsTrigger$.next).not.toHaveBeenCalled()
       expect(component.displayDeleteDialog).toBeFalse()
       expect(component.item4Delete).toBeUndefined()
       component.data$!.subscribe({
         next: (data) => {
-          expect(data.length).toBe(1)
+          expect(data!.length).toBe(1)
           done()
         },
         error: done.fail
       })
+    })
+
+    it('should also remove deleted item from filteredData when filter is active', (done) => {
+      const items: RowListGridData[] = [
+        { id: 'id1', title: 't1', productName: 'p1', imagePath: '' },
+        { id: 'id2', title: 't2', productName: 'p1', imagePath: '' },
+        { id: 'id3', title: 'ab', productName: 'p2', imagePath: '' }
+      ]
+      component.item4Delete = items[0] as Announcement
+      component['dataSubject$'].next(items)
+      component.onGlobalFilter('t', items) // filter to items 1 and 2
+
+      if (component.filteredData) expect(component.filteredData.length).toBe(2)
+
+      component.onDeleteConfirmed(true)
+
+      if (component.filteredData) expect(component.filteredData.length).toBe(1)
+      component.data$!.subscribe({
+        next: (data) => {
+          expect(data!.length).toBe(2)
+          done()
+        },
+        error: done.fail
+      })
+    })
+
+    it('should fallback to empty array when dataSubject$ holds null on deletion', () => {
+      component.item4Delete = { id: 'id1', productName: 'p1' } as Announcement
+      component['dataSubject$'].next(null)
+      spyOn(component.usedListsTrigger$, 'next')
+
+      component.onDeleteConfirmed(true)
+
+      expect(component.usedListsTrigger$.next).toHaveBeenCalled()
+      expect(component.displayDeleteDialog).toBeFalse()
     })
 
     it('should deny deleting from interactive table if permission is missing', async () => {
@@ -649,7 +684,7 @@ describe('AnnouncementSearchComponent', () => {
       component.onGlobalFilter('', data)
 
       expect(component.tableFilterValue).toBe('')
-      expect(component.filteredData).toEqual(data)
+      expect(component.filteredData).toBeUndefined()
     })
 
     it('should set filteredData to full data when value is undefined', () => {
@@ -658,7 +693,7 @@ describe('AnnouncementSearchComponent', () => {
       component.onGlobalFilter(undefined, data)
 
       expect(component.tableFilterValue).toBe('')
-      expect(component.filteredData).toEqual(data)
+      expect(component.filteredData).toBeUndefined()
     })
 
     it('should filter data by title field (case-insensitive)', () => {

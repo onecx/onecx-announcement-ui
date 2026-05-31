@@ -1,6 +1,17 @@
-import { Component, EventEmitter, OnInit } from '@angular/core'
+import { Component, DestroyRef, EventEmitter, inject, OnInit } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { TranslateService } from '@ngx-translate/core'
-import { BehaviorSubject, catchError, combineLatest, finalize, map, Observable, of, switchMap } from 'rxjs'
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  finalize,
+  map,
+  Observable,
+  of,
+  Subscription,
+  switchMap
+} from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
@@ -94,9 +105,9 @@ export type Workspace = {
 })
 export class AnnouncementSearchComponent implements OnInit {
   // dialog
-  public loadingMetaData = false
   public searching = false
   public exceptionKey: string | undefined = undefined
+  public loadingMetaData = false
   public changeMode: ChangeMode = 'VIEW'
   public dateFormat: string
   public actions$: Observable<Action[]> | undefined
@@ -120,7 +131,10 @@ export class AnnouncementSearchComponent implements OnInit {
   ]
 
   // data
-  public data$: Observable<RowListGridData[]> | undefined
+  private readonly destroyRef = inject(DestroyRef)
+  private readonly dataSubject$ = new BehaviorSubject<RowListGridData[] | null>(null)
+  public data$: Observable<RowListGridData[] | null> = this.dataSubject$.asObservable()
+  private searchSubscription?: Subscription
   public filteredData: RowListGridData[] | undefined = undefined
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint
@@ -209,23 +223,23 @@ export class AnnouncementSearchComponent implements OnInit {
     private readonly msgService: PortalMessageService,
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
     this.interactiveColumns = this.createInteractiveColumns()
+    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
     this.displayedColumnKeys = this.columns.filter((a) => a.active === true).map((col) => col.field)
     this.pdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.pdSlotName)
     this.wdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.wdSlotName)
   }
 
   public ngOnInit(): void {
-    this.user.lang$.subscribe({
+    this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (lang) => {
         this.dateFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : 'M/d/yy, h:mm a'
         this.interactiveColumns = this.createInteractiveColumns()
       }
     })
+    this.pdSlotEmitter.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.productData$)
+    this.wdSlotEmitter.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.workspaceData$)
     this.prepareActionButtons()
-    this.pdSlotEmitter.subscribe(this.productData$)
-    this.wdSlotEmitter.subscribe(this.workspaceData$)
     this.loadMetaData()
     this.onSearch({})
   }
@@ -241,7 +255,7 @@ export class AnnouncementSearchComponent implements OnInit {
             label: data['ACTIONS.CREATE.LABEL'],
             title: data['ACTIONS.CREATE.TOOLTIP'],
             actionCallback: () =>
-              this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, undefined, 'CREATE')),
+              this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, 'CREATE')),
             icon: 'pi pi-plus',
             show: 'always',
             permission: 'ANNOUNCEMENT#CREATE'
@@ -270,7 +284,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public onGlobalFilter(value?: string, data?: RowListGridData[]): void {
     if (!data) return
     this.tableFilterValue = value ?? ''
-    if (this.tableFilterValue === '') this.filteredData = data
+    if (this.tableFilterValue === '') this.filteredData = undefined
     else
       this.filteredData = data?.filter((row) =>
         row['title']?.toString().toLowerCase().includes(this.tableFilterValue.toLowerCase())
@@ -291,10 +305,9 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  DETAIL => CREATE, COPY, EDIT, VIEW
    */
-  public onDetail(ev: Event | undefined, item: Announcement | undefined, mode: ChangeMode): void {
-    ev?.stopPropagation()
+  public onDetail(item: Announcement | undefined, mode: ChangeMode): void {
     this.changeMode = mode
-    this.item4Detail = item // do not manipulate the item here
+    this.item4Detail = { ...item } // do not manipulate the item here
     this.displayDetailDialog = true
   }
   public onCloseDetail(refresh: boolean): void {
@@ -311,21 +324,21 @@ export class AnnouncementSearchComponent implements OnInit {
    */
   public onDeleteFromInteractive(item: RowListGridData): void {
     this.ensurePermission('ANNOUNCEMENT#DELETE', () => {
-      this.item4Delete = item as Announcement
+      this.item4Delete = { ...item } as Announcement
       this.displayDeleteDialog = true
     })
   }
 
   public onViewFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#VIEW', () => this.onDetail(undefined, item as Announcement, 'VIEW'))
+    this.ensurePermission('ANNOUNCEMENT#VIEW', () => this.onDetail(item as Announcement, 'VIEW'))
   }
 
   public onCopyFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, item as Announcement, 'COPY'))
+    this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(item as Announcement, 'COPY'))
   }
 
   public onEditFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#EDIT', () => this.onDetail(undefined, item as Announcement, 'EDIT'))
+    this.ensurePermission('ANNOUNCEMENT#EDIT', () => this.onDetail(item as Announcement, 'EDIT'))
   }
 
   private ensurePermission(permission: string, onGranted: () => void): void {
@@ -345,12 +358,13 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   // called after successful deletion from AnnouncementDeleteComponent
-  public onDeleteConfirmed(deleted: boolean, data: RowListGridData[]): void {
+  public onDeleteConfirmed(deleted: boolean): void {
     if (deleted) {
-      data = data?.filter((d) => d.id !== this.item4Delete?.id)
-      //this.onGlobalFilter(this.tableFilterValue ?? undefined, data)
-      this.data$ = of(data)
-      if (!data?.find((d) => d?.['productName'] === this.item4Delete?.productName)) {
+      const productName = this.item4Delete?.productName
+      const data = this.dataSubject$.getValue()?.filter((d) => d['id'] !== this.item4Delete?.id) ?? []
+      this.dataSubject$.next(data)
+      this.onGlobalFilter(this.tableFilterValue, data) // update filtered data if filter is active
+      if (productName && !data.find((d) => d?.['productName'] === productName)) {
         this.usedListsTrigger$.next()
       }
     }
@@ -459,15 +473,20 @@ export class AnnouncementSearchComponent implements OnInit {
     if (!reuseCriteria) this.criteria = criteria
     this.searching = true
     this.exceptionKey = undefined
-    this.data$ = this.announcementApi.searchAnnouncements({ announcementSearchCriteria: this.criteria }).pipe(
-      map((data) => (data.stream as RowListGridData[]) ?? []),
-      catchError((err) => {
-        this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
-        this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
-        console.error('searchAnnouncements', err)
-        return of([])
-      }),
-      finalize(() => (this.searching = false))
-    )
+    this.searchSubscription?.unsubscribe()
+    this.searchSubscription = this.announcementApi
+      .searchAnnouncements({ announcementSearchCriteria: this.criteria })
+      .pipe(
+        map((data) => (data.stream as RowListGridData[]) ?? []),
+        catchError((err) => {
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'
+          this.msgService.error({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.SEARCH_FAILED' })
+          console.error('searchAnnouncements', err)
+          return of([] as RowListGridData[])
+        }),
+        finalize(() => (this.searching = false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe((data) => this.dataSubject$.next(data))
   }
 }
