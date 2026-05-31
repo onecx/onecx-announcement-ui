@@ -14,7 +14,7 @@ import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { SharedModule } from 'src/app/shared/shared.module'
-import { convertLineBreaks } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { environment } from 'src/environments/environment'
 
@@ -33,7 +33,7 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   private readonly announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
   public displayDetailDialog = false
-  convertLineBreaks = convertLineBreaks
+  convertLineBreaks = Utils.convertLineBreaks
 
   constructor(
     @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,

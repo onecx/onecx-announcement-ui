@@ -20,7 +20,7 @@ import {
   Configuration
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
-import { convertLineBreaks } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 
 @Component({
@@ -45,7 +45,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   private readonly currentDate = new Date().toISOString()
   public announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
-  public convertLineBreaks = convertLineBreaks
+  public convertLineBreaks = Utils.convertLineBreaks
 
   constructor(
     @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,

@@ -34,7 +34,7 @@ import {
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
-import { getDisplayName } from 'src/app/shared/utils'
+import { Utils } from 'src/app/shared/utils'
 import { AnnouncementDetailComponent } from '../announcement-detail/announcement-detail.component'
 import { AnnouncementDeleteComponent } from '../announcement-delete/announcement-delete.component'
 import { AnnouncementCriteriaComponent } from './announcement-criteria/announcement-criteria.component'
@@ -372,7 +372,7 @@ export class AnnouncementSearchComponent implements OnInit {
     this.item4Delete = undefined
   }
 
-  public getDisplayName = getDisplayName
+  public getDisplayName = Utils.getDisplayName
 
   private getInteractiveColumnType(col: ExtendedColumn): ColumnType {
     if (col.isDate) return ColumnType.DATE
