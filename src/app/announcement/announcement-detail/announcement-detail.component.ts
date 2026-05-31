@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormBuilder, FormControl, FormGroup, Validators, ValidationErrors, ValidatorFn } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { finalize, Observable, map, of } from 'rxjs'
@@ -20,8 +30,8 @@ import type { ChangeMode } from '../announcement-search/announcement-search.comp
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
-    const startDate = fg.controls['startDate']?.value
-    const endDate = fg.controls['endDate']?.value
+    const startDate = fg.get('startDate')?.value
+    const endDate = fg.get('endDate')?.value
     if (startDate && endDate) {
       const start = new Date(startDate)
       const end = new Date(endDate)
@@ -36,7 +46,8 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
   templateUrl: './announcement-detail.component.html',
   styleUrls: ['./announcement-detail.component.scss'],
   standalone: true,
-  imports: [SharedModule]
+  imports: [SharedModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementDetailComponent implements OnChanges {
   @Input() public visible = false
@@ -46,12 +57,12 @@ export class AnnouncementDetailComponent implements OnChanges {
   @Input() public allProducts: SelectItem[] = []
   @Output() public visibleChange = new EventEmitter<boolean>()
 
+  private readonly destroyRef = inject(DestroyRef)
   public loading = false
   public exceptionKey: string | undefined = undefined
   public datetimeFormat: string
   public dateFormat: string
   public timeFormat: string
-  public displayDateRangeError = false
   // form
   public announcementForm: FormGroup
   public typeOptions$: Observable<SelectItem[]> = of([])
@@ -64,7 +75,7 @@ export class AnnouncementDetailComponent implements OnChanges {
     type: AnnouncementType.Info,
     priority: AnnouncementPriorityType.Normal
   }
-  public preview = this.previewDefault
+  public preview: Preview = this.previewDefault
 
   constructor(
     private readonly user: UserService,
@@ -89,11 +100,10 @@ export class AnnouncementDetailComponent implements OnChanges {
       startDate: new FormControl(null),
       endDate: new FormControl(null)
     })
-    this.announcementForm.controls['startDate'].addValidators([
-      Validators.required,
-      dateRangeValidator(this.announcementForm)
-    ])
-    this.announcementForm.controls['endDate'].addValidators([dateRangeValidator(this.announcementForm)])
+    this.announcementForm
+      .get('startDate')!
+      .addValidators([Validators.required, dateRangeValidator(this.announcementForm)])
+    this.announcementForm.get('endDate')!.addValidators([dateRangeValidator(this.announcementForm)])
     // prepare dropdown lists
     this.prepareDropDownOptions()
   }
@@ -112,8 +122,8 @@ export class AnnouncementDetailComponent implements OnChanges {
   private prepareForm(data?: Announcement): void {
     if (data) {
       this.announcementForm.patchValue(data)
-      this.announcementForm.controls['startDate'].patchValue(data?.startDate ? new Date(data.startDate) : null)
-      this.announcementForm.controls['endDate'].patchValue(data?.endDate ? new Date(data.endDate) : null)
+      this.announcementForm.get('startDate')!.patchValue(data?.startDate ? new Date(data.startDate) : null)
+      this.announcementForm.get('endDate')!.patchValue(data?.endDate ? new Date(data.endDate) : null)
       this.preview = { status: data.status!, type: data.type!, priority: data.priority! }
     } else this.preview = this.previewDefault // for create mode
 
@@ -143,7 +153,10 @@ export class AnnouncementDetailComponent implements OnChanges {
     this.exceptionKey = undefined
     this.announcementApi
       .getAnnouncementById({ id: id })
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(
+        finalize(() => (this.loading = false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (data) => this.prepareForm(data),
         error: (err) => {
@@ -195,6 +208,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       .createAnnouncement({
         createAnnouncementRequest: item
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
@@ -213,6 +227,7 @@ export class AnnouncementDetailComponent implements OnChanges {
           id: id,
           updateAnnouncementRequest: item
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })

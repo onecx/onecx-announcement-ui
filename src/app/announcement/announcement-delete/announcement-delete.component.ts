@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
 import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
@@ -10,7 +10,8 @@ import { SharedModule } from 'src/app/shared/shared.module'
   selector: 'app-announcement-delete',
   templateUrl: './announcement-delete.component.html',
   standalone: true,
-  imports: [SharedModule]
+  imports: [SharedModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementDeleteComponent {
   @Input() announcement: Announcement | undefined
