@@ -364,7 +364,7 @@ export class AnnouncementSearchComponent implements OnInit {
       const data = this.dataSubject$.getValue()?.filter((d) => d['id'] !== this.item4Delete?.id) ?? []
       this.dataSubject$.next(data)
       this.onGlobalFilter(this.tableFilterValue, data) // update filtered data if filter is active
-      if (productName && !data.find((d) => d?.['productName'] === productName)) {
+      if (productName && !data.some((d) => d?.['productName'] === productName)) {
         this.usedListsTrigger$.next()
       }
     }

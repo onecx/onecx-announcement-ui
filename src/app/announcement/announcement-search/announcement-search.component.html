@@ -190,16 +190,16 @@
           }
         </ng-template>
 
-        <ng-template #displayNameTemplate let-data="data">
-          <ng-container *ngIf="!data.name"> {{ data.nameAll }} </ng-container>
+        <ng-template #displayNameTemplate let-mdata="data">
+          <ng-container *ngIf="!mdata.name"> {{ mdata.nameAll }} </ng-container>
           <div
-            *ngIf="data.name"
+            *ngIf="mdata.name"
             class="text-ellipsis-2-lines"
-            [pTooltip]="data.displayName ? '' : data.name"
+            [pTooltip]="mdata.displayName ? '' : mdata.name"
             tooltipPosition="top"
             tooltipEvent="hover"
           >
-            {{ data.displayName ?? data.nameNotFound }}
+            {{ mdata.displayName ?? mdata.nameNotFound }}
           </div>
         </ng-template>
       </ocx-interactive-data-view>
