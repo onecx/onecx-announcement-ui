@@ -115,11 +115,11 @@ export class AnnouncementSearchComponent implements OnInit {
   public criteria: AnnouncementSearchCriteria = {}
   public displayDetailDialog = false
   public displayDeleteDialog = false
-  public interactiveColumns: DataTableColumn[] = []
   public displayedColumnKeys: string[] = []
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
   public tableFilterValue = ''
+  public interactiveColumns: DataTableColumn[] = []
   public interactiveAdditionalActions: DataAction[] = [
     {
       id: 'copy',
@@ -135,7 +135,7 @@ export class AnnouncementSearchComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef)
   private readonly dataSubject$ = new BehaviorSubject<RowListGridData[] | null>(null)
   public data$: Observable<RowListGridData[] | null> = this.dataSubject$.asObservable()
-  private searchSubscription?: Subscription
+  private searchSubscription?: Subscription // to cancel ongoing search if new search is triggered
   public filteredData: RowListGridData[] | undefined = undefined
   public metaData$!: Observable<AllMetaData> // collection of data used in UI
   public usedLists$!: Observable<AllUsedLists> // getting data from bff endpoint

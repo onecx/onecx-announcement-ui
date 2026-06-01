@@ -50,11 +50,11 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementDetailComponent implements OnChanges {
-  @Input() public visible = false
-  @Input() public changeMode: ChangeMode = 'VIEW'
   @Input() public announcement: Announcement | undefined
+  @Input() public changeMode: ChangeMode = 'VIEW'
   @Input() public allWorkspaces: SelectItem[] = []
   @Input() public allProducts: SelectItem[] = []
+  @Input() public visible = false
   @Output() public visibleChange = new EventEmitter<boolean>()
 
   private readonly destroyRef = inject(DestroyRef)
