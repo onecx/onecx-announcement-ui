@@ -249,7 +249,7 @@ export class AnnouncementSearchComponent implements OnInit {
    */
   private prepareActionButtons(): void {
     this.actions$ = this.translate.get(['ACTIONS.CREATE.LABEL', 'ACTIONS.CREATE.TOOLTIP']).pipe(
-      map((data) => {
+      map((data: Record<string, string>) => {
         return [
           {
             label: data['ACTIONS.CREATE.LABEL'],
