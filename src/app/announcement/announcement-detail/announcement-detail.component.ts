@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core'
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormBuilder, FormControl, FormGroup, Validators, ValidationErrors, ValidatorFn } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { finalize, Observable, map, of } from 'rxjs'
@@ -20,8 +30,8 @@ import type { ChangeMode } from '../announcement-search/announcement-search.comp
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
-    const startDate = fg.controls['startDate']?.value
-    const endDate = fg.controls['endDate']?.value
+    const startDate = fg.get('startDate')?.value
+    const endDate = fg.get('endDate')?.value
     if (startDate && endDate) {
       const start = new Date(startDate)
       const end = new Date(endDate)
@@ -36,22 +46,23 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
   templateUrl: './announcement-detail.component.html',
   styleUrls: ['./announcement-detail.component.scss'],
   standalone: true,
-  imports: [SharedModule]
+  imports: [SharedModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementDetailComponent implements OnChanges {
-  @Input() public displayDialog = false
-  @Input() public changeMode: ChangeMode = 'VIEW'
   @Input() public announcement: Announcement | undefined
+  @Input() public changeMode: ChangeMode = 'VIEW'
   @Input() public allWorkspaces: SelectItem[] = []
   @Input() public allProducts: SelectItem[] = []
-  @Output() public hideDialogAndChanged = new EventEmitter<boolean>()
+  @Input() public visible = false
+  @Output() public visibleChange = new EventEmitter<boolean>()
 
+  private readonly destroyRef = inject(DestroyRef)
   public loading = false
   public exceptionKey: string | undefined = undefined
-  public datetimeFormat: string
-  public dateFormat: string
-  public timeFormat: string
-  public displayDateRangeError = false
+  public datetimeFormat = 'M/d/yy, hh:mm:ss a'
+  public dateFormat = 'mm/dd/yy'
+  public timeFormat = '12'
   // form
   public announcementForm: FormGroup
   public typeOptions$: Observable<SelectItem[]> = of([])
@@ -64,7 +75,7 @@ export class AnnouncementDetailComponent implements OnChanges {
     type: AnnouncementType.Info,
     priority: AnnouncementPriorityType.Normal
   }
-  public preview = this.previewDefault
+  public preview: Preview = this.previewDefault
 
   constructor(
     private readonly user: UserService,
@@ -73,9 +84,11 @@ export class AnnouncementDetailComponent implements OnChanges {
     private readonly translate: TranslateService,
     private readonly msgService: PortalMessageService
   ) {
-    this.datetimeFormat = this.user.lang$.getValue() === 'de' ? 'dd.MM.yyyy HH:mm:ss' : 'M/d/yy, hh:mm:ss a'
-    this.dateFormat = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'mm/dd/yy'
-    this.timeFormat = this.user.lang$.getValue() === 'de' ? '24' : '12'
+    this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lang) => {
+      this.datetimeFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm:ss' : this.datetimeFormat
+      this.dateFormat = lang === 'de' ? 'dd.mm.yy' : this.dateFormat
+      this.timeFormat = lang === 'de' ? '24' : this.timeFormat
+    })
     this.announcementForm = fb.nonNullable.group({
       modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),
@@ -89,17 +102,16 @@ export class AnnouncementDetailComponent implements OnChanges {
       startDate: new FormControl(null),
       endDate: new FormControl(null)
     })
-    this.announcementForm.controls['startDate'].addValidators([
-      Validators.required,
-      dateRangeValidator(this.announcementForm)
-    ])
-    this.announcementForm.controls['endDate'].addValidators([dateRangeValidator(this.announcementForm)])
+    this.announcementForm
+      .get('startDate')!
+      .addValidators([Validators.required, dateRangeValidator(this.announcementForm)])
+    this.announcementForm.get('endDate')!.addValidators([dateRangeValidator(this.announcementForm)])
     // prepare dropdown lists
     this.prepareDropDownOptions()
   }
 
   public ngOnChanges() {
-    if (!this.displayDialog) return
+    if (!this.visible) return
     this.exceptionKey = undefined
     // matching mode and given data?
     if ('CREATE' === this.changeMode && this.announcement) return
@@ -112,10 +124,10 @@ export class AnnouncementDetailComponent implements OnChanges {
   private prepareForm(data?: Announcement): void {
     if (data) {
       this.announcementForm.patchValue(data)
-      this.announcementForm.controls['startDate'].patchValue(data?.startDate ? new Date(data.startDate) : null)
-      this.announcementForm.controls['endDate'].patchValue(data?.endDate ? new Date(data.endDate) : null)
+      this.announcementForm.get('startDate')!.patchValue(data?.startDate ? new Date(data.startDate) : null)
+      this.announcementForm.get('endDate')!.patchValue(data?.endDate ? new Date(data.endDate) : null)
       this.preview = { status: data.status!, type: data.type!, priority: data.priority! }
-    } else this.preview = this.previewDefault
+    } else this.preview = this.previewDefault // for create mode
 
     switch (this.changeMode) {
       case 'COPY':
@@ -143,7 +155,10 @@ export class AnnouncementDetailComponent implements OnChanges {
     this.exceptionKey = undefined
     this.announcementApi
       .getAnnouncementById({ id: id })
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(
+        finalize(() => (this.loading = false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (data) => this.prepareForm(data),
         error: (err) => {
@@ -160,7 +175,7 @@ export class AnnouncementDetailComponent implements OnChanges {
    *  UI Events
    */
   public onDialogHide(changed?: boolean) {
-    this.hideDialogAndChanged.emit(changed ?? false)
+    this.visibleChange.emit(changed ?? false)
     this.announcementForm.reset()
   }
   public onChangeAnnouncementStatus(ev: any) {
@@ -195,6 +210,7 @@ export class AnnouncementDetailComponent implements OnChanges {
       .createAnnouncement({
         createAnnouncementRequest: item
       })
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.msgService.success({ summaryKey: 'ACTIONS.CREATE.MESSAGE.OK' })
@@ -213,6 +229,7 @@ export class AnnouncementDetailComponent implements OnChanges {
           id: id,
           updateAnnouncementRequest: item
         })
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.msgService.success({ summaryKey: 'ACTIONS.EDIT.MESSAGE.OK' })

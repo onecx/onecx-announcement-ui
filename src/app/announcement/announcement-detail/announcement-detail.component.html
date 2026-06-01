@@ -1,7 +1,7 @@
 <p-dialog
   [header]="'DIALOG.DETAIL.' + changeMode + '.HEADER' | translate"
-  [(visible)]="displayDialog"
-  (onHide)="onDialogHide()"
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit(false)"
   [modal]="true"
   [closable]="true"
   [draggable]="true"
@@ -17,7 +17,12 @@
   }"
 >
   <!-- display status/type/priority on dialog header -->
-  <div id="am_detail_header_preview" class="absolute sm:dialog-header-right-slot flex flex-row" aria-hidden="true">
+  <div
+    *ngIf="!exceptionKey && preview"
+    id="am_detail_header_preview"
+    class="absolute sm:dialog-header-right-slot flex flex-row"
+    aria-hidden="true"
+  >
     <div
       id="am_detail_header_preview_priority"
       class="p-2 pi text-xl border-round hidden sm:block"
@@ -62,7 +67,7 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <div class="mt-2 flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-5">
+      <div class="mt-0 sm:mt-2 flex flex-wrap flex-column justify-content-between row-gap-3 sm:row-gap-5">
         <div class="w-full relative">
           <p-badge
             *ngIf="changeMode !== 'VIEW'"
@@ -141,11 +146,11 @@
       tooltipPosition="top"
       tooltipEvent="hover"
     >
-      <div class="flex flex-wrap flex-column justify-content-between row-gap-3">
+      <div class="flex flex-wrap flex-column justify-content-between row-gap-2 sm:row-gap-3">
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="pb-3 px-2"
+          styleClass="pt-2 pb-2 sm:pb-3 px-1 sm:px-2"
           [legend]="'DIALOG.DETAIL.TAB.ACTIVATION' | translate"
         >
           <div
@@ -202,7 +207,9 @@
               </label>
             </p-floatlabel>
 
-            <div class="mr-4 flex flex-column justify-content-center sm:align-items-center row-gap-1">
+            <div
+              class="sm:mr-4 flex flex-row sm:flex-column sm:justify-content-center align-items-center row-gap-1 column-gap-2"
+            >
               <p-inputSwitch
                 inputId="am_detail_form_status"
                 class="input-switch-xl"
@@ -237,7 +244,7 @@
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="pt-2 pb-3 px-2"
+          styleClass="pt-2 pb-2 sm:pb-3 px-1 sm:px-2"
           [legend]="'DIALOG.DETAIL.TAB.VISIBILITY' | translate"
         >
           <div class="w-full flex flex-column sm:flex-row sm:flex-nowrap row-gap-3 sm:row-gap-0 column-gap-5">
@@ -295,12 +302,14 @@
         <p-fieldset
           [toggleable]="false"
           [collapsed]="false"
-          styleClass="pt-2 pb-3 px-2"
+          styleClass="pt-1 pb-2 sm:pb-3 px-1 sm:px-2"
           [legend]="'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate"
         >
-          <div class="w-full flex flex-row flex-wrap gap-2 sm:justify-content-evenly align-items-end">
+          <div
+            class="w-full flex flex-row flex-wrap column-gap-0 row-gap-2 justify-content-start sm:justify-content-evenly align-items-end"
+          >
             <section
-              class="p-0 pt-2 md:pt-0 md:text-right flex flex-column md:justify-content-end"
+              class="md:text-right flex flex-column md:justify-content-end"
               [attr.aria-label]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
             >
               <label class="float-label mb-1 text-sm font-medium" for="am_detail_form_priority" aria-hidden="true">
@@ -448,7 +457,7 @@
         *ngIf="exceptionKey || changeMode === 'VIEW'"
         id="am_detail_action_close"
         icon="pi pi-times"
-        (onClick)="onDialogHide()"
+        (onClick)="visibleChange.emit(false)"
         [label]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [ariaLabel]="'ACTIONS.NAVIGATION.CLOSE' | translate"
         [pTooltip]="'ACTIONS.NAVIGATION.CLOSE.TOOLTIP' | translate"
@@ -459,7 +468,7 @@
         *ngIf="!(exceptionKey || changeMode === 'VIEW')"
         id="am_detail_action_cancel"
         icon="pi pi-times"
-        (onClick)="onDialogHide()"
+        (onClick)="visibleChange.emit(false)"
         [label]="'ACTIONS.CANCEL' | translate"
         [ariaLabel]="'ACTIONS.CANCEL' | translate"
         [pTooltip]="'ACTIONS.TOOLTIPS.CANCEL_AND_CLOSE' | translate"

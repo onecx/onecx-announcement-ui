@@ -9,6 +9,7 @@ import { LabelResolver } from 'src/app/shared/label.resolver'
 import { PortalPageComponent, providePermissionService } from '@onecx/angular-utils'
 
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
+import { AnnouncementDeleteComponent } from './announcement-delete/announcement-delete.component'
 import { OneCXAnnouncementListActiveComponent } from '../remotes/announcement-list-active/announcement-list-active.component'
 
 const routes: Routes = [
@@ -37,7 +38,8 @@ const routes: Routes = [
     PortalPageComponent,
     RouterModule.forChild(routes),
     SharedModule,
-    AnnouncementSearchComponent
+    AnnouncementSearchComponent,
+    AnnouncementDeleteComponent
   ],
   providers: [...providePermissionService()]
 })
