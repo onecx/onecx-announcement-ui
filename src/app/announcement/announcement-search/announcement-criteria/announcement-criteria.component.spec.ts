@@ -125,13 +125,13 @@ describe('AnnouncementCriteriaComponent', () => {
    */
   it('should load dropdown lists with translations', () => {
     let data2: SelectItem[] = []
-    component.type$?.subscribe((data) => {
+    component.typeOptions$?.subscribe((data) => {
       data2 = data
     })
     expect(data2.length).toBeGreaterThanOrEqual(3)
 
     data2 = []
-    component.priorityType$?.subscribe((data) => {
+    component.priorityTypeOptions$?.subscribe((data) => {
       data2 = data
     })
     expect(data2.length).toBeGreaterThanOrEqual(3)

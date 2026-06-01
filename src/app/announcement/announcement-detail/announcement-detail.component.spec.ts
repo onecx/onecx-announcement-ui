@@ -115,7 +115,7 @@ describe('AnnouncementDetailComponent', () => {
 
     it('should build type and priority dropdown options', async () => {
       const typeOptions = await firstValueFrom(component.typeOptions$!)
-      const priorityOptions = await firstValueFrom(component.priorityOptions$!)
+      const priorityOptions = await firstValueFrom(component.priorityTypeOptions$!)
 
       expect(typeOptions.length).toBe(3)
       expect(typeOptions[0].value).toBe(AnnouncementType.Event)

@@ -320,7 +320,7 @@
                 id="am_detail_form_priority"
                 formControlName="priority"
                 controlErrorsIgnore
-                [options]="(priorityOptions$ | async) ?? []"
+                [options]="(priorityTypeOptions$ | async) ?? []"
                 (onChange)="onChangeAnnouncementPriority($event)"
                 [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
                 tooltipPosition="top"

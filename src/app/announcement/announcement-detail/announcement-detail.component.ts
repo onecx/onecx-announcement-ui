@@ -27,6 +27,7 @@ import {
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
 import type { ChangeMode } from '../announcement-search/announcement-search.component'
+import { AnnouncementEnumTranslation } from '../announcement-enum-translation'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {
@@ -65,11 +66,10 @@ export class AnnouncementDetailComponent implements OnChanges {
   public timeFormat = '12'
   // form
   public announcementForm: FormGroup
-  public typeOptions$: Observable<SelectItem[]> = of([])
-  public statusOptions$: Observable<SelectItem[]> = of([])
-  public priorityOptions$: Observable<SelectItem[]> = of([])
-  public AnnouncementPriorityType = AnnouncementPriorityType
-  public AnnouncementType = AnnouncementType
+  public readonly typeOptions$: Observable<SelectItem[]>
+  public readonly statusOptions$: Observable<SelectItem[]>
+  public readonly priorityTypeOptions$: Observable<SelectItem[]>
+
   private readonly previewDefault: Preview = {
     status: AnnouncementStatus.Inactive,
     type: AnnouncementType.Info,
@@ -107,7 +107,9 @@ export class AnnouncementDetailComponent implements OnChanges {
       .addValidators([Validators.required, dateRangeValidator(this.announcementForm)])
     this.announcementForm.get('endDate')!.addValidators([dateRangeValidator(this.announcementForm)])
     // prepare dropdown lists
-    this.prepareDropDownOptions()
+    this.typeOptions$ = AnnouncementEnumTranslation.announcementType(this.translate)
+    this.statusOptions$ = AnnouncementEnumTranslation.announcementStatus(this.translate)
+    this.priorityTypeOptions$ = AnnouncementEnumTranslation.announcementPriorityType(this.translate)
   }
 
   public ngOnChanges() {
@@ -241,53 +243,5 @@ export class AnnouncementDetailComponent implements OnChanges {
           }
         })
     }
-  }
-
-  /****************************************************************************
-   *  SERVER responses & internal
-   */
-  private prepareDropDownOptions() {
-    this.typeOptions$ = this.translate
-      .get([
-        'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event,
-        'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Info,
-        'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.SystemMaintenance
-      ])
-      .pipe(
-        map((data) => {
-          return [
-            { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event], value: AnnouncementType.Event },
-            { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Info], value: AnnouncementType.Info },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.SystemMaintenance],
-              value: AnnouncementType.SystemMaintenance
-            }
-          ]
-        })
-      )
-    this.priorityOptions$ = this.translate
-      .get([
-        'ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Important,
-        'ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Low,
-        'ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Normal
-      ])
-      .pipe(
-        map((data) => {
-          return [
-            {
-              label: data['ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Important],
-              value: AnnouncementPriorityType.Important
-            },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Normal],
-              value: AnnouncementPriorityType.Normal
-            },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Low],
-              value: AnnouncementPriorityType.Low
-            }
-          ]
-        })
-      )
   }
 }

@@ -7,7 +7,12 @@ import { of, throwError } from 'rxjs'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
-import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
+import {
+  Announcement,
+  AnnouncementInternalAPIService,
+  AnnouncementPriorityType,
+  AnnouncementStatus
+} from 'src/app/shared/generated'
 import { AnnouncementDeleteComponent } from './announcement-delete.component'
 
 const announcement: Announcement = {
@@ -17,8 +22,8 @@ const announcement: Announcement = {
   productName: 'productName',
   workspaceName: 'workspaceName',
   type: 'EVENT' as any,
-  status: 'ACTIVE' as any,
-  priority: 'IMPORTANT' as any,
+  status: AnnouncementStatus.Active,
+  priority: AnnouncementPriorityType.Important,
   startDate: '2023-01-02',
   endDate: '2023-01-03'
 }
