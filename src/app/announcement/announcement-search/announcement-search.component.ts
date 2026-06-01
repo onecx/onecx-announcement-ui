@@ -130,6 +130,7 @@ export class AnnouncementSearchComponent implements OnInit {
       callback: (item) => this.onCopyFromInteractive(item as RowListGridData)
     }
   ]
+  public getDisplayName = Utils.getDisplayName
 
   // data
   private readonly destroyRef = inject(DestroyRef)
@@ -234,7 +235,6 @@ export class AnnouncementSearchComponent implements OnInit {
     this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (lang) => {
         this.datetimeFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : this.datetimeFormat
-        this.interactiveColumns = this.createInteractiveColumns()
       }
     })
     this.pdSlotEmitter.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.productData$)
@@ -255,7 +255,7 @@ export class AnnouncementSearchComponent implements OnInit {
             label: data['ACTIONS.CREATE.LABEL'],
             title: data['ACTIONS.CREATE.TOOLTIP'],
             actionCallback: () =>
-              this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, 'CREATE')),
+              this.ensureHasPermission('ANNOUNCEMENT#CREATE', () => this.onDetail(undefined, 'CREATE')),
             icon: 'pi pi-plus',
             show: 'always',
             permission: 'ANNOUNCEMENT#CREATE'
@@ -319,29 +319,7 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   }
 
-  /****************************************************************************
-   *  DELETE => Ask for confirmation
-   */
-  public onDeleteFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#DELETE', () => {
-      this.item4Delete = { ...item } as Announcement
-      this.displayDeleteDialog = true
-    })
-  }
-
-  public onViewFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#VIEW', () => this.onDetail(item as Announcement, 'VIEW'))
-  }
-
-  public onCopyFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#CREATE', () => this.onDetail(item as Announcement, 'COPY'))
-  }
-
-  public onEditFromInteractive(item: RowListGridData): void {
-    this.ensurePermission('ANNOUNCEMENT#EDIT', () => this.onDetail(item as Announcement, 'EDIT'))
-  }
-
-  private ensurePermission(permission: string, onGranted: () => void): void {
+  private ensureHasPermission(permission: string, onGranted: () => void): void {
     this.user
       .hasPermission(permission)
       .then((granted) => {
@@ -357,22 +335,21 @@ export class AnnouncementSearchComponent implements OnInit {
       })
   }
 
-  // called after successful deletion from AnnouncementDeleteComponent
-  public onDeleteConfirmed(deleted: boolean): void {
-    if (deleted) {
-      const productName = this.item4Delete?.productName
-      const data = this.dataSubject$.getValue()?.filter((d) => d['id'] !== this.item4Delete?.id) ?? []
-      this.dataSubject$.next(data)
-      this.onGlobalFilter(this.tableFilterValue, data) // update filtered data if filter is active
-      if (productName && !data.some((d) => d?.['productName'] === productName)) {
-        this.usedListsTrigger$.next()
-      }
-    }
-    this.displayDeleteDialog = false
-    this.item4Delete = undefined
+  public onViewFromInteractive(item: RowListGridData): void {
+    this.ensureHasPermission('ANNOUNCEMENT#VIEW', () => this.onDetail(item as Announcement, 'VIEW'))
   }
-
-  public getDisplayName = Utils.getDisplayName
+  public onCopyFromInteractive(item: RowListGridData): void {
+    this.ensureHasPermission('ANNOUNCEMENT#CREATE', () => this.onDetail(item as Announcement, 'COPY'))
+  }
+  public onEditFromInteractive(item: RowListGridData): void {
+    this.ensureHasPermission('ANNOUNCEMENT#EDIT', () => this.onDetail(item as Announcement, 'EDIT'))
+  }
+  public onDeleteFromInteractive(item: RowListGridData): void {
+    this.ensureHasPermission('ANNOUNCEMENT#DELETE', () => {
+      this.item4Delete = { ...item } as Announcement
+      this.displayDeleteDialog = true
+    })
+  }
 
   private getInteractiveColumnType(col: ExtendedColumn): ColumnType {
     if (col.isDate) return ColumnType.DATE
@@ -388,19 +365,36 @@ export class AnnouncementSearchComponent implements OnInit {
     return this.columns.map((col) => {
       const columnLabelKey = `${col.translationPrefix}.${col.header}`
       const columnTooltipKey = `${col.translationPrefix}.TOOLTIPS.${col.header}`
-      const translatedColumnLabel = this.translate.instant(columnLabelKey)
 
       return {
         id: col.field,
-        nameKey: translatedColumnLabel === columnLabelKey ? columnLabelKey : translatedColumnLabel,
+        nameKey: columnLabelKey,
         tooltipKey: columnTooltipKey,
         columnType: this.getInteractiveColumnType(col),
         sortable: this.isInteractiveSortable(col),
         filterable: col.hasFilter === true,
-        css: col.css,
-        ...(col.isDate ? { dateFormat: this.datetimeFormat } : {})
+        dateFormat: col.isDate ? this.datetimeFormat : undefined,
+        css: col.css
       }
     })
+  }
+
+  /*
+   * DELETION confirmed
+   */
+  // called after successful deletion from AnnouncementDeleteComponent
+  public onDeleteConfirmed(deleted: boolean): void {
+    if (deleted) {
+      const productName = this.item4Delete?.productName
+      const data = this.dataSubject$.getValue()?.filter((d) => d['id'] !== this.item4Delete?.id) ?? []
+      this.dataSubject$.next(data)
+      this.onGlobalFilter(this.tableFilterValue, data) // update filtered data if filter is active
+      if (productName && !data.some((d) => d?.['productName'] === productName)) {
+        this.usedListsTrigger$.next()
+      }
+    }
+    this.displayDeleteDialog = false
+    this.item4Delete = undefined
   }
 
   /****************************************************************************

@@ -117,7 +117,7 @@
         formControlName="type"
         controlErrorsIgnore
         appendTo="body"
-        [options]="(type$ | async) ?? []"
+        [options]="(typeOptions$ | async) ?? []"
         [filter]="false"
         [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
@@ -131,7 +131,7 @@
     <p-floatlabel *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_priority"
-        [options]="(priorityType$ | async) ?? []"
+        [options]="(priorityTypeOptions$ | async) ?? []"
         formControlName="priority"
         controlErrorsIgnore
         appendTo="body"

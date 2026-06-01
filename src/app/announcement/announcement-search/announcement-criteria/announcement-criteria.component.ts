@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { FormControl, FormGroup } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 import { SelectItem } from 'primeng/api'
-import { Observable, map, of } from 'rxjs'
+import { Observable } from 'rxjs'
 
 import { UserService } from '@onecx/angular-integration-interface'
 import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AnnouncementEnumTranslation } from '../../announcement-enum-translation'
 
 import {
   AnnouncementPriorityType,
@@ -32,7 +33,7 @@ export interface AnnouncementCriteriaForm {
   standalone: true,
   imports: [SharedModule, AngularAcceleratorModule]
 })
-export class AnnouncementCriteriaComponent implements OnInit {
+export class AnnouncementCriteriaComponent {
   @Input() public actions: Action[] = []
   @Input() public usedWorkspaces: SelectItem[] = []
   @Input() public usedProducts: SelectItem[] = []
@@ -43,9 +44,9 @@ export class AnnouncementCriteriaComponent implements OnInit {
   public criteriaForm!: FormGroup<AnnouncementCriteriaForm>
   public dateFormatForRange: string
   public filteredTitles = []
-  public type$: Observable<SelectItem[]> = of([])
-  public statusOptions$: Observable<SelectItem[]> = of([])
-  public priorityType$: Observable<SelectItem[]> = of([])
+  public typeOptions$: Observable<SelectItem[]>
+  public statusOptions$: Observable<SelectItem[]>
+  public priorityTypeOptions$: Observable<SelectItem[]>
 
   constructor(
     private readonly user: UserService,
@@ -61,10 +62,9 @@ export class AnnouncementCriteriaComponent implements OnInit {
       priority: new FormControl<AnnouncementPriorityType[] | null>(null),
       startDateRange: new FormControl<Date[] | null>(null)
     })
-  }
-
-  ngOnInit(): void {
-    this.prepareDialogTranslations()
+    this.typeOptions$ = AnnouncementEnumTranslation.announcementType(this.translate)
+    this.statusOptions$ = AnnouncementEnumTranslation.announcementStatus(this.translate)
+    this.priorityTypeOptions$ = AnnouncementEnumTranslation.announcementPriorityType(this.translate)
   }
 
   public onSearch(): void {
@@ -102,69 +102,5 @@ export class AnnouncementCriteriaComponent implements OnInit {
       dateTo = dateRange[1]
     }
     return [dateFrom.toISOString(), dateTo.toISOString()]
-  }
-
-  private prepareDialogTranslations() {
-    this.type$ = this.translate
-      .get([
-        'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event,
-        'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Info,
-        'ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.SystemMaintenance
-      ])
-      .pipe(
-        map((data) => {
-          return [
-            { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Event], value: AnnouncementType.Event },
-            { label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.Info], value: AnnouncementType.Info },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_TYPE.' + AnnouncementType.SystemMaintenance],
-              value: AnnouncementType.SystemMaintenance
-            }
-          ]
-        })
-      )
-    this.statusOptions$ = this.translate
-      .get([
-        'ENUMS.ANNOUNCEMENT_STATUS.' + AnnouncementStatus.Active,
-        'ENUMS.ANNOUNCEMENT_STATUS.' + AnnouncementStatus.Inactive
-      ])
-      .pipe(
-        map((data) => {
-          return [
-            {
-              label: data['ENUMS.ANNOUNCEMENT_STATUS.' + AnnouncementStatus.Active],
-              value: AnnouncementStatus.Active
-            },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_STATUS.' + AnnouncementStatus.Inactive],
-              value: AnnouncementStatus.Inactive
-            }
-          ]
-        })
-      )
-    this.priorityType$ = this.translate
-      .get([
-        'ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Important,
-        'ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Low,
-        'ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Normal
-      ])
-      .pipe(
-        map((data) => {
-          return [
-            {
-              label: data['ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Important],
-              value: AnnouncementPriorityType.Important
-            },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Normal],
-              value: AnnouncementPriorityType.Normal
-            },
-            {
-              label: data['ENUMS.ANNOUNCEMENT_PRIORITY.' + AnnouncementPriorityType.Low],
-              value: AnnouncementPriorityType.Low
-            }
-          ]
-        })
-      )
   }
 }
