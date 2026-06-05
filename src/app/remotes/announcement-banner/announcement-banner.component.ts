@@ -52,6 +52,24 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
+  }
+
+  private prioValue(prio: string | undefined): number {
+    if (prio === 'IMPORTANT') return 3
+    if (prio === 'NORMAL') return 2
+    else return 1
+  }
+
+  public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
+    this.announcementApi.configuration = new Configuration({
+      basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
+    })
+    this.appConfigService.init(config['baseUrl'])
+    this.remoteComponentConfig.next(config)
+    this.searchWorkspaceAnnouncements()
+  }
+
+  private searchWorkspaceAnnouncements() {
     combineLatest([
       this.remoteComponentConfig.asObservable(),
       this.appStateService.currentWorkspace$.asObservable(),
@@ -87,20 +105,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
         })
       )
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
-  }
-
-  private prioValue(prio: string | undefined): number {
-    if (prio === 'IMPORTANT') return 3
-    if (prio === 'NORMAL') return 2
-    else return 1
-  }
-
-  ocxInitRemoteComponent(config: RemoteComponentConfig): void {
-    this.announcementApi.configuration = new Configuration({
-      basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
-    })
-    this.remoteComponentConfig.next(config)
-    this.appConfigService.init(config['baseUrl'])
   }
 
   hide(id: string): void {
