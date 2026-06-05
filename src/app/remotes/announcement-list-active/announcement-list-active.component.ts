@@ -1,6 +1,6 @@
 import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
-import { TranslateService } from '@ngx-translate/core'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
 import { PopoverModule } from 'primeng/popover'
 
@@ -13,9 +13,8 @@ import {
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
-import { SharedModule } from 'src/app/shared/shared.module'
-import { Utils } from 'src/app/shared/utils'
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
+import { Utils } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 
 @Component({
@@ -23,7 +22,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-list-active.component.html',
   styleUrls: ['./announcement-list-active.component.scss'],
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CommonModule, AngularAcceleratorModule, SharedModule, PopoverModule]
+  imports: [AngularAcceleratorModule, AngularRemoteComponentsModule, CommonModule, PopoverModule, TranslateModule]
 })
 export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -32,18 +31,18 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   private readonly currentDate = new Date().toISOString()
   private readonly announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
+  public convertLineBreaks = Utils.convertLineBreaks
   public displayDetailDialog = false
-  convertLineBreaks = Utils.convertLineBreaks
 
   constructor(
     @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
-    private readonly announcementApi: AnnouncementInternalAPIService,
-    private readonly translateService: TranslateService,
+    private readonly appConfigService: AppConfigService,
     private readonly appStateService: AppStateService,
+    private readonly translateService: TranslateService,
     private readonly userService: UserService,
-    private readonly appConfigService: AppConfigService
+    private readonly announcementApi: AnnouncementInternalAPIService
   ) {
-    this.userService.lang$.subscribe((lang: string) => this.translateService.use(lang))
+    this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
   }
 
   private prioValue(prio: string | undefined): number {

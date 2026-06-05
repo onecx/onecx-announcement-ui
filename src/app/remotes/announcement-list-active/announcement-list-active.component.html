@@ -1,7 +1,7 @@
 <ng-container *ngIf="announcements$ | async as announcements">
-  <div *ngIf="announcements.length > 0" class="py-2 card surface-100">
-    <div class="mb-2 px-2 font-medium text-lg">{{ 'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate }}</div>
-    <div class="px-1 flex flex-column row-gap-2 max-h-20rem overflow-x-hidden overflow-y-auto">
+  <div *ngIf="announcements.length > 0" class="pb-2 card surface-100">
+    <div class="p-2 font-medium text-lg bg-gray-200">{{ 'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate }}</div>
+    <div class="mt-1 px-1 flex flex-column row-gap-2 max-h-20rem overflow-x-hidden overflow-y-auto">
       <a
         *ngFor="let announcement of announcements; let i = index"
         class="p-2 announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 border-none hover:bg-gray-200 cursor-pointer"

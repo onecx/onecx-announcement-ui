@@ -18,9 +18,7 @@ import {
 import { OneCXAnnouncementListActiveComponent } from './announcement-list-active.component'
 
 class MockAppStateService {
-  currentWorkspace$ = {
-    asObservable: () => of({ workspaceName: 'wsName' })
-  }
+  currentWorkspace$ = { asObservable: () => of({ workspaceName: 'wsName' }) }
   currentMfe$ = { asObservable: () => of({ productName: 'productName' }) }
 }
 
@@ -41,6 +39,7 @@ describe('AnnouncementListActiveComponent', () => {
   let component: OneCXAnnouncementListActiveComponent
   let fixture: ComponentFixture<OneCXAnnouncementListActiveComponent>
   let mockAppStateService: MockAppStateService
+  let baseUrlSubject: ReplaySubject<any>
 
   const apiServiceSpy = {
     searchAnnouncementBanners: jasmine
@@ -48,7 +47,6 @@ describe('AnnouncementListActiveComponent', () => {
       .and.returnValue(of({ stream: [normalAnnouncement] }))
   }
 
-  let baseUrlSubject: ReplaySubject<any>
   beforeEach(() => {
     mockAppStateService = new MockAppStateService()
     baseUrlSubject = new ReplaySubject<any>(1)
@@ -57,6 +55,7 @@ describe('AnnouncementListActiveComponent', () => {
       declarations: [],
       imports: [
         TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
