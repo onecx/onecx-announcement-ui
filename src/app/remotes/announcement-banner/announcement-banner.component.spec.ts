@@ -161,10 +161,6 @@ describe('AnnouncementBannerComponent - common case', () => {
     it('should hide the announcement', () => {
       initializeComponent()
 
-      const mockAnnouncementsSubject = {
-        value: [{ id: 'announcement1' }, { id: 'announcement2' }],
-        next: jasmine.createSpy('next')
-      }
       component['announcementsSubject'].next([{ id: 'announcement1' }, { id: 'announcement2' }])
       spyOn(localStorage, 'setItem').and.callFake(() => {})
       spyOn(component as any, 'getIgnoredAnnouncementsIds').and.returnValue([])
@@ -173,7 +169,6 @@ describe('AnnouncementBannerComponent - common case', () => {
       component.hide(id)
 
       expect(localStorage.setItem).toHaveBeenCalledWith(component['ignoredAnnouncementsKey'], JSON.stringify([id]))
-      //expect(mockAnnouncementsSubject.next).toHaveBeenCalledWith([{ id: 'announcement2' }])
     })
 
     it('should log an error if an anncmt could not be hidden (an exception is thrown in the try block)', () => {
