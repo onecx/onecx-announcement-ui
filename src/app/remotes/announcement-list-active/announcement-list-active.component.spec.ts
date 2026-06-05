@@ -1,12 +1,10 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
-import { CarouselModule } from 'primeng/carousel'
-import { TagModule } from 'primeng/tag'
 
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
@@ -72,7 +70,7 @@ describe('AnnouncementListActiveComponent', () => {
     })
       .overrideComponent(OneCXAnnouncementListActiveComponent, {
         set: {
-          imports: [CommonModule, TranslateTestingModule, CarouselModule, TagModule],
+          imports: [CommonModule, TranslateTestingModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },

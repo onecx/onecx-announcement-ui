@@ -134,5 +134,11 @@ describe('Utils', () => {
 
       expect(Utils.convertLineBreaks(text)).toEqual('123<br/>456')
     })
+
+    it('should ignore empty text', () => {
+      const text = undefined
+
+      expect(Utils.convertLineBreaks(text)).toEqual('')
+    })
   })
 })

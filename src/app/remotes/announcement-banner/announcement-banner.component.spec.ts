@@ -1,12 +1,10 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
-import { CarouselModule } from 'primeng/carousel'
-import { TagModule } from 'primeng/tag'
 
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
@@ -74,7 +72,7 @@ describe('AnnouncementBannerComponent - common case', () => {
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [CommonModule, TranslateTestingModule, CarouselModule, TagModule],
+          imports: [CommonModule, TranslateTestingModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
@@ -247,7 +245,7 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [CommonModule, TranslateTestingModule, CarouselModule, TagModule],
+          imports: [CommonModule, TranslateTestingModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
