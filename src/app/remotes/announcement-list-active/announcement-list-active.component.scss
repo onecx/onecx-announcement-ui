@@ -3,8 +3,13 @@
 }
 
 :host ::ng-deep {
-  &.p-overlaypanel .p-overlaypanel-content {
-    padding: 0;
+  /* PrimeNG Popover */
+  --p-popover-content-padding: 0 !important;
+
+  /* PrimeNG Popover: fix arrow display */
+  .p-popover:after,
+  .p-popover:before {
+    display: none !important;
   }
 
   @media screen and (min-width: 992px) {

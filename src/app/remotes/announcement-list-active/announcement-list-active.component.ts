@@ -2,7 +2,7 @@ import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
-import { OverlayPanelModule } from 'primeng/overlaypanel'
+import { PopoverModule } from 'primeng/popover'
 
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import {
@@ -23,7 +23,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-list-active.component.html',
   styleUrls: ['./announcement-list-active.component.scss'],
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CommonModule, AngularAcceleratorModule, SharedModule, OverlayPanelModule]
+  imports: [AngularRemoteComponentsModule, CommonModule, AngularAcceleratorModule, SharedModule, PopoverModule]
 })
 export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
