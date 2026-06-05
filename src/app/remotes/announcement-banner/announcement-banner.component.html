@@ -1,70 +1,65 @@
-<ng-container *ngIf="announcements$ | async as announcements">
+<ng-container *ngIf="announcements$ | async as items">
   <p-carousel
-    *ngIf="announcements && announcements.length > 0"
-    styleClass="announcement-banner-carousel mt-2 sm:mt-3 mb-0"
-    [value]="announcements"
+    styleClass="mt-2 sm:mt-3 mb-0"
+    [value]="items"
     [numVisible]="1"
     [numScroll]="1"
     [orientation]="'horizontal'"
     [showIndicators]="false"
     [style.zIndex]="990"
   >
-    <ng-template let-announcement pTemplate="item">
+    <ng-template let-item #item>
       <div
         class="p-2 border-round flex flex-row justify-content-between align-items-center"
         [ngClass]="
-          announcement.priority === 'IMPORTANT'
+          item.priority === 'IMPORTANT'
             ? 'bg-red-100 text-red-800 border-red-600'
-            : announcement.priority === 'NORMAL'
+            : item.priority === 'NORMAL'
               ? 'bg-yellow-200 text-yellow-800 border-yellow-600'
-              : announcement.priority === 'LOW'
+              : item.priority === 'LOW'
                 ? 'bg-blue-100 text-blue-800 border-blue-600'
                 : 'bg-green-200 text-green-800 border-green-600'
         "
       >
-        <!-- content -->
         <div class="flex flex-row align-items-center column-gap-2">
           <span
             id="am_announcement_banner_icon"
-            class="px-1 sm:px-2 pi text-xl"
-            [class.pi-info-circle]="announcement.type === 'INFO'"
-            [class.pi-calendar]="announcement.type === 'EVENT'"
-            [class.pi-wrench]="announcement.type === 'SYSTEM_MAINTENANCE'"
-            [attr.aria-label]="('ANNOUNCEMENT.PRIORITY' | translate) + ': ' + announcement.priority"
+            class="px-1 sm:px-3 pi text-xl"
+            [class.pi-info-circle]="item.type === 'INFO'"
+            [class.pi-calendar]="item.type === 'EVENT'"
+            [class.pi-wrench]="item.type === 'SYSTEM_MAINTENANCE'"
+            [attr.aria-label]="('ANNOUNCEMENT.PRIORITY' | translate) + ': ' + item.priority"
             [pTooltip]="
               ('ANNOUNCEMENT.PRIORITY' | translate) +
               ': ' +
-              announcement.priority +
-              (announcement.workspaceName
-                ? ', ' + ('ANNOUNCEMENT.WORKSPACE' | translate) + ': ' + announcement.workspaceName
-                : '') +
-              (announcement.productName
-                ? ', ' + ('ANNOUNCEMENT.APPLICATION' | translate) + ': ' + announcement.productName
-                : '')
+              item.priority +
+              (item.workspaceName ? ', ' + ('ANNOUNCEMENT.WORKSPACE' | translate) + ': ' + item.workspaceName : '') +
+              (item.productName ? ', ' + ('ANNOUNCEMENT.APPLICATION' | translate) + ': ' + item.productName : '')
             "
             tooltipPosition="top"
             tooltipEvent="hover"
           ></span>
           <div class="flex flex-column row-gap-1">
-            <div id="am_announcement_banner_title" class="font-bold">{{ announcement.title }}</div>
-            <div id="am_announcement_banner_content" [innerHTML]="convertLineBreaks(announcement.content)"></div>
+            <div id="am_announcement_banner_title" class="font-bold">{{ item.title }}</div>
+            <div id="am_announcement_banner_content" [innerHTML]="convertLineBreaks(item.content)"></div>
           </div>
         </div>
-        <!-- close -->
-        <button
+
+        <p-button
           id="am_announcement_banner_action_close"
-          pButton
+          size="large"
+          [rounded]="true"
+          [text]="true"
           icon="pi pi-times"
-          class="p-button-rounded p-button-text p-3"
-          [class.text-red-800]="announcement.priority === 'IMPORTANT'"
-          [class.text-yellow-800]="announcement.priority === 'NORMAL'"
-          [class.text-blue-800]="announcement.priority === 'LOW'"
-          (click)="hide(announcement.id!)"
+          [class.text-red-800]="item.priority === 'IMPORTANT'"
+          [class.text-yellow-800]="item.priority === 'NORMAL'"
+          [class.text-blue-800]="item.priority === 'LOW'"
+          (click)="hide(item.id!)"
           [attr.aria-label]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
           [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
           tooltipPosition="top"
           tooltipEvent="hover"
-        ></button>
+        ></p-button>
       </div>
     </ng-template>
   </p-carousel>

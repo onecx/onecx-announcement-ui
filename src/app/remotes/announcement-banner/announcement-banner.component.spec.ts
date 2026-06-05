@@ -3,8 +3,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { ReplaySubject, of, throwError } from 'rxjs'
 import { TranslateTestingModule } from 'ngx-translate-testing'
+import { ReplaySubject, of, throwError } from 'rxjs'
+import { CarouselModule } from 'primeng/carousel'
+import { ButtonModule } from 'primeng/button'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
@@ -49,8 +52,8 @@ describe('AnnouncementBannerComponent - common case', () => {
       .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
   }
-
   let baseUrlSubject: ReplaySubject<any>
+
   beforeEach(() => {
     mockAppStateService = new MockAppStateService()
     baseUrlSubject = new ReplaySubject<any>(1)
@@ -59,6 +62,7 @@ describe('AnnouncementBannerComponent - common case', () => {
       declarations: [],
       imports: [
         TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
@@ -72,7 +76,7 @@ describe('AnnouncementBannerComponent - common case', () => {
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [CommonModule, TranslateTestingModule],
+          imports: [CommonModule, TranslateTestingModule, CarouselModule, ButtonModule, TooltipModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
@@ -106,7 +110,7 @@ describe('AnnouncementBannerComponent - common case', () => {
     initializeComponent()
 
     expect(component).toBeTruthy()
-    component.announcementsSubject.subscribe((anncmts) => {
+    component['announcementsSubject'].subscribe((anncmts) => {
       expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
     })
   })

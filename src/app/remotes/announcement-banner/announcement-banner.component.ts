@@ -1,40 +1,36 @@
-import { Component, Inject, Input, NO_ERRORS_SCHEMA } from '@angular/core'
-import { Location } from '@angular/common'
-import { TranslateService } from '@ngx-translate/core'
+import { Component, Inject, Input } from '@angular/core'
+import { CommonModule, Location } from '@angular/common'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 import { CarouselModule } from 'primeng/carousel'
+import { ButtonModule } from 'primeng/button'
+import { TooltipModule } from 'primeng/tooltip'
 
+import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
   ocxRemoteComponent,
   ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
-import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
-import {
-  Announcement,
-  AnnouncementAbstract,
-  AnnouncementInternalAPIService,
-  Configuration
-} from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
+import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
 import { Utils } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'app-announcement-banner',
   templateUrl: './announcement-banner.component.html',
-  styleUrls: ['./announcement-banner.component.scss'],
   standalone: true,
-  imports: [AngularRemoteComponentsModule, CarouselModule, AngularAcceleratorModule, SharedModule],
-  schemas: [NO_ERRORS_SCHEMA],
-  providers: [
-    {
-      provide: REMOTE_COMPONENT_CONFIG,
-      useValue: new ReplaySubject<RemoteComponentConfig>(1)
-    }
+  imports: [
+    AngularAcceleratorModule,
+    AngularRemoteComponentsModule,
+    CommonModule,
+    CarouselModule,
+    ButtonModule,
+    TooltipModule,
+    TranslateModule
   ]
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
@@ -43,7 +39,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   }
   private readonly ignoredAnnouncementsKey = 'onecx_announcement_banner_ignored_ids'
   private readonly currentDate = new Date().toISOString()
-  public announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
+  private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
   public convertLineBreaks = Utils.convertLineBreaks
 
@@ -79,7 +75,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
                     return (
                       results.stream
                         // exclude already seen items
-                        ?.filter((result: Announcement) => !ignoredAnnouncements.includes(result.id!))
+                        ?.filter((result) => !ignoredAnnouncements.includes(result.id!))
                         // high prio first, low prio last
                         .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
                     )
