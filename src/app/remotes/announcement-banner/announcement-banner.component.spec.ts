@@ -46,13 +46,13 @@ describe('AnnouncementBannerComponent - common case', () => {
   let component: OneCXAnnouncementBannerComponent
   let fixture: ComponentFixture<OneCXAnnouncementBannerComponent>
   let mockAppStateService: MockAppStateService
+  let baseUrlSubject: ReplaySubject<any>
 
   const apiServiceSpy = {
     searchAnnouncementBanners: jasmine
       .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
   }
-  let baseUrlSubject: ReplaySubject<any>
 
   beforeEach(() => {
     mockAppStateService = new MockAppStateService()

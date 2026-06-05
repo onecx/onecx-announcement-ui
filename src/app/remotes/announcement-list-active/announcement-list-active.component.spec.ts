@@ -39,13 +39,13 @@ describe('AnnouncementListActiveComponent', () => {
   let component: OneCXAnnouncementListActiveComponent
   let fixture: ComponentFixture<OneCXAnnouncementListActiveComponent>
   let mockAppStateService: MockAppStateService
+  let baseUrlSubject: ReplaySubject<any>
 
   const apiServiceSpy = {
     searchAnnouncementBanners: jasmine
       .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
   }
-  let baseUrlSubject: ReplaySubject<any>
 
   beforeEach(() => {
     mockAppStateService = new MockAppStateService()
