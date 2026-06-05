@@ -57,34 +57,37 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     })
     this.appConfigService.init(config['baseUrl'])
     this.remoteComponentConfig.next(config)
-    this.searchWorkspaceAnnouncements().subscribe((announcements) => this.announcementsSubject.next(announcements))
+    this.searchWorkspaceAnnouncements()
   }
 
   private searchWorkspaceAnnouncements() {
-    return this.appStateService.currentWorkspace$.asObservable().pipe(
-      mergeMap((currentWorkspace) => {
-        return this.announcementApi
-          .searchAnnouncementBanners({
-            announcementBannerSearchCriteria: {
-              workspaceName: currentWorkspace.workspaceName,
-              currentDate: this.currentDate
-            }
-          })
-          .pipe(
-            map((results) => {
-              return (
-                results.stream
-                  // exclude product specific announcements
-                  ?.filter((ann) => !ann.productName)
-                  // high prio first, low prio last
-                  .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
-              )
-            }),
-            catchError(() => {
-              return of([])
+    this.appStateService.currentWorkspace$
+      .asObservable()
+      .pipe(
+        mergeMap((currentWorkspace) => {
+          return this.announcementApi
+            .searchAnnouncementBanners({
+              announcementBannerSearchCriteria: {
+                workspaceName: currentWorkspace.workspaceName,
+                currentDate: this.currentDate
+              }
             })
-          )
-      })
-    )
+            .pipe(
+              map((results) => {
+                return (
+                  results.stream
+                    // exclude product specific announcements
+                    ?.filter((ann) => !ann.productName)
+                    // high prio first, low prio last
+                    .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
+                )
+              }),
+              catchError(() => {
+                return of([])
+              })
+            )
+        })
+      )
+      .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 }

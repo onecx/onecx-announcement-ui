@@ -5,9 +5,6 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
-import { CarouselModule } from 'primeng/carousel'
-import { ButtonModule } from 'primeng/button'
-import { TooltipModule } from 'primeng/tooltip'
 
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
@@ -76,7 +73,7 @@ describe('AnnouncementBannerComponent - common case', () => {
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [CommonModule, TranslateTestingModule, CarouselModule, ButtonModule, TooltipModule],
+          imports: [CommonModule, TranslateTestingModule],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
             { provide: AppConfigService },
@@ -108,6 +105,7 @@ describe('AnnouncementBannerComponent - common case', () => {
     )
 
     initializeComponent()
+    component['searchWorkspaceAnnouncements']()
 
     expect(component).toBeTruthy()
     component['announcementsSubject'].subscribe((anncmts) => {
@@ -267,6 +265,7 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
 
   it('should load announcements when the component starts', () => {
     initializeComponent()
+    component['searchWorkspaceAnnouncements']()
 
     expect(component).toBeTruthy()
     component['announcementsSubject'].subscribe((anncmts) => {
