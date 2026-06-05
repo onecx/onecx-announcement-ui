@@ -39,7 +39,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   }
   private readonly ignoredAnnouncementsKey = 'onecx_announcement_banner_ignored_ids'
   private readonly currentDate = new Date().toISOString()
-  private announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
+  private readonly announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
   public convertLineBreaks = Utils.convertLineBreaks
 

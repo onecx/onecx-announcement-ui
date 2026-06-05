@@ -54,7 +54,7 @@
           [class.text-red-800]="item.priority === 'IMPORTANT'"
           [class.text-yellow-800]="item.priority === 'NORMAL'"
           [class.text-blue-800]="item.priority === 'LOW'"
-          (click)="hide(item.id!)"
+          (onClick)="hide(item.id!)"
           [attr.aria-label]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
           [pTooltip]="'ANNOUNCEMENT.BANNER.CLOSE' | translate"
           tooltipPosition="top"
