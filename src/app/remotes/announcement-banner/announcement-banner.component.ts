@@ -2,6 +2,7 @@ import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
+
 import { CarouselModule } from 'primeng/carousel'
 import { ButtonModule } from 'primeng/button'
 import { TooltipModule } from 'primeng/tooltip'
@@ -44,7 +45,8 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   public convertLineBreaks = Utils.convertLineBreaks
 
   constructor(
-    @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
+    @Inject(REMOTE_COMPONENT_CONFIG)
+    private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
     private readonly appConfigService: AppConfigService,
     private readonly appStateService: AppStateService,
     private readonly translateService: TranslateService,
@@ -60,6 +62,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     else return 1
   }
 
+  // initialize this component as remote
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
     this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)

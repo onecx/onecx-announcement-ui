@@ -1,11 +1,10 @@
-@import '/src/app/_am-mixins.scss';
+@use 'src/app/am-mixins' as *;
 
 @include text-badges;
 @include ocx-text-responsive;
 @include ocx-floatlabel;
 @include ocx-modal-dialog;
-@include tabview-header-fix;
-@include tabview-body-fix;
+@include ocx-tabs;
 
 :host ::ng-deep {
   .p-toggleswitch:not(&.p-toggleswitch-checked) .p-toggleswitch-slider {

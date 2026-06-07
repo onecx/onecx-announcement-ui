@@ -25,6 +25,7 @@
 
 @mixin ocx-text-responsive {
   :host ::ng-deep {
+    --disabled-opacity: 0.7;
     .text-responsive {
       white-space: nowrap;
       overflow: hidden;
@@ -42,13 +43,6 @@
     -webkit-box-orient: vertical;
   } @else {
     white-space: nowrap;
-  }
-}
-
-// disable preset of opacity in form: not readable
-@mixin readable-disabled-form-controls {
-  :host ::ng-deep {
-    --disabled-opacity: 0.7;
   }
 }
 
@@ -73,22 +67,20 @@
   }
 }
 
-@mixin p-inputgroup-fixes {
+@mixin ocx-p-inputgroup {
   :host ::ng-deep {
-    .inputgroup-dropdown-with-link {
-      border-right: none;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-    .input-field-correction .p-inputtext {
-      padding-top: 1rem !important;
-      padding-bottom: 0.5rem !important;
-    }
-    .pseudo-button:hover {
-      background: var(--button-hover-bg) !important;
-      cursor: pointer;
-      * {
-        background: var(--button-hover-bg) !important;
+    .p-inputgroupaddon {
+      > p-button {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        > .p-button {
+          flex-grow: 1;
+        }
+      }
+      /* Manipulate the addon wrapper depends on button state inside */
+      &:has(.p-button.p-button-primary) {
+        border: none;
       }
     }
   }
@@ -146,19 +138,6 @@
 /* **********************************************
  *  PrimeNG - Layout Corrections
  * **********************************************/
-@mixin input-clear-icon {
-  .p-input-icon-right > a:last-of-type {
-    right: 0.75rem;
-    color: var(--emphasis-medium);
-  }
-  .p-input-icon-left > a,
-  .p-input-icon-right > a {
-    position: absolute;
-    top: 50%;
-    margin-top: -0.5rem;
-  }
-}
-
 @mixin correct-autocomplete {
   :host ::ng-deep {
     .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
@@ -493,23 +472,20 @@
 /* **********************************************
  *  TABs
  * **********************************************/
-@mixin tabview-body-fix {
+@mixin ocx-tabs {
   :host ::ng-deep {
-    .p-tabs .p-tabpanels {
-      padding: 1.4rem 0 0 0;
-    }
-  }
-}
-@mixin tabview-header-fix {
-  :host ::ng-deep {
-    --tabview-header-active-bg: rgb(from var(--primary-color) r g b / 0.12) !important;
-
-    .p-tablist-tab-list {
-      button.p-tab {
-        padding: 0.5rem 1rem;
+    .p-tabs {
+      .p-tablist {
+        border-bottom: 1px solid var(--surface-300);
+      }
+      .p-tab {
+        padding: 0.75rem 1rem;
         &.p-tab-active {
-          background-color: var(--tabview-header-active-bg) !important;
+          background-color: rgb(from var(--primary-color) r g b / 0.12);
         }
+      }
+      .p-tabpanels {
+        padding: 1.5rem 0 0 0;
       }
     }
   }

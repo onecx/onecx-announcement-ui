@@ -52,6 +52,7 @@ type ExtendedColumn = Column & {
   isDropdown?: boolean
   limit?: boolean
   css?: string
+  cssBody?: string
 }
 type AllMetaData = {
   allProducts: SelectItem[]
@@ -118,7 +119,7 @@ export class AnnouncementSearchComponent implements OnInit {
   public displayedColumnKeys: string[] = []
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
-  public tableFilterValue = ''
+  public globalFilterValue = ''
   public interactiveColumns: DataTableColumn[] = []
   public interactiveAdditionalActions: DataAction[] = [
     {
@@ -127,7 +128,7 @@ export class AnnouncementSearchComponent implements OnInit {
       icon: 'pi pi-copy',
       permission: 'ANNOUNCEMENT#CREATE',
       classes: ['copy-action-button'],
-      callback: (item) => this.onCopyFromInteractive(item as RowListGridData)
+      callback: (item: RowListGridData) => this.onCopyFromInteractive(item)
     }
   ]
   public getDisplayName = Utils.getDisplayName
@@ -163,6 +164,14 @@ export class AnnouncementSearchComponent implements OnInit {
       css: 'text-center '
     },
     {
+      field: 'type',
+      header: 'TYPE',
+      active: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      css: 'text-center',
+      cssBody: 'text-xl'
+    },
+    {
       field: 'title',
       header: 'TITLE',
       active: true,
@@ -173,37 +182,27 @@ export class AnnouncementSearchComponent implements OnInit {
       field: 'workspaceName',
       header: 'WORKSPACE',
       active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center'
+      translationPrefix: 'ANNOUNCEMENT'
     },
     {
       field: 'productName',
       header: 'PRODUCT_NAME',
       active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden xl:table-cell'
-    },
-    {
-      field: 'type',
-      header: 'TYPE',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center text-xl hidden xl:table-cell'
+      translationPrefix: 'ANNOUNCEMENT'
     },
     {
       field: 'priority',
       header: 'PRIORITY',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden lg:table-cell',
-      isDropdown: true
+      css: 'text-center hidden lg:table-cell'
     },
     {
       field: 'startDate',
       header: 'START_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center',
+      css: 'hidden lg:table-cell',
       hasFilter: false,
       isDate: true
     },
@@ -212,7 +211,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'END_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center',
+      css: 'hidden lg:table-cell',
       hasFilter: false,
       isDate: true
     }
@@ -233,7 +232,7 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public ngOnInit(): void {
     this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (lang) => {
+      next: (lang: string) => {
         this.datetimeFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm' : this.datetimeFormat
       }
     })
@@ -283,16 +282,16 @@ export class AnnouncementSearchComponent implements OnInit {
 
   public onGlobalFilter(value?: string, data?: RowListGridData[]): void {
     if (!data) return
-    this.tableFilterValue = value ?? ''
-    if (this.tableFilterValue === '') this.filteredData = undefined
+    this.globalFilterValue = value ?? ''
+    if (this.globalFilterValue === '') this.filteredData = undefined
     else
       this.filteredData = data?.filter((row) =>
-        row['title']?.toString().toLowerCase().includes(this.tableFilterValue.toLowerCase())
+        row['title']?.toString().toLowerCase().includes(this.globalFilterValue.toLowerCase())
       )
   }
 
   public onClearGlobalFilter(input?: HTMLInputElement): void {
-    this.tableFilterValue = ''
+    this.globalFilterValue = ''
     this.filteredData = undefined
     if (input) input.value = ''
   }
@@ -353,7 +352,6 @@ export class AnnouncementSearchComponent implements OnInit {
 
   private getInteractiveColumnType(col: ExtendedColumn): ColumnType {
     if (col.isDate) return ColumnType.DATE
-    if (col.isDropdown) return ColumnType.TRANSLATION_KEY
     return ColumnType.STRING
   }
 
@@ -361,6 +359,7 @@ export class AnnouncementSearchComponent implements OnInit {
     return !['status', 'type'].includes(col.field)
   }
 
+  // Extend the columns with information for interactive table and special rendering
   private createInteractiveColumns(): DataTableColumn[] {
     return this.columns.map((col) => {
       const columnLabelKey = `${col.translationPrefix}.${col.header}`
@@ -374,7 +373,9 @@ export class AnnouncementSearchComponent implements OnInit {
         sortable: this.isInteractiveSortable(col),
         filterable: col.hasFilter === true,
         dateFormat: col.isDate ? this.datetimeFormat : undefined,
-        css: col.css
+        // extensions for custom rendering:
+        css: col.css,
+        cssBody: col.cssBody
       }
     })
   }
@@ -388,7 +389,7 @@ export class AnnouncementSearchComponent implements OnInit {
       const productName = this.item4Delete?.productName
       const data = this.dataSubject$.getValue()?.filter((d) => d['id'] !== this.item4Delete?.id) ?? []
       this.dataSubject$.next(data)
-      this.onGlobalFilter(this.tableFilterValue, data) // update filtered data if filter is active
+      this.onGlobalFilter(this.globalFilterValue, data) // update filtered data if filter is active
       if (productName && !data.some((d) => d?.['productName'] === productName)) {
         this.usedListsTrigger$.next()
       }

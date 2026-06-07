@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
@@ -59,12 +58,11 @@ describe('AnnouncementListActiveComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: AppStateService, useValue: mockAppStateService },
-        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject }
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     })
       .overrideComponent(OneCXAnnouncementListActiveComponent, {

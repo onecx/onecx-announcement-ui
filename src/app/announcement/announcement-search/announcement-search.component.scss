@@ -1,12 +1,12 @@
-@import '/src/app/_am-mixins.scss';
+@use 'src/app/am-mixins' as *;
 
 @include danger-action;
 @include ocx-text-responsive;
 @include ocx-floatlabel;
+@include ocx-p-inputgroup;
 @include ocx-modal-dialog;
 @include ocx-interactive-data-view-fixes;
 @include p-table-zebra-rows;
-@include p-inputgroup-fixes;
 @include table-inline-p-buttons;
 @include table-responsive-table-cell;
 
