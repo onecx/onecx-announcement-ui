@@ -56,12 +56,6 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
   }
 
-  private prioValue(prio: string | undefined): number {
-    if (prio === 'IMPORTANT') return 3
-    if (prio === 'NORMAL') return 2
-    else return 1
-  }
-
   // initialize this component as remote
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
     this.announcementApi.configuration = new Configuration({
@@ -70,6 +64,12 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.appConfigService.init(config['baseUrl'])
     this.remoteComponentConfig.next(config)
     this.searchWorkspaceAnnouncements()
+  }
+
+  private prioValue(prio: string | undefined): number {
+    if (prio === 'IMPORTANT') return 3
+    if (prio === 'NORMAL') return 2
+    else return 1
   }
 
   private searchWorkspaceAnnouncements() {
@@ -110,7 +110,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 
-  hide(id: string): void {
+  public hide(id: string): void {
     try {
       const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
 
@@ -124,6 +124,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       console.error('Failed to hide the announcement:', error)
     }
   }
+
   private getIgnoredAnnouncementsIds(): string[] {
     try {
       const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)

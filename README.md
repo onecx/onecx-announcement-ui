@@ -1,3 +1,3 @@
 # onecx-announcement-ui
 
-OneCX Announcement 
+OneCX Announcement UI 
