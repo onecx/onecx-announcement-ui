@@ -186,7 +186,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'WORKSPACE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-2 md:p-0',
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
       cssBody: 'hidden md:table-cell p-2 md:p-0'
     },
     {
@@ -194,7 +194,7 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'PRODUCT_NAME',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-2 md:p-0',
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
       cssBody: 'hidden md:table-cell p-2 md:p-0'
     },
     {
@@ -202,16 +202,16 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'PRIORITY',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2 lg:p-0',
-      cssBody: 'hidden lg:table-cell p-2 lg:p-0'
+      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
+      cssBody: 'hidden xl:table-cell p-0 xl:p-2 text-center'
     },
     {
       field: 'startDate',
       header: 'START_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2 lg:p-0',
-      cssBody: 'hidden lg:table-cell p-2 lg:p-0',
+      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 lg:p-2',
+      cssBody: 'hidden lg:table-cell p-0 lg:p-2',
       hasFilter: false,
       isDate: true
     },
@@ -220,8 +220,8 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'END_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2 lg:p-0',
-      cssBody: 'hidden lg:table-cell p-2 lg:p-0',
+      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
+      cssBody: 'hidden xl:table-cell p-0 xl:p-2',
       hasFilter: false,
       isDate: true
     }
