@@ -51,7 +51,7 @@ type ExtendedColumn = Column & {
   isDate?: boolean
   isDropdown?: boolean
   limit?: boolean
-  css?: string
+  cssHeader?: string
   cssBody?: string
 }
 type AllMetaData = {
@@ -161,48 +161,57 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'STATUS',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center '
+      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'text-center p-2'
     },
     {
       field: 'type',
       header: 'TYPE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center',
-      cssBody: 'text-xl'
+      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'text-xl text-center p-2'
     },
     {
       field: 'title',
       header: 'TITLE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 p-2',
+      cssBody: 'p-2',
       limit: true
     },
     {
       field: 'workspaceName',
       header: 'WORKSPACE',
       active: true,
-      translationPrefix: 'ANNOUNCEMENT'
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-2 md:p-0',
+      cssBody: 'hidden md:table-cell p-2 md:p-0'
     },
     {
       field: 'productName',
       header: 'PRODUCT_NAME',
       active: true,
-      translationPrefix: 'ANNOUNCEMENT'
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-2 md:p-0',
+      cssBody: 'hidden md:table-cell p-2 md:p-0'
     },
     {
       field: 'priority',
       header: 'PRIORITY',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'text-center hidden lg:table-cell'
+      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2 lg:p-0',
+      cssBody: 'hidden lg:table-cell p-2 lg:p-0'
     },
     {
       field: 'startDate',
       header: 'START_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'hidden lg:table-cell',
+      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2 lg:p-0',
+      cssBody: 'hidden lg:table-cell p-2 lg:p-0',
       hasFilter: false,
       isDate: true
     },
@@ -211,7 +220,8 @@ export class AnnouncementSearchComponent implements OnInit {
       header: 'END_DATE',
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
-      css: 'hidden lg:table-cell',
+      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2 lg:p-0',
+      cssBody: 'hidden lg:table-cell p-2 lg:p-0',
       hasFilter: false,
       isDate: true
     }
@@ -374,7 +384,7 @@ export class AnnouncementSearchComponent implements OnInit {
         filterable: col.hasFilter === true,
         dateFormat: col.isDate ? this.datetimeFormat : undefined,
         // extensions for custom rendering:
-        css: col.css,
+        cssHeader: col.cssHeader,
         cssBody: col.cssBody
       }
     })

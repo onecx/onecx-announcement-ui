@@ -25,9 +25,17 @@
       }
     }
 
+    /* table header padding, if visible */
+    .p-datatable-thead > tr > th {
+      padding: 0;
+    }
+    /* table cell dimensions/padding managed by column settings */
+    .p-datatable-tbody > tr > td {
+      padding: 0;
+    }
+
     .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
-      padding: 0.5rem;
       /* action column */
       &:first-child {
         border-right: 1px solid var(--surface-border, #dee2e6);

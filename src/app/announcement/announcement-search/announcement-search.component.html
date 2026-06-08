@@ -122,18 +122,36 @@
         </ng-template>
 
         <!-- TABLE COLUMN HEADER -->
-        <ng-template pTemplate="columnHeader" let-col="column">
-          <span [class]="col.css">{{ col.nameKey | translate }}</span>
+        <ng-template
+          pTemplate="columnHeader"
+          let-col="column"
+          let-labelTemplate="labelTemplate"
+          let-sortTemplate="sortTemplate"
+          let-filterTemplate="filterTemplate"
+        >
+          <div [class]="col.cssHeader">
+            <div>
+              <ng-container
+                [ngTemplateOutlet]="labelTemplate"
+                [ngTemplateOutletContext]="{ column: col }"
+              ></ng-container>
+            </div>
+            <ng-container
+              [ngTemplateOutlet]="filterTemplate"
+              [ngTemplateOutletContext]="{ column: col }"
+            ></ng-container>
+            <ng-container [ngTemplateOutlet]="sortTemplate" [ngTemplateOutletContext]="{ column: col }"></ng-container>
+          </div>
         </ng-template>
 
         <!-- TABLE BODY -->
         <ng-template pTemplate="dateTableCell" let-item="rowObject" let-col="column">
-          @let colBodyCss = (col.cssBody ?? '') + ' ' + (col.css ?? '');
+          @let colBodyCss = col.cssBody ?? '';
           <div [class]="colBodyCss">{{ item[col.id] | date: datetimeFormat }}</div>
         </ng-template>
 
         <ng-template pTemplate="stringTableCell" let-item="rowObject" let-col="column">
-          @let colBodyCss = (col.cssBody ?? '') + ' ' + (col.css ?? '');
+          @let colBodyCss = col.cssBody ?? '';
           @switch (col.id) {
             @case ('type') {
               <div
@@ -181,7 +199,8 @@
                     name: item['workspaceName'],
                     displayName: getDisplayName(item['workspaceName'], metaData.allWorkspaces),
                     nameAll: 'ANNOUNCEMENT.ALL' | translate,
-                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
+                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
+                    class: colBodyCss
                   }
                 }"
               />
@@ -194,7 +213,8 @@
                     name: item['productName'],
                     displayName: getDisplayName(item['productName'], metaData.allProducts),
                     nameAll: 'ANNOUNCEMENT.ALL' | translate,
-                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate
+                    nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
+                    class: colBodyCss
                   }
                 }"
               />
@@ -207,16 +227,19 @@
 
         <!-- SPECIAL: translate meta data names -->
         <ng-template #displayNameTemplate let-mdata="data">
-          <ng-container *ngIf="!mdata.name"> {{ mdata.nameAll }} </ng-container>
-          <div
-            *ngIf="mdata.name"
-            class="text-ellipsis-2-lines"
-            [pTooltip]="mdata.displayName ? '' : mdata.name"
-            tooltipPosition="top"
-            tooltipEvent="hover"
-          >
-            {{ mdata.displayName ?? mdata.nameNotFound }}
-          </div>
+          @if (mdata.name) {
+            <div
+              *ngIf="mdata.name"
+              [class]="mdata.class + ' text-ellipsis-2-lines'"
+              [pTooltip]="mdata.displayName ? '' : mdata.name"
+              tooltipPosition="top"
+              tooltipEvent="hover"
+            >
+              {{ mdata.displayName ?? mdata.nameNotFound }}
+            </div>
+          } @else {
+            <div [class]="mdata.class">{{ mdata.nameAll }}</div>
+          }
         </ng-template>
       </ocx-interactive-data-view>
 

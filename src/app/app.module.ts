@@ -4,13 +4,13 @@ import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/
 import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations'
 import { RouterModule, Routes } from '@angular/router'
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
+import { MissingTranslationHandler, TranslateLoader, TranslateModule } from '@ngx-translate/core'
 
 import { AngularAuthModule } from '@onecx/angular-auth'
-import { createTranslateLoader, provideThemeConfig, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 import { APP_CONFIG } from '@onecx/angular-integration-interface'
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { StandaloneShellModule, provideStandaloneProviders } from '@onecx/angular-standalone-shell'
+import { createTranslateLoader, provideThemeConfig, provideTranslationPathFromMeta } from '@onecx/angular-utils'
 
 import { environment } from 'src/environments/environment'
 import { AppComponent } from './app.component'
@@ -22,7 +22,6 @@ const routes: Routes = [
   }
 ]
 @NgModule({
-  bootstrap: [AppComponent],
   imports: [
     AppComponent,
     CommonModule,
@@ -34,18 +33,22 @@ const routes: Routes = [
       initialNavigation: 'enabledBlocking',
       enableTracing: true
     }),
+    StandaloneShellModule,
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
-    }),
-    StandaloneShellModule
+      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
+      missingTranslationHandler: {
+        provide: MissingTranslationHandler,
+        useClass: AngularAcceleratorMissingTranslationHandler
+      }
+    })
   ],
   providers: [
     { provide: APP_CONFIG, useValue: environment },
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideHttpClient(withInterceptorsFromDi()),
-    provideThemeConfig(),
     provideStandaloneProviders(),
+    provideThemeConfig(),
     provideAnimations()
   ]
 })
