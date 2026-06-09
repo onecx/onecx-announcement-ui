@@ -25,14 +25,10 @@
       }
     }
 
-    /* table cell dimensions/padding managed by column settings */
     .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
+      /* table cell padding is managed by column settings */
       padding: 0;
-    }
-
-    .p-datatable-thead > tr > th,
-    .p-datatable-tbody > tr > td {
       /* action column */
       &:first-child {
         border-right: 1px solid var(--surface-border, #dee2e6);
