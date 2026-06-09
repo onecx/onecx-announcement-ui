@@ -25,11 +25,8 @@
       }
     }
 
-    /* table header padding, if visible */
-    .p-datatable-thead > tr > th {
-      padding: 0;
-    }
     /* table cell dimensions/padding managed by column settings */
+    .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
       padding: 0;
     }
@@ -42,8 +39,7 @@
         width: 1rem;
         white-space: nowrap;
         text-align: center;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding: 0.5rem 1rem;
       }
       .icon-button-row-wrapper {
         display: flex;
