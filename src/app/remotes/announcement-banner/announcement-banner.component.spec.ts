@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
@@ -45,7 +44,7 @@ describe('AnnouncementBannerComponent - common case', () => {
   let mockAppStateService: MockAppStateService
   let baseUrlSubject: ReplaySubject<any>
 
-  const apiServiceSpy = {
+  const annServiceSpy = {
     searchAnnouncementBanners: jasmine
       .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
@@ -63,19 +62,18 @@ describe('AnnouncementBannerComponent - common case', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: AppStateService, useValue: mockAppStateService },
-        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject }
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
           imports: [CommonModule, TranslateTestingModule],
           providers: [
-            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
+            { provide: AnnouncementInternalAPIService, useValue: annServiceSpy },
             { provide: AppConfigService },
             { provide: AppStateService, useValue: mockAppStateService }
           ]
@@ -85,7 +83,7 @@ describe('AnnouncementBannerComponent - common case', () => {
 
     baseUrlSubject.next('base_url_mock')
 
-    apiServiceSpy.searchAnnouncementBanners.calls.reset()
+    annServiceSpy.searchAnnouncementBanners.calls.reset()
   })
 
   function initializeComponent() {
@@ -100,7 +98,7 @@ describe('AnnouncementBannerComponent - common case', () => {
   })
 
   it('should load announcements when the component starts', () => {
-    apiServiceSpy.searchAnnouncementBanners.and.returnValue(
+    annServiceSpy.searchAnnouncementBanners.and.returnValue(
       of({ stream: [normalAnnouncement, lowPrioAnnouncement, importantAnnouncement] })
     )
 
@@ -114,7 +112,7 @@ describe('AnnouncementBannerComponent - common case', () => {
   })
 
   it('should catch an error if loading announcements fails', () => {
-    apiServiceSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
+    annServiceSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
 
     initializeComponent()
 
@@ -211,17 +209,17 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
   let component: OneCXAnnouncementBannerComponent
   let fixture: ComponentFixture<OneCXAnnouncementBannerComponent>
   let mockAppStateService: MockAppStateServiceWelcome
+  let baseUrlSubject: ReplaySubject<any>
 
-  const apiServiceSpy = {
+  const annServiceSpy = {
     searchAnnouncementBanners: jasmine
       .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
   }
 
-  let baseUrlSubject: ReplaySubject<any>
   beforeEach(() => {
-    mockAppStateService = new MockAppStateServiceWelcome()
     baseUrlSubject = new ReplaySubject<any>(1)
+    mockAppStateService = new MockAppStateServiceWelcome()
 
     TestBed.configureTestingModule({
       declarations: [],
@@ -231,20 +229,17 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: AppStateService, useValue: MockAppStateServiceWelcome },
         provideHttpClient(),
-        provideHttpClientTesting(),
-        {
-          provide: REMOTE_COMPONENT_CONFIG,
-          useValue: baseUrlSubject
-        }
+        provideHttpClientTesting()
       ]
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
           imports: [CommonModule, TranslateTestingModule],
           providers: [
-            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
+            { provide: AnnouncementInternalAPIService, useValue: annServiceSpy },
             { provide: AppConfigService },
             { provide: AppStateService, useValue: mockAppStateService }
           ]
@@ -254,7 +249,7 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
 
     baseUrlSubject.next('base_url_mock')
 
-    apiServiceSpy.searchAnnouncementBanners.calls.reset()
+    annServiceSpy.searchAnnouncementBanners.calls.reset()
   })
 
   function initializeComponent() {

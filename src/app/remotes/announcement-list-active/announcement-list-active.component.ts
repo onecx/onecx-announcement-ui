@@ -45,12 +45,6 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
   }
 
-  private prioValue(prio: string | undefined): number {
-    if (prio === 'IMPORTANT') return 3
-    if (prio === 'NORMAL') return 2
-    else return 1
-  }
-
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
     this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
@@ -58,6 +52,12 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
     this.appConfigService.init(config['baseUrl'])
     this.remoteComponentConfig.next(config)
     this.searchWorkspaceAnnouncements()
+  }
+
+  private prioValue(prio: string | undefined): number {
+    if (prio === 'IMPORTANT') return 3
+    if (prio === 'NORMAL') return 2
+    else return 1
   }
 
   private searchWorkspaceAnnouncements() {

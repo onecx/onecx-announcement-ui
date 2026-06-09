@@ -1,12 +1,12 @@
-@import '/src/app/_am-mixins.scss';
+@use 'src/app/am-mixins' as *;
 
 @include danger-action;
 @include ocx-text-responsive;
 @include ocx-floatlabel;
+@include ocx-p-inputgroup;
 @include ocx-modal-dialog;
 @include ocx-interactive-data-view-fixes;
 @include p-table-zebra-rows;
-@include p-inputgroup-fixes;
 @include table-inline-p-buttons;
 @include table-responsive-table-cell;
 
@@ -27,15 +27,15 @@
 
     .p-datatable-thead > tr > th,
     .p-datatable-tbody > tr > td {
-      padding: 0.5rem;
+      /* table cell padding is managed by column settings */
+      padding: 0;
       /* action column */
       &:first-child {
         border-right: 1px solid var(--surface-border, #dee2e6);
         width: 1rem;
         white-space: nowrap;
         text-align: center;
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding: 0.5rem 1rem;
       }
       .icon-button-row-wrapper {
         display: flex;

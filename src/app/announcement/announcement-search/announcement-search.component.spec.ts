@@ -674,7 +674,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should return early if data is not provided', () => {
       component.onGlobalFilter('test', undefined)
 
-      expect(component.tableFilterValue).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.filteredData).toBeUndefined()
     })
 
@@ -683,7 +683,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onGlobalFilter('', data)
 
-      expect(component.tableFilterValue).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.filteredData).toBeUndefined()
     })
 
@@ -692,7 +692,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onGlobalFilter(undefined, data)
 
-      expect(component.tableFilterValue).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.filteredData).toBeUndefined()
     })
 
@@ -701,7 +701,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onGlobalFilter('admin', data)
 
-      expect(component.tableFilterValue).toBe('admin')
+      expect(component.globalFilterValue).toBe('admin')
       expect(component.filteredData?.length).toBe(1)
       expect((component.filteredData?.[0] as any).workspaceName).toBe('ADMIN')
     })
@@ -711,29 +711,29 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onGlobalFilter('nonexistent', data)
 
-      expect(component.tableFilterValue).toBe('nonexistent')
+      expect(component.globalFilterValue).toBe('nonexistent')
       expect(component.filteredData?.length).toBe(0)
     })
 
     it('should clear global filter and reset filteredData', () => {
-      component.tableFilterValue = 'some filter'
+      component.globalFilterValue = 'some filter'
       component.filteredData = itemData as RowListGridData[]
 
       component.onClearGlobalFilter()
 
-      expect(component.tableFilterValue).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.filteredData).toBeUndefined()
     })
 
     it('should clear global filter and reset input element value', () => {
-      component.tableFilterValue = 'some filter'
+      component.globalFilterValue = 'some filter'
       component.filteredData = itemData as RowListGridData[]
       const input = document.createElement('input')
       input.value = 'some filter'
 
       component.onClearGlobalFilter(input)
 
-      expect(component.tableFilterValue).toBe('')
+      expect(component.globalFilterValue).toBe('')
       expect(component.filteredData).toBeUndefined()
       expect(input.value).toBe('')
     })

@@ -20,7 +20,9 @@ const PROXY_CONFIG = {
   '/bff/': {
     target: 'http://onecx-announcement-bff',
     secure: false,
-    pathRewrite: { '^.*/bff/': '/' },
+    pathRewrite: {
+      '^.*/bff/': '/'
+    },
     changeOrigin: true,
     logLevel: 'debug',
     onProxyRes: onProxyRes

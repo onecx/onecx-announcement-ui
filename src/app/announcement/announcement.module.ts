@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { PortalPageComponent, providePermissionService } from '@onecx/angular-utils'
 
 import { SharedModule } from 'src/app/shared/shared.module'
 import { LabelResolver } from 'src/app/shared/label.resolver'
-import { PortalPageComponent, providePermissionService } from '@onecx/angular-utils'
 
 import { AnnouncementSearchComponent } from './announcement-search/announcement-search.component'
 import { AnnouncementDeleteComponent } from './announcement-delete/announcement-delete.component'
-import { OneCXAnnouncementListActiveComponent } from '../remotes/announcement-list-active/announcement-list-active.component'
+import { OneCXAnnouncementListActiveComponent } from 'src/app/remotes/announcement-list-active/announcement-list-active.component'
 
 const routes: Routes = [
   {

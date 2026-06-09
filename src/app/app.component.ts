@@ -3,9 +3,9 @@ import { StandaloneShellModule } from '@onecx/angular-standalone-shell'
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
   standalone: true,
-  imports: [StandaloneShellModule]
+  imports: [StandaloneShellModule],
+  templateUrl: './app.component.html'
 })
 export class AppComponent {
   title = 'onecx-ui'

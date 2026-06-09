@@ -2,6 +2,7 @@ import { Component, Inject, Input } from '@angular/core'
 import { CommonModule, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
+
 import { CarouselModule } from 'primeng/carousel'
 import { ButtonModule } from 'primeng/button'
 import { TooltipModule } from 'primeng/tooltip'
@@ -44,7 +45,8 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   public convertLineBreaks = Utils.convertLineBreaks
 
   constructor(
-    @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
+    @Inject(REMOTE_COMPONENT_CONFIG)
+    private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
     private readonly appConfigService: AppConfigService,
     private readonly appStateService: AppStateService,
     private readonly translateService: TranslateService,
@@ -54,12 +56,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
   }
 
-  private prioValue(prio: string | undefined): number {
-    if (prio === 'IMPORTANT') return 3
-    if (prio === 'NORMAL') return 2
-    else return 1
-  }
-
+  // initialize this component as remote
   public ocxInitRemoteComponent(config: RemoteComponentConfig): void {
     this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
@@ -67,6 +64,12 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.appConfigService.init(config['baseUrl'])
     this.remoteComponentConfig.next(config)
     this.searchWorkspaceAnnouncements()
+  }
+
+  private prioValue(prio: string | undefined): number {
+    if (prio === 'IMPORTANT') return 3
+    if (prio === 'NORMAL') return 2
+    else return 1
   }
 
   private searchWorkspaceAnnouncements() {
@@ -107,7 +110,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       .subscribe((announcements) => this.announcementsSubject.next(announcements))
   }
 
-  hide(id: string): void {
+  public hide(id: string): void {
     try {
       const ignoredAnnouncements = this.getIgnoredAnnouncementsIds()
 
@@ -121,6 +124,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       console.error('Failed to hide the announcement:', error)
     }
   }
+
   private getIgnoredAnnouncementsIds(): string[] {
     try {
       const ignored = localStorage.getItem(this.ignoredAnnouncementsKey)

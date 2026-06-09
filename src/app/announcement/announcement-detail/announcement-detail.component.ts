@@ -26,8 +26,8 @@ import {
   UpdateAnnouncementRequest
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
-import type { ChangeMode } from '../announcement-search/announcement-search.component'
 import { AnnouncementEnumTranslation } from '../announcement-enum-translation'
+import type { ChangeMode } from '../announcement-search/announcement-search.component'
 
 export function dateRangeValidator(fg: FormGroup): ValidatorFn {
   return (): ValidationErrors | null => {

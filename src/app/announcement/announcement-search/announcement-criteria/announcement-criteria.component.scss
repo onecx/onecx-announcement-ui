@@ -1,4 +1,4 @@
-@import '/src/app/_am-mixins.scss';
+@use 'src/app/am-mixins' as *;
 
 @include ocx-search-criteria-fixes;
 @include ocx-text-responsive;

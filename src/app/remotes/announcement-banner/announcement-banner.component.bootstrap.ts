@@ -43,9 +43,7 @@ bootstrapRemoteComponent(
         useClass: AngularAcceleratorMissingTranslationHandler
       }
     }),
-    importProvidersFrom(AngularAuthModule),
-    importProvidersFrom(BrowserModule),
-    importProvidersFrom(BrowserAnimationsModule),
+    importProvidersFrom(AngularAuthModule, BrowserModule, BrowserAnimationsModule),
     provideThemeConfig()
   ]
 )
