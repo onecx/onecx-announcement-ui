@@ -78,6 +78,7 @@
       >
       <p-tab
         value="2"
+        [disabled]="['COPY', 'CREATE'].includes(changeMode)"
         [pTooltip]="'DIALOG.DETAIL.TAB.TOOLTIPS.INTERN' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
@@ -99,7 +100,7 @@
               tooltipEvent="hover"
               aria-hidden="true"
             />
-            <p-floatlabel class="flex-grow-1">
+            <p-floatlabel variant="on" class="flex-grow-1">
               <textarea
                 #announcementTitle
                 pInputTextarea
@@ -134,7 +135,7 @@
               tooltipEvent="hover"
               aria-hidden="true"
             />
-            <p-floatlabel class="flex-grow-1">
+            <p-floatlabel variant="on" class="flex-grow-1">
               <textarea
                 #announcementContent
                 pInputTextarea
@@ -169,7 +170,7 @@
             <div
               class="w-full flex flex-column sm:flex-row sm:flex-wrap row-gap-3 sm:row-gap-4 sm:justify-content-between"
             >
-              <p-floatlabel class="flex-grow-1">
+              <p-floatlabel variant="on" class="flex-grow-1">
                 <p-datepicker
                   inputId="am_detail_form_start_date"
                   type="text"
@@ -193,7 +194,7 @@
                   {{ 'ANNOUNCEMENT.START_DATE' | translate }}
                 </label>
               </p-floatlabel>
-              <p-floatlabel class="flex-grow-1">
+              <p-floatlabel variant="on" class="flex-grow-1">
                 <p-datepicker
                   inputId="am_detail_form_end_date"
                   type="text"
@@ -258,7 +259,7 @@
             [legend]="'DIALOG.DETAIL.TAB.VISIBILITY' | translate"
           >
             <div class="w-full flex flex-column sm:flex-row sm:flex-nowrap row-gap-3 sm:row-gap-0 column-gap-5">
-              <span class="p-floatlabel p-floatlabel-on am-label-top flex-1 min-w-0">
+              <p-floatlabel variant="on" class="flex-1 min-w-0">
                 <p-select
                   #workspaceName
                   id="am_detail_form_workspace_name"
@@ -280,9 +281,9 @@
                 <label for="am_detail_form_workspace_name" aria-hidden="true">
                   {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}
                 </label>
-              </span>
+              </p-floatlabel>
 
-              <span class="p-floatlabel p-floatlabel-on am-label-top flex-1 min-w-0">
+              <p-floatlabel variant="on" class="flex-1 min-w-0">
                 <p-select
                   id="am_detail_form_application_name"
                   class="input-field"
@@ -303,7 +304,7 @@
                 <label for="am_detail_form_application_name" aria-hidden="true">
                   {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}
                 </label>
-              </span>
+              </p-floatlabel>
             </div>
           </p-fieldset>
 
@@ -374,7 +375,7 @@
         <div class="mt-0 sm:mt-2 flex flex-column row-gap-5">
           <!-- row 1 -->
           <div class="flex flex-column sm:flex-row gap-3 sm:gap-4">
-            <p-floatlabel class="flex-grow-1 sm:flex-grow-0">
+            <p-floatlabel variant="on" class="flex-grow-1 sm:flex-grow-0">
               <input
                 pInputText
                 type="text"
@@ -391,7 +392,7 @@
                 {{ 'INTERNAL.CREATION_DATE' | translate }}
               </label>
             </p-floatlabel>
-            <p-floatlabel class="flex-grow-1">
+            <p-floatlabel variant="on" class="flex-grow-1">
               <input
                 pInputText
                 type="text"
@@ -412,7 +413,7 @@
 
           <!-- row 2 -->
           <div class="flex flex-column sm:flex-row gap-3 sm:gap-4">
-            <p-floatlabel class="flex-grow-1 sm:flex-grow-0">
+            <p-floatlabel variant="on" class="flex-grow-1 sm:flex-grow-0">
               <input
                 pInputText
                 type="text"
@@ -429,7 +430,7 @@
                 {{ 'INTERNAL.MODIFICATION_DATE' | translate }}
               </label>
             </p-floatlabel>
-            <p-floatlabel class="flex-grow-1">
+            <p-floatlabel variant="on" class="flex-grow-1">
               <input
                 pInputText
                 type="text"

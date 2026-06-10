@@ -26,6 +26,7 @@ import {
   UpdateAnnouncementRequest
 } from 'src/app/shared/generated'
 import { SharedModule } from 'src/app/shared/shared.module'
+
 import { AnnouncementEnumTranslation } from '../announcement-enum-translation'
 import type { ChangeMode } from '../announcement-search/announcement-search.component'
 
@@ -116,11 +117,18 @@ export class AnnouncementDetailComponent implements OnChanges {
     if (!this.visible) return
     this.exceptionKey = undefined
     // matching mode and given data?
-    if ('CREATE' === this.changeMode && this.announcement) return
-    if (['EDIT', 'VIEW'].includes(this.changeMode))
-      if (this.announcement) this.getData(this.announcement?.id)
-      else return
-    else this.prepareForm(this.announcement)
+    switch (this.changeMode) {
+      case 'CREATE':
+        this.prepareForm()
+        break
+      case 'COPY':
+        this.prepareForm(this.announcement)
+        break
+      case 'EDIT':
+      case 'VIEW':
+        this.getData(this.announcement?.id)
+        break
+    }
   }
 
   private prepareForm(data?: Announcement): void {
