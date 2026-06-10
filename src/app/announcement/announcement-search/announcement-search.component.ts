@@ -178,7 +178,7 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       translationPrefix: 'ANNOUNCEMENT',
       cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 p-2',
-      cssBody: 'p-2',
+      cssBody: 'py-0 px-2 sm:px-3',
       limit: true
     },
     {

@@ -3,7 +3,6 @@
 @include text-badges;
 @include ocx-required-label;
 @include ocx-text-responsive;
-@include ocx-modal-dialog;
 @include ocx-tabs;
 
 :host ::ng-deep {
@@ -81,7 +80,7 @@
       word-break: break-word;
     }
     .p-fieldset-content {
-      padding: 0rem 0.5rem 0rem 0.5rem;
+      padding: 0rem 0.5rem;
     }
   }
 
