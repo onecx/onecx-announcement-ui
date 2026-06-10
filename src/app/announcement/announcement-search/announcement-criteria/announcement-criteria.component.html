@@ -7,7 +7,7 @@
   [actions]="actions"
 >
   <form [formGroup]="criteriaForm" class="flex flex-wrap gap-3">
-    <p-floatlabel>
+    <p-floatlabel variant="on">
       <input
         #criteriaAnnouncementTitle
         id="am_search_criteria_title"
@@ -28,7 +28,7 @@
       />
       <label for="am_search_criteria_title" aria-hidden="true">{{ 'ANNOUNCEMENT.TITLE' | translate }}</label>
     </p-floatlabel>
-    <p-floatlabel>
+    <p-floatlabel variant="on">
       <p-datepicker
         inputId="am_search_criteria_start_date_range"
         styleClass="w-13rem"
@@ -48,7 +48,7 @@
         {{ 'ANNOUNCEMENT.START_DATE_RANGE' | translate }}
       </label>
     </p-floatlabel>
-    <p-floatlabel>
+    <p-floatlabel variant="on">
       <p-select
         id="am_search_criteria_workspace_name"
         styleClass="w-11rem sm:w-13rem"
@@ -69,7 +69,7 @@
         {{ 'ANNOUNCEMENT.WORKSPACE' | translate }}
       </label>
     </p-floatlabel>
-    <p-floatlabel>
+    <p-floatlabel variant="on">
       <p-select
         id="am_search_criteria_product_name"
         styleClass="w-11rem sm:w-13rem"
@@ -90,7 +90,7 @@
         {{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}
       </label>
     </p-floatlabel>
-    <p-floatlabel *ocxAdvanced>
+    <p-floatlabel variant="on" *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_status"
         formControlName="status"
@@ -106,7 +106,7 @@
       <label for="am_search_criteria_status" aria-hidden="true">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
     </p-floatlabel>
 
-    <p-floatlabel *ocxAdvanced>
+    <p-floatlabel variant="on" *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_type"
         formControlName="type"
@@ -122,7 +122,7 @@
       <label for="am_search_criteria_type" aria-hidden="true">{{ 'ANNOUNCEMENT.TYPE' | translate }}</label>
     </p-floatlabel>
 
-    <p-floatlabel *ocxAdvanced>
+    <p-floatlabel variant="on" *ocxAdvanced>
       <p-multiSelect
         id="am_search_criteria_priority"
         [options]="(priorityTypeOptions$ | async) ?? []"

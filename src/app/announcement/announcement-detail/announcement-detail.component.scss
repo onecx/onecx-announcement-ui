@@ -1,8 +1,8 @@
 @use 'src/app/am-mixins' as *;
 
 @include text-badges;
+@include ocx-required-label;
 @include ocx-text-responsive;
-@include ocx-floatlabel;
 @include ocx-modal-dialog;
 @include ocx-tabs;
 
