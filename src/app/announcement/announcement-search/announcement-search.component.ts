@@ -10,14 +10,14 @@ import {
   Observable,
   of,
   Subscription,
-  switchMap
+  switchMap,
+  tap
 } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import {
   Action,
-  AngularAcceleratorModule,
   ColumnType,
   DataAction,
   DataSortDirection,
@@ -27,27 +27,27 @@ import {
 import { PortalPageComponent } from '@onecx/angular-utils'
 import { SlotService } from '@onecx/angular-remote-components'
 
+import { SharedModule } from 'src/app/shared/shared.module'
 import {
   Announcement,
   AnnouncementAssignments,
   AnnouncementInternalAPIService,
   AnnouncementSearchCriteria
 } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
 import { Utils } from 'src/app/shared/utils'
 import { AnnouncementDetailComponent } from '../announcement-detail/announcement-detail.component'
 import { AnnouncementDeleteComponent } from '../announcement-delete/announcement-delete.component'
 import { AnnouncementCriteriaComponent } from './announcement-criteria/announcement-criteria.component'
 
 export type ChangeMode = 'VIEW' | 'COPY' | 'CREATE' | 'EDIT'
-type Column = {
+export type ExtendedColumn = {
   field: string
-  header: string
+  labelKey: string
   active?: boolean
   translationPrefix?: string
-}
-type ExtendedColumn = Column & {
-  hasFilter?: boolean
+  sortable: boolean
+  filterable?: boolean
+  // extensions for UI configuration
   isDate?: boolean
   isDropdown?: boolean
   limit?: boolean
@@ -98,7 +98,6 @@ export type Workspace = {
   standalone: true,
   imports: [
     SharedModule,
-    AngularAcceleratorModule,
     PortalPageComponent,
     AnnouncementCriteriaComponent,
     AnnouncementDetailComponent,
@@ -120,6 +119,85 @@ export class AnnouncementSearchComponent implements OnInit {
   public sortField = 'startDate'
   public sortDirection = DataSortDirection.DESCENDING
   public globalFilterValue = ''
+  public dataViewColumns: ExtendedColumn[] = [
+    {
+      field: 'status',
+      labelKey: 'STATUS',
+      active: true,
+      sortable: false,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'text-center p-2'
+    },
+    {
+      field: 'type',
+      labelKey: 'TYPE',
+      active: true,
+      sortable: false,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'text-xl text-center p-2'
+    },
+    {
+      field: 'title',
+      labelKey: 'TITLE',
+      active: true,
+      sortable: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 p-2',
+      cssBody: 'py-0 px-2 sm:px-3',
+      limit: true
+    },
+    {
+      field: 'workspaceName',
+      labelKey: 'WORKSPACE',
+      active: true,
+      sortable: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
+      cssBody: 'hidden md:table-cell p-2 md:p-0'
+    },
+    {
+      field: 'productName',
+      labelKey: 'PRODUCT_NAME',
+      active: true,
+      sortable: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
+      cssBody: 'hidden md:table-cell p-2 md:p-0'
+    },
+    {
+      field: 'priority',
+      labelKey: 'PRIORITY',
+      active: true,
+      sortable: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
+      cssBody: 'hidden xl:table-cell p-0 xl:p-2 text-center'
+    },
+    {
+      field: 'startDate',
+      labelKey: 'START_DATE',
+      active: true,
+      sortable: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 lg:p-2',
+      cssBody: 'hidden lg:table-cell p-0 lg:p-2',
+      filterable: false,
+      isDate: true
+    },
+    {
+      field: 'endDate',
+      labelKey: 'END_DATE',
+      active: true,
+      sortable: true,
+      translationPrefix: 'ANNOUNCEMENT',
+      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
+      cssBody: 'hidden xl:table-cell p-0 xl:p-2',
+      filterable: false,
+      isDate: true
+    }
+  ]
   public interactiveColumns: DataTableColumn[] = []
   public interactiveAdditionalActions: DataAction[] = [
     {
@@ -155,78 +233,6 @@ export class AnnouncementSearchComponent implements OnInit {
   public wdIsComponentDefined$: Observable<boolean> | undefined // check
   public workspaceData$ = new BehaviorSubject<Workspace[] | undefined>(undefined) // workspace data
 
-  public columns: ExtendedColumn[] = [
-    {
-      field: 'status',
-      header: 'STATUS',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
-      cssBody: 'text-center p-2'
-    },
-    {
-      field: 'type',
-      header: 'TYPE',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
-      cssBody: 'text-xl text-center p-2'
-    },
-    {
-      field: 'title',
-      header: 'TITLE',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'flex flex-row flex-nowrap align-items-center column-gap-2 p-2',
-      cssBody: 'py-0 px-2 sm:px-3',
-      limit: true
-    },
-    {
-      field: 'workspaceName',
-      header: 'WORKSPACE',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
-      cssBody: 'hidden md:table-cell p-2 md:p-0'
-    },
-    {
-      field: 'productName',
-      header: 'PRODUCT_NAME',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
-      cssBody: 'hidden md:table-cell p-2 md:p-0'
-    },
-    {
-      field: 'priority',
-      header: 'PRIORITY',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
-      cssBody: 'hidden xl:table-cell p-0 xl:p-2 text-center'
-    },
-    {
-      field: 'startDate',
-      header: 'START_DATE',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 lg:p-2',
-      cssBody: 'hidden lg:table-cell p-0 lg:p-2',
-      hasFilter: false,
-      isDate: true
-    },
-    {
-      field: 'endDate',
-      header: 'END_DATE',
-      active: true,
-      translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
-      cssBody: 'hidden xl:table-cell p-0 xl:p-2',
-      hasFilter: false,
-      isDate: true
-    }
-  ]
-
   constructor(
     private readonly user: UserService,
     private readonly slotService: SlotService,
@@ -235,7 +241,7 @@ export class AnnouncementSearchComponent implements OnInit {
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {
     this.interactiveColumns = this.createInteractiveColumns()
-    this.displayedColumnKeys = this.columns.filter((a) => a.active === true).map((col) => col.field)
+    this.displayedColumnKeys = this.dataViewColumns.filter((a) => a.active === true).map((col) => col.field)
     this.pdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.pdSlotName)
     this.wdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.wdSlotName)
   }
@@ -314,9 +320,9 @@ export class AnnouncementSearchComponent implements OnInit {
   /****************************************************************************
    *  DETAIL => CREATE, COPY, EDIT, VIEW
    */
-  public onDetail(item: Announcement | undefined, mode: ChangeMode): void {
+  public onDetail(item: RowListGridData | undefined, mode: ChangeMode): void {
     this.changeMode = mode
-    this.item4Detail = { ...item } // do not manipulate the item here
+    this.item4Detail = { ...item } as Announcement // do not manipulate the item here
     this.displayDetailDialog = true
   }
   public onCloseDetail(refresh: boolean): void {
@@ -345,13 +351,13 @@ export class AnnouncementSearchComponent implements OnInit {
   }
 
   public onViewFromInteractive(item: RowListGridData): void {
-    this.ensureHasPermission('ANNOUNCEMENT#VIEW', () => this.onDetail(item as Announcement, 'VIEW'))
+    this.ensureHasPermission('ANNOUNCEMENT#VIEW', () => this.onDetail(item, 'VIEW'))
   }
   public onCopyFromInteractive(item: RowListGridData): void {
-    this.ensureHasPermission('ANNOUNCEMENT#CREATE', () => this.onDetail(item as Announcement, 'COPY'))
+    this.ensureHasPermission('ANNOUNCEMENT#CREATE', () => this.onDetail(item, 'COPY'))
   }
   public onEditFromInteractive(item: RowListGridData): void {
-    this.ensureHasPermission('ANNOUNCEMENT#EDIT', () => this.onDetail(item as Announcement, 'EDIT'))
+    this.ensureHasPermission('ANNOUNCEMENT#EDIT', () => this.onDetail(item, 'EDIT'))
   }
   public onDeleteFromInteractive(item: RowListGridData): void {
     this.ensureHasPermission('ANNOUNCEMENT#DELETE', () => {
@@ -365,23 +371,19 @@ export class AnnouncementSearchComponent implements OnInit {
     return ColumnType.STRING
   }
 
-  private isInteractiveSortable(col: ExtendedColumn): boolean {
-    return !['status', 'type'].includes(col.field)
-  }
-
   // Extend the columns with information for interactive table and special rendering
   private createInteractiveColumns(): DataTableColumn[] {
-    return this.columns.map((col) => {
-      const columnLabelKey = `${col.translationPrefix}.${col.header}`
-      const columnTooltipKey = `${col.translationPrefix}.TOOLTIPS.${col.header}`
+    return this.dataViewColumns.map((col) => {
+      const columnLabelKey = `${col.translationPrefix}.${col.labelKey}`
+      const columnTooltipKey = `${col.translationPrefix}.TOOLTIPS.${col.labelKey}`
 
       return {
         id: col.field,
         nameKey: columnLabelKey,
         tooltipKey: columnTooltipKey,
         columnType: this.getInteractiveColumnType(col),
-        sortable: this.isInteractiveSortable(col),
-        filterable: col.hasFilter === true,
+        sortable: col.sortable === true,
+        filterable: col.filterable === true,
         dateFormat: col.isDate ? this.datetimeFormat : undefined,
         // extensions for custom rendering:
         cssHeader: col.cssHeader,
@@ -475,6 +477,11 @@ export class AnnouncementSearchComponent implements OnInit {
     this.searchSubscription = this.announcementApi
       .searchAnnouncements({ announcementSearchCriteria: this.criteria })
       .pipe(
+        tap((data) => {
+          if (data.stream && data.stream.length === 0)
+            this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.NO_RESULTS' })
+          this.prepareActionButtons()
+        }),
         map((data) => (data.stream as RowListGridData[]) ?? []),
         catchError((err) => {
           this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENTS'

@@ -9,7 +9,7 @@ import { PortalMessageService, UserService } from '@onecx/angular-integration-in
 import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
 
 import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
-import { AnnouncementSearchComponent } from './announcement-search.component'
+import { AnnouncementSearchComponent, ExtendedColumn } from './announcement-search.component'
 
 type Column = {
   field: string
@@ -69,7 +69,7 @@ describe('AnnouncementSearchComponent', () => {
     lang$: langSubject,
     hasPermission: hasPermissionSpy
   }
-  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error'])
+  const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
   const apiServiceSpy = {
     searchAnnouncements: jasmine.createSpy('searchAnnouncements').and.returnValue(of({})),
     getAllAnnouncementAssignments: jasmine.createSpy('getAllAnnouncementAssignments').and.returnValue(of({}))
@@ -119,6 +119,7 @@ describe('AnnouncementSearchComponent', () => {
     // to spy data: reset
     msgServiceSpy.success.calls.reset()
     msgServiceSpy.error.calls.reset()
+    msgServiceSpy.info.calls.reset()
     apiServiceSpy.searchAnnouncements.calls.reset()
     apiServiceSpy.getAllAnnouncementAssignments.calls.reset()
     // to spy data: refill with neutral data
@@ -134,7 +135,7 @@ describe('AnnouncementSearchComponent', () => {
     it('should call OnInit and populate displayed column keys and actions', () => {
       component.ngOnInit()
 
-      expect(component.displayedColumnKeys[0]).toEqual(component.columns[0].field)
+      expect(component.displayedColumnKeys[0]).toEqual(component.dataViewColumns[0].field)
     })
   })
 
@@ -186,7 +187,7 @@ describe('AnnouncementSearchComponent', () => {
     })
 
     it('should fallback to empty stream when response has no stream property', (done) => {
-      apiServiceSpy.searchAnnouncements.and.returnValue(of({}))
+      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [] }))
 
       component.onSearch({})
 
@@ -197,6 +198,7 @@ describe('AnnouncementSearchComponent', () => {
         },
         error: done.fail
       })
+      expect(msgServiceSpy.info).toHaveBeenCalledWith({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.NO_RESULTS' })
     })
 
     it('should search assigned to one workspace', (done) => {
@@ -650,11 +652,11 @@ describe('AnnouncementSearchComponent', () => {
 
   describe('filter columns', () => {
     it('should update the columns that are seen in results', () => {
-      const columns: Column[] = [
-        { field: 'workspaceName', header: 'WORKSPACE' },
-        { field: 'context', header: 'CONTEXT' }
+      const columns: ExtendedColumn[] = [
+        { field: 'workspaceName', labelKey: 'WORKSPACE', active: true, sortable: true },
+        { field: 'context', labelKey: 'CONTEXT', active: true, sortable: true }
       ]
-      component.columns = columns
+      component.dataViewColumns = columns
 
       component.onColumnsChange(['workspaceName'])
 
