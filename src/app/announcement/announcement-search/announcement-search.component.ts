@@ -478,8 +478,7 @@ export class AnnouncementSearchComponent implements OnInit {
       .searchAnnouncements({ announcementSearchCriteria: this.criteria })
       .pipe(
         tap((data) => {
-          if (data.stream && data.stream.length === 0)
-            this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.NO_RESULTS' })
+          if (data.stream?.length === 0) this.msgService.info({ summaryKey: 'ACTIONS.SEARCH.MESSAGE.NO_RESULTS' })
           this.prepareActionButtons()
         }),
         map((data) => (data.stream as RowListGridData[]) ?? []),
