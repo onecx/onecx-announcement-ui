@@ -11,11 +11,6 @@ import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
 import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent, ExtendedColumn } from './announcement-search.component'
 
-type Column = {
-  field: string
-  header: string
-}
-
 const itemData: any = [
   {
     modificationCount: 0,
