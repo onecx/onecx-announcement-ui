@@ -154,8 +154,8 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       sortable: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
-      cssBody: 'hidden md:table-cell p-2 md:p-0'
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-2',
+      cssBody: 'hidden md:table-cell p-2'
     },
     {
       field: 'productName',
@@ -163,8 +163,8 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       sortable: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-0 md:p-2',
-      cssBody: 'hidden md:table-cell p-2 md:p-0'
+      cssHeader: 'hidden md:flex flex-row flex-nowrap align-items-center column-gap-2 p-2',
+      cssBody: 'hidden md:table-cell p-2'
     },
     {
       field: 'priority',
@@ -172,8 +172,8 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       sortable: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
-      cssBody: 'hidden xl:table-cell p-0 xl:p-2 text-center'
+      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'hidden xl:table-cell p-2 text-center'
     },
     {
       field: 'startDate',
@@ -181,8 +181,8 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       sortable: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 lg:p-2',
-      cssBody: 'hidden lg:table-cell p-0 lg:p-2',
+      cssHeader: 'hidden lg:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'hidden lg:table-cell p-2',
       filterable: false,
       isDate: true
     },
@@ -192,8 +192,8 @@ export class AnnouncementSearchComponent implements OnInit {
       active: true,
       sortable: true,
       translationPrefix: 'ANNOUNCEMENT',
-      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-0 xl:p-2',
-      cssBody: 'hidden xl:table-cell p-0 xl:p-2',
+      cssHeader: 'hidden xl:flex flex-row flex-nowrap align-items-center column-gap-2 text-center p-2',
+      cssBody: 'hidden xl:table-cell p-2',
       filterable: false,
       isDate: true
     }
