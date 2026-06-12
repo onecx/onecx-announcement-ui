@@ -40,7 +40,6 @@ export class AnnouncementCriteriaComponent {
   @Output() public searchEmitter = new EventEmitter<AnnouncementSearchCriteria>()
   @Output() public resetSearchEmitter = new EventEmitter<boolean>()
 
-  public displayCreateDialog = false
   public criteriaForm!: FormGroup<AnnouncementCriteriaForm>
   public dateFormatForRange: string
   public filteredTitles = []

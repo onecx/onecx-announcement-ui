@@ -75,6 +75,7 @@ import { LabelResolver } from './label.resolver'
     TranslateModule
   ],
   exports: [
+    AngularAcceleratorModule,
     AutoCompleteModule,
     BadgeModule,
     ButtonModule,

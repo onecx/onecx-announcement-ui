@@ -56,6 +56,14 @@
   }
 }
 
+@mixin word-break-all {
+  :host ::ng-deep {
+    .word-break-all {
+      word-break: break-all;
+    }
+  }
+}
+
 // highlight
 @mixin danger-action {
   :host ::ng-deep {
@@ -432,9 +440,27 @@
   }
 }
 
+@mixin ocx-p-message {
+  :host ::ng-deep {
+    .p-message {
+      display: inline-grid;
+      min-width: 20rem;
+    }
+  }
+}
+
 /* **********************************************
  *  DIALOG
  * **********************************************/
+@mixin ocx-content {
+  :host ::ng-deep {
+    .ocx-content > div {
+      margin-bottom: 0 !important;
+      padding-top: 0.5rem;
+    }
+  }
+}
+
 @mixin ocx-modal-dialog {
   :host ::ng-deep {
     .p-dialog .p-dialog-header {
