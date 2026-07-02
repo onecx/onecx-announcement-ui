@@ -1,6 +1,5 @@
 import { importProvidersFrom } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MissingTranslationHandler, TranslateLoader } from '@ngx-translate/core'
 import { ReplaySubject } from 'rxjs'
@@ -8,7 +7,7 @@ import { ReplaySubject } from 'rxjs'
 import { AngularAuthModule } from '@onecx/angular-auth'
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { provideTranslateServiceForRoot } from '@onecx/angular-remote-components'
-import { AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
+import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import {
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,
@@ -43,7 +42,7 @@ bootstrapRemoteComponent(
         useClass: AngularAcceleratorMissingTranslationHandler
       }
     }),
-    importProvidersFrom(AngularAuthModule, BrowserModule, BrowserAnimationsModule),
+    importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
     provideThemeConfig()
   ]
 )
