@@ -202,7 +202,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(1)
+          expect(data).toHaveSize(1)
           expect(data![0]).toEqual(itemData[1])
           done()
         },
@@ -218,7 +218,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(1)
+          expect(data).toHaveSize(1)
           expect(data![0]).toEqual(itemData[1])
           done()
         },
@@ -238,7 +238,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(0)
+          expect(data).toHaveSize(0)
           done()
         },
         error: done.fail
@@ -544,7 +544,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.item4Delete).toBeUndefined()
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(0)
+          expect(data).toHaveSize(0)
           done()
         },
         error: done.fail
@@ -567,7 +567,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.item4Delete).toBeUndefined()
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(1)
+          expect(data).toHaveSize(1)
           done()
         },
         error: done.fail
@@ -591,7 +591,7 @@ describe('AnnouncementSearchComponent', () => {
       if (component.filteredData) expect(component.filteredData.length).toBe(1)
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(2)
+          expect(data).toHaveSize(2)
           done()
         },
         error: done.fail
