@@ -117,9 +117,9 @@ describe('AnnouncementDetailComponent', () => {
       const typeOptions = await firstValueFrom(component.typeOptions$!)
       const priorityOptions = await firstValueFrom(component.priorityTypeOptions$!)
 
-      expect(typeOptions.length).toBe(3)
+      expect(typeOptions).toHaveSize(3)
       expect(typeOptions[0].value).toBe(AnnouncementType.Event)
-      expect(priorityOptions.length).toBe(3)
+      expect(priorityOptions).toHaveSize(3)
       expect(priorityOptions[0].value).toBe(AnnouncementPriorityType.Important)
     })
   })
@@ -249,7 +249,7 @@ describe('AnnouncementDetailComponent', () => {
         component.ngOnChanges()
 
         expect(component.announcementForm.enabled).toBeTrue()
-        expect(component.announcementForm.controls['title'].value).toEqual(null)
+        expect(component.announcementForm.controls['title'].value).toBeNull()
       })
 
       it('should prepare creating an announcement - start with empty form', () => {
@@ -260,7 +260,7 @@ describe('AnnouncementDetailComponent', () => {
 
         expect(component.announcementForm.reset).toHaveBeenCalled()
         expect(component.announcementForm.enabled).toBeTrue()
-        expect(component.announcementForm.controls['title'].value).toBe(null)
+        expect(component.announcementForm.controls['title'].value).toBeNull()
         // check default values
         expect(component.announcementForm.controls['priority'].value).toEqual(AnnouncementPriorityType.Normal)
         expect(component.announcementForm.controls['status'].value).toEqual(AnnouncementStatus.Inactive)
@@ -431,7 +431,7 @@ describe('AnnouncementDetailComponent', () => {
       dateFormGroup.setValidators(dateRangeValidator(dateFormGroup))
       dateFormGroup.updateValueAndValidity()
 
-      expect(dateFormGroup.errors).toEqual(null)
+      expect(dateFormGroup.errors).toBeNull()
     })
   })
 

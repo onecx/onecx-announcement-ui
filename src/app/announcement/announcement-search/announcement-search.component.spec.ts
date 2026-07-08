@@ -362,10 +362,10 @@ describe('AnnouncementSearchComponent', () => {
       component.metaData$.subscribe({
         next: (meta) => {
           if (meta) {
-            expect(meta.allProducts.length).toBe(1)
-            expect(meta.allWorkspaces.length).toBe(1)
-            expect(meta.usedProducts?.length).toBe(2)
-            expect(meta.usedWorkspaces?.length).toBe(2)
+            expect(meta.allProducts).toHaveSize(1)
+            expect(meta.allWorkspaces).toHaveSize(1)
+            expect(meta.usedProducts).toHaveSize(2)
+            expect(meta.usedWorkspaces).toHaveSize(2)
             expect(meta.usedProducts).toEqual([
               { label: 'Product', value: 'product' },
               { label: 'unknown', value: 'unknown' }
@@ -393,10 +393,10 @@ describe('AnnouncementSearchComponent', () => {
       component.metaData$.subscribe({
         next: (meta) => {
           if (meta) {
-            expect(meta.allProducts.length).toBe(2) // take over the used products
-            expect(meta.allWorkspaces.length).toBe(2) // take over the used workspaces
-            expect(meta.usedProducts?.length).toBe(2)
-            expect(meta.usedWorkspaces?.length).toBe(2)
+            expect(meta.allProducts).toHaveSize(2) // take over the used products
+            expect(meta.allWorkspaces).toHaveSize(2) // take over the used workspaces
+            expect(meta.usedProducts).toHaveSize(2)
+            expect(meta.usedWorkspaces).toHaveSize(2)
             expect(meta.usedProducts).toEqual([
               { label: 'product', value: 'product' },
               { label: 'unknown', value: 'unknown' }
@@ -418,7 +418,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onDetail(undefined, mode)
 
-      expect(component.changeMode).toEqual(mode)
+      expect(component.changeMode).toBe(mode)
       expect(component.item4Detail).toEqual({})
       expect(component.displayDetailDialog).toBeTrue()
 
@@ -432,7 +432,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onDetail(itemData[0], mode)
 
-      expect(component.changeMode).toEqual(mode)
+      expect(component.changeMode).toBe(mode)
       expect(component.item4Detail).toEqual(itemData[0])
       expect(component.displayDetailDialog).toBeTrue()
     })
@@ -442,7 +442,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.onDetail(itemData[0], mode)
 
-      expect(component.changeMode).toEqual(mode)
+      expect(component.changeMode).toBe(mode)
       expect(component.item4Detail).toEqual(itemData[0])
       expect(component.displayDetailDialog).toBeTrue()
 
@@ -468,7 +468,7 @@ describe('AnnouncementSearchComponent', () => {
       await Promise.resolve()
 
       expect(component.displayDetailDialog).toBeTrue()
-      expect(component.changeMode).toEqual('EDIT')
+      expect(component.changeMode).toBe('EDIT')
       expect(component.item4Detail).toEqual(itemData[0])
     })
 
@@ -489,7 +489,7 @@ describe('AnnouncementSearchComponent', () => {
       await Promise.resolve()
 
       expect(component.displayDetailDialog).toBeTrue()
-      expect(component.changeMode).toEqual('VIEW')
+      expect(component.changeMode).toBe('VIEW')
       expect(component.item4Detail).toEqual(itemData[0])
     })
 
@@ -503,7 +503,7 @@ describe('AnnouncementSearchComponent', () => {
       await Promise.resolve()
 
       expect(component.displayDetailDialog).toBeTrue()
-      expect(component.changeMode).toEqual('COPY')
+      expect(component.changeMode).toBe('COPY')
       expect(component.item4Detail).toEqual(itemData[0])
     })
   })
