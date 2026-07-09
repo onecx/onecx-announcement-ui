@@ -1,9 +1,10 @@
-<ng-container *ngIf="announcements$ | async as announcements">
-  <div *ngIf="announcements.length > 0" class="pb-2 card surface-100">
+@let items = announcements$ | async;
+@if (items && items.length > 0) {
+  <div class="pb-2 card surface-100">
     <div class="p-2 font-medium text-lg bg-gray-200">{{ 'ANNOUNCEMENT.LIST-ACTIVE.TITLE' | translate }}</div>
     <div class="mt-1 px-1 flex flex-column row-gap-2 max-h-20rem overflow-x-hidden overflow-y-auto">
       <a
-        *ngFor="let announcement of announcements; let i = index"
+        *ngFor="let item of items; let i = index"
         class="p-2 announcement-row block flex flex-row flex-nowrap justify-content-start align-items-center column-gap-3 border-none hover:bg-gray-200 cursor-pointer"
         (click)="detailDialog.toggle($event)"
         #overlayTarget
@@ -13,12 +14,12 @@
           <div
             [id]="'am_list_active_data_row_' + i + '_icon'"
             class="pi text-base md:text-xl"
-            [class.pi-info-circle]="announcement.type === 'INFO'"
-            [class.pi-calendar]="announcement.type === 'EVENT'"
-            [class.pi-wrench]="announcement.type === 'SYSTEM_MAINTENANCE'"
-            [class.text-red-800]="announcement.priority === 'IMPORTANT'"
-            [class.text-yellow-800]="announcement.priority === 'NORMAL'"
-            [class.text-blue-800]="announcement.priority === 'LOW'"
+            [class.pi-info-circle]="item.type === 'INFO'"
+            [class.pi-calendar]="item.type === 'EVENT'"
+            [class.pi-wrench]="item.type === 'SYSTEM_MAINTENANCE'"
+            [class.text-red-800]="item.priority === 'IMPORTANT'"
+            [class.text-yellow-800]="item.priority === 'NORMAL'"
+            [class.text-blue-800]="item.priority === 'LOW'"
           ></div>
         </div>
         <!-- ICON + TITLE + CONTENT -->
@@ -27,13 +28,13 @@
             [id]="'am_list_active_data_row_' + i + '_title'"
             class="text-sm sm:text-base md:text-md font-bold white-space-nowrap overflow-hidden text-overflow-ellipsis"
           >
-            {{ announcement.title }}
+            {{ item.title }}
           </div>
           <div
             [id]="'am_list_active_data_row_' + i + '_content'"
             class="text-xs sm:text-sm white-space-nowrap overflow-hidden text-overflow-ellipsis"
           >
-            {{ announcement.content }}
+            {{ item.content }}
           </div>
         </div>
 
@@ -48,32 +49,32 @@
           <div class="flex flex-column">
             <div
               class="p-2 sm:p-3 border-round-top border-noround-bottom flex flex-row column-gap-3 align-items-center"
-              [class.bg-red-200]="announcement.priority === 'IMPORTANT'"
-              [class.bg-yellow-200]="announcement.priority === 'NORMAL'"
-              [class.bg-blue-200]="announcement.priority === 'LOW'"
+              [class.bg-red-200]="item.priority === 'IMPORTANT'"
+              [class.bg-yellow-200]="item.priority === 'NORMAL'"
+              [class.bg-blue-200]="item.priority === 'LOW'"
             >
               <div
                 [id]="'am_list_active_data_row_' + i + '_detail_icon'"
                 class="pi text-base sm:text-lg md:text-xl"
-                [class.pi-info-circle]="announcement.type === 'INFO'"
-                [class.pi-calendar]="announcement.type === 'EVENT'"
-                [class.pi-wrench]="announcement.type === 'SYSTEM_MAINTENANCE'"
-                [class.bg-red-200]="announcement.priority === 'IMPORTANT'"
-                [class.bg-yellow-200]="announcement.priority === 'NORMAL'"
-                [class.bg-blue-200]="announcement.priority === 'LOW'"
+                [class.pi-info-circle]="item.type === 'INFO'"
+                [class.pi-calendar]="item.type === 'EVENT'"
+                [class.pi-wrench]="item.type === 'SYSTEM_MAINTENANCE'"
+                [class.bg-red-200]="item.priority === 'IMPORTANT'"
+                [class.bg-yellow-200]="item.priority === 'NORMAL'"
+                [class.bg-blue-200]="item.priority === 'LOW'"
               ></div>
               <div [id]="'am_list_active_data_row_' + i + '_detail_title'" class="text-sm sm:text-base font-bold">
-                {{ announcement.title }}
+                {{ item.title }}
               </div>
             </div>
             <div
               [id]="'am_list_active_data_row_' + i + '_detail_content'"
               class="py-2 px-3 text-xs sm:text-sm md:text-base"
-              [innerHTML]="convertLineBreaks(announcement.content)"
+              [innerHTML]="convertLineBreaks(item.content)"
             ></div>
           </div>
         </p-popover>
       </a>
     </div>
   </div>
-</ng-container>
+}

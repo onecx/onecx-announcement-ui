@@ -1,12 +1,11 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
-import { CommonModule } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
 
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
-import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
+import { AppStateService } from '@onecx/angular-integration-interface'
 
 import {
   Announcement,
@@ -40,10 +39,16 @@ describe('AnnouncementListActiveComponent', () => {
   let mockAppStateService: MockAppStateService
   let baseUrlSubject: ReplaySubject<any>
 
-  const apiServiceSpy = {
+  const announcementApiSpy = {
     searchAnnouncementBanners: jasmine
       .createSpy('searchAnnouncementBanners')
       .and.returnValue(of({ stream: [normalAnnouncement] }))
+  }
+
+  function initializeComponent() {
+    fixture = TestBed.createComponent(OneCXAnnouncementListActiveComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
   }
 
   beforeEach(() => {
@@ -59,71 +64,64 @@ describe('AnnouncementListActiveComponent', () => {
         }).withDefaultLanguage('en')
       ],
       providers: [
-        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
-        { provide: AppStateService, useValue: mockAppStateService },
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
+        { provide: AppStateService, useValue: mockAppStateService }
       ]
     })
       .overrideComponent(OneCXAnnouncementListActiveComponent, {
-        set: {
-          imports: [CommonModule, TranslateTestingModule],
-          providers: [
-            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
-            { provide: AppConfigService },
-            { provide: AppStateService, useValue: mockAppStateService }
-          ]
+        add: {
+          providers: [{ provide: AnnouncementInternalAPIService, useValue: announcementApiSpy }]
         }
       })
       .compileComponents()
 
     baseUrlSubject.next('base_url_mock')
-
-    apiServiceSpy.searchAnnouncementBanners.calls.reset()
   })
 
-  function initializeComponent() {
-    fixture = TestBed.createComponent(OneCXAnnouncementListActiveComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-  }
+  afterEach(() => {
+    announcementApiSpy.searchAnnouncementBanners.calls.reset()
+  })
 
   it('should create', () => {
     initializeComponent()
     expect(component).toBeTruthy()
   })
 
-  it('should load announcements when the component starts', fakeAsync(() => {
-    apiServiceSpy.searchAnnouncementBanners.and.returnValue(
-      of({ stream: [normalAnnouncement, importantAnnouncement, lowPrioAnnouncement] })
-    )
+  describe('get data', () => {
+    it('should load announcements when the component starts', fakeAsync(() => {
+      announcementApiSpy.searchAnnouncementBanners.and.returnValue(
+        of({ stream: [normalAnnouncement, importantAnnouncement, lowPrioAnnouncement] })
+      )
 
-    initializeComponent()
+      initializeComponent()
 
-    expect(component).toBeTruthy()
-    const mockConfig: RemoteComponentConfig = {
-      appId: 'appId',
-      productName: 'prodName',
-      permissions: ['permission'],
-      baseUrl: 'base'
-    }
+      expect(component).toBeTruthy()
+      const mockConfig: RemoteComponentConfig = {
+        appId: 'appId',
+        productName: 'prodName',
+        permissions: ['permission'],
+        baseUrl: 'base'
+      }
 
-    component.ocxRemoteComponentConfig = mockConfig
+      component.ocxRemoteComponentConfig = mockConfig
 
-    component['announcementsSubject'].subscribe((anncmts) => {
-      tick(500)
-      expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
-    })
-  }))
+      component['announcementsSubject'].subscribe((anncmts) => {
+        tick(500)
+        expect(anncmts).toEqual([importantAnnouncement, normalAnnouncement, lowPrioAnnouncement])
+      })
+    }))
 
-  it('should catch an error if loading announcements fails', () => {
-    apiServiceSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
+    it('should catch an error if loading announcements fails', () => {
+      announcementApiSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
 
-    initializeComponent()
+      initializeComponent()
 
-    expect(component).toBeTruthy()
-    component['announcementsSubject'].subscribe((anncmts) => {
-      expect(anncmts).toEqual([])
+      expect(component).toBeTruthy()
+      component['announcementsSubject'].subscribe((anncmts) => {
+        expect(anncmts).toEqual([])
+      })
     })
   })
 
