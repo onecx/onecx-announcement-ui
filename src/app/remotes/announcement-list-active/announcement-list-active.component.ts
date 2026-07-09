@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core'
-import { AsyncPipe, Location } from '@angular/common'
+import { AsyncPipe, Location, NgFor } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
 import { PopoverModule } from 'primeng/popover'
@@ -22,7 +22,7 @@ import { environment } from 'src/environments/environment'
   templateUrl: './announcement-list-active.component.html',
   styleUrls: ['./announcement-list-active.component.scss'],
   standalone: true,
-  imports: [AngularAcceleratorModule, AngularRemoteComponentsModule, AsyncPipe, PopoverModule, TranslateModule]
+  imports: [AngularAcceleratorModule, AngularRemoteComponentsModule, AsyncPipe, NgFor, PopoverModule, TranslateModule]
 })
 export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
