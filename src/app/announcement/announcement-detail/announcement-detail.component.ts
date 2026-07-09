@@ -9,11 +9,47 @@ import {
   Output
 } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { FormBuilder, FormControl, FormGroup, Validators, ValidationErrors, ValidatorFn } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
+import { AsyncPipe, DatePipe } from '@angular/common'
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+  ValidationErrors,
+  ValidatorFn
+} from '@angular/forms'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { finalize, Observable } from 'rxjs'
-import { SelectItem } from 'primeng/api'
 
+import { BadgeModule } from 'primeng/badge'
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
+import { ConfirmPopupModule } from 'primeng/confirmpopup'
+import { DataViewModule } from 'primeng/dataview'
+import { DatePicker } from 'primeng/datepicker'
+import { DialogModule } from 'primeng/dialog'
+import { DynamicDialogModule } from 'primeng/dynamicdialog'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { FieldsetModule } from 'primeng/fieldset'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { InputTextModule } from 'primeng/inputtext'
+import { InputSwitchModule } from 'primeng/inputswitch'
+import { MessageModule } from 'primeng/message'
+import { SelectModule } from 'primeng/select'
+import { SelectButtonModule } from 'primeng/selectbutton'
+import { SelectItem } from 'primeng/api'
+import { TableModule } from 'primeng/table'
+import { TabsModule } from 'primeng/tabs'
+import { TagModule } from 'primeng/tag'
+import { TextareaModule } from 'primeng/textarea'
+import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
+
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 
 import {
@@ -25,7 +61,6 @@ import {
   CreateAnnouncementRequest,
   UpdateAnnouncementRequest
 } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
 
 import { AnnouncementEnumTranslation } from '../announcement-enum-translation'
 import type { ChangeMode } from '../announcement-search/announcement-search.component'
@@ -48,7 +83,40 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
   templateUrl: './announcement-detail.component.html',
   styleUrls: ['./announcement-detail.component.scss'],
   standalone: true,
-  imports: [SharedModule],
+  imports: [
+    AngularAcceleratorModule,
+    // CommonModule
+    AsyncPipe,
+    DatePipe,
+    // other modules
+    BadgeModule,
+    ButtonModule,
+    CardModule,
+    ConfirmDialogModule,
+    ConfirmPopupModule,
+    DataViewModule,
+    DatePicker,
+    DialogModule,
+    DynamicDialogModule,
+    FloatLabelModule,
+    FieldsetModule,
+    FormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    InputTextModule,
+    InputSwitchModule,
+    MessageModule,
+    ReactiveFormsModule,
+    SelectModule,
+    SelectButtonModule,
+    TableModule,
+    TabsModule,
+    TagModule,
+    TextareaModule,
+    ToastModule,
+    TooltipModule,
+    TranslateModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AnnouncementDetailComponent implements OnChanges {

@@ -4,3 +4,29 @@
 
 /* portal core */
 @use 'node_modules/@onecx/angular-accelerator/assets/styles.scss';
+
+/*
+ * Global styles for OneCX Announcement UI
+ *
+ * These styles are required here because there are some DOM elements created on the fly (e.g. dropdownn lists) are under the DOM root.
+*/
+// disable default settings of dialogs created by portal dialog service
+.buttonDialogScrollableContent {
+  max-height: unset !important;
+  margin-bottom: 1rem !important;
+}
+
+.p-select-option,
+.p-listbox-option {
+  padding: 0.5rem 1rem !important;
+}
+/* ZEBRA rows on dropdown */
+.p-select-overlay .p-select-list *:nth-child(even) .p-select-option {
+  background-color: var(--onecx-announcement-onecx-announcement-ui-datatable-row-striped-background);
+}
+/* ZEBRA rows on listbox */
+.p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled) {
+  &:nth-child(even) {
+    background-color: var(--onecx-announcement-onecx-announcement-ui-datatable-row-striped-background);
+  }
+}
