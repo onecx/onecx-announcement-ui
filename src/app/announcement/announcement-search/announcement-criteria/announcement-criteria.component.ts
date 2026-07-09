@@ -1,8 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
-import { FormControl, FormGroup } from '@angular/forms'
-import { TranslateService } from '@ngx-translate/core'
-import { SelectItem } from 'primeng/api'
+import { AsyncPipe } from '@angular/common'
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { Observable } from 'rxjs'
+
+import { ButtonModule } from 'primeng/button'
+import { DatePickerModule } from 'primeng/datepicker'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { MultiSelectModule } from 'primeng/multiselect'
+import { SelectModule } from 'primeng/select'
+import { SelectItem } from 'primeng/api'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { UserService } from '@onecx/angular-integration-interface'
 import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -14,7 +24,6 @@ import {
   AnnouncementStatus,
   AnnouncementType
 } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
 
 export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
@@ -31,7 +40,21 @@ export interface AnnouncementCriteriaForm {
   templateUrl: './announcement-criteria.component.html',
   styleUrls: ['./announcement-criteria.component.scss'],
   standalone: true,
-  imports: [SharedModule, AngularAcceleratorModule]
+  imports: [
+    AngularAcceleratorModule,
+    AsyncPipe,
+    FloatLabelModule,
+    DatePickerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    MultiSelectModule,
+    ButtonModule,
+    SelectModule,
+    TooltipModule,
+    TranslateModule
+  ]
 })
 export class AnnouncementCriteriaComponent {
   @Input() public actions: Action[] = []
