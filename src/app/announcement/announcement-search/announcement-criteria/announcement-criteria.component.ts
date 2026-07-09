@@ -7,6 +7,7 @@ import { Observable } from 'rxjs'
 import { ButtonModule } from 'primeng/button'
 import { DatePickerModule } from 'primeng/datepicker'
 import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputTextModule } from 'primeng/inputtext'
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { MultiSelectModule } from 'primeng/multiselect'
@@ -49,6 +50,7 @@ export interface AnnouncementCriteriaForm {
     ReactiveFormsModule,
     InputGroupModule,
     InputGroupAddonModule,
+    InputTextModule,
     MultiSelectModule,
     ButtonModule,
     SelectModule,
