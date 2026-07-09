@@ -1,18 +1,23 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
+import { TranslateModule } from '@ngx-translate/core'
+
+import { ButtonModule } from 'primeng/button'
+import { DialogModule } from 'primeng/dialog'
 import { SelectItem } from 'primeng/api'
+import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
 
 import { Announcement, AnnouncementInternalAPIService } from 'src/app/shared/generated'
-import { SharedModule } from 'src/app/shared/shared.module'
 import { Utils } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-announcement-delete',
-  templateUrl: './announcement-delete.component.html',
   standalone: true,
-  imports: [SharedModule],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [ButtonModule, DialogModule, ToastModule, TooltipModule, TranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './announcement-delete.component.html'
 })
 export class AnnouncementDeleteComponent {
   @Input() announcement: Announcement | undefined
@@ -21,12 +26,12 @@ export class AnnouncementDeleteComponent {
   @Input() visible = false
   @Output() visibleChange = new EventEmitter<boolean>()
 
+  public Utils = Utils
+
   constructor(
     private readonly msgService: PortalMessageService,
     private readonly announcementApi: AnnouncementInternalAPIService
   ) {}
-
-  public getDisplayName = Utils.getDisplayName
 
   public onDeleteConfirmation(): void {
     if (!this.announcement?.id) return

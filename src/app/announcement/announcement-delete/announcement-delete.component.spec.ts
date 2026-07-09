@@ -1,4 +1,3 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
@@ -51,18 +50,14 @@ describe('AnnouncementDeleteComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage('en')
       ],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     })
       .overrideComponent(AnnouncementDeleteComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
+          ]
         }
       })
       .compileComponents()
@@ -90,19 +85,19 @@ describe('AnnouncementDeleteComponent', () => {
   describe('getDisplayName', () => {
     it('should return label from list if name matches', () => {
       const list = [{ label: 'My Workspace', value: 'ws1' }]
-      expect(component.getDisplayName('ws1', list)).toBe('My Workspace')
+      expect(component.Utils.getDisplayName('ws1', list)).toBe('My Workspace')
     })
 
     it('should return undefined if name is not provided', () => {
-      expect(component.getDisplayName(undefined, [])).toBeUndefined()
+      expect(component.Utils.getDisplayName(undefined, [])).toBeUndefined()
     })
 
     it('should return undefined if not found in list', () => {
-      expect(component.getDisplayName('unknown', [{ label: 'X', value: 'Y' }])).toBeUndefined()
+      expect(component.Utils.getDisplayName('unknown', [{ label: 'X', value: 'Y' }])).toBeUndefined()
     })
 
     it('should return undefined if list is undefined', () => {
-      expect(component.getDisplayName('ws1', undefined)).toBeUndefined()
+      expect(component.Utils.getDisplayName('ws1', undefined)).toBeUndefined()
     })
   })
 

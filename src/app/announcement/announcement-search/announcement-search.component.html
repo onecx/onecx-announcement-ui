@@ -228,7 +228,6 @@
             <ng-template #displayNameTemplate let-mdata="data">
               @if (mdata.name) {
                 <div
-                  *ngIf="mdata.name"
                   [class]="mdata.class + ' text-ellipsis-2-lines'"
                   [pTooltip]="mdata.displayName ? '' : mdata.name"
                   tooltipPosition="top"
