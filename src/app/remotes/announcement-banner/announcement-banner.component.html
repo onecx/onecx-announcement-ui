@@ -1,6 +1,6 @@
-<ng-container *ngIf="announcements$ | async as items">
+@let items = announcements$ | async;
+@if (items && items.length > 0) {
   <p-carousel
-    *ngIf="items.length > 0"
     styleClass="mt-2 sm:mt-3 mb-0"
     [value]="items"
     [numVisible]="1"
@@ -42,7 +42,7 @@
           ></span>
           <div class="flex flex-column row-gap-1">
             <div id="am_announcement_banner_title" class="font-bold">{{ item.title }}</div>
-            <div id="am_announcement_banner_content" [innerHTML]="convertLineBreaks(item.content)"></div>
+            <div id="am_announcement_banner_content" [innerHTML]="Utils.convertLineBreaks(item.content)"></div>
           </div>
         </div>
 
@@ -64,4 +64,4 @@
       </div>
     </ng-template>
   </p-carousel>
-</ng-container>
+}

@@ -46,201 +46,201 @@
             [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
           ></p-message>
         }
-        <ocx-interactive-data-view
-          *ngIf="!(searching || exceptionKey)"
-          id="am_search_table"
-          styleClass="p-0"
-          [data]="filteredData ?? data"
-          [supportedViewLayouts]="['table']"
-          [layout]="'table'"
-          [columns]="interactiveColumns"
-          [displayedColumnKeys]="displayedColumnKeys"
-          [clientSideFiltering]="false"
-          [clientSideSorting]="true"
-          [sortField]="sortField"
-          [sortDirection]="sortDirection"
-          [tablePaginator]="true"
-          [pageSize]="10"
-          [pageSizes]="[10, 30, 100]"
-          [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
-          [viewPermission]="'ANNOUNCEMENT#VIEW'"
-          [editPermission]="'ANNOUNCEMENT#EDIT'"
-          [deletePermission]="'ANNOUNCEMENT#DELETE'"
-          [additionalActions]="interactiveAdditionalActions"
-          [actionColumnPosition]="'left'"
-          (displayedColumnKeysChange)="onColumnsChange($event)"
-          (sorted)="onSortChange($event)"
-          (editItem)="onEditFromInteractive($event)"
-          (deleteItem)="onDeleteFromInteractive($event)"
-        >
-          <!-- TABLE HEADER -->
-          <ng-template #topCenter>
-            <p-inputgroup>
-              <p-inputgroup-addon>
-                <i class="pi pi-filter"></i>
-              </p-inputgroup-addon>
-              <p-floatlabel variant="on">
-                <input
-                  #globalFilterInput
-                  pInputText
-                  type="text"
-                  id="am_search_table_global_filter"
-                  [value]="globalFilterValue"
-                  (input)="onGlobalFilter(globalFilterInput.value, data)"
-                  (focus)="globalFilterInput.classList.add('p-focus')"
-                  (blur)="globalFilterInput.classList.remove('p-focus')"
-                  [attr.aria-label]="
-                    ('DIALOG.DATAVIEW.FILTER_BY' | translate) + ' ' + ('ANNOUNCEMENT.TITLE' | translate)
-                  "
-                  [pTooltip]="('DIALOG.DATAVIEW.FILTER_BY' | translate) + ' ' + ('ANNOUNCEMENT.TITLE' | translate)"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                />
-                <label for="am_search_table_global_filter" aria-hidden="true">
-                  {{ 'DIALOG.DATAVIEW.FILTER_PLACEHOLDER' | translate }}
-                </label>
-              </p-floatlabel>
-              <p-inputgroup-addon>
-                <p-button
-                  id="am_search_table_global_filter_clear"
-                  icon="pi pi-filter-slash"
-                  (onClick)="onClearGlobalFilter(globalFilterInput)"
-                  (onKeydown.enter)="onClearGlobalFilter(globalFilterInput)"
-                  [severity]="globalFilterInput.value !== '' ? 'primary' : 'secondary'"
-                  [disabled]="!globalFilterValue"
-                  [ariaLabel]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
-                  [pTooltip]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                />
-              </p-inputgroup-addon>
-            </p-inputgroup>
-          </ng-template>
-
-          <!-- TABLE COLUMN HEADER -->
-          <ng-template
-            pTemplate="columnHeader"
-            let-col="column"
-            let-labelTemplate="labelTemplate"
-            let-sortTemplate="sortTemplate"
-            let-filterTemplate="filterTemplate"
+        @if (!(searching || exceptionKey)) {
+          <ocx-interactive-data-view
+            id="am_search_table"
+            styleClass="p-0"
+            [data]="filteredData ?? data"
+            [supportedViewLayouts]="['table']"
+            [layout]="'table'"
+            [columns]="interactiveColumns"
+            [displayedColumnKeys]="displayedColumnKeys"
+            [clientSideFiltering]="false"
+            [clientSideSorting]="true"
+            [sortField]="sortField"
+            [sortDirection]="sortDirection"
+            [tablePaginator]="true"
+            [pageSize]="10"
+            [pageSizes]="[10, 30, 100]"
+            [emptyResultsMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
+            [viewPermission]="'ANNOUNCEMENT#VIEW'"
+            [editPermission]="'ANNOUNCEMENT#EDIT'"
+            [deletePermission]="'ANNOUNCEMENT#DELETE'"
+            [additionalActions]="interactiveAdditionalActions"
+            [actionColumnPosition]="'left'"
+            (displayedColumnKeysChange)="onColumnsChange($event)"
+            (sorted)="onSortChange($event)"
+            (editItem)="onEditFromInteractive($event)"
+            (deleteItem)="onDeleteFromInteractive($event)"
           >
-            <div [class]="col.cssHeader">
-              <div>
+            <!-- TABLE HEADER -->
+            <ng-template #topCenter>
+              <p-inputgroup>
+                <p-inputgroup-addon>
+                  <i class="pi pi-filter"></i>
+                </p-inputgroup-addon>
+                <p-floatlabel variant="on">
+                  <input
+                    #globalFilterInput
+                    pInputText
+                    type="text"
+                    id="am_search_table_global_filter"
+                    [value]="globalFilterValue"
+                    (input)="onGlobalFilter(globalFilterInput.value, data)"
+                    (focus)="globalFilterInput.classList.add('p-focus')"
+                    (blur)="globalFilterInput.classList.remove('p-focus')"
+                    [attr.aria-label]="
+                      ('DIALOG.DATAVIEW.FILTER_BY' | translate) + ' ' + ('ANNOUNCEMENT.TITLE' | translate)
+                    "
+                    [pTooltip]="('DIALOG.DATAVIEW.FILTER_BY' | translate) + ' ' + ('ANNOUNCEMENT.TITLE' | translate)"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  />
+                  <label for="am_search_table_global_filter" aria-hidden="true">
+                    {{ 'DIALOG.DATAVIEW.FILTER_PLACEHOLDER' | translate }}
+                  </label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                  <p-button
+                    id="am_search_table_global_filter_clear"
+                    icon="pi pi-filter-slash"
+                    (onClick)="onClearGlobalFilter(globalFilterInput)"
+                    (onKeydown.enter)="onClearGlobalFilter(globalFilterInput)"
+                    [severity]="globalFilterInput.value !== '' ? 'primary' : 'secondary'"
+                    [disabled]="!globalFilterValue"
+                    [ariaLabel]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
+                    [pTooltip]="'DIALOG.DATAVIEW.FILTER_CLEAR' | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  />
+                </p-inputgroup-addon>
+              </p-inputgroup>
+            </ng-template>
+
+            <!-- TABLE COLUMN HEADER -->
+            <ng-template
+              pTemplate="columnHeader"
+              let-col="column"
+              let-labelTemplate="labelTemplate"
+              let-sortTemplate="sortTemplate"
+              let-filterTemplate="filterTemplate"
+            >
+              <div [class]="col.cssHeader">
+                <div>
+                  <ng-container
+                    [ngTemplateOutlet]="labelTemplate"
+                    [ngTemplateOutletContext]="{ column: col }"
+                  ></ng-container>
+                </div>
                 <ng-container
-                  [ngTemplateOutlet]="labelTemplate"
+                  [ngTemplateOutlet]="filterTemplate"
+                  [ngTemplateOutletContext]="{ column: col }"
+                ></ng-container>
+                <ng-container
+                  [ngTemplateOutlet]="sortTemplate"
                   [ngTemplateOutletContext]="{ column: col }"
                 ></ng-container>
               </div>
-              <ng-container
-                [ngTemplateOutlet]="filterTemplate"
-                [ngTemplateOutletContext]="{ column: col }"
-              ></ng-container>
-              <ng-container
-                [ngTemplateOutlet]="sortTemplate"
-                [ngTemplateOutletContext]="{ column: col }"
-              ></ng-container>
-            </div>
-          </ng-template>
+            </ng-template>
 
-          <!-- TABLE BODY -->
-          <ng-template pTemplate="dateTableCell" let-item="rowObject" let-col="column">
-            @let colBodyCss = col.cssBody ?? '';
-            <div [class]="colBodyCss">{{ item[col.id] | date: datetimeFormat }}</div>
-          </ng-template>
+            <!-- TABLE BODY -->
+            <ng-template pTemplate="dateTableCell" let-item="rowObject" let-col="column">
+              @let colBodyCss = col.cssBody ?? '';
+              <div [class]="colBodyCss">{{ item[col.id] | date: datetimeFormat }}</div>
+            </ng-template>
 
-          <ng-template pTemplate="stringTableCell" let-item="rowObject" let-col="column">
-            @let colBodyCss = col.cssBody ?? '';
-            @switch (col.id) {
-              @case ('type') {
+            <ng-template pTemplate="stringTableCell" let-item="rowObject" let-col="column">
+              @let colBodyCss = col.cssBody ?? '';
+              @switch (col.id) {
+                @case ('type') {
+                  <div
+                    [class]="colBodyCss + ' w-full pi'"
+                    [class.pi-info-circle]="item['type'] === 'INFO'"
+                    [class.pi-calendar]="item['type'] === 'EVENT'"
+                    [class.pi-wrench]="item['type'] === 'SYSTEM_MAINTENANCE'"
+                    [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + item['type'] | translate"
+                    [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + item['type'] | translate"
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></div>
+                }
+                @case ('status') {
+                  <div
+                    [class]="colBodyCss + ' w-full pi'"
+                    [class.pi-circle-on]="item['status'] === 'ACTIVE'"
+                    [class.pi-circle-off]="item['status'] === 'INACTIVE'"
+                    [class.text-red-600]="item['priority'] === 'IMPORTANT'"
+                    [class.text-yellow-600]="item['priority'] === 'NORMAL'"
+                    [class.text-blue-600]="item['priority'] === 'LOW'"
+                    [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + item['status'] | translate"
+                    [pTooltip]="
+                      ('ENUMS.ANNOUNCEMENT_STATUS.' + item['status'] | translate) +
+                      ' - ' +
+                      ('ENUMS.ANNOUNCEMENT_PRIORITY.' + item['priority'] | translate)
+                    "
+                    tooltipPosition="top"
+                    tooltipEvent="hover"
+                  ></div>
+                }
+                @case ('priority') {
+                  <div [class]="colBodyCss + ' w-full'">
+                    {{ 'ENUMS.ANNOUNCEMENT_PRIORITY.' + item['priority'] | translate }}
+                  </div>
+                }
+                @case ('title') {
+                  <div [class]="colBodyCss" class="text-ellipsis-2-lines">{{ item['title'] }}</div>
+                }
+                @case ('workspaceName') {
+                  <ng-container
+                    [ngTemplateOutlet]="displayNameTemplate"
+                    [ngTemplateOutletContext]="{
+                      data: {
+                        name: item['workspaceName'],
+                        displayName: getDisplayName(item['workspaceName'], metaData.allWorkspaces),
+                        nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                        nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
+                        class: colBodyCss
+                      }
+                    }"
+                  />
+                }
+                @case ('productName') {
+                  <ng-container
+                    [ngTemplateOutlet]="displayNameTemplate"
+                    [ngTemplateOutletContext]="{
+                      data: {
+                        name: item['productName'],
+                        displayName: getDisplayName(item['productName'], metaData.allProducts),
+                        nameAll: 'ANNOUNCEMENT.ALL' | translate,
+                        nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
+                        class: colBodyCss
+                      }
+                    }"
+                  />
+                }
+                @default {
+                  <div [class]="colBodyCss">{{ item[col.id] }}</div>
+                }
+              }
+            </ng-template>
+
+            <!-- SPECIAL: translate meta data names -->
+            <ng-template #displayNameTemplate let-mdata="data">
+              @if (mdata.name) {
                 <div
-                  [class]="colBodyCss + ' w-full pi'"
-                  [class.pi-info-circle]="item['type'] === 'INFO'"
-                  [class.pi-calendar]="item['type'] === 'EVENT'"
-                  [class.pi-wrench]="item['type'] === 'SYSTEM_MAINTENANCE'"
-                  [attr.aria-label]="'ENUMS.ANNOUNCEMENT_TYPE.' + item['type'] | translate"
-                  [pTooltip]="'ENUMS.ANNOUNCEMENT_TYPE.' + item['type'] | translate"
+                  [class]="mdata.class + ' text-ellipsis-2-lines'"
+                  [pTooltip]="mdata.displayName ? '' : mdata.name"
                   tooltipPosition="top"
                   tooltipEvent="hover"
-                ></div>
-              }
-              @case ('status') {
-                <div
-                  [class]="colBodyCss + ' w-full pi'"
-                  [class.pi-circle-on]="item['status'] === 'ACTIVE'"
-                  [class.pi-circle-off]="item['status'] === 'INACTIVE'"
-                  [class.text-red-600]="item['priority'] === 'IMPORTANT'"
-                  [class.text-yellow-600]="item['priority'] === 'NORMAL'"
-                  [class.text-blue-600]="item['priority'] === 'LOW'"
-                  [attr.aria-label]="'ENUMS.ANNOUNCEMENT_STATUS.' + item['status'] | translate"
-                  [pTooltip]="
-                    ('ENUMS.ANNOUNCEMENT_STATUS.' + item['status'] | translate) +
-                    ' - ' +
-                    ('ENUMS.ANNOUNCEMENT_PRIORITY.' + item['priority'] | translate)
-                  "
-                  tooltipPosition="top"
-                  tooltipEvent="hover"
-                ></div>
-              }
-              @case ('priority') {
-                <div [class]="colBodyCss + ' w-full'">
-                  {{ 'ENUMS.ANNOUNCEMENT_PRIORITY.' + item['priority'] | translate }}
+                >
+                  {{ mdata.displayName ?? mdata.nameNotFound }}
                 </div>
+              } @else {
+                <div [class]="mdata.class">{{ mdata.nameAll }}</div>
               }
-              @case ('title') {
-                <div [class]="colBodyCss" class="text-ellipsis-2-lines">{{ item['title'] }}</div>
-              }
-              @case ('workspaceName') {
-                <ng-container
-                  [ngTemplateOutlet]="displayNameTemplate"
-                  [ngTemplateOutletContext]="{
-                    data: {
-                      name: item['workspaceName'],
-                      displayName: getDisplayName(item['workspaceName'], metaData.allWorkspaces),
-                      nameAll: 'ANNOUNCEMENT.ALL' | translate,
-                      nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
-                      class: colBodyCss
-                    }
-                  }"
-                />
-              }
-              @case ('productName') {
-                <ng-container
-                  [ngTemplateOutlet]="displayNameTemplate"
-                  [ngTemplateOutletContext]="{
-                    data: {
-                      name: item['productName'],
-                      displayName: getDisplayName(item['productName'], metaData.allProducts),
-                      nameAll: 'ANNOUNCEMENT.ALL' | translate,
-                      nameNotFound: 'ANNOUNCEMENT.NOT_FOUND' | translate,
-                      class: colBodyCss
-                    }
-                  }"
-                />
-              }
-              @default {
-                <div [class]="colBodyCss">{{ item[col.id] }}</div>
-              }
-            }
-          </ng-template>
-
-          <!-- SPECIAL: translate meta data names -->
-          <ng-template #displayNameTemplate let-mdata="data">
-            @if (mdata.name) {
-              <div
-                *ngIf="mdata.name"
-                [class]="mdata.class + ' text-ellipsis-2-lines'"
-                [pTooltip]="mdata.displayName ? '' : mdata.name"
-                tooltipPosition="top"
-                tooltipEvent="hover"
-              >
-                {{ mdata.displayName ?? mdata.nameNotFound }}
-              </div>
-            } @else {
-              <div [class]="mdata.class">{{ mdata.nameAll }}</div>
-            }
-          </ng-template>
-        </ocx-interactive-data-view>
+            </ng-template>
+          </ocx-interactive-data-view>
+        }
 
         <!-- DELETE -->
         <app-announcement-delete

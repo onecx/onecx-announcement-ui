@@ -7,7 +7,7 @@ import { ReplaySubject } from 'rxjs'
 import { AngularAuthModule } from '@onecx/angular-auth'
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { provideTranslateServiceForRoot } from '@onecx/angular-remote-components'
-import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule, AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
 import {
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,

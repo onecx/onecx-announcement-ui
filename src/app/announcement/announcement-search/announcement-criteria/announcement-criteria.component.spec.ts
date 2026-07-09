@@ -1,17 +1,18 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
-import { provideHttpClient, HttpClient } from '@angular/common/http'
+import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { SelectItem } from 'primeng/api'
+import { provideRouter } from '@angular/router'
+import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject } from 'rxjs'
 
+import { SelectItem } from 'primeng/api'
+
 import { UserService } from '@onecx/angular-integration-interface'
-import { createTranslateLoader } from '@onecx/angular-utils'
 
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
+import { AnnouncementSearchComponent } from '../announcement-search.component'
 
 const filledCriteria = new FormGroup<AnnouncementCriteriaForm>({
   title: new FormControl<string | null>('title'),
@@ -35,45 +36,46 @@ const emptyCriteria = new FormGroup<AnnouncementCriteriaForm>({
 describe('AnnouncementCriteriaComponent', () => {
   let component: AnnouncementCriteriaComponent
   let fixture: ComponentFixture<AnnouncementCriteriaComponent>
-  const defaultLang = 'de'
+  const defaultLang = 'en'
   const langSubject = new BehaviorSubject<string>(defaultLang)
 
   const mockUserService = {
     lang$: langSubject
   }
 
+  function initializeComponent() {
+    fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  }
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        AnnouncementCriteriaComponent,
-        TranslateModule.forRoot({
-          loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] }
-        })
+        TranslateTestingModule.withTranslations({
+          de: require('src/assets/i18n/de.json'),
+          en: require('src/assets/i18n/en.json')
+        }).withDefaultLanguage(defaultLang)
       ],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [provideHttpClient(), provideHttpClientTesting(), { provide: UserService, useValue: mockUserService }]
-    })
-      .overrideComponent(AnnouncementCriteriaComponent, {
-        set: {
-          template: '',
-          imports: []
-        }
-      })
-      .compileComponents()
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: '', component: AnnouncementSearchComponent }]),
+        { provide: UserService, useValue: mockUserService }
+      ]
+    }).compileComponents()
   }))
 
   beforeEach(() => {
     langSubject.next(defaultLang)
-    fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
+    initializeComponent()
   })
 
   it('should create', () => {
     expect(component).toBeTruthy()
   })
 
-  describe('onSearch & onResetCriteria', () => {
+  describe('search criteria', () => {
     it('should search announcements without criteria', () => {
       component.criteriaForm = emptyCriteria
       spyOn(component.searchEmitter, 'emit')
@@ -123,38 +125,42 @@ describe('AnnouncementCriteriaComponent', () => {
   /**
    * Translations
    */
-  it('should load dropdown lists with translations', () => {
-    let data2: SelectItem[] = []
-    component.typeOptions$?.subscribe((data) => {
-      data2 = data
-    })
-    expect(data2.length).toBeGreaterThanOrEqual(3)
+  describe('translations', () => {
+    it('should load dropdown lists with translations', () => {
+      let data2: SelectItem[] = []
+      component.typeOptions$?.subscribe((data) => {
+        data2 = data
+      })
+      expect(data2.length).toBeGreaterThanOrEqual(3)
 
-    data2 = []
-    component.priorityTypeOptions$?.subscribe((data) => {
-      data2 = data
-    })
-    expect(data2.length).toBeGreaterThanOrEqual(3)
+      data2 = []
+      component.priorityTypeOptions$?.subscribe((data) => {
+        data2 = data
+      })
+      expect(data2.length).toBeGreaterThanOrEqual(3)
 
-    data2 = []
-    component.statusOptions$?.subscribe((data) => {
-      data2 = data
+      data2 = []
+      component.statusOptions$?.subscribe((data) => {
+        data2 = data
+      })
+      expect(data2.length).toBeGreaterThanOrEqual(2)
     })
-    expect(data2.length).toBeGreaterThanOrEqual(2)
   })
 
   /**
    * Language tests
    */
-  it('should set a German date format', () => {
-    expect(component.dateFormatForRange).toEqual('dd.mm.yy')
-  })
+  describe('lang', () => {
+    it('should set a English date format', () => {
+      expect(component.dateFormatForRange).toEqual('m/d/yy')
+    })
 
-  it('should set default date format', () => {
-    langSubject.next('en')
-    fixture = TestBed.createComponent(AnnouncementCriteriaComponent)
-    component = fixture.componentInstance
-    fixture.detectChanges()
-    expect(component.dateFormatForRange).toEqual('m/d/yy')
+    it('should set default date format', () => {
+      langSubject.next('de')
+
+      initializeComponent()
+
+      expect(component.dateFormatForRange).toEqual('dd.mm.yy')
+    })
   })
 })

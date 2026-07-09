@@ -1,6 +1,7 @@
 import { Component, DestroyRef, EventEmitter, inject, OnInit } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { TranslateService } from '@ngx-translate/core'
+import { AsyncPipe, DatePipe, NgTemplateOutlet } from '@angular/common'
+import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import {
   BehaviorSubject,
   catchError,
@@ -13,11 +14,20 @@ import {
   switchMap,
   tap
 } from 'rxjs'
+import { ButtonModule } from 'primeng/button'
+import { CardModule } from 'primeng/card'
+import { FloatLabelModule } from 'primeng/floatlabel'
+import { InputGroupModule } from 'primeng/inputgroup'
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { MessageModule } from 'primeng/message'
 import { SelectItem } from 'primeng/api'
+import { ToastModule } from 'primeng/toast'
+import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import {
   Action,
+  AngularAcceleratorModule,
   ColumnType,
   DataAction,
   DataSortDirection,
@@ -27,7 +37,6 @@ import {
 import { PortalPageComponent } from '@onecx/angular-utils'
 import { SlotService } from '@onecx/angular-remote-components'
 
-import { SharedModule } from 'src/app/shared/shared.module'
 import {
   Announcement,
   AnnouncementAssignments,
@@ -93,16 +102,30 @@ export type Workspace = {
 
 @Component({
   selector: 'app-announcement-search',
-  templateUrl: './announcement-search.component.html',
-  styleUrls: ['./announcement-search.component.scss'],
   standalone: true,
   imports: [
-    SharedModule,
+    AngularAcceleratorModule,
+    // CommonModule
+    AsyncPipe,
+    DatePipe,
+    NgTemplateOutlet,
+    // other modules
+    MessageModule,
+    ToastModule,
+    TooltipModule,
+    TranslateModule,
+    ButtonModule,
+    CardModule,
+    FloatLabelModule,
+    InputGroupModule,
+    InputGroupAddonModule,
     PortalPageComponent,
     AnnouncementCriteriaComponent,
     AnnouncementDetailComponent,
     AnnouncementDeleteComponent
-  ]
+  ],
+  templateUrl: './announcement-search.component.html',
+  styleUrls: ['./announcement-search.component.scss']
 })
 export class AnnouncementSearchComponent implements OnInit {
   // dialog

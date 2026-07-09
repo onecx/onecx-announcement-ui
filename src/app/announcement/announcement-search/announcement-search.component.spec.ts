@@ -1,11 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
+import { provideRouter } from '@angular/router'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
+import { providePermissionService } from '@onecx/angular-utils'
 
 import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
 import { AnnouncementSearchComponent, ExtendedColumn } from './announcement-search.component'
@@ -87,15 +90,18 @@ describe('AnnouncementSearchComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: UserService, useValue: mockUserService },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
+        providePermissionService(),
+        provideNoopAnimations(),
+        provideRouter([{ path: '', component: AnnouncementSearchComponent }])
       ]
     })
       .overrideComponent(AnnouncementSearchComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: UserService, useValue: mockUserService },
+            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
+          ]
         }
       })
       .compileComponents()
@@ -202,7 +208,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(1)
+          expect(data).toHaveSize(1)
           expect(data![0]).toEqual(itemData[1])
           done()
         },
@@ -218,7 +224,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(1)
+          expect(data).toHaveSize(1)
           expect(data![0]).toEqual(itemData[1])
           done()
         },
@@ -238,7 +244,7 @@ describe('AnnouncementSearchComponent', () => {
 
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(0)
+          expect(data).toHaveSize(0)
           done()
         },
         error: done.fail
@@ -544,7 +550,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.item4Delete).toBeUndefined()
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(0)
+          expect(data).toHaveSize(0)
           done()
         },
         error: done.fail
@@ -567,7 +573,7 @@ describe('AnnouncementSearchComponent', () => {
       expect(component.item4Delete).toBeUndefined()
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(1)
+          expect(data).toHaveSize(1)
           done()
         },
         error: done.fail
@@ -591,7 +597,7 @@ describe('AnnouncementSearchComponent', () => {
       if (component.filteredData) expect(component.filteredData.length).toBe(1)
       component.data$!.subscribe({
         next: (data) => {
-          expect(data!.length).toBe(2)
+          expect(data).toHaveSize(2)
           done()
         },
         error: done.fail

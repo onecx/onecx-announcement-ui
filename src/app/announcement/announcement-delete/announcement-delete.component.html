@@ -1,94 +1,102 @@
-<p-dialog
-  [header]="'DIALOG.DETAIL.DELETE.HEADER' | translate"
-  [visible]="visible"
-  (visibleChange)="this.visibleChange.emit(false)"
-  [modal]="true"
-  [closable]="true"
-  [draggable]="true"
-  [resizable]="false"
-  [dismissableMask]="true"
-  [style]="{ 'max-width': '550px' }"
->
-  <div *ngIf="announcement" class="flex column-gap-3 justify-content-start align-items-center">
-    <div class="pi pi-question-circle text-3xl danger-action-text" aria-hidden="true"></div>
-    <section class="w-11 flex flex-column row-gap-3 justify-content-start">
-      <div
-        id="am_delete_message_text"
-        class="mr-3 font-bold"
-        [attr.aria-label]="'ACTIONS.CONFIRMATION.QUESTION' | translate"
-        role="note"
-      >
-        {{ 'ACTIONS.DELETE.MESSAGE.TEXT' | translate }}
-      </div>
-      <div
-        id="am_delete_announcement_title"
-        class="px-5 text-center danger-action-text text-responsive"
-        [attr.aria-label]="'ANNOUNCEMENT.TITLE' | translate"
-        role="note"
-      >
-        {{ announcement.title }}
-      </div>
+@if (visible) {
+  <p-dialog
+    [header]="'DIALOG.DETAIL.DELETE.HEADER' | translate"
+    [visible]="true"
+    (visibleChange)="this.visibleChange.emit(false)"
+    [modal]="true"
+    [closable]="true"
+    [draggable]="true"
+    [resizable]="false"
+    [dismissableMask]="true"
+    [style]="{ 'max-width': '550px' }"
+  >
+    @if (announcement) {
+      <div class="flex column-gap-3 justify-content-start align-items-center">
+        <div class="pi pi-question-circle text-3xl danger-action-text" aria-hidden="true"></div>
+        <section class="w-11 flex flex-column row-gap-3 justify-content-start">
+          <div
+            id="am_delete_message_text"
+            class="mr-3 font-bold"
+            [attr.aria-label]="'ACTIONS.CONFIRMATION.QUESTION' | translate"
+            role="note"
+          >
+            {{ 'ACTIONS.DELETE.MESSAGE.TEXT' | translate }}
+          </div>
+          <div
+            id="am_delete_announcement_title"
+            class="px-5 text-center danger-action-text text-responsive"
+            [attr.aria-label]="'ANNOUNCEMENT.TITLE' | translate"
+            role="note"
+          >
+            {{ announcement.title }}
+          </div>
 
-      <div class="px-2 flex flex-column row-gap-1 justify-content-center" aria-hidden="true">
-        <div *ngIf="announcement.status === 'ACTIVE'" class="flex flex-row column-gap-3">
-          <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.STATUS' | translate }}</div>
-          <div class="w-7 text-left danger-action-text" id="am_delete_active">
-            {{ 'ACTIONS.CONFIRMATION.YES' | translate }}
+          <div class="px-2 flex flex-column row-gap-1 justify-content-center" aria-hidden="true">
+            @if (announcement.status === 'ACTIVE') {
+              <div class="flex flex-row column-gap-3">
+                <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.STATUS' | translate }}</div>
+                <div class="w-7 text-left danger-action-text" id="am_delete_active">
+                  {{ 'ACTIONS.CONFIRMATION.YES' | translate }}
+                </div>
+              </div>
+            }
+            <div class="flex flex-row column-gap-3">
+              <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.TYPE' | translate }}</div>
+              <div class="w-7 text-left" id="am_delete_type">
+                {{ 'ENUMS.ANNOUNCEMENT_TYPE.' + announcement.type | translate }}
+              </div>
+            </div>
+            <div class="flex flex-row column-gap-3">
+              <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</div>
+              <div class="w-7 text-left text-responsive" id="am_delete_workspace">
+                @if (announcement.workspaceName) {
+                  {{ Utils.getDisplayName(announcement.workspaceName, allWorkspaces) }}
+                } @else {
+                  {{ 'ANNOUNCEMENT.ALL' | translate }}
+                }
+              </div>
+            </div>
+            <div class="flex flex-row column-gap-3">
+              <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}</div>
+              <div class="w-7 text-left text-responsive" id="am_delete_product_name">
+                @if (announcement.productName) {
+                  {{ Utils.getDisplayName(announcement.productName, allProducts) }}
+                } @else {
+                  {{ 'ANNOUNCEMENT.ALL' | translate }}
+                }
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="flex flex-row column-gap-3">
-          <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.TYPE' | translate }}</div>
-          <div class="w-7 text-left" id="am_delete_type">
-            {{ 'ENUMS.ANNOUNCEMENT_TYPE.' + announcement.type | translate }}
-          </div>
-        </div>
-        <div class="flex flex-row column-gap-3">
-          <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.WORKSPACE' | translate }}</div>
-          <div class="w-7 text-left text-responsive" id="am_delete_workspace">
-            <ng-container *ngIf="announcement.workspaceName">
-              {{ getDisplayName(announcement.workspaceName, allWorkspaces) }}
-            </ng-container>
-            <ng-container *ngIf="!announcement.workspaceName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-          </div>
-        </div>
-        <div class="flex flex-row column-gap-3">
-          <div class="w-4 text-right font-bold">{{ 'ANNOUNCEMENT.PRODUCT_NAME' | translate }}</div>
-          <div class="w-7 text-left text-responsive" id="am_delete_product_name">
-            <ng-container *ngIf="announcement.productName">
-              {{ getDisplayName(announcement.productName, allProducts) }}
-            </ng-container>
-            <ng-container *ngIf="!announcement.productName"> {{ 'ANNOUNCEMENT.ALL' | translate }} </ng-container>
-          </div>
-        </div>
-      </div>
 
-      <div class="white-space-nowrap">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
-    </section>
-  </div>
-  <ng-template pTemplate="footer">
-    <footer class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
-      <p-button
-        id="am_delete_action_no"
-        icon="pi pi-times"
-        pAutoFocus
-        [autofocus]="true"
-        (onClick)="this.visibleChange.emit(false)"
-        [label]="'ACTIONS.CONFIRMATION.NO' | translate"
-        [ariaLabel]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
-        [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      ></p-button>
-      <p-button
-        id="am_delete_action_yes"
-        icon="pi pi-check"
-        (onClick)="onDeleteConfirmation()"
-        [label]="'ACTIONS.CONFIRMATION.YES' | translate"
-        [ariaLabel]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
-        [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
-        tooltipPosition="top"
-        tooltipEvent="hover"
-      ></p-button>
-    </footer>
-  </ng-template>
-</p-dialog>
+          <div class="white-space-nowrap">{{ 'ACTIONS.DELETE.MESSAGE.INFO' | translate }}</div>
+        </section>
+      </div>
+    }
+    <ng-template pTemplate="footer">
+      <footer class="flex flex-wrap justify-content-end column-gap-2 row-gap-1">
+        <p-button
+          id="am_delete_action_no"
+          icon="pi pi-times"
+          pAutoFocus
+          [autofocus]="true"
+          (onClick)="this.visibleChange.emit(false)"
+          [label]="'ACTIONS.CONFIRMATION.NO' | translate"
+          [ariaLabel]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
+          [pTooltip]="'ACTIONS.CONFIRMATION.NO.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></p-button>
+        <p-button
+          id="am_delete_action_yes"
+          icon="pi pi-check"
+          (onClick)="onDeleteConfirmation()"
+          [label]="'ACTIONS.CONFIRMATION.YES' | translate"
+          [ariaLabel]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
+          [pTooltip]="'ACTIONS.CONFIRMATION.YES.TOOLTIP' | translate"
+          tooltipPosition="top"
+          tooltipEvent="hover"
+        ></p-button>
+      </footer>
+    </ng-template>
+  </p-dialog>
+}

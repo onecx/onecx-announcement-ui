@@ -1,11 +1,12 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core'
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { BehaviorSubject, firstValueFrom, of, throwError } from 'rxjs'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { providePermissionService } from '@onecx/angular-utils'
 
 import {
   Announcement,
@@ -72,19 +73,15 @@ describe('AnnouncementDetailComponent', () => {
           en: require('src/assets/i18n/en.json')
         }).withDefaultLanguage(defaultLang)
       ],
-      schemas: [NO_ERRORS_SCHEMA],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: UserService, useValue: mockUserService },
-        { provide: PortalMessageService, useValue: msgServiceSpy },
-        { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
-      ]
+      providers: [provideHttpClient(), provideHttpClientTesting(), providePermissionService(), provideNoopAnimations()]
     })
       .overrideComponent(AnnouncementDetailComponent, {
-        set: {
-          template: '',
-          imports: []
+        add: {
+          providers: [
+            { provide: PortalMessageService, useValue: msgServiceSpy },
+            { provide: UserService, useValue: mockUserService },
+            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
+          ]
         }
       })
       .compileComponents()

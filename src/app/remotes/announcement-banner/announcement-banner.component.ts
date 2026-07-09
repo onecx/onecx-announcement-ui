@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core'
-import { CommonModule, Location } from '@angular/common'
+import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
 
@@ -7,32 +7,35 @@ import { CarouselModule } from 'primeng/carousel'
 import { ButtonModule } from 'primeng/button'
 import { TooltipModule } from 'primeng/tooltip'
 
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import {
   AngularRemoteComponentsModule,
   ocxRemoteComponent,
   ocxRemoteWebcomponent
 } from '@onecx/angular-remote-components'
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import { AnnouncementAbstract, AnnouncementInternalAPIService, Configuration } from 'src/app/shared/generated'
-import { Utils } from 'src/app/shared/utils'
 import { environment } from 'src/environments/environment'
+import { Utils } from 'src/app/shared/utils'
 
 @Component({
   selector: 'app-announcement-banner',
-  templateUrl: './announcement-banner.component.html',
   standalone: true,
   imports: [
     AngularAcceleratorModule,
     AngularRemoteComponentsModule,
-    CommonModule,
+    // Common Module
+    AsyncPipe,
+    NgClass,
+    // PrimeNG Modules
     CarouselModule,
     ButtonModule,
     TooltipModule,
     TranslateModule
-  ]
+  ],
+  templateUrl: './announcement-banner.component.html'
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
@@ -42,7 +45,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   private readonly currentDate = new Date().toISOString()
   private readonly announcementsSubject = new BehaviorSubject<AnnouncementAbstract[] | undefined>([])
   public announcements$: Observable<AnnouncementAbstract[] | undefined> = this.announcementsSubject.asObservable()
-  public convertLineBreaks = Utils.convertLineBreaks
+  public Utils = Utils
 
   constructor(
     @Inject(REMOTE_COMPONENT_CONFIG)
