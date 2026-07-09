@@ -590,11 +590,11 @@ describe('AnnouncementSearchComponent', () => {
       component['dataSubject$'].next(items)
       component.onGlobalFilter('t', items) // filter to items 1 and 2
 
-      if (component.filteredData) expect(component.filteredData.length).toBe(2)
+      expect(component.filteredData).toHaveSize(2)
 
       component.onDeleteConfirmed(true)
 
-      if (component.filteredData) expect(component.filteredData.length).toBe(1)
+      expect(component.filteredData).toHaveSize(1)
       component.data$!.subscribe({
         next: (data) => {
           expect(data).toHaveSize(2)
