@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core'
+import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core'
 import { AsyncPipe, Location, NgClass } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
@@ -35,6 +35,7 @@ import { Utils } from 'src/app/shared/utils'
     TooltipModule,
     TranslateModule
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './announcement-banner.component.html'
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {

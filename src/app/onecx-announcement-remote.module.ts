@@ -66,9 +66,7 @@ const routes: Routes = [
   ]
 })
 export class OneCXAnnouncementModule implements DoBootstrap {
-  constructor(private readonly injector: Injector) {
-    console.info('OneCX Announcement Module constructor')
-  }
+  constructor(private readonly injector: Injector) {}
 
   ngDoBootstrap(): void {
     createAppEntrypoint(AppEntrypointComponent, 'ocx-announcement-component', this.injector)

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, inject, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, OnInit } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AsyncPipe, DatePipe, NgTemplateOutlet } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -110,22 +110,23 @@ export type Workspace = {
     DatePipe,
     NgTemplateOutlet,
     // other modules
-    MessageModule,
-    ToastModule,
-    TooltipModule,
-    TranslateModule,
     ButtonModule,
     CardModule,
     FloatLabelModule,
     InputGroupModule,
     InputGroupAddonModule,
+    MessageModule,
+    ToastModule,
+    TooltipModule,
+    TranslateModule,
     PortalPageComponent,
     AnnouncementCriteriaComponent,
     AnnouncementDetailComponent,
     AnnouncementDeleteComponent
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './announcement-search.component.html',
-  styleUrls: ['./announcement-search.component.scss']
+  styleUrl: './announcement-search.component.scss'
 })
 export class AnnouncementSearchComponent implements OnInit {
   // dialog

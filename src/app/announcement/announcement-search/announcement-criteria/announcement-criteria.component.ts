@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
 import { AsyncPipe } from '@angular/common'
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
@@ -17,6 +17,7 @@ import { TooltipModule } from 'primeng/tooltip'
 
 import { UserService } from '@onecx/angular-integration-interface'
 import { Action, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+
 import { AnnouncementEnumTranslation } from '../../announcement-enum-translation'
 
 import {
@@ -38,8 +39,6 @@ export interface AnnouncementCriteriaForm {
 
 @Component({
   selector: 'app-announcement-criteria',
-  templateUrl: './announcement-criteria.component.html',
-  styleUrls: ['./announcement-criteria.component.scss'],
   standalone: true,
   imports: [
     AngularAcceleratorModule,
@@ -56,7 +55,10 @@ export interface AnnouncementCriteriaForm {
     SelectModule,
     TooltipModule,
     TranslateModule
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './announcement-criteria.component.html',
+  styleUrl: './announcement-criteria.component.scss'
 })
 export class AnnouncementCriteriaComponent {
   @Input() public actions: Action[] = []

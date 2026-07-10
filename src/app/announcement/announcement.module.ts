@@ -41,7 +41,5 @@ const routes: Routes = [
   ]
 })
 export class AnnouncementModule {
-  constructor() {
-    console.info('Announcement Module constructor')
-  }
+  constructor() {}
 }

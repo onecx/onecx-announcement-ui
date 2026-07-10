@@ -53,7 +53,5 @@ const routes: Routes = [
   ]
 })
 export class AppModule {
-  constructor() {
-    console.info('OneCX Announcement Module constructor')
-  }
+  constructor() {}
 }
