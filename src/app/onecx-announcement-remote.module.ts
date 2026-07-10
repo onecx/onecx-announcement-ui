@@ -10,6 +10,7 @@ import {
   createTranslateLoader,
   MultiLanguageMissingTranslationHandler,
   PortalApiConfiguration,
+  providePermissionService,
   provideThemeConfig,
   provideTranslationPathFromMeta
 } from '@onecx/angular-utils'
@@ -18,6 +19,7 @@ import { AppStateService, ConfigurationService } from '@onecx/angular-integratio
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 import { Configuration } from './shared/generated'
+import { LabelResolver } from './shared/label.resolver'
 import { environment } from 'src/environments/environment'
 import { AppEntrypointComponent } from './app-entrypoint.component'
 
@@ -50,6 +52,7 @@ const routes: Routes = [
     })
   ],
   providers: [
+    LabelResolver,
     ConfigurationService,
     { provide: Configuration, useFactory: apiConfigProvider },
     provideAppInitializer(() => {
@@ -58,6 +61,7 @@ const routes: Routes = [
     }),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideHttpClient(withInterceptorsFromDi()),
+    providePermissionService(),
     provideThemeConfig()
   ]
 })

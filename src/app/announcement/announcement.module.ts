@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
-import { PortalPageComponent, providePermissionService } from '@onecx/angular-utils'
+import { PortalPageComponent } from '@onecx/angular-utils'
 
 import { LabelResolver } from 'src/app/shared/label.resolver'
 
@@ -38,8 +38,7 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     AnnouncementSearchComponent,
     AnnouncementDeleteComponent
-  ],
-  providers: [...providePermissionService()]
+  ]
 })
 export class AnnouncementModule {
   constructor() {
