@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -32,7 +31,6 @@ const routes: Routes = [
 ]
 @NgModule({
   imports: [
-    CommonModule,
     AngularAcceleratorModule,
     PortalPageComponent,
     RouterModule.forChild(routes),
