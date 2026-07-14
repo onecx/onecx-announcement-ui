@@ -44,7 +44,6 @@ import { SelectButtonModule } from 'primeng/selectbutton'
 import { SelectItem } from 'primeng/api'
 import { TableModule } from 'primeng/table'
 import { TabsModule } from 'primeng/tabs'
-import { TagModule } from 'primeng/tag'
 import { TextareaModule } from 'primeng/textarea'
 import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
@@ -80,8 +79,6 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
 
 @Component({
   selector: 'app-announcement-detail',
-  templateUrl: './announcement-detail.component.html',
-  styleUrls: ['./announcement-detail.component.scss'],
   standalone: true,
   imports: [
     AngularAcceleratorModule,
@@ -111,13 +108,14 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
     SelectButtonModule,
     TableModule,
     TabsModule,
-    TagModule,
     TextareaModule,
     ToastModule,
     TooltipModule,
     TranslateModule
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './announcement-detail.component.html',
+  styleUrl: './announcement-detail.component.scss'
 })
 export class AnnouncementDetailComponent implements OnChanges {
   @Input() public announcement: Announcement | undefined

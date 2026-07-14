@@ -1,6 +1,5 @@
 import { DoBootstrap, Injector, NgModule, inject, provideAppInitializer } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
-import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { RouterModule, Routes, Router } from '@angular/router'
 import { TranslateLoader, TranslateModule, MissingTranslationHandler } from '@ngx-translate/core'
@@ -18,9 +17,9 @@ import { createAppEntrypoint, initializeRouter, startsWith } from '@onecx/angula
 import { AppStateService, ConfigurationService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
+import { environment } from 'src/environments/environment'
 import { Configuration } from './shared/generated'
 import { LabelResolver } from './shared/label.resolver'
-import { environment } from 'src/environments/environment'
 import { AppEntrypointComponent } from './app-entrypoint.component'
 
 function apiConfigProvider() {
@@ -37,14 +36,17 @@ const routes: Routes = [
 @NgModule({
   imports: [
     AppEntrypointComponent,
-    AngularAuthModule,
-    BrowserModule,
-    BrowserAnimationsModule,
     AngularAcceleratorModule,
+    AngularAuthModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(routes),
     TranslateModule.forRoot({
       isolate: true,
-      loader: { provide: TranslateLoader, useFactory: createTranslateLoader, deps: [HttpClient] },
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient]
+      },
       missingTranslationHandler: {
         provide: MissingTranslationHandler,
         useClass: MultiLanguageMissingTranslationHandler
@@ -52,8 +54,8 @@ const routes: Routes = [
     })
   ],
   providers: [
-    LabelResolver,
     ConfigurationService,
+    LabelResolver,
     { provide: Configuration, useFactory: apiConfigProvider },
     provideAppInitializer(() => {
       const initializerFn = initializeRouter(inject(Router), inject(AppStateService))
@@ -66,9 +68,7 @@ const routes: Routes = [
   ]
 })
 export class OneCXAnnouncementModule implements DoBootstrap {
-  constructor(private readonly injector: Injector) {
-    console.info('OneCX Announcement Module constructor')
-  }
+  private readonly injector = inject(Injector)
 
   ngDoBootstrap(): void {
     createAppEntrypoint(AppEntrypointComponent, 'ocx-announcement-component', this.injector)

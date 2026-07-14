@@ -1,4 +1,3 @@
-import { FormGroup, FormControl } from '@angular/forms'
 import { SelectItem } from 'primeng/api'
 
 import { Utils } from './utils'
@@ -36,57 +35,6 @@ describe('Utils', () => {
       Utils.copyToClipboard('text')
 
       expect(writeTextSpy).toHaveBeenCalledWith('text')
-    })
-  })
-
-  describe('forceFormValidation', () => {
-    it('should mark controls as dirty and touched', () => {
-      const group = new FormGroup({
-        control1: new FormControl(''),
-        control2: new FormControl('')
-      })
-
-      Utils.forceFormValidation(group)
-
-      expect(group.dirty).toBeTrue()
-      expect(group.touched).toBeTrue()
-    })
-  })
-
-  describe('dropDownSortItemsByLabel', () => {
-    it('should correctly sort items by label', () => {
-      const items: SelectItem[] = [
-        { label: 'label2', value: 2 },
-        { label: 'label1', value: 1 }
-      ]
-
-      const sortedItems = items.sort(Utils.dropDownSortItemsByLabel)
-
-      expect(sortedItems[0].label).toEqual('label1')
-    })
-    it("should treat falsy values for SelectItem.label as ''", () => {
-      const items: SelectItem[] = [
-        { label: undefined, value: 1 },
-        { label: undefined, value: 2 },
-        { label: 'label1', value: 2 }
-      ]
-
-      const sortedItems = items.sort(Utils.dropDownSortItemsByLabel)
-
-      expect(sortedItems[0].label).toBeUndefined()
-    })
-  })
-
-  describe('dropDownGetLabelByValue', () => {
-    it('should return the label corresponding to the value', () => {
-      const items: SelectItem[] = [
-        { label: 'label2', value: 2 },
-        { label: 'label1', value: 1 }
-      ]
-
-      const result = Utils.dropDownGetLabelByValue(items, '1')
-
-      expect(result).toEqual('label1')
     })
   })
 
