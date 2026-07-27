@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core
 import { AsyncPipe, Location, NgFor } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
+
+import { MessageModule } from 'primeng/message'
 import { PopoverModule } from 'primeng/popover'
 
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
@@ -20,7 +22,15 @@ import { environment } from 'src/environments/environment'
 @Component({
   selector: 'app-announcement-list-active',
   standalone: true,
-  imports: [AngularAcceleratorModule, AngularRemoteComponentsModule, AsyncPipe, NgFor, PopoverModule, TranslateModule],
+  imports: [
+    AngularAcceleratorModule,
+    AngularRemoteComponentsModule,
+    AsyncPipe,
+    MessageModule,
+    NgFor,
+    PopoverModule,
+    TranslateModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './announcement-list-active.component.html',
   styleUrl: './announcement-list-active.component.scss'

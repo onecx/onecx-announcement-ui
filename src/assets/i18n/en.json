@@ -165,7 +165,8 @@
       "PRODUCT": "Application"
     },
     "LIST-ACTIVE": {
-      "TITLE": "Announcements"
+      "TITLE": "Announcements",
+      "NO_ACTIVE_ANNOUNCEMENTS": "No active Announcements"
     },
     "TOOLTIPS": {
       "TITLE": "Title of the Announcement, maximum of 255 characters",

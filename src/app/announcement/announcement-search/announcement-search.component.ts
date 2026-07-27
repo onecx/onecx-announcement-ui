@@ -21,7 +21,6 @@ import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { MessageModule } from 'primeng/message'
 import { SelectItem } from 'primeng/api'
-import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
@@ -116,9 +115,9 @@ export type Workspace = {
     InputGroupModule,
     InputGroupAddonModule,
     MessageModule,
-    ToastModule,
     TooltipModule,
     TranslateModule,
+    // components
     PortalPageComponent,
     AnnouncementCriteriaComponent,
     AnnouncementDetailComponent,

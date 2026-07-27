@@ -165,7 +165,8 @@
       "PRODUCT": "Applikation"
     },
     "LIST-ACTIVE": {
-      "TITLE": "Ankündigungen"
+      "TITLE": "Ankündigungen",
+      "NO_ACTIVE_ANNOUNCEMENTS": "Keine aktiven Ankündigungen"
     },
     "TOOLTIPS": {
       "TITLE": "Titel der Neuigkeit",

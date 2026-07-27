@@ -1,13 +1,13 @@
 import { importProvidersFrom } from '@angular/core'
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { MissingTranslationHandler, TranslateLoader } from '@ngx-translate/core'
+import { TranslateLoader, MissingTranslationHandler } from '@ngx-translate/core'
 import { ReplaySubject } from 'rxjs'
 
 import { AngularAuthModule } from '@onecx/angular-auth'
 import { bootstrapRemoteComponent } from '@onecx/angular-webcomponents'
 import { provideTranslateServiceForRoot } from '@onecx/angular-remote-components'
-import { AngularAcceleratorMissingTranslationHandler, AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AngularAcceleratorModule, AngularAcceleratorMissingTranslationHandler } from '@onecx/angular-accelerator'
 import {
   REMOTE_COMPONENT_CONFIG,
   RemoteComponentConfig,
@@ -24,11 +24,13 @@ bootstrapRemoteComponent(
   'ocx-announcement-list-active-component',
   environment.production,
   [
-    provideHttpClient(withInterceptorsFromDi()),
     {
       provide: REMOTE_COMPONENT_CONFIG,
       useValue: new ReplaySubject<RemoteComponentConfig>(1)
     },
+    importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
+    provideHttpClient(withInterceptorsFromDi()),
+    provideThemeConfig(),
     provideTranslationPathFromMeta(import.meta.url, 'assets/i18n/'),
     provideTranslateServiceForRoot({
       isolate: true,
@@ -41,8 +43,6 @@ bootstrapRemoteComponent(
         provide: MissingTranslationHandler,
         useClass: AngularAcceleratorMissingTranslationHandler
       }
-    }),
-    importProvidersFrom(AngularAcceleratorModule, AngularAuthModule, BrowserAnimationsModule),
-    provideThemeConfig()
+    })
   ]
 )
