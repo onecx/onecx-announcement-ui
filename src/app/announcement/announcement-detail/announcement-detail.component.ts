@@ -45,7 +45,6 @@ import { SelectItem } from 'primeng/api'
 import { TableModule } from 'primeng/table'
 import { TabsModule } from 'primeng/tabs'
 import { TextareaModule } from 'primeng/textarea'
-import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -109,7 +108,6 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
     TableModule,
     TabsModule,
     TextareaModule,
-    ToastModule,
     TooltipModule,
     TranslateModule
   ],

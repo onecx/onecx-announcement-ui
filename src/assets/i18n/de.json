@@ -11,48 +11,48 @@
     },
     "COPY": {
       "LABEL": "Kopieren",
-      "TOOLTIP": "Mit den Daten eine neue Neuigkeit anlegen",
+      "TOOLTIP": "Mit den Daten eine neue Ankündigung anlegen",
       "CLIPBOARD": "In die Zwischenablage kopieren"
     },
     "CREATE": {
       "LABEL": "Erstellen",
-      "TOOLTIP": "Eine neue Neuigkeit erstellen",
+      "TOOLTIP": "Eine neue Ankündigung erstellen",
       "MESSAGE": {
-        "OK": "Die Neuigkeit wurde erfolgreich erstellt",
-        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeit wurde nicht erstellt."
+        "OK": "Die Ankündigung wurde erfolgreich erstellt",
+        "NOK": "Ein Fehler ist aufgetreten. Die Ankündigung wurde nicht erstellt."
       }
     },
     "DELETE": {
       "LABEL": "Löschen",
-      "TOOLTIP": "Neuigkeit löschen",
+      "TOOLTIP": "Ankündigung löschen",
       "MESSAGE": {
-        "TEXT": "Möchten Sie diese Neuigkeit löschen?",
+        "TEXT": "Möchten Sie diese Ankündigung löschen?",
         "INFO": "Diese Aktion kann nicht rückgängig gemacht werden!",
-        "OK": "Die Neuigkeit wurde erfolgreich gelöscht",
-        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeit wurde nicht gelöscht."
+        "OK": "Die Ankündigung wurde erfolgreich gelöscht",
+        "NOK": "Ein Fehler ist aufgetreten. Die Ankündigung wurde nicht gelöscht."
       }
     },
     "EDIT": {
       "LABEL": "Bearbeiten",
-      "TOOLTIP": "Neuigkeit bearbeiten",
+      "TOOLTIP": "Ankündigung bearbeiten",
       "MESSAGE": {
-        "OK": "Die Neuigkeit wurde erfolgreich gespeichert",
-        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeit wurde nicht gespeichert."
+        "OK": "Die Ankündigung wurde erfolgreich gespeichert",
+        "NOK": "Ein Fehler ist aufgetreten. Die Ankündigung wurde nicht gespeichert."
       }
     },
     "EXPORT": {
       "LABEL": "Export",
       "TOOLTIP": "Definition als JSON herunterladen",
       "MESSAGE": {
-        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeiten konnten nicht exportiert werden."
+        "NOK": "Ein Fehler ist aufgetreten. Die Ankündigungen konnten nicht exportiert werden."
       }
     },
     "IMPORT": {
       "LABEL": "Import",
       "TOOLTIP": "Definition als JSON hochladen",
       "MESSAGE": {
-        "OK": "Die Neuigkeiten wurden erfolgreich importiert.",
-        "NOK": "Ein Fehler ist aufgetreten. Die Neuigkeiten wurden nicht importiert."
+        "OK": "Die Ankündigungen wurden erfolgreich importiert.",
+        "NOK": "Ein Fehler ist aufgetreten. Die Ankündigungen wurden nicht importiert."
       }
     },
     "NAVIGATION": {
@@ -76,7 +76,7 @@
     },
     "VIEW": {
       "LABEL": "Details",
-      "TOOLTIP": "Neuigkeitdetails"
+      "TOOLTIP": "Details der Ankündigung"
     },
     "CANCEL": "Abbrechen",
     "CHOOSE": "Auswählen",
@@ -90,11 +90,11 @@
       "CANCEL_AND_CLOSE": "Abbrechen und Dialog schließen",
       "CANCEL_WITHOUT_SAVE": "Die Aktion ohne Speichern abbrechen",
       "SAVE": "Die Änderungen speichern",
-      "SAVE_AS": "Speichern als neue Neuigkeit"
+      "SAVE_AS": "Speichern als neue Ankündigung"
     }
   },
   "BREADCRUMBS": {
-    "SEARCH": "Neuigkeiten"
+    "SEARCH": "Ankündigungen"
   },
   "INTERNAL": {
     "CREATION_DATE": "Erstellt am",
@@ -111,22 +111,22 @@
   },
   "DIALOG": {
     "SEARCH": {
-      "HEADER": "Neuigkeiten",
-      "SUBHEADER": "Suchen und Verwalten von Neuigkeiten"
+      "HEADER": "Ankündigungen",
+      "SUBHEADER": "Suchen und Verwalten von Ankündigungen"
     },
     "DETAIL": {
-      "COPY.HEADER": "Neuigkeit erstellen",
-      "CREATE.HEADER": "Neuigkeit erstellen",
-      "DELETE.HEADER": "Neuigkeit löschen",
-      "EDIT.HEADER": "Neuigkeit ändern",
-      "VIEW.HEADER": "Neuigkeit Details",
+      "COPY.HEADER": "Ankündigung erstellen",
+      "CREATE.HEADER": "Ankündigung erstellen",
+      "DELETE.HEADER": "Ankündigung löschen",
+      "EDIT.HEADER": "Ankündigung ändern",
+      "VIEW.HEADER": "Ankündigung Details",
       "TAB": {
         "PROPS": "Eigenschaften",
         "CONTENT": "Inhalt",
         "INTERN": "Intern",
         "TOOLTIPS": {
-          "PROPS": "Basiseigenschaften des Neuigkeit",
-          "CONTENT": "Titel und Inhalt der Neuigkeit",
+          "PROPS": "Basiseigenschaften des Ankündigung",
+          "CONTENT": "Titel und Inhalt der Ankündigung",
           "INTERN": "Interne Eigenschaften"
         },
         "VISIBILITY": "Sichtbar für",
@@ -165,21 +165,22 @@
       "PRODUCT": "Applikation"
     },
     "LIST-ACTIVE": {
-      "TITLE": "Ankündigungen"
+      "TITLE": "Ankündigungen",
+      "NO_ACTIVE_ANNOUNCEMENTS": "Keine aktiven Ankündigungen"
     },
     "TOOLTIPS": {
-      "TITLE": "Titel der Neuigkeit",
-      "TITLE.CRITERIA": "Titel der Neuigkeit, Suche mit Wildcard: *",
-      "WORKSPACE": "Workspace, bei dem die Neuigkeit angezeigt werden soll",
-      "PRODUCT_NAME": "Applikation, bei der die Neuigkeit angezeigt werden soll",
-      "TYPE": "Typ der Neuigkeit",
-      "STATUS": "Ist die Neuigkeit aktiv?",
-      "PRIORITY": "Priorität der Neuigkeit",
-      "START_DATE": "Datum und Zeit zu dem die Neuigkeit aktiv wird",
+      "TITLE": "Titel der Ankündigung",
+      "TITLE.CRITERIA": "Titel der Ankündigung, Suche mit Wildcard: *",
+      "WORKSPACE": "Workspace, bei dem die Ankündigung angezeigt werden soll",
+      "PRODUCT_NAME": "Applikation, bei der die Ankündigung angezeigt werden soll",
+      "TYPE": "Typ der Ankündigung",
+      "STATUS": "Ist die Ankündigung aktiv?",
+      "PRIORITY": "Priorität der Ankündigung",
+      "START_DATE": "Datum und Zeit zu dem die Ankündigung aktiv wird",
       "START_DATE_RANGE": "Datumsbereich des Startdatums",
-      "END_DATE": "Datum und Zeit zu dem die Neuigkeit inaktiv wird",
+      "END_DATE": "Datum und Zeit zu dem die Ankündigung inaktiv wird",
       "END_DATE_RANGE": "Datumsbereich des Endedatums",
-      "CONTENT": "Der Text der angezeigten Neuigkeit, maximal 1000 Zeichen",
+      "CONTENT": "Der Text der angezeigten Ankündigung, maximal 1000 Zeichen",
       "CHARACTERS": "Noch mögliche Zeichen",
       "PREVIEW.ICON": "Vorschau"
     }
@@ -216,14 +217,14 @@
   },
   "EXCEPTIONS": {
     "HTTP_STATUS_undefined": {
-      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
-      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
-      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal."
+      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Ankündigung - bitte versuchen Sie es noch einmal.",
+      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Ankündigungen - bitte versuchen Sie es noch einmal.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Ankündigungen zugeordnet sind - bitte versuchen Sie es noch einmal."
     },
     "HTTP_STATUS_0": {
-      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
-      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Neuigkeiten - bitte versuchen Sie es noch einmal.",
-      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Neuigkeiten zugeordnet sind - bitte versuchen Sie es noch einmal."
+      "ANNOUNCEMENT": "Unbekanntes Problem beim Abrufen der Ankündigung - bitte versuchen Sie es noch einmal.",
+      "ANNOUNCEMENTS": "Unbekanntes Problem beim Abrufen von Ankündigungen - bitte versuchen Sie es noch einmal.",
+      "ASSIGNMENTS": "Unbekanntes Problem beim Abrufen von Workspaces und Applikationen die Ankündigungen zugeordnet sind - bitte versuchen Sie es noch einmal."
     },
     "HTTP_STATUS_400": {
       "ANNOUNCEMENT": "Ihre Anfrage konnte nicht bearbeitet werden.",
@@ -231,23 +232,23 @@
       "ASSIGNMENTS": "Ihre Anfrage konnte nicht bearbeitet werden."
     },
     "HTTP_STATUS_401": {
-      "ANNOUNCEMENT": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
-      "ANNOUNCEMENTS": "Sie sind nicht autorisiert, um Neuigkeiten zu sehen.",
-      "ASSIGNMENTS": "Sie sind nicht autorisiert, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind."
+      "ANNOUNCEMENT": "Sie sind nicht autorisiert, um Ankündigungen zu sehen.",
+      "ANNOUNCEMENTS": "Sie sind nicht autorisiert, um Ankündigungen zu sehen.",
+      "ASSIGNMENTS": "Sie sind nicht autorisiert, um Workspaces und Applikationen zu sehen, die Ankündigungen zugeordnet sind."
     },
     "HTTP_STATUS_403": {
-      "ANNOUNCEMENT": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
-      "ANNOUNCEMENTS": "Sie haben keine Rechte, um Neuigkeiten zu sehen.",
-      "ASSIGNMENTS": "Sie haben keine Rechte, um Workspaces und Applikationen zu sehen, die Neuigkeiten zugeordnet sind."
+      "ANNOUNCEMENT": "Sie haben keine Rechte, um Ankündigungen zu sehen.",
+      "ANNOUNCEMENTS": "Sie haben keine Rechte, um Ankündigungen zu sehen.",
+      "ASSIGNMENTS": "Sie haben keine Rechte, um Workspaces und Applikationen zu sehen, die Ankündigungen zugeordnet sind."
     },
     "HTTP_STATUS_404": {
-      "ANNOUNCEMENT": "Neuigkeit nicht gefunden.",
-      "ANNOUNCEMENTS": "Es konnten keine Neuigkeiten gefunden werden.",
-      "ASSIGNMENTS": "Es konnten keine Workspaces und Applikationen gefunden werden, die Neuigkeiten zugeordnet sind."
+      "ANNOUNCEMENT": "Ankündigung nicht gefunden.",
+      "ANNOUNCEMENTS": "Es konnten keine Ankündigungen gefunden werden.",
+      "ASSIGNMENTS": "Es konnten keine Workspaces und Applikationen gefunden werden, die Ankündigungen zugeordnet sind."
     },
     "HTTP_STATUS_500": {
-      "ANNOUNCEMENT": "Unbekanntes Server-Problem beim Abrufen der Neuigkeit - bitte versuchen Sie es noch einmal.",
-      "ANNOUNCEMENTS": "Unbekanntes Server-Problem beim Abrufen von Neuigkeitsdaten - bitte versuchen Sie es noch einmal.",
+      "ANNOUNCEMENT": "Unbekanntes Server-Problem beim Abrufen der Ankündigung - bitte versuchen Sie es noch einmal.",
+      "ANNOUNCEMENTS": "Unbekanntes Server-Problem beim Abrufen von Ankündigungsdaten - bitte versuchen Sie es noch einmal.",
       "ASSIGNMENTS": "Unbekanntes Server-Problem beim Abrufen von Workspaces und Applikationen - bitte versuchen Sie es noch einmal."
     }
   }

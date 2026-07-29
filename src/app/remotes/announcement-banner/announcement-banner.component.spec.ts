@@ -1,11 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { AsyncPipe } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
 
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
+import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+
 import {
   Announcement,
   AnnouncementInternalAPIService,
@@ -13,8 +17,6 @@ import {
   AnnouncementStatus
 } from 'src/app/shared/generated'
 import { OneCXAnnouncementBannerComponent } from './announcement-banner.component'
-import { AsyncPipe } from '@angular/common'
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 
 class MockAppStateService {
   currentWorkspace$ = { asObservable: () => of({ workspaceName: 'wsName' }) }
@@ -73,6 +75,7 @@ describe('AnnouncementBannerComponent - common case', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideNoopAnimations(),
         { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: AppStateService, useValue: mockAppStateService }
       ]
