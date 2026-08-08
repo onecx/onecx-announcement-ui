@@ -37,7 +37,7 @@ module.exports = function (config) {
     },
     reporters: ['progress', 'coverage', 'sonarqubeUnit'],
     jasmineHtmlReporter: {
-      suppressAll: true // Entfernt doppelte Stacktraces im Browser
+      suppressAll: true
     },
     sonarQubeUnitReporter: {
       outputFile: 'reports/sonarqube_report.xml',
