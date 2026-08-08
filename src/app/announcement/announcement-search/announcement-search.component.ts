@@ -233,7 +233,6 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   ]
   public getDisplayName = Utils.getDisplayName
-
   // data
   private readonly destroyRef = inject(DestroyRef)
   private readonly dataSubject$ = new BehaviorSubject<RowListGridData[] | null>(null)

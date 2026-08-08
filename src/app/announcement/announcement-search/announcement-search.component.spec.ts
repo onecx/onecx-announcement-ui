@@ -145,7 +145,7 @@ describe('AnnouncementSearchComponent', () => {
       component.ngOnInit()
 
       component.actions$?.subscribe((action) => {
-        action[0].actionCallback()
+        if (action[0].actionCallback) action[0].actionCallback()
       })
 
       await Promise.resolve()
@@ -160,7 +160,7 @@ describe('AnnouncementSearchComponent', () => {
       component.ngOnInit()
 
       component.actions$?.subscribe((action) => {
-        action[0].actionCallback()
+        if (action[0].actionCallback) action[0].actionCallback()
       })
 
       await Promise.resolve()
@@ -505,7 +505,7 @@ describe('AnnouncementSearchComponent', () => {
 
       expect(copyAction).toBeDefined()
 
-      copyAction?.callback(itemData[0])
+      if (copyAction?.callback) copyAction?.callback(itemData[0])
       await Promise.resolve()
 
       expect(component.displayDetailDialog).toBeTrue()
