@@ -36,7 +36,8 @@ import { Utils } from 'src/app/shared/utils'
     TranslateModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './announcement-banner.component.html'
+  templateUrl: './announcement-banner.component.html',
+  host: { style: 'width: 100%;' }
 })
 export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocxRemoteWebcomponent {
   @Input() set ocxRemoteComponentConfig(config: RemoteComponentConfig) {
