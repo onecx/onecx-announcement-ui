@@ -1,0 +1,45 @@
+@use 'src/app/am-mixins' as *;
+
+@include ocx-text-responsive;
+
+::ng-deep {
+  .p-carousel-content {
+    .p-carousel-prev-button,
+    .p-carousel-next-button {
+      width: 2.5rem !important;
+      text-align: center;
+      button {
+        height: 2rem !important;
+        width: 2rem !important;
+      }
+    }
+  }
+  .text-ellipsis-1-line {
+    @include displaying-text-ellipsis(1);
+  }
+  .text-ellipsis-2-lines {
+    @include displaying-text-ellipsis(2);
+  }
+
+  .p-carousel-items-container {
+    align-items: flex-start !important;
+  }
+
+  .p-carousel-item {
+    max-height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    transition: max-height 0.3s ease-in-out;
+  }
+
+  .p-carousel-item-active {
+    max-height: 1000px !important;
+    overflow: visible !important;
+    visibility: visible !important;
+  }
+
+  .announcement-banner-action button {
+    height: 1.9rem !important;
+    width: 1.9rem !important;
+  }
+}

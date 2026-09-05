@@ -166,7 +166,7 @@ describe('AnnouncementBannerComponent - common case', () => {
       spyOn(component as any, 'getIgnoredAnnouncementsIds').and.returnValue([])
 
       const id = 'announcement1'
-      component.hide(id)
+      component.onHideItem(id)
 
       expect(localStorage.setItem).toHaveBeenCalledWith(component['ignoredAnnouncementsKey'], JSON.stringify([id]))
     })
@@ -178,7 +178,7 @@ describe('AnnouncementBannerComponent - common case', () => {
       spyOn(localStorage, 'setItem').and.throwError(error.message)
       spyOn(console, 'error')
 
-      component.hide('some id')
+      component.onHideItem('some id')
 
       expect(console.error).toHaveBeenCalledWith('Failed to hide the announcement:', error)
     })

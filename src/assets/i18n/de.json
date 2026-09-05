@@ -160,7 +160,10 @@
     "ALL": "Alle",
     "NOT_FOUND": "- unbekannt -",
     "BANNER": {
-      "CLOSE": "Schließen",
+      "HIDE": "Ausblenden",
+      "RESTORE": "Alle ausgeblendeten Ankündigungen wieder einblenden",
+      "TOGGLE.FULL": "Inhalt anzeigen",
+      "TOGGLE.TITLE": "Nur Titel in einer Zeile anzeigen",
       "WORKSPACE": "Workspace",
       "PRODUCT": "Applikation"
     },
