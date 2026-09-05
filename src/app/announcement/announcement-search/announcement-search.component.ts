@@ -452,7 +452,7 @@ export class AnnouncementSearchComponent implements OnInit {
             return ul
           }),
           catchError((err) => {
-            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.ASSIGNMENTS'
             console.error('getAllAnnouncementAssignments', err)
             return of({ products: [], workspaces: [] })
           })
