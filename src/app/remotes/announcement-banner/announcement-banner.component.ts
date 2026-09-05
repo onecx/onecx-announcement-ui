@@ -110,7 +110,8 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
                         .sort((a, b) => this.prioValue(b.priority) - this.prioValue(a.priority))
                     )
                   }),
-                  catchError(() => {
+                  catchError((err) => {
+                    console.error('Failed to search announcement banners:', err)
                     return of([])
                   })
                 )
