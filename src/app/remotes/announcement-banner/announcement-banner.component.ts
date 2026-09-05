@@ -163,19 +163,17 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
       this.announcementsSubject.next(currentAnnouncements)
       this.searchWorkspaceAnnouncements()
     } catch (error) {
-      console.error('Failed to restore the announcement:', error)
+      console.error('Failed to restore the announcements:', error)
     }
   }
 
   public onToggleDisplayFull(): void {
     localStorage.removeItem(this.displayAnnouncementsKey)
     this.displayType.set('full')
-    console.log('Toggled full view of the announcement banner')
   }
 
   public onToggleDisplayTitle(): void {
     localStorage.setItem(this.displayAnnouncementsKey, JSON.stringify('title'))
     this.displayType.set('title')
-    console.log('Toggled title view of the announcement banner')
   }
 }
