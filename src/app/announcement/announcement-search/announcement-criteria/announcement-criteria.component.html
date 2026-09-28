@@ -94,6 +94,7 @@
       <p-select
         id="am_search_criteria_status"
         formControlName="status"
+        [style.min-width.rem]="7"
         [options]="(statusOptions$ | async) ?? []"
         [showClear]="true"
         [autoDisplayFirst]="true"
@@ -110,6 +111,7 @@
       <p-select
         id="am_search_criteria_type"
         formControlName="type"
+        [style.min-width.rem]="7"
         [options]="(typeOptions$ | async) ?? []"
         [showClear]="true"
         [autoDisplayFirst]="true"
@@ -125,8 +127,9 @@
     <p-floatlabel variant="on" *ocxAdvanced>
       <p-select
         id="am_search_criteria_priority"
-        [options]="(priorityTypeOptions$ | async) ?? []"
         formControlName="priority"
+        [style.min-width.rem]="7"
+        [options]="(priorityTypeOptions$ | async) ?? []"
         [showClear]="true"
         [autoDisplayFirst]="true"
         [appendTo]="'body'"
