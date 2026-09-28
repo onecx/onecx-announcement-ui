@@ -22,7 +22,6 @@ import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { MessageModule } from 'primeng/message'
 import { SelectItem } from 'primeng/api'
-import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
@@ -117,9 +116,9 @@ export type Workspace = {
     InputGroupModule,
     InputGroupAddonModule,
     MessageModule,
-    ToastModule,
     TooltipModule,
     TranslateModule,
+    // components
     PortalPageComponent,
     AnnouncementCriteriaComponent,
     AnnouncementDetailComponent,
@@ -235,7 +234,6 @@ export class AnnouncementSearchComponent implements OnInit {
     }
   ]
   public getDisplayName = Utils.getDisplayName
-
   // data
   private readonly destroyRef = inject(DestroyRef)
   private readonly route = inject(ActivatedRoute)
@@ -458,7 +456,7 @@ export class AnnouncementSearchComponent implements OnInit {
             return ul
           }),
           catchError((err) => {
-            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ASSIGNMENTS'
+            this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.ASSIGNMENTS'
             console.error('getAllAnnouncementAssignments', err)
             return of({ products: [], workspaces: [] })
           })

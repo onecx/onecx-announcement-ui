@@ -45,7 +45,6 @@ import { SelectItem } from 'primeng/api'
 import { TableModule } from 'primeng/table'
 import { TabsModule } from 'primeng/tabs'
 import { TextareaModule } from 'primeng/textarea'
-import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -60,6 +59,7 @@ import {
   CreateAnnouncementRequest,
   UpdateAnnouncementRequest
 } from 'src/app/shared/generated'
+import { Utils } from 'src/app/shared/utils'
 
 import { AnnouncementEnumTranslation } from '../announcement-enum-translation'
 import type { ChangeMode } from '../announcement-search/announcement-search.component'
@@ -109,7 +109,6 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
     TableModule,
     TabsModule,
     TextareaModule,
-    ToastModule,
     TooltipModule,
     TranslateModule
   ],
@@ -240,7 +239,7 @@ export class AnnouncementDetailComponent implements OnChanges {
         error: (err) => {
           this.announcementForm.reset()
           this.announcementForm.disable()
-          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + err.status + '.ANNOUNCEMENT'
+          this.exceptionKey = 'EXCEPTIONS.HTTP_STATUS_' + Utils.mapping_error_status(err.status) + '.ANNOUNCEMENT'
           this.msgService.error({ summaryKey: this.exceptionKey })
           console.error('getAnnouncementById', err)
         }

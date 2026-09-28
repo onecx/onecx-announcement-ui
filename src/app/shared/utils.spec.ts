@@ -3,6 +3,19 @@ import { SelectItem } from 'primeng/api'
 import { Utils } from './utils'
 
 describe('Utils', () => {
+  describe('http error status', () => {
+    it('should map known status', () => {
+      const status = Utils.mapping_error_status(404)
+
+      expect(status).toEqual(404)
+    })
+    it('should map unknown status', () => {
+      const status = Utils.mapping_error_status(405)
+
+      expect(status).toEqual(0)
+    })
+  })
+
   describe('limitText', () => {
     it('should truncate text that exceeds the specified limit', () => {
       const result = Utils.limitText('hello', 4)

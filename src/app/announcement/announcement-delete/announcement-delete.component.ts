@@ -4,7 +4,6 @@ import { TranslateModule } from '@ngx-translate/core'
 import { ButtonModule } from 'primeng/button'
 import { DialogModule } from 'primeng/dialog'
 import { SelectItem } from 'primeng/api'
-import { ToastModule } from 'primeng/toast'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
@@ -15,7 +14,7 @@ import { Utils } from 'src/app/shared/utils'
 @Component({
   selector: 'app-announcement-delete',
   standalone: true,
-  imports: [ButtonModule, DialogModule, ToastModule, TooltipModule, TranslateModule],
+  imports: [ButtonModule, DialogModule, TooltipModule, TranslateModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './announcement-delete.component.html'
 })
