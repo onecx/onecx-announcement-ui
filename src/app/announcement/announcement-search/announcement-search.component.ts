@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, OnInit } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AsyncPipe, DatePipe, NgTemplateOutlet } from '@angular/common'
+import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import {
   BehaviorSubject,
@@ -235,6 +236,8 @@ export class AnnouncementSearchComponent implements OnInit {
   public getDisplayName = Utils.getDisplayName
   // data
   private readonly destroyRef = inject(DestroyRef)
+  private readonly route = inject(ActivatedRoute)
+  private readonly router = inject(Router)
   private readonly dataSubject$ = new BehaviorSubject<RowListGridData[] | null>(null)
   public data$: Observable<RowListGridData[] | null> = this.dataSubject$.asObservable()
   private searchSubscription?: Subscription // to cancel ongoing search if new search is triggered
@@ -278,7 +281,8 @@ export class AnnouncementSearchComponent implements OnInit {
     this.wdSlotEmitter.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(this.workspaceData$)
     this.prepareActionButtons()
     this.loadMetaData()
-    this.onSearch({})
+    const restored = this.restoreStateFromQueryParams()
+    if (!restored) this.onSearch({})
   }
 
   /****************************************************************************
@@ -493,6 +497,7 @@ export class AnnouncementSearchComponent implements OnInit {
    */
   public onSearch(criteria: AnnouncementSearchCriteria, reuseCriteria = false): void {
     if (!reuseCriteria) this.criteria = criteria
+    this.updateSearchParamsFromState()
     this.searching = true
     this.exceptionKey = undefined
     this.searchSubscription?.unsubscribe()
@@ -514,5 +519,46 @@ export class AnnouncementSearchComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((data) => this.dataSubject$.next(data))
+  }
+
+  private updateSearchParamsFromState(): void {
+    const queryParams = {
+      title: this.criteria.title,
+      workspaceName: this.criteria.workspaceName,
+      productName: this.criteria.productName,
+      status: this.criteria.status,
+      type: this.criteria.type,
+      priority: this.criteria.priority,
+      startDateFrom: this.criteria.startDateFrom,
+      startDateTo: this.criteria.startDateTo
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      replaceUrl: true,
+      queryParamsHandling: 'merge'
+    })
+  }
+
+  private restoreStateFromQueryParams(): boolean {
+    const queryParams = this.route.snapshot.queryParams
+    const paramKeys = Object.keys(queryParams)
+
+    if (!paramKeys.length) return false
+
+    this.criteria = {
+      title: queryParams['title'] ?? undefined,
+      workspaceName: queryParams['workspaceName'] ?? undefined,
+      productName: queryParams['productName'] ?? undefined,
+      status: queryParams['status'] ?? undefined,
+      type: queryParams['type'] ?? undefined,
+      priority: queryParams['priority'] ?? undefined,
+      startDateFrom: queryParams['startDateFrom'] ?? undefined,
+      startDateTo: queryParams['startDateTo'] ?? undefined
+    }
+
+    this.onSearch(this.criteria, true)
+    return true
   }
 }

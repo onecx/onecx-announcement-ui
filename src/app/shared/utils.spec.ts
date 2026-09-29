@@ -102,4 +102,34 @@ describe('Utils', () => {
       expect(Utils.convertLineBreaks(text)).toEqual('')
     })
   })
+
+  describe('mapDateStringsToDateRange', () => {
+    it('should return null when startDateFrom is invalid', () => {
+      expect(Utils.mapDateStringsToDateRange('invalid-date')).toBeNull()
+    })
+
+    it('should return array with only start date when startDateTo is undefined', () => {
+      const result = Utils.mapDateStringsToDateRange('2024-01-01')
+
+      expect(result).toHaveSize(1)
+      expect(result?.[0]).toEqual(new Date('2024-01-01'))
+    })
+
+    it('should return null when startDateTo is invalid', () => {
+      expect(Utils.mapDateStringsToDateRange('2024-01-01', 'invalid-date')).toBeNull()
+    })
+
+    it('should return array with only start date when end date year is 3000', () => {
+      const result = Utils.mapDateStringsToDateRange('2024-01-01', '3000-12-31')
+
+      expect(result).toHaveSize(1)
+      expect(result?.[0]).toEqual(new Date('2024-01-01'))
+    })
+
+    it('should return date range when both dates are valid', () => {
+      const result = Utils.mapDateStringsToDateRange('2024-01-01', '2024-12-31')
+
+      expect(result).toEqual([new Date('2024-01-01'), new Date('2024-12-31')])
+    })
+  })
 })

@@ -91,56 +91,53 @@
       </label>
     </p-floatlabel>
     <p-floatlabel variant="on" *ocxAdvanced>
-      <p-multiSelect
+      <p-select
         id="am_search_criteria_status"
         formControlName="status"
-        appendTo="body"
+        [style.min-width.rem]="7"
         [options]="(statusOptions$ | async) ?? []"
-        [filter]="false"
         [showClear]="true"
-        [showToggleAll]="false"
+        [autoDisplayFirst]="true"
+        [appendTo]="'body'"
         [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-      </p-multiSelect>
+      ></p-select>
       <label for="am_search_criteria_status" aria-hidden="true">{{ 'ANNOUNCEMENT.STATUS' | translate }}</label>
     </p-floatlabel>
 
     <p-floatlabel variant="on" *ocxAdvanced>
-      <p-multiSelect
+      <p-select
         id="am_search_criteria_type"
         formControlName="type"
-        appendTo="body"
+        [style.min-width.rem]="7"
         [options]="(typeOptions$ | async) ?? []"
-        [filter]="false"
         [showClear]="true"
-        [showToggleAll]="false"
+        [autoDisplayFirst]="true"
+        [appendTo]="'body'"
         [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.TYPE' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-      </p-multiSelect>
+      ></p-select>
       <label for="am_search_criteria_type" aria-hidden="true">{{ 'ANNOUNCEMENT.TYPE' | translate }}</label>
     </p-floatlabel>
 
     <p-floatlabel variant="on" *ocxAdvanced>
-      <p-multiSelect
+      <p-select
         id="am_search_criteria_priority"
-        [options]="(priorityTypeOptions$ | async) ?? []"
         formControlName="priority"
-        appendTo="body"
-        [filter]="false"
+        [style.min-width.rem]="7"
+        [options]="(priorityTypeOptions$ | async) ?? []"
         [showClear]="true"
-        [showToggleAll]="false"
+        [autoDisplayFirst]="true"
+        [appendTo]="'body'"
         [ariaLabel]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
         [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.PRIORITY' | translate"
         tooltipPosition="top"
         tooltipEvent="hover"
-      >
-      </p-multiSelect>
+      ></p-select>
       <label for="am_search_criteria_priority" aria-hidden="true">{{ 'ANNOUNCEMENT.PRIORITY' | translate }}</label>
     </p-floatlabel>
   </form>

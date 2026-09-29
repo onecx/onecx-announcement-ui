@@ -30,5 +30,34 @@ export const Utils = {
 
   convertLineBreaks(text?: string) {
     return text?.replaceAll(/(?:\r\n|\r|\n)/g, '<br/>') ?? ''
+  },
+
+  mapDateStringsToDateRange(startDateFrom?: string, startDateTo?: string): Date[] | null {
+    if (!startDateFrom) return null
+
+    const dateFrom = new Date(startDateFrom)
+    if (Number.isNaN(dateFrom.getTime())) return null
+    if (!startDateTo) return [dateFrom]
+
+    const dateTo = new Date(startDateTo)
+    if (Number.isNaN(dateTo.getTime())) return null
+    if (dateTo.getFullYear() === 3000) return [dateFrom]
+
+    return [dateFrom, dateTo]
+  },
+
+  mapDateRangeToDateStrings(dateRange: Date[]) {
+    let dateFrom!: Date
+    let dateTo!: Date
+
+    if (dateRange[1] == null || dateRange[0].toDateString() === dateRange[1].toDateString()) {
+      dateFrom = dateRange[0]
+      dateTo = new Date(dateFrom)
+      dateTo.setFullYear(3000)
+    } else {
+      dateFrom = dateRange[0]
+      dateTo = dateRange[1]
+    }
+    return [dateFrom.toISOString(), dateTo.toISOString()]
   }
 }
