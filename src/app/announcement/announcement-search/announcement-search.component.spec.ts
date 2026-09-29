@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
+import { ActivatedRoute, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
-import { provideRouter } from '@angular/router'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
@@ -145,7 +145,7 @@ describe('AnnouncementSearchComponent', () => {
       component.ngOnInit()
 
       component.actions$?.subscribe((action) => {
-        if (action[0].actionCallback) action[0].actionCallback()
+        action[0].actionCallback()
       })
 
       await Promise.resolve()
@@ -160,7 +160,7 @@ describe('AnnouncementSearchComponent', () => {
       component.ngOnInit()
 
       component.actions$?.subscribe((action) => {
-        if (action[0].actionCallback) action[0].actionCallback()
+        action[0].actionCallback()
       })
 
       await Promise.resolve()
@@ -749,6 +749,37 @@ describe('AnnouncementSearchComponent', () => {
       langSubject.next('de')
       initTestComponent()
       expect(component.datetimeFormat).toEqual('dd.MM.yyyy HH:mm')
+    })
+  })
+
+  describe('restore state from query params', () => {
+    it('should map null query params to undefined', () => {
+      const route = TestBed.inject(ActivatedRoute)
+
+      Object.defineProperty(route.snapshot, 'queryParams', {
+        value: {
+          title: null,
+          workspaceName: null
+        },
+        configurable: true
+      })
+
+      const onSearchSpy = spyOn(component, 'onSearch')
+      const result = (component as any).restoreStateFromQueryParams()
+
+      expect(result).toBeTrue()
+      expect(component.criteria).toEqual({
+        title: undefined,
+        workspaceName: undefined,
+        productName: undefined,
+        status: undefined,
+        type: undefined,
+        priority: undefined,
+        startDateFrom: undefined,
+        startDateTo: undefined
+      })
+
+      expect(onSearchSpy).toHaveBeenCalled()
     })
   })
 })

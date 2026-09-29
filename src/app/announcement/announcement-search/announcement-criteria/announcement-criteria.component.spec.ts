@@ -18,18 +18,18 @@ const filledCriteria = new FormGroup<AnnouncementCriteriaForm>({
   title: new FormControl<string | null>('title'),
   workspaceName: new FormControl<string | null>('workspaceName'),
   productName: new FormControl<string | null>('productName'),
-  status: new FormControl<AnnouncementStatus[] | null>([AnnouncementStatus.Active]),
-  type: new FormControl<AnnouncementType[] | null>([AnnouncementType.Event]),
-  priority: new FormControl<AnnouncementPriorityType[] | null>([AnnouncementPriorityType.Low]),
+  status: new FormControl<AnnouncementStatus | null>(AnnouncementStatus.Active),
+  type: new FormControl<AnnouncementType | null>(AnnouncementType.Event),
+  priority: new FormControl<AnnouncementPriorityType | null>(AnnouncementPriorityType.Low),
   startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
 })
 const emptyCriteria = new FormGroup<AnnouncementCriteriaForm>({
   title: new FormControl<string | null>(null),
   workspaceName: new FormControl<string | null>(null),
   productName: new FormControl<string | null>(null),
-  status: new FormControl<AnnouncementStatus[] | null>(null),
-  type: new FormControl<AnnouncementType[] | null>(null),
-  priority: new FormControl<AnnouncementPriorityType[] | null>(null),
+  status: new FormControl<AnnouncementStatus | null>(null),
+  type: new FormControl<AnnouncementType | null>(null),
+  priority: new FormControl<AnnouncementPriorityType | null>(null),
   startDateRange: new FormControl<Date[] | null>([new Date('2023-01-02'), new Date('2023-01-03')])
 })
 
@@ -91,7 +91,13 @@ describe('AnnouncementCriteriaComponent', () => {
 
       component.onSearch()
 
-      expect(component.searchEmitter.emit).toHaveBeenCalled()
+      expect(component.searchEmitter.emit).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          status: AnnouncementStatus.Active,
+          type: AnnouncementType.Event,
+          priority: AnnouncementPriorityType.Low
+        })
+      )
     })
 
     it('should prevent user from searching for invalid dates', () => {
@@ -119,6 +125,28 @@ describe('AnnouncementCriteriaComponent', () => {
 
       expect(component.criteriaForm.reset).toHaveBeenCalled()
       expect(component.resetSearchEmitter.emit).toHaveBeenCalled()
+    })
+
+    it('should apply criteria input with single enum values', () => {
+      fixture.componentRef.setInput('criteria', {
+        title: 'title',
+        status: AnnouncementStatus.Inactive,
+        type: AnnouncementType.Info,
+        priority: AnnouncementPriorityType.Normal
+      })
+      fixture.detectChanges()
+
+      expect(component.criteriaForm.controls['title'].value).toBe('title')
+      expect(component.criteriaForm.controls['status'].value).toBe(AnnouncementStatus.Inactive)
+      expect(component.criteriaForm.controls['type'].value).toBe(AnnouncementType.Info)
+      expect(component.criteriaForm.controls['priority'].value).toBe(AnnouncementPriorityType.Normal)
+    })
+
+    it('should reset form when criteria is undefined', () => {
+      spyOn(component.criteriaForm, 'reset')
+      ;(component as any).applyCriteria(undefined)
+
+      expect(component.criteriaForm.reset).toHaveBeenCalled()
     })
   })
 
