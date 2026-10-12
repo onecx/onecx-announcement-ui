@@ -94,6 +94,47 @@ describe('AnnouncementCriteriaComponent', () => {
       expect(component.searchEmitter.emit).toHaveBeenCalled()
     })
 
+    it('should emit every selected filter value when multiple values are selected', () => {
+      const status = [AnnouncementStatus.Active, AnnouncementStatus.Inactive]
+      const type = [AnnouncementType.Event, AnnouncementType.Info]
+      const priority = [AnnouncementPriorityType.Important, AnnouncementPriorityType.Low]
+      component.criteriaForm.patchValue({ status, type, priority })
+      spyOn(component.searchEmitter, 'emit')
+
+      component.onSearch()
+
+      expect(component.searchEmitter.emit).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({ status, type, priority })
+      )
+    })
+
+    it('should emit empty filter arrays when all selected values are cleared', () => {
+      component.criteriaForm.patchValue({ status: [], type: [], priority: [] })
+      spyOn(component.searchEmitter, 'emit')
+
+      component.onSearch()
+
+      expect(component.searchEmitter.emit).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({ status: [], type: [], priority: [] })
+      )
+    })
+
+    it('should omit filter values when the search form is reset', () => {
+      component.criteriaForm.patchValue({
+        status: [AnnouncementStatus.Active, AnnouncementStatus.Inactive],
+        type: [AnnouncementType.Event, AnnouncementType.Info],
+        priority: [AnnouncementPriorityType.Important, AnnouncementPriorityType.Low]
+      })
+      component.onResetCriteria()
+      spyOn(component.searchEmitter, 'emit')
+
+      component.onSearch()
+
+      expect(component.searchEmitter.emit).toHaveBeenCalledOnceWith(
+        jasmine.objectContaining({ status: undefined, type: undefined, priority: undefined })
+      )
+    })
+
     it('should prevent user from searching for invalid dates', () => {
       component.criteriaForm = filledCriteria
       component.criteriaForm.patchValue({ startDateRange: [new Date('2023-01-02')] })
