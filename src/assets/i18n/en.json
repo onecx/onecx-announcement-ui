@@ -72,6 +72,10 @@
       "MESSAGE": {
         "NO_RESULTS": "Search returned no results",
         "SEARCH_FAILED": "Search failed"
+      },
+      "RESET_BUTTON": {
+        "ARIA_LABEL": "Reset search criteria and results",
+        "TOOLTIP": "Reset search criteria and results"
       }
     },
     "VIEW": {

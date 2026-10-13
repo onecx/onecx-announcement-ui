@@ -72,6 +72,10 @@
       "MESSAGE": {
         "NO_RESULTS": "Die Suche ergab keine Treffer",
         "SEARCH_FAILED": "Suche ist fehlgeschlagen"
+      },
+      "RESET_BUTTON": {
+        "ARIA_LABEL": "Suchkriterien und Ergebnisse zurücksetzen",
+        "TOOLTIP": "Suchkriterien und Ergebnisse zurücksetzen"
       }
     },
     "VIEW": {
