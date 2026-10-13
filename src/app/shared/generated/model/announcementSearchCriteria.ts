@@ -18,9 +18,9 @@ import { AnnouncementType } from './announcementType';
 export interface AnnouncementSearchCriteria { 
     title?: string;
     content?: string;
-    type?: AnnouncementType;
-    priority?: AnnouncementPriorityType;
-    status?: AnnouncementStatus;
+    type?: Array<AnnouncementType>;
+    priority?: Array<AnnouncementPriorityType>;
+    status?: Array<AnnouncementStatus>;
     appearance?: Array<AnnouncementAppearance>;
     startDateFrom?: string;
     startDateTo?: string;
@@ -37,6 +37,4 @@ export interface AnnouncementSearchCriteria {
      */
     pageSize?: number;
 }
-
-
 

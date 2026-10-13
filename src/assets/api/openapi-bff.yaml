@@ -270,11 +270,17 @@ components:
         content:
           type: string
         type:
-          $ref: '#/components/schemas/AnnouncementType'
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementType'
         priority:
-          $ref: '#/components/schemas/AnnouncementPriorityType'
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementPriorityType'
         status:
-          $ref: '#/components/schemas/AnnouncementStatus'
+          type: array
+          items:
+            $ref: '#/components/schemas/AnnouncementStatus'
         appearance:
           type: array
           items:
