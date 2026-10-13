@@ -98,9 +98,9 @@ export class AnnouncementCriteriaComponent {
       title: this.criteriaForm.value.title === null ? undefined : this.criteriaForm.value.title,
       workspaceName: this.criteriaForm.value.workspaceName === null ? undefined : this.criteriaForm.value.workspaceName,
       productName: this.criteriaForm.value.productName === null ? undefined : this.criteriaForm.value.productName,
-      priority: this.criteriaForm.value.priority === null ? undefined : this.criteriaForm.value.priority?.[0],
-      status: this.criteriaForm.value.status === null ? undefined : this.criteriaForm.value.status?.[0],
-      type: this.criteriaForm.value.type === null ? undefined : this.criteriaForm.value.type?.[0]
+      priority: this.criteriaForm.value.priority === null ? undefined : this.criteriaForm.value.priority,
+      status: this.criteriaForm.value.status === null ? undefined : this.criteriaForm.value.status,
+      type: this.criteriaForm.value.type === null ? undefined : this.criteriaForm.value.type
     }
     if (this.criteriaForm.value.startDateRange) {
       const dates = this.mapDateRangeToDateStrings(this.criteriaForm.value.startDateRange)
