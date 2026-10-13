@@ -311,6 +311,7 @@ export class AnnouncementSearchComponent implements OnInit {
    */
   public onCriteriaReset(): void {
     this.criteria = {}
+    this.onSearch(this.criteria, true)
   }
   public onColumnsChange(activeIds: string[]) {
     if (

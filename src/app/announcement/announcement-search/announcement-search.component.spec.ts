@@ -216,24 +216,26 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should reset search criteria and empty items for the next search', (done) => {
-      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [itemData[1]] }))
+    it('should reset search criteria and empty items for the next search', () => {
+      apiServiceSpy.searchAnnouncements.calls.reset()
+      apiServiceSpy.searchAnnouncements.and.returnValues(of({ stream: [itemData[1]] }), of({ stream: [] }))
       component.criteria = { workspaceName: 'ADMIN' }
+      component['dataSubject$'].next(null)
+      const emissions: Array<any[] | null> = []
+
+      component.data$!.subscribe((data) => emissions.push(data))
 
       component.onSearch(component.criteria, true)
-
-      component.data$!.subscribe({
-        next: (data) => {
-          expect(data).toHaveSize(1)
-          expect(data![0]).toEqual(itemData[1])
-          done()
-        },
-        error: done.fail
-      })
+      expect(apiServiceSpy.searchAnnouncements).toHaveBeenCalledTimes(1)
+      expect(emissions[0]).toBeNull()
+      expect(emissions[1]).toHaveSize(1)
+      expect(emissions[1]![0]).toEqual(itemData[1])
 
       component.onCriteriaReset()
 
       expect(component.criteria).toEqual({})
+      expect(apiServiceSpy.searchAnnouncements).toHaveBeenCalledTimes(2)
+      expect(emissions[2]).toEqual([])
     })
 
     it('should display an error message if the search fails', (done) => {
