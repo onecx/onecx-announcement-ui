@@ -18,6 +18,7 @@ import { FloatLabelModule } from 'primeng/floatlabel'
 import { InputTextModule } from 'primeng/inputtext'
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
+import { MultiSelectModule } from 'primeng/multiselect'
 import { SelectModule } from 'primeng/select'
 import { SelectItem } from 'primeng/api'
 import { TooltipModule } from 'primeng/tooltip'
@@ -38,9 +39,9 @@ export interface AnnouncementCriteriaForm {
   title: FormControl<string | null>
   workspaceName: FormControl<string | null>
   productName: FormControl<string | null>
-  status: FormControl<AnnouncementStatus | null>
-  type: FormControl<AnnouncementType | null>
-  priority: FormControl<AnnouncementPriorityType | null>
+  status: FormControl<AnnouncementStatus[] | null>
+  type: FormControl<AnnouncementType[] | null>
+  priority: FormControl<AnnouncementPriorityType[] | null>
   startDateRange: FormControl<Date[] | null>
 }
 
@@ -57,6 +58,7 @@ export interface AnnouncementCriteriaForm {
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
+    MultiSelectModule,
     ButtonModule,
     SelectModule,
     TooltipModule,
@@ -90,9 +92,9 @@ export class AnnouncementCriteriaComponent implements OnChanges {
       title: new FormControl<string | null>(null),
       workspaceName: new FormControl<string | null>(null),
       productName: new FormControl<string | null>(null),
-      status: new FormControl<AnnouncementStatus | null>(null),
-      type: new FormControl<AnnouncementType | null>(null),
-      priority: new FormControl<AnnouncementPriorityType | null>(null),
+      status: new FormControl<AnnouncementStatus[] | null>(null),
+      type: new FormControl<AnnouncementType[] | null>(null),
+      priority: new FormControl<AnnouncementPriorityType[] | null>(null),
       startDateRange: new FormControl<Date[] | null>(null)
     })
     this.typeOptions$ = AnnouncementEnumTranslation.announcementType(this.translate)
