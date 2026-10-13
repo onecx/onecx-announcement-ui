@@ -94,25 +94,7 @@ describe('AnnouncementCriteriaComponent', () => {
       expect(component.searchEmitter.emit).toHaveBeenCalled()
     })
 
-    it('should emit the first selected filter value when multiple values are selected', () => {
-      const status = [AnnouncementStatus.Active, AnnouncementStatus.Inactive]
-      const type = [AnnouncementType.Event, AnnouncementType.Info]
-      const priority = [AnnouncementPriorityType.Important, AnnouncementPriorityType.Low]
-      component.criteriaForm.patchValue({ status, type, priority })
-      spyOn(component.searchEmitter, 'emit')
-
-      component.onSearch()
-
-      expect(component.searchEmitter.emit).toHaveBeenCalledOnceWith(
-        jasmine.objectContaining({
-          status: AnnouncementStatus.Active,
-          type: AnnouncementType.Event,
-          priority: AnnouncementPriorityType.Important
-        })
-      )
-    })
-
-    it('should emit every selected filter value when multiple values are selected', () => {
+    it('should emit all selected filter values when multiple values are selected', () => {
       const status = [AnnouncementStatus.Active, AnnouncementStatus.Inactive]
       const type = [AnnouncementType.Event, AnnouncementType.Info]
       const priority = [AnnouncementPriorityType.Important, AnnouncementPriorityType.Low]
@@ -124,6 +106,28 @@ describe('AnnouncementCriteriaComponent', () => {
       expect(component.searchEmitter.emit).toHaveBeenCalledOnceWith(
         jasmine.objectContaining({ status, type, priority })
       )
+    })
+
+    it('should reset the form when criteria are undefined', () => {
+      component.criteriaForm.patchValue({
+        title: 'title',
+        workspaceName: 'workspace',
+        productName: 'product',
+        status: [AnnouncementStatus.Active],
+        type: [AnnouncementType.Event],
+        priority: [AnnouncementPriorityType.Low]
+      })
+      spyOn(component.criteriaForm, 'reset').and.callThrough()
+
+      component['applyCriteria'](undefined)
+
+      expect(component.criteriaForm.reset).toHaveBeenCalledTimes(1)
+      expect(component.criteriaForm.value.title).toBeNull()
+      expect(component.criteriaForm.value.workspaceName).toBeNull()
+      expect(component.criteriaForm.value.productName).toBeNull()
+      expect(component.criteriaForm.value.status).toBeNull()
+      expect(component.criteriaForm.value.type).toBeNull()
+      expect(component.criteriaForm.value.priority).toBeNull()
     })
 
     it('should emit empty filter arrays when all selected values are cleared', () => {
