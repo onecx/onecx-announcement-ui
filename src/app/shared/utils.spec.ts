@@ -41,13 +41,24 @@ describe('Utils', () => {
     let writeTextSpy: jasmine.Spy
 
     beforeEach(() => {
-      writeTextSpy = spyOn(navigator.clipboard, 'writeText')
+      writeTextSpy = spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve())
     })
 
     it('should copy text to clipboard', () => {
       Utils.copyToClipboard('text')
 
       expect(writeTextSpy).toHaveBeenCalledWith('text')
+    })
+
+    it('should log when clipboard write rejects', async () => {
+      const error = new Error('Clipboard not allowed')
+      writeTextSpy.and.returnValue(Promise.reject(error))
+      const consoleErrorSpy = spyOn(console, 'error')
+
+      Utils.copyToClipboard('text')
+      await Promise.resolve()
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(error)
     })
   })
 

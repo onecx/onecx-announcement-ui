@@ -16,7 +16,7 @@ export const Utils = {
   },
 
   copyToClipboard(text?: string): void {
-    if (text) navigator.clipboard.writeText(text)
+    if (text) navigator.clipboard.writeText(text).catch((err) => console.error(err))
   },
 
   getDisplayName(name: string | undefined, list: SelectItem[] | undefined, defValue?: string): string | undefined {
