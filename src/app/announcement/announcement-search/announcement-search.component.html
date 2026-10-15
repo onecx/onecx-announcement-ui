@@ -22,6 +22,7 @@
   @let metaData = metaData$ | async;
   @if (metaData) {
     <app-announcement-criteria
+      [criteria]="criteria"
       [actions]="(actions$ | async) ?? []"
       [usedProducts]="metaData.usedProducts ?? []"
       [usedWorkspaces]="metaData.usedWorkspaces ?? []"

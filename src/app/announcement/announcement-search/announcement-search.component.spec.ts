@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
+import { ActivatedRoute, provideRouter } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
-import { provideRouter } from '@angular/router'
 
 import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
@@ -145,7 +145,7 @@ describe('AnnouncementSearchComponent', () => {
       component.ngOnInit()
 
       component.actions$?.subscribe((action) => {
-        if (action[0].actionCallback) action[0].actionCallback()
+        action[0].actionCallback?.()
       })
 
       await Promise.resolve()
@@ -160,7 +160,7 @@ describe('AnnouncementSearchComponent', () => {
       component.ngOnInit()
 
       component.actions$?.subscribe((action) => {
-        if (action[0].actionCallback) action[0].actionCallback()
+        action[0].actionCallback?.()
       })
 
       await Promise.resolve()
@@ -216,24 +216,26 @@ describe('AnnouncementSearchComponent', () => {
       })
     })
 
-    it('should reset search criteria and empty items for the next search', (done) => {
-      apiServiceSpy.searchAnnouncements.and.returnValue(of({ stream: [itemData[1]] }))
+    it('should reset search criteria and empty items for the next search', () => {
+      apiServiceSpy.searchAnnouncements.calls.reset()
+      apiServiceSpy.searchAnnouncements.and.returnValues(of({ stream: [itemData[1]] }), of({ stream: [] }))
       component.criteria = { workspaceName: 'ADMIN' }
+      component['dataSubject$'].next(null)
+      const emissions: Array<any[] | null> = []
+
+      component.data$!.subscribe((data) => emissions.push(data))
 
       component.onSearch(component.criteria, true)
-
-      component.data$!.subscribe({
-        next: (data) => {
-          expect(data).toHaveSize(1)
-          expect(data![0]).toEqual(itemData[1])
-          done()
-        },
-        error: done.fail
-      })
+      expect(apiServiceSpy.searchAnnouncements).toHaveBeenCalledTimes(1)
+      expect(emissions[0]).toBeNull()
+      expect(emissions[1]).toHaveSize(1)
+      expect(emissions[1]![0]).toEqual(itemData[1])
 
       component.onCriteriaReset()
 
       expect(component.criteria).toEqual({})
+      expect(apiServiceSpy.searchAnnouncements).toHaveBeenCalledTimes(2)
+      expect(emissions[2]).toEqual([])
     })
 
     it('should display an error message if the search fails', (done) => {
@@ -749,6 +751,37 @@ describe('AnnouncementSearchComponent', () => {
       langSubject.next('de')
       initTestComponent()
       expect(component.datetimeFormat).toEqual('dd.MM.yyyy HH:mm')
+    })
+  })
+
+  describe('restore state from query params', () => {
+    it('should map null query params to undefined', () => {
+      const route = TestBed.inject(ActivatedRoute)
+
+      Object.defineProperty(route.snapshot, 'queryParams', {
+        value: {
+          title: null,
+          workspaceName: null
+        },
+        configurable: true
+      })
+
+      const onSearchSpy = spyOn(component, 'onSearch')
+      const result = (component as any).restoreStateFromQueryParams()
+
+      expect(result).toBeTrue()
+      expect(component.criteria).toEqual({
+        title: undefined,
+        workspaceName: undefined,
+        productName: undefined,
+        status: undefined,
+        type: undefined,
+        priority: undefined,
+        startDateFrom: undefined,
+        startDateTo: undefined
+      })
+
+      expect(onSearchSpy).toHaveBeenCalled()
     })
   })
 })
