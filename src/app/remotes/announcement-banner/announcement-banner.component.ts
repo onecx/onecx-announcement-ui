@@ -69,7 +69,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
     this.announcementApi.configuration = new Configuration({
       basePath: Location.joinWithSlash(config.baseUrl, environment.apiPrefix)
     })
-    this.appConfigService.init(config['baseUrl'])
+    this.appConfigService.init(config['baseUrl']).catch((err) => console.error(err))
     this.remoteComponentConfig.next(config)
     this.displayType.set(this.getAnnouncementDisplayType())
     this.searchWorkspaceAnnouncements()

@@ -45,4 +45,4 @@ bootstrapRemoteComponent(
       }
     })
   ]
-)
+).catch((err) => console.error(err))
