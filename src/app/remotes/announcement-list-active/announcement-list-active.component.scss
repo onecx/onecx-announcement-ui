@@ -1,10 +1,10 @@
 .announcement-row:last-of-type {
-  border-bottom: none !important;
+  border-bottom: none;
 }
 
 :host ::ng-deep {
   /* PrimeNG Popover */
-  --p-popover-content-padding: 0 !important;
+  --p-popover-content-padding: 0;
 
   /* PrimeNG Popover: fix arrow display */
   .p-popover:after,

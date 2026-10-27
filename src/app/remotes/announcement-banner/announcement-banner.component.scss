@@ -6,11 +6,11 @@
   .p-carousel-content {
     .p-carousel-prev-button,
     .p-carousel-next-button {
-      width: 2.5rem !important;
+      width: 2.5rem;
       text-align: center;
       button {
-        height: 2rem !important;
-        width: 2rem !important;
+        height: 2rem;
+        width: 2rem;
       }
     }
   }
@@ -22,24 +22,24 @@
   }
 
   .p-carousel-items-container {
-    align-items: flex-start !important;
+    align-items: flex-start;
   }
 
   .p-carousel-item {
-    max-height: 0 !important;
-    overflow: hidden !important;
-    visibility: hidden !important;
+    max-height: 0;
+    overflow: hidden;
+    visibility: hidden;
     transition: max-height 0.3s ease-in-out;
   }
 
   .p-carousel-item-active {
-    max-height: 1000px !important;
-    overflow: visible !important;
-    visibility: visible !important;
+    max-height: 1000px;
+    overflow: visible;
+    visibility: visible;
   }
 
   .announcement-banner-action button {
-    height: 1.9rem !important;
-    width: 1.9rem !important;
+    height: 1.9rem;
+    width: 1.9rem;
   }
 }
