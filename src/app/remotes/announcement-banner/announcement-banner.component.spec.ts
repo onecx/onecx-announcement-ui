@@ -128,6 +128,29 @@ describe('AnnouncementBannerComponent - common case', () => {
         done()
       })
     })
+
+    it('should log an error when app config init fails', () => {
+      const error = new Error('config failed')
+
+      initializeComponent()
+
+      const appConfigInitSpy = spyOn(component['appConfigService'], 'init').and.callFake(() => {
+        return {
+          catch: (callback: (err: Error) => void) => {
+            callback(error)
+            return Promise.resolve()
+          }
+        } as any
+      })
+      spyOn(console, 'error')
+
+      component.ocxInitRemoteComponent({
+        baseUrl: 'base_url'
+      } as RemoteComponentConfig)
+
+      expect(appConfigInitSpy).toHaveBeenCalledWith('base_url')
+      expect(console.error).toHaveBeenCalledWith(error)
+    })
   })
 
   describe('data', () => {

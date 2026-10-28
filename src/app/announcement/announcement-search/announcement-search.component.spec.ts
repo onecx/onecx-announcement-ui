@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { ActivatedRoute, provideRouter } from '@angular/router'
+import { ActivatedRoute, provideRouter, Router } from '@angular/router'
 import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
@@ -782,6 +782,31 @@ describe('AnnouncementSearchComponent', () => {
       })
 
       expect(onSearchSpy).toHaveBeenCalled()
+    })
+
+    it('should log an error when query params sync fails', () => {
+      const router = TestBed.inject(Router)
+      const error = new Error('navigate failed')
+      const navigateSpy = spyOn(router, 'navigate').and.callFake(() => {
+        return {
+          catch: (callback: (err: Error) => void) => {
+            callback(error)
+            return Promise.resolve()
+          }
+        } as any
+      })
+      spyOn(console, 'error')
+
+      component.criteria = {
+        title: 'annonce',
+        workspaceName: 'ws',
+        productName: 'product'
+      }
+
+      ;(component as any).updateSearchParamsFromState()
+
+      expect(navigateSpy).toHaveBeenCalled()
+      expect(console.error).toHaveBeenCalledWith(error)
     })
   })
 })
