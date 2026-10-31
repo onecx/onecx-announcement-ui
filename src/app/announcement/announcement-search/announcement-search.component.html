@@ -32,9 +32,19 @@
 
     <ocx-content class="ocx-content">
       @if (loadingMetaData) {
-        <p-message id="am_search_message_loading" severity="info" [text]="'ACTIONS.LOADING' | translate"></p-message>
+        <p-message 
+          id="am_search_message_loading" 
+          severity="info"
+          styleClass="w-fit"
+          [text]="'ACTIONS.LOADING' | translate"
+        ></p-message>
       } @else if (exceptionKey) {
-        <p-message id="am_search_message_error" severity="error" [text]="exceptionKey | translate"></p-message>
+        <p-message 
+          id="am_search_message_error" 
+          severity="error" 
+          styleClass="w-fit"
+          [text]="exceptionKey | translate"
+        ></p-message>
       }
 
       @let data = data$ | async;
@@ -44,6 +54,7 @@
           <p-message
             id="am_search_message_searching"
             severity="info"
+            styleClass="w-fit"
             [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
           ></p-message>
         }
