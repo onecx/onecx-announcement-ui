@@ -38,6 +38,4 @@ const routes: Routes = [
     AnnouncementDeleteComponent
   ]
 })
-export class AnnouncementModule {
-  constructor() {}
-}
+export class AnnouncementModule {}
