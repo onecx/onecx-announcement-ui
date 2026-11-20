@@ -4,6 +4,7 @@
 @include ocx-required-label;
 @include ocx-text-responsive;
 @include ocx-tabs;
+@include ocx-fieldset;
 
 :host ::ng-deep {
   .p-toggleswitch:not(&.p-toggleswitch-checked) .p-toggleswitch-slider {
@@ -54,31 +55,6 @@
         height: 1.6rem;
         margin-top: -0.8rem;
       }
-    }
-  }
-
-  .p-fieldset {
-    > .p-fieldset-legend {
-      color: var(--text-color, var(--text-color-default));
-      background: var(--panel-header-bg);
-      font-weight: var(--panel-header-font-weight);
-      border-radius: var(--border-radius);
-      padding: 0.3rem 0.4rem;
-      max-width: calc(100% - 0.8rem);
-      white-space: normal;
-      line-height: 1.2;
-      overflow-wrap: anywhere;
-    }
-
-    > .p-fieldset-legend span,
-    > .p-fieldset-legend .p-fieldset-legend-label,
-    .p-fieldset-legend .p-fieldset-legend-text {
-      white-space: normal;
-      line-height: 1.2;
-      overflow-wrap: anywhere;
-    }
-    .p-fieldset-content {
-      padding: 0rem 0.5rem;
     }
   }
 

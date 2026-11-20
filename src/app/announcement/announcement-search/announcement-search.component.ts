@@ -258,13 +258,13 @@ export class AnnouncementSearchComponent implements OnInit {
   public wdIsComponentDefined$: Observable<boolean> | undefined // check
   public workspaceData$ = new BehaviorSubject<Workspace[] | undefined>(undefined) // workspace data
 
-  constructor(
-    private readonly user: UserService,
-    private readonly slotService: SlotService,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService,
-    private readonly announcementApi: AnnouncementInternalAPIService
-  ) {
+  private readonly user = inject(UserService)
+  private readonly slotService = inject(SlotService)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+  private readonly announcementApi = inject(AnnouncementInternalAPIService)
+
+  constructor() {
     this.interactiveColumns = this.createInteractiveColumns()
     this.displayedColumnKeys = this.dataViewColumns.filter((a) => a.active === true).map((col) => col.field)
     this.pdIsComponentDefined$ = this.slotService.isSomeComponentDefinedForSlot(this.pdSlotName)

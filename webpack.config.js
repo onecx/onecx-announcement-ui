@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const { ModifyEntryPlugin } = require('@angular-architects/module-federation/src/utils/modify-entry-plugin')
 const { share, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack')
 const { ModifySourcePlugin, ReplaceOperation } = require('modify-source-webpack-plugin')
@@ -74,9 +75,15 @@ const modifyMaterialPlugin = new ModifySourcePlugin({
   ]
 })
 
+const isProduction = process.env.NODE_ENV === 'production'
 module.exports = {
   ...config,
-  plugins: [...plugins, modifyPrimeNgPlugin, modifyMaterialPlugin],
+  plugins: [
+    new webpack.DefinePlugin({ ngDevMode: JSON.stringify(!isProduction) }),
+    ...plugins,
+    modifyPrimeNgPlugin,
+    modifyMaterialPlugin
+  ],
   module: { parser: { javascript: { importMeta: false } } },
   output: { uniqueName: 'onecx-announcement-ui', publicPath: 'auto' },
   experiments: { ...config.experiments, topLevelAwait: true },

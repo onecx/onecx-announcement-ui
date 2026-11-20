@@ -33,11 +33,9 @@ import { DatePicker } from 'primeng/datepicker'
 import { DialogModule } from 'primeng/dialog'
 import { DynamicDialogModule } from 'primeng/dynamicdialog'
 import { FloatLabelModule } from 'primeng/floatlabel'
-import { FieldsetModule } from 'primeng/fieldset'
 import { InputGroupModule } from 'primeng/inputgroup'
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon'
 import { InputTextModule } from 'primeng/inputtext'
-import { InputSwitchModule } from 'primeng/inputswitch'
 import { MessageModule } from 'primeng/message'
 import { SelectModule } from 'primeng/select'
 import { SelectButtonModule } from 'primeng/selectbutton'
@@ -45,6 +43,7 @@ import { SelectItem } from 'primeng/api'
 import { TableModule } from 'primeng/table'
 import { TabsModule } from 'primeng/tabs'
 import { TextareaModule } from 'primeng/textarea'
+import { ToggleSwitchModule } from 'primeng/toggleswitch'
 import { TooltipModule } from 'primeng/tooltip'
 
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
@@ -96,12 +95,10 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
     DialogModule,
     DynamicDialogModule,
     FloatLabelModule,
-    FieldsetModule,
     FormsModule,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
-    InputSwitchModule,
     MessageModule,
     ReactiveFormsModule,
     SelectModule,
@@ -110,6 +107,7 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
     TabsModule,
     TextareaModule,
     TooltipModule,
+    ToggleSwitchModule,
     TranslateModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -143,19 +141,19 @@ export class AnnouncementDetailComponent implements OnChanges {
   }
   public preview: Preview = this.previewDefault
 
-  constructor(
-    private readonly user: UserService,
-    private readonly announcementApi: AnnouncementInternalAPIService,
-    private readonly fb: FormBuilder,
-    private readonly translate: TranslateService,
-    private readonly msgService: PortalMessageService
-  ) {
+  private readonly user = inject(UserService)
+  private readonly announcementApi = inject(AnnouncementInternalAPIService)
+  private readonly fb = inject(FormBuilder)
+  private readonly translate = inject(TranslateService)
+  private readonly msgService = inject(PortalMessageService)
+
+  constructor() {
     this.user.lang$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lang) => {
       this.datetimeFormat = lang === 'de' ? 'dd.MM.yyyy HH:mm:ss' : this.datetimeFormat
       this.dateFormat = lang === 'de' ? 'dd.mm.yy' : this.dateFormat
       this.timeFormat = lang === 'de' ? '24' : this.timeFormat
     })
-    this.announcementForm = fb.nonNullable.group({
+    this.announcementForm = this.fb.nonNullable.group({
       modificationCount: new FormControl(null),
       title: new FormControl(null, [Validators.required, Validators.minLength(2), Validators.maxLength(255)]),
       content: new FormControl(null, [Validators.maxLength(1000)]),

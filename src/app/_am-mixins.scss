@@ -48,6 +48,24 @@
   }
 }
 
+@mixin ocx-fieldset {
+  :host ::ng-deep {
+    fieldset {
+      border: 1px solid var(--onecx-announcement-onecx-announcement-ui-dialog-border-color);
+      border-radius: 0.5rem;
+      background: var(--onecx-announcement-onecx-announcement-ui-surface-50);
+      padding: 1rem;
+      margin: 0;
+
+      legend {
+        background-color: transparent;
+        padding: 0.3rem 0.4rem;
+        font-weight: var(--onecx-announcement-onecx-announcement-ui-dialog-title-font-weight);
+      }
+    }
+  }
+}
+
 @mixin invisible {
   :host ::ng-deep {
     .invisible {

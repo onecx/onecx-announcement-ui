@@ -1,13 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ActivatedRoute, provideRouter, Router } from '@angular/router'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { BehaviorSubject, of, throwError } from 'rxjs'
 
-import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
 import { DataSortDirection, RowListGridData } from '@onecx/angular-accelerator'
+import { PortalMessageService, UserService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { providePermissionService } from '@onecx/angular-utils'
 
 import { Announcement, AnnouncementAssignments, AnnouncementInternalAPIService } from 'src/app/shared/generated'
@@ -80,18 +79,15 @@ describe('AnnouncementSearchComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        AnnouncementSearchComponent,
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage(defaultLang)
-      ],
+      imports: [AnnouncementSearchComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
         providePermissionService(),
-        provideNoopAnimations(),
+        provideTranslateTestingService({
+          de: require('/src/assets/i18n/de.json'),
+          en: require('/src/assets/i18n/en.json')
+        }),
         provideRouter([{ path: '', component: AnnouncementSearchComponent }])
       ]
     })

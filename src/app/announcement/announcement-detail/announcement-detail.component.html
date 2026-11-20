@@ -163,12 +163,10 @@
         <!-- Features -->
         <p-tabpanel value="1">
           <div class="sm:mt-1 flex flex-wrap flex-column justify-content-between row-gap-2 sm:row-gap-3">
-            <p-fieldset
-              [toggleable]="false"
-              [collapsed]="false"
-              styleClass="py-2 sm:py-3 px-1 sm:px-2 surface-50"
-              [legend]="'DIALOG.DETAIL.TAB.ACTIVATION' | translate"
-            >
+            <fieldset>
+              <legend tooltipPosition="top" tooltipEvent="hover">
+                {{ 'DIALOG.DETAIL.TAB.ACTIVATION' | translate }}
+              </legend>
               <div
                 class="w-full flex flex-column sm:flex-row sm:flex-wrap row-gap-3 sm:row-gap-4 sm:justify-content-between"
               >
@@ -224,7 +222,7 @@
                 <div
                   class="sm:mr-4 flex flex-row sm:flex-column sm:justify-content-center align-items-center row-gap-1 column-gap-2"
                 >
-                  <p-inputSwitch
+                  <p-toggleswitch
                     inputId="am_detail_form_status"
                     class="input-switch-xl"
                     formControlName="status"
@@ -235,7 +233,7 @@
                     [pTooltip]="'ANNOUNCEMENT.TOOLTIPS.STATUS' | translate"
                     tooltipPosition="top"
                     tooltipEvent="hover"
-                  ></p-inputSwitch>
+                  ></p-toggleswitch>
                   <label class="text-sm float-label" for="am_detail_form_status" aria-hidden="true">
                     {{ 'ENUMS.ANNOUNCEMENT_STATUS.' + announcementForm.controls['status'].value | translate }}
                   </label>
@@ -250,14 +248,12 @@
                   </label>
                 }
               </div>
-            </p-fieldset>
+            </fieldset>
 
-            <p-fieldset
-              [toggleable]="false"
-              [collapsed]="false"
-              styleClass="pt-2 sm:pt-3 pb-3 px-1 sm:px-2  surface-50"
-              [legend]="'DIALOG.DETAIL.TAB.VISIBILITY' | translate"
-            >
+            <fieldset>
+              <legend tooltipPosition="top" tooltipEvent="hover">
+                {{ 'DIALOG.DETAIL.TAB.VISIBILITY' | translate }}
+              </legend>
               <div class="w-full flex flex-column sm:flex-row sm:flex-nowrap row-gap-3 sm:row-gap-0 column-gap-5">
                 <p-floatlabel variant="on" class="flex-1 min-w-0">
                   <p-select
@@ -268,7 +264,6 @@
                     panelStyleClass="w-20rem"
                     formControlName="workspaceName"
                     [options]="allWorkspaces"
-                    [autoDisplayFirst]="true"
                     [appendTo]="'body'"
                     [showClear]="true"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
@@ -291,7 +286,6 @@
                     panelStyleClass="w-20rem"
                     formControlName="productName"
                     [options]="allProducts"
-                    [autoDisplayFirst]="true"
                     [appendTo]="'body'"
                     [showClear]="true"
                     [emptyMessage]="'ACTIONS.SEARCH.NO_DATA' | translate"
@@ -306,14 +300,12 @@
                   </label>
                 </p-floatlabel>
               </div>
-            </p-fieldset>
+            </fieldset>
 
-            <p-fieldset
-              [toggleable]="false"
-              [collapsed]="false"
-              styleClass="pt-2 sm:pt-3 pb-3 px-1 sm:px-2  surface-50"
-              [legend]="'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate"
-            >
+            <fieldset>
+              <legend tooltipPosition="top" tooltipEvent="hover">
+                {{ 'DIALOG.DETAIL.TAB.CLASSIFICATION' | translate }}
+              </legend>
               <div
                 class="w-full flex flex-row flex-wrap column-gap-0 row-gap-2 justify-content-start sm:justify-content-evenly align-items-end"
               >
@@ -366,7 +358,7 @@
                   ></p-selectButton>
                 </section>
               </div>
-            </p-fieldset>
+            </fieldset>
           </div>
         </p-tabpanel>
 

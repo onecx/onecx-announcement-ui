@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core'
 import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, combineLatest, map, mergeMap, of } from 'rxjs'
@@ -52,15 +52,14 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
   public Utils = Utils
   public displayType = signal<DisplayType>('full')
 
-  constructor(
-    @Inject(REMOTE_COMPONENT_CONFIG)
-    private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
-    private readonly appConfigService: AppConfigService,
-    private readonly appStateService: AppStateService,
-    private readonly translateService: TranslateService,
-    private readonly userService: UserService,
-    private readonly announcementApi: AnnouncementInternalAPIService
-  ) {
+  private readonly remoteComponentConfig = inject<ReplaySubject<RemoteComponentConfig>>(REMOTE_COMPONENT_CONFIG)
+  private readonly appConfigService = inject(AppConfigService)
+  private readonly appStateService = inject(AppStateService)
+  private readonly translateService = inject(TranslateService)
+  private readonly userService = inject(UserService)
+  private readonly announcementApi = inject(AnnouncementInternalAPIService)
+
+  constructor() {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
   }
 

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -83,10 +84,10 @@ export class AnnouncementCriteriaComponent implements OnChanges {
   public statusOptions$: Observable<SelectItem[]>
   public priorityTypeOptions$: Observable<SelectItem[]>
 
-  constructor(
-    private readonly user: UserService,
-    public readonly translate: TranslateService
-  ) {
+  private readonly user = inject(UserService)
+  public readonly translate = inject(TranslateService)
+
+  constructor() {
     this.dateFormatForRange = this.user.lang$.getValue() === 'de' ? 'dd.mm.yy' : 'm/d/yy'
     this.criteriaForm = new FormGroup<AnnouncementCriteriaForm>({
       title: new FormControl<string | null>(null),

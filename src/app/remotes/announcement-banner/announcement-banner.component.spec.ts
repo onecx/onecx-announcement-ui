@@ -2,13 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { AsyncPipe } from '@angular/common'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { provideNoopAnimations } from '@angular/platform-browser/animations'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
 
-import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
-import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
 import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
+import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
+import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
 
 import {
   Announcement,
@@ -65,17 +64,14 @@ describe('AnnouncementBannerComponent - common case', () => {
 
     TestBed.configureTestingModule({
       declarations: [],
-      imports: [
-        AngularAcceleratorModule,
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
+      imports: [AngularAcceleratorModule],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideNoopAnimations(),
+        provideTranslateTestingService({
+          de: require('/src/assets/i18n/de.json'),
+          en: require('/src/assets/i18n/en.json')
+        }),
         { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject },
         { provide: AppStateService, useValue: mockAppStateService }
       ]
@@ -322,22 +318,19 @@ describe('AnnouncementBannerComponent - on welcome product', () => {
     mockAppStateService = new MockAppStateServiceWelcome()
 
     TestBed.configureTestingModule({
-      declarations: [],
-      imports: [
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideTranslateTestingService({
+          de: require('/src/assets/i18n/de.json'),
+          en: require('/src/assets/i18n/en.json')
+        }),
         { provide: REMOTE_COMPONENT_CONFIG, useValue: baseUrlSubject }
       ]
     })
       .overrideComponent(OneCXAnnouncementBannerComponent, {
         set: {
-          imports: [TranslateTestingModule, AsyncPipe],
+          imports: [AsyncPipe],
           providers: [
             { provide: AnnouncementInternalAPIService, useValue: announcementApiSpy },
             { provide: AppConfigService },
