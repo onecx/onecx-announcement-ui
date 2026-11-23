@@ -29,7 +29,7 @@ import { CardModule } from 'primeng/card'
 import { ConfirmDialogModule } from 'primeng/confirmdialog'
 import { ConfirmPopupModule } from 'primeng/confirmpopup'
 import { DataViewModule } from 'primeng/dataview'
-import { DatePicker } from 'primeng/datepicker'
+import { DatePickerModule } from 'primeng/datepicker'
 import { DialogModule } from 'primeng/dialog'
 import { DynamicDialogModule } from 'primeng/dynamicdialog'
 import { FloatLabelModule } from 'primeng/floatlabel'
@@ -91,7 +91,7 @@ type Preview = { status: AnnouncementStatus; type: AnnouncementType; priority: A
     ConfirmDialogModule,
     ConfirmPopupModule,
     DataViewModule,
-    DatePicker,
+    DatePickerModule,
     DialogModule,
     DynamicDialogModule,
     FloatLabelModule,
