@@ -61,6 +61,7 @@ describe('AnnouncementBannerComponent - common case', () => {
   beforeEach(() => {
     mockAppStateService = new MockAppStateService()
     baseUrlSubject = new ReplaySubject<any>(1)
+    announcementApiSpy.searchAnnouncementBanners.and.returnValue(of({ stream: [normalAnnouncement] }))
 
     TestBed.configureTestingModule({
       declarations: [],
@@ -165,13 +166,17 @@ describe('AnnouncementBannerComponent - common case', () => {
     })
 
     it('should catch an error if loading announcements fails', () => {
-      announcementApiSpy.searchAnnouncementBanners.and.returnValue(throwError(() => new Error()))
+      const errorResponse = { status: '404', statusText: 'Not found' }
+      announcementApiSpy.searchAnnouncementBanners.and.returnValue(throwError(() => errorResponse))
+      spyOn(console, 'error')
 
       initializeComponent()
+      component['searchWorkspaceAnnouncements']()
 
       expect(component).toBeTruthy()
       component['announcementsSubject'].subscribe((announcements) => {
         expect(announcements).toEqual([])
+        expect(console.error).toHaveBeenCalledWith('searchAnnouncementBanners', errorResponse)
       })
     })
   })

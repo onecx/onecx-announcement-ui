@@ -3,7 +3,7 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
 import { provideRouter } from '@angular/router'
-import { BehaviorSubject } from 'rxjs'
+import { BehaviorSubject, of } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
 import { UserService } from '@onecx/angular-integration-interface'
@@ -39,7 +39,8 @@ describe('AnnouncementCriteriaComponent', () => {
   const langSubject = new BehaviorSubject<string>(defaultLang)
 
   const mockUserService = {
-    lang$: langSubject
+    lang$: langSubject,
+    getPermissions: () => of([])
   }
 
   function initializeComponent() {

@@ -63,7 +63,8 @@ describe('AnnouncementSearchComponent', () => {
   const hasPermissionSpy = jasmine.createSpy('hasPermission').and.returnValue(Promise.resolve(true))
   const mockUserService = {
     lang$: langSubject,
-    hasPermission: hasPermissionSpy
+    hasPermission: hasPermissionSpy,
+    getPermissions: () => of(['ANNOUNCEMENT#SEARCH', 'ANNOUNCEMENT#VIEW', 'ANNOUNCEMENT#EDIT', 'ANNOUNCEMENT#DELETE'])
   }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', ['success', 'error', 'info'])
   const apiServiceSpy = {

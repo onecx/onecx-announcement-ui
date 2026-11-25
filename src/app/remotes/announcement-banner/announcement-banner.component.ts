@@ -110,7 +110,7 @@ export class OneCXAnnouncementBannerComponent implements ocxRemoteComponent, ocx
                     )
                   }),
                   catchError((err) => {
-                    console.error('Failed to search announcement banners:', err)
+                    console.error('searchAnnouncementBanners', err)
                     return of([])
                   })
                 )

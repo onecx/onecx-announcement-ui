@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
 
 import { PopoverModule } from 'primeng/popover'
+import { MessageModule } from 'primeng/message'
 
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import {
@@ -21,7 +22,14 @@ import { environment } from 'src/environments/environment'
 @Component({
   selector: 'app-announcement-list-active',
   standalone: true,
-  imports: [AngularAcceleratorModule, AngularRemoteComponentsModule, AsyncPipe, PopoverModule, TranslateModule],
+  imports: [
+    AngularAcceleratorModule,
+    AngularRemoteComponentsModule,
+    AsyncPipe,
+    PopoverModule,
+    MessageModule,
+    TranslateModule
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './announcement-list-active.component.html',
   styleUrl: './announcement-list-active.component.scss'
