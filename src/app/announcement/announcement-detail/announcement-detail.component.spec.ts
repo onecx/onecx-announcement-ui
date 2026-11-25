@@ -44,7 +44,7 @@ describe('AnnouncementDetailComponent', () => {
 
   const defaultLang = 'en'
   const langSubject = new BehaviorSubject<string>(defaultLang)
-  const mockUserService = { lang$: langSubject }
+  const mockUserService = { lang$: langSubject, getPermissions: () => of([]) }
   const msgServiceSpy = jasmine.createSpyObj<PortalMessageService>('PortalMessageService', [
     'success',
     'error',
