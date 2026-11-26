@@ -2,3 +2,10 @@
 
 @include ocx-search-criteria-fixes;
 @include ocx-text-responsive;
+
+:host ::ng-deep {
+  .p-datepicker-input {
+    flex: 1 1 auto;
+    width: 1%;
+  }
+}

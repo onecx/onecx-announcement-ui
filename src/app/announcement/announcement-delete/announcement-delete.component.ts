@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core'
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { TranslateModule } from '@ngx-translate/core'
 
 import { ButtonModule } from 'primeng/button'
@@ -27,10 +27,8 @@ export class AnnouncementDeleteComponent {
 
   public Utils = Utils
 
-  constructor(
-    private readonly msgService: PortalMessageService,
-    private readonly announcementApi: AnnouncementInternalAPIService
-  ) {}
+  private readonly msgService = inject(PortalMessageService)
+  private readonly announcementApi = inject(AnnouncementInternalAPIService)
 
   public onDeleteConfirmation(): void {
     if (!this.announcement?.id) return

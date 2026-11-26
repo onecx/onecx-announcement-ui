@@ -12,6 +12,13 @@
     display: none !important;
   }
 
+  .message-info {
+    background: color-mix(in srgb, #eff6ff, transparent 5%);
+    border: 1px solid var(--onecx-announcement-onecx-announcement-ui-blue-200);
+    color: var(--onecx-announcement-onecx-announcement-ui-blue-600);
+    font-weight: var(--font-weight-medium);
+  }
+
   @media screen and (min-width: 992px) {
     .lg\:max-w-40rem {
       max-width: 40rem !important;

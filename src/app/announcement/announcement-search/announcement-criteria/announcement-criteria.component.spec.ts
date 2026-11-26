@@ -3,12 +3,11 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { FormControl, FormGroup } from '@angular/forms'
 import { provideRouter } from '@angular/router'
-import { TranslateTestingModule } from 'ngx-translate-testing'
-import { BehaviorSubject } from 'rxjs'
-
+import { BehaviorSubject, of } from 'rxjs'
 import { SelectItem } from 'primeng/api'
 
 import { UserService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import { AnnouncementPriorityType, AnnouncementStatus, AnnouncementType } from 'src/app/shared/generated'
 import { AnnouncementCriteriaComponent, AnnouncementCriteriaForm } from './announcement-criteria.component'
@@ -40,7 +39,8 @@ describe('AnnouncementCriteriaComponent', () => {
   const langSubject = new BehaviorSubject<string>(defaultLang)
 
   const mockUserService = {
-    lang$: langSubject
+    lang$: langSubject,
+    getPermissions: () => of([])
   }
 
   function initializeComponent() {
@@ -51,15 +51,13 @@ describe('AnnouncementCriteriaComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage(defaultLang)
-      ],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideTranslateTestingService({
+          de: require('/src/assets/i18n/de.json'),
+          en: require('/src/assets/i18n/en.json')
+        }),
         provideRouter([{ path: '', component: AnnouncementSearchComponent }]),
         { provide: UserService, useValue: mockUserService }
       ]

@@ -11,6 +11,7 @@ COPY dist/onecx-announcement-ui/ $DIR_HTML
 # Application environments default values
 ENV BFF_URL http://onecx-announcement-bff:8080/
 ENV APP_BASE_HREF /
+ENV NODE_ENV production
 
 RUN chmod 775 -R "$DIR_HTML"/assets
 USER 1001

@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core'
-import { AsyncPipe, Location, NgFor } from '@angular/common'
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core'
+import { AsyncPipe, Location } from '@angular/common'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { BehaviorSubject, Observable, ReplaySubject, catchError, map, mergeMap, of } from 'rxjs'
 
-import { MessageModule } from 'primeng/message'
 import { PopoverModule } from 'primeng/popover'
+import { MessageModule } from 'primeng/message'
 
 import { AppConfigService, AppStateService, UserService } from '@onecx/angular-integration-interface'
 import {
@@ -26,9 +26,8 @@ import { environment } from 'src/environments/environment'
     AngularAcceleratorModule,
     AngularRemoteComponentsModule,
     AsyncPipe,
-    MessageModule,
-    NgFor,
     PopoverModule,
+    MessageModule,
     TranslateModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,14 +44,14 @@ export class OneCXAnnouncementListActiveComponent implements ocxRemoteComponent,
   public convertLineBreaks = Utils.convertLineBreaks
   public displayDetailDialog = false
 
-  constructor(
-    @Inject(REMOTE_COMPONENT_CONFIG) private readonly remoteComponentConfig: ReplaySubject<RemoteComponentConfig>,
-    private readonly appConfigService: AppConfigService,
-    private readonly appStateService: AppStateService,
-    private readonly translateService: TranslateService,
-    private readonly userService: UserService,
-    private readonly announcementApi: AnnouncementInternalAPIService
-  ) {
+  private readonly remoteComponentConfig = inject<ReplaySubject<RemoteComponentConfig>>(REMOTE_COMPONENT_CONFIG)
+  private readonly appConfigService = inject(AppConfigService)
+  private readonly appStateService = inject(AppStateService)
+  private readonly translateService = inject(TranslateService)
+  private readonly userService = inject(UserService)
+  private readonly announcementApi = inject(AnnouncementInternalAPIService)
+
+  constructor() {
     this.userService.lang$.subscribe((lang) => this.translateService.use(lang))
   }
 

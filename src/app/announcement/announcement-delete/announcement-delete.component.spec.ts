@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
-import { TranslateTestingModule } from 'ngx-translate-testing'
 import { of, throwError } from 'rxjs'
 
 import { PortalMessageService } from '@onecx/angular-integration-interface'
+import { provideTranslateTestingService } from '@onecx/angular-testing'
 
 import {
   Announcement,
@@ -43,20 +43,18 @@ describe('AnnouncementDeleteComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        AnnouncementDeleteComponent,
-        TranslateTestingModule.withTranslations({
-          de: require('src/assets/i18n/de.json'),
-          en: require('src/assets/i18n/en.json')
-        }).withDefaultLanguage('en')
-      ],
+      imports: [AnnouncementDeleteComponent],
       providers: [provideHttpClient(), provideHttpClientTesting()]
     })
       .overrideComponent(AnnouncementDeleteComponent, {
         add: {
           providers: [
             { provide: PortalMessageService, useValue: msgServiceSpy },
-            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy }
+            { provide: AnnouncementInternalAPIService, useValue: apiServiceSpy },
+            provideTranslateTestingService({
+              de: require('/src/assets/i18n/de.json'),
+              en: require('/src/assets/i18n/en.json')
+            })
           ]
         }
       })
