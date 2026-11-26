@@ -24,6 +24,9 @@
       &:first-child .table-header-wrapper {
         justify-content: center;
       }
+      &:nth-child(2) {
+        text-align: center;
+      }
     }
 
     .p-datatable-thead > tr > th,
@@ -54,11 +57,6 @@
       button.deleteTableRowButton {
         order: 3;
       }
-    }
-
-    /* action buttons */
-    .p-datatable-thead > tr > th:nth-child(2) {
-      text-align: center;
     }
   }
 

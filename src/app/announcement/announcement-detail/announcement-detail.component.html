@@ -17,12 +17,9 @@
   }"
 >
   @if (exceptionKey) {
-    <p-message
-      id="am_detail_message_error"
-      severity="error"
-      styleClass="p-2"
-      [text]="exceptionKey | translate"
-    ></p-message>
+    <p-message id="am_detail_message_error" severity="error" styleClass="p-2 w-fit">
+      {{ exceptionKey | translate }}
+    </p-message>
   } @else {
     @if (preview) {
       <!-- display status/type/priority on dialog header -->

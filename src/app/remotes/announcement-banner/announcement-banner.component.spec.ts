@@ -4,7 +4,6 @@ import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { ReplaySubject, of, throwError } from 'rxjs'
 
-import { AngularAcceleratorModule } from '@onecx/angular-accelerator'
 import { AppConfigService, AppStateService } from '@onecx/angular-integration-interface'
 import { provideTranslateTestingService } from '@onecx/angular-testing'
 import { REMOTE_COMPONENT_CONFIG, RemoteComponentConfig } from '@onecx/angular-utils'
@@ -46,6 +45,7 @@ describe('AnnouncementBannerComponent - common case', () => {
 
   let mockAppStateService: MockAppStateService
   let baseUrlSubject: ReplaySubject<any>
+
   const announcementApiSpy = {
     searchAnnouncementBanners: jasmine
       .createSpy('searchAnnouncementBanners')
@@ -64,8 +64,6 @@ describe('AnnouncementBannerComponent - common case', () => {
     announcementApiSpy.searchAnnouncementBanners.and.returnValue(of({ stream: [normalAnnouncement] }))
 
     TestBed.configureTestingModule({
-      declarations: [],
-      imports: [AngularAcceleratorModule],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),

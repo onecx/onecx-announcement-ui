@@ -1,6 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing'
 import { provideHttpClient } from '@angular/common/http'
 import { provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideNoopAnimations } from '@angular/platform-browser/animations'
 import { ReplaySubject, of, throwError } from 'rxjs'
 
 import { AppStateService } from '@onecx/angular-integration-interface'
@@ -58,6 +59,7 @@ describe('AnnouncementListActiveComponent', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
+        provideNoopAnimations(),
         provideTranslateTestingService({
           de: require('/src/assets/i18n/de.json'),
           en: require('/src/assets/i18n/en.json')

@@ -36,24 +36,18 @@
           {{ 'ACTIONS.LOADING' | translate }}
         </p-message>
       } @else if (exceptionKey) {
-        <p-message
-          id="am_search_message_error"
-          severity="error"
-          styleClass="w-fit"
-          [text]="exceptionKey | translate"
-        ></p-message>
+        <p-message id="am_search_message_error" severity="error" styleClass="w-fit">
+          {{ exceptionKey | translate }}
+        </p-message>
       }
 
       @let data = data$ | async;
       @if (data) {
         <!-- placed here to avoid https://angular.dev/errors/NG0100 -->
         @if (searching) {
-          <p-message
-            id="am_search_message_searching"
-            severity="info"
-            styleClass="w-fit"
-            [text]="'ACTIONS.SEARCH.IN_PROGRESS' | translate"
-          ></p-message>
+          <p-message id="am_search_message_searching" severity="info" styleClass="w-fit">
+            {{ 'ACTIONS.SEARCH.IN_PROGRESS' | translate }}
+          </p-message>
         }
         @if (!(searching || exceptionKey)) {
           <ocx-interactive-data-view
